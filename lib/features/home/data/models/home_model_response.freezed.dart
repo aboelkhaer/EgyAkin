@@ -2248,6 +2248,8 @@ mixin _$PatientHomeDataModel {
   num? get egfr => throw _privateConstructorUsedError;
   @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
   num? get egfrPrevious => throw _privateConstructorUsedError;
+  @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+  num? get egfrDelta => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _flexibleNumFromJson)
   num? get bmi => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -2287,6 +2289,8 @@ abstract class $PatientHomeDataModelCopyWith<$Res> {
       @JsonKey(fromJson: _flexibleNumFromJson) num? egfr,
       @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
       num? egfrPrevious,
+      @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+      num? egfrDelta,
       @JsonKey(fromJson: _flexibleNumFromJson) num? bmi,
       @JsonKey(name: 'updated_at') String? updatedAt,
       DoctorModel? doctor,
@@ -2323,6 +2327,7 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
     Object? age = freezed,
     Object? egfr = freezed,
     Object? egfrPrevious = freezed,
+    Object? egfrDelta = freezed,
     Object? bmi = freezed,
     Object? updatedAt = freezed,
     Object? doctor = freezed,
@@ -2356,6 +2361,10 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
       egfrPrevious: freezed == egfrPrevious
           ? _value.egfrPrevious
           : egfrPrevious // ignore: cast_nullable_to_non_nullable
+              as num?,
+      egfrDelta: freezed == egfrDelta
+          ? _value.egfrDelta
+          : egfrDelta // ignore: cast_nullable_to_non_nullable
               as num?,
       bmi: freezed == bmi
           ? _value.bmi
@@ -2451,6 +2460,8 @@ abstract class _$$PatientHomeDataModelImplCopyWith<$Res>
       @JsonKey(fromJson: _flexibleNumFromJson) num? egfr,
       @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
       num? egfrPrevious,
+      @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+      num? egfrDelta,
       @JsonKey(fromJson: _flexibleNumFromJson) num? bmi,
       @JsonKey(name: 'updated_at') String? updatedAt,
       DoctorModel? doctor,
@@ -2487,6 +2498,7 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
     Object? age = freezed,
     Object? egfr = freezed,
     Object? egfrPrevious = freezed,
+    Object? egfrDelta = freezed,
     Object? bmi = freezed,
     Object? updatedAt = freezed,
     Object? doctor = freezed,
@@ -2520,6 +2532,10 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
       egfrPrevious: freezed == egfrPrevious
           ? _value.egfrPrevious
           : egfrPrevious // ignore: cast_nullable_to_non_nullable
+              as num?,
+      egfrDelta: freezed == egfrDelta
+          ? _value.egfrDelta
+          : egfrDelta // ignore: cast_nullable_to_non_nullable
               as num?,
       bmi: freezed == bmi
           ? _value.bmi
@@ -2568,6 +2584,8 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
       @JsonKey(fromJson: _flexibleNumFromJson) this.egfr,
       @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
       this.egfrPrevious,
+      @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+      this.egfrDelta,
       @JsonKey(fromJson: _flexibleNumFromJson) this.bmi,
       @JsonKey(name: 'updated_at') this.updatedAt,
       this.doctor,
@@ -2596,6 +2614,9 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
   @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
   final num? egfrPrevious;
   @override
+  @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+  final num? egfrDelta;
+  @override
   @JsonKey(fromJson: _flexibleNumFromJson)
   final num? bmi;
   @override
@@ -2620,7 +2641,7 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
 
   @override
   String toString() {
-    return 'PatientHomeDataModel(id: $id, name: $name, hospital: $hospital, age: $age, egfr: $egfr, egfrPrevious: $egfrPrevious, bmi: $bmi, updatedAt: $updatedAt, doctor: $doctor, sections: $sections, sectionsCompleted: $sectionsCompleted, sectionsTotal: $sectionsTotal, sectionsLastUpdatedAt: $sectionsLastUpdatedAt, nextSection: $nextSection)';
+    return 'PatientHomeDataModel(id: $id, name: $name, hospital: $hospital, age: $age, egfr: $egfr, egfrPrevious: $egfrPrevious, egfrDelta: $egfrDelta, bmi: $bmi, updatedAt: $updatedAt, doctor: $doctor, sections: $sections, sectionsCompleted: $sectionsCompleted, sectionsTotal: $sectionsTotal, sectionsLastUpdatedAt: $sectionsLastUpdatedAt, nextSection: $nextSection)';
   }
 
   @override
@@ -2636,6 +2657,8 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
             (identical(other.egfr, egfr) || other.egfr == egfr) &&
             (identical(other.egfrPrevious, egfrPrevious) ||
                 other.egfrPrevious == egfrPrevious) &&
+            (identical(other.egfrDelta, egfrDelta) ||
+                other.egfrDelta == egfrDelta) &&
             (identical(other.bmi, bmi) || other.bmi == bmi) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
@@ -2662,6 +2685,7 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
       age,
       egfr,
       egfrPrevious,
+      egfrDelta,
       bmi,
       updatedAt,
       doctor,
@@ -2698,6 +2722,8 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
           @JsonKey(fromJson: _flexibleNumFromJson) final num? egfr,
           @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
           final num? egfrPrevious,
+          @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+          final num? egfrDelta,
           @JsonKey(fromJson: _flexibleNumFromJson) final num? bmi,
           @JsonKey(name: 'updated_at') final String? updatedAt,
           final DoctorModel? doctor,
@@ -2727,6 +2753,9 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
   @override
   @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
   num? get egfrPrevious;
+  @override
+  @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson)
+  num? get egfrDelta;
   @override
   @JsonKey(fromJson: _flexibleNumFromJson)
   num? get bmi;

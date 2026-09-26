@@ -543,6 +543,8 @@ export 'package:egy_akin/features/home/presentation/widgets/doctors_activation.d
 export 'package:egy_akin/app/shared/functions/safe_close_for_cubit.dart';
 export 'package:egy_akin/app/shared/functions/is_arabic.dart';
 export 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
+export 'package:egy_akin/app/shared/widgets/hashtag_text_editing_controller.dart';
+export 'package:egy_akin/app/shared/widgets/chat_hashtag_scope.dart';
 export 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 export 'package:egy_akin/features/community/presentation/widgets/images_in_post_card.dart';
 export 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';

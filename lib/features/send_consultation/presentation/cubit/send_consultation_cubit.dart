@@ -40,6 +40,11 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
   int get totalInviteCount =>
       doctorsChecked.length + pendingExternalInvites.length;
 
+  void clearInputFields() {
+    searchController.clear();
+    consultMessage = '';
+  }
+
   bool queuePendingExternalInvite({
     required String email,
     String? inviteMessage,
@@ -216,6 +221,7 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
       (r) async {
         doctorsChecked.clear();
         pendingExternalInvites.clear();
+        clearInputFields();
 
         var successMessage = r.message?.toString().isNotEmpty == true
             ? r.message!
@@ -237,8 +243,8 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
           state.maybeMap(
             orElse: () => state,
             loaded: (value) => SendConsultationState.loaded(
-              value.isSearching,
-              value.isSearched,
+              false,
+              false,
               successMessage,
               value.response?.copyWith(data: []),
               value.counterChanges,
@@ -333,13 +339,14 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
       (r) {
         doctorsChecked.clear();
         searchController.clear();
+        consultMessage = '';
 
         emit(
           state.maybeMap(
             orElse: () => state,
             loaded: (value) => SendConsultationState.loaded(
-              value.isSearching,
-              value.isSearched,
+              false,
+              false,
               r.message.toString(),
               value.response?.copyWith(data: []),
               value.counterChanges,
@@ -516,6 +523,7 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
 
     doctorsChecked.clear();
     pendingExternalInvites.clear();
+    clearInputFields();
 
     if (stagedInvites.isNotEmpty) {
       await _flushPendingExternalInvites(

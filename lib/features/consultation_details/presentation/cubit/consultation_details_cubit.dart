@@ -3,6 +3,13 @@ import 'package:egy_akin/features/consultation_details/presentation/cubit/consul
 
 import '../../../../exports.dart';
 
+void _syncConsultationOpen(String consultationId, bool isOpen) {
+  if (!sl.isRegistered<ConsultationCubit>()) return;
+  final cubit = resolveConsultationCubit();
+  if (cubit.isClosed) return;
+  cubit.updateConsultationIsOpen(consultationId, isOpen);
+}
+
 class ConsultationDetailsCubit extends Cubit<ConsultationDetailsState> {
   ConsultationDetailsCubit(this._getConsultationDetailsUsecase,
       this._addConsultationReplyUsecase, this._lockOrUnlockConsultationUsecase)
@@ -148,6 +155,7 @@ class ConsultationDetailsCubit extends Cubit<ConsultationDetailsState> {
             !isOpen,
           ),
         ));
+        _syncConsultationOpen(consultationId, isOpen);
       },
     );
   }

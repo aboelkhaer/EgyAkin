@@ -51,8 +51,7 @@ class HomeModelResponse with _$HomeModelResponse {
     bool? value,
     bool? verified,
     @JsonKey(fromJson: _flexibleStringFromJson) String? unreadCount,
-    @JsonKey(fromJson: _flexibleStringFromJson)
-    String? isSyndicateCardRequired,
+    @JsonKey(fromJson: _flexibleStringFromJson) String? isSyndicateCardRequired,
     @JsonKey(name: 'app_update_message') dynamic appUpdateMessage,
     @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
     String? doctorPatientCount,
@@ -93,7 +92,9 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
     @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
     @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
-    @JsonKey(name: 'pending_outcomes') List<PatientHomeDataModel>? pendingOutcomes,
+    @JsonKey(name: 'pending_outcomes')
+    List<PatientHomeDataModel>? pendingOutcomes,
+
     /// Dedicated draft patients when the API provides them; otherwise derive
     /// from [currentPatients] where submit_status is not true.
     @JsonKey(name: 'drafts') List<PatientHomeDataModel>? drafts,
@@ -120,7 +121,8 @@ class ResearchInsightsModel with _$ResearchInsightsModel {
     num? mostCommonCausePct,
     @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
     num? avgEgfrAtAdmission,
-    @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
+    @JsonKey(
+        name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
     num? avgEgfrAtAdmissionDelta,
     @JsonKey(name: 'computed_at') String? computedAt,
   }) = _ResearchInsightsModel;
@@ -175,6 +177,7 @@ class PatientHomeDataModel with _$PatientHomeDataModel {
     @JsonKey(fromJson: _flexibleNumFromJson) num? egfr,
     @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
     num? egfrPrevious,
+    @JsonKey(name: 'egfr_delta', fromJson: _flexibleNumFromJson) num? egfrDelta,
     @JsonKey(fromJson: _flexibleNumFromJson) num? bmi,
     @JsonKey(name: 'updated_at') String? updatedAt,
     DoctorModel? doctor,

@@ -325,8 +325,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
             return BuildMultipleValueQuestion(
               index: widget.index,
               questionList: cubit.questionModelList,
-              initialValue:
-                  answerMap[AppStrings.otherField]?.toString() ?? '',
+              initialValue: answerMap[AppStrings.otherField]?.toString() ?? '',
               listContainOther: answers,
               oldAnswer: null,
               isOldAnswer: false,
@@ -380,8 +379,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                         EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? primaryLocal
-                              .withOpacity(isDarkMode ? 0.28 : 0.14)
+                          ? primaryLocal.withOpacity(isDarkMode ? 0.28 : 0.14)
                           : (isDarkMode
                               ? const Color(0xFF2A2A2E)
                               : const Color(0xFFF3F4F6)),
@@ -427,180 +425,9 @@ class _BuildQuestionState extends State<BuildQuestion> {
           //! Date
 
           case AppStrings.questionTypeDate:
-            var questionAnswer = cubit.questionModelList[widget.index].answer;
-            final qidDate = cubit.questionModelList[widget.index].id.toString();
-            final storedRaw = cubit.formData[qidDate] ?? questionAnswer;
-
-            DateTime selectedDate = DateTime.now();
-            if (storedRaw != null &&
-                storedRaw.toString().trim().isNotEmpty) {
-              try {
-                selectedDate = DateTime.parse(storedRaw.toString());
-              } catch (_) {
-                selectedDate = DateTime.now();
-              }
-            }
-
-            final primaryLocal =
-                isDarkMode ? AppColors.darkPrimary : AppColors.primary;
-            final fieldBg = isDarkMode
-                ? const Color(0xFF2A2A2E)
-                : const Color(0xFFF3F4F6);
-            final mutedLocal =
-                isDarkMode ? Colors.white54 : const Color(0xFF6B7280);
-            final titleLocal =
-                isDarkMode ? Colors.white : const Color(0xFF111827);
-            final hasStoredAnswer = cubit.formData.containsKey(qidDate) ||
-                (questionAnswer != null &&
-                    questionAnswer.toString().trim().isNotEmpty);
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12.r),
-                    onTap: () async {
-                      cubit.clearInvalidHighlight(qidDate);
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate,
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: isDarkMode
-                                  ? ColorScheme.dark(
-                                      primary: primaryLocal,
-                                      onPrimary: Colors.white,
-                                      surface: const Color(0xFF1C1C1E),
-                                      onSurface: Colors.white,
-                                    )
-                                  : ColorScheme.light(
-                                      primary: primaryLocal,
-                                      onPrimary: Colors.white,
-                                      surface: Colors.white,
-                                      onSurface: const Color(0xFF111827),
-                                    ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked == null) return;
-                      cubit.clearAiFilledMark(qidDate);
-                      final value = picked.toString();
-                      cubit.formData[qidDate] = value;
-                      log(cubit.formData[qidDate].toString());
-                      setState(() {});
-                    },
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: fieldBg,
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: primaryLocal.withOpacity(0.55),
-                          width: 1.2,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 12.h,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 36.w,
-                              height: 36.w,
-                              decoration: BoxDecoration(
-                                color: primaryLocal.withOpacity(
-                                  isDarkMode ? 0.22 : 0.12,
-                                ),
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              child: Icon(
-                                Icons.calendar_today_rounded,
-                                size: 16.sp,
-                                color: primaryLocal,
-                              ),
-                            ),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    hasStoredAnswer
-                                        ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
-                                        : context.tr(AppStrings.selectDate),
-                                    style: TextStyle(
-                                      fontSize: 13.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: titleLocal,
-                                    ),
-                                  ),
-                                  SizedBox(height: 2.h),
-                                  Text(
-                                    hasStoredAnswer
-                                        ? DateFormat('EEEE, d MMM yyyy')
-                                            .format(selectedDate)
-                                        : context.tr(AppStrings.addDate),
-                                    style: TextStyle(
-                                      fontSize: 10.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: mutedLocal,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.chevron_right_rounded,
-                              size: 20.sp,
-                              color: mutedLocal,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                isValidDate(
-                        cubit.questionModelList[widget.index].answer.toString())
-                    ? const SizedBox.shrink()
-                    : cubit.questionModelList[widget.index].answer == null
-                        ? const SizedBox.shrink()
-                        : Padding(
-                            padding: EdgeInsets.only(top: 8.h),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '${context.tr(AppStrings.oldAnswer)}:',
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    color: mutedLocal,
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                Flexible(
-                                  child: Text(
-                                    cubit.questionModelList[widget.index]
-                                        .answer
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: titleLocal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-              ],
+            return _SectionDateQuestionField(
+              questionIndex: widget.index,
+              isDarkMode: isDarkMode,
             );
 
           //! File
@@ -657,5 +484,210 @@ class _BuildQuestionState extends State<BuildQuestion> {
 
     // Also update formData to prevent the "You should update and data to submit" dialog
     cubit.formData[cubit.questionModelList[index].id.toString()] = doubleValue;
+  }
+}
+
+class _SectionDateQuestionField extends StatefulWidget {
+  final int questionIndex;
+  final bool isDarkMode;
+
+  const _SectionDateQuestionField({
+    required this.questionIndex,
+    required this.isDarkMode,
+  });
+
+  @override
+  State<_SectionDateQuestionField> createState() =>
+      _SectionDateQuestionFieldState();
+}
+
+class _SectionDateQuestionFieldState extends State<_SectionDateQuestionField> {
+  bool _isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = PatientSectionDetailsCubit.get(context);
+    final question = cubit.questionModelList[widget.questionIndex];
+    final qidDate = question.id.toString();
+    final questionAnswer = question.answer;
+    final storedRaw = cubit.formData[qidDate] ?? questionAnswer;
+
+    DateTime selectedDate = DateTime.now();
+    if (storedRaw != null && storedRaw.toString().trim().isNotEmpty) {
+      try {
+        selectedDate = DateTime.parse(storedRaw.toString());
+      } catch (_) {
+        selectedDate = DateTime.now();
+      }
+    }
+
+    final isDarkMode = widget.isDarkMode;
+    final primaryLocal = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+    final fieldBg = isDarkMode ? AppColors.darkCardBG : AppColors.subBG;
+    final mutedLocal = isDarkMode ? Colors.white54 : const Color(0xFF6B7280);
+    final titleLocal = isDarkMode ? Colors.white : const Color(0xFF111827);
+    final hasStoredAnswer = cubit.formData.containsKey(qidDate) ||
+        (questionAnswer != null && questionAnswer.toString().trim().isNotEmpty);
+    final borderColor = _isSelected
+        ? primaryLocal
+        : (isDarkMode ? AppColors.darkBorder : Colors.grey.shade300);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () => _openPicker(
+              cubit: cubit,
+              qidDate: qidDate,
+              selectedDate: selectedDate,
+              primaryLocal: primaryLocal,
+            ),
+            child: Ink(
+              decoration: BoxDecoration(
+                color: fieldBg,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: borderColor, width: 1),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 12.h,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      decoration: BoxDecoration(
+                        color: primaryLocal.withOpacity(
+                          isDarkMode ? 0.22 : 0.12,
+                        ),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(
+                        Icons.calendar_today_rounded,
+                        size: 16.sp,
+                        color: primaryLocal,
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            hasStoredAnswer
+                                ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
+                                : context.tr(AppStrings.selectDate),
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w700,
+                              color: titleLocal,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            hasStoredAnswer
+                                ? DateFormat('EEEE, d MMM yyyy')
+                                    .format(selectedDate)
+                                : context.tr(AppStrings.addDate),
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                              color: mutedLocal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 20.sp,
+                      color: mutedLocal,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        isValidDate(question.answer.toString())
+            ? const SizedBox.shrink()
+            : question.answer == null
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${context.tr(AppStrings.oldAnswer)}:',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: mutedLocal,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            question.answer.toString(),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w700,
+                              color: titleLocal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+      ],
+    );
+  }
+
+  Future<void> _openPicker({
+    required PatientSectionDetailsCubit cubit,
+    required String qidDate,
+    required DateTime selectedDate,
+    required Color primaryLocal,
+  }) async {
+    cubit.clearInvalidHighlight(qidDate);
+    setState(() => _isSelected = true);
+    try {
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: widget.isDarkMode
+                  ? ColorScheme.dark(
+                      primary: primaryLocal,
+                      onPrimary: Colors.white,
+                      surface: const Color(0xFF1C1C1E),
+                      onSurface: Colors.white,
+                    )
+                  : ColorScheme.light(
+                      primary: primaryLocal,
+                      onPrimary: Colors.white,
+                      surface: Colors.white,
+                      onSurface: const Color(0xFF111827),
+                    ),
+            ),
+            child: child!,
+          );
+        },
+      );
+      if (picked == null) return;
+      cubit.clearAiFilledMark(qidDate);
+      cubit.formData[qidDate] = picked.toString();
+      log(cubit.formData[qidDate].toString());
+    } finally {
+      if (mounted) setState(() => _isSelected = false);
+    }
   }
 }

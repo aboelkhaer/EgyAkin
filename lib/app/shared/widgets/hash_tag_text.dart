@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/widgets/link_preview_widget.dart';
+import 'package:egy_akin/app/shared/functions/chat_text_direction.dart';
 import 'package:flutter/gestures.dart';
 import '../../../exports.dart';
 
@@ -12,6 +13,15 @@ class HashtagText extends StatefulWidget {
   final String? highlightWord;
   final bool disableTrimLines;
 
+  /// When set, overrides the default post body text style (e.g. chat bubbles).
+  final TextStyle? style;
+
+  /// When set, overrides the default hashtag color/weight.
+  final TextStyle? hashtagStyle;
+
+  /// Community posts show URL cards; chat bubbles should not.
+  final bool showLinkPreviews;
+
   const HashtagText({
     super.key,
     required this.content,
@@ -22,6 +32,9 @@ class HashtagText extends StatefulWidget {
     this.trimExpandedText = '',
     this.highlightWord,
     this.disableTrimLines = false,
+    this.style,
+    this.hashtagStyle,
+    this.showLinkPreviews = true,
   });
 
   @override
@@ -36,13 +49,35 @@ class _HashtagTextState extends State<HashtagText> {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final span = _buildHashtagTextSpan(isDarkMode);
+        final direction = _getTextDirection(widget.content);
+
+        // Skip LayoutBuilder when trim is off — chat bubbles use IntrinsicWidth,
+        // which cannot measure LayoutBuilder children.
+        if (widget.disableTrimLines) {
+          final richText = RichText(
+            text: span,
+            textDirection: direction,
+            softWrap: true,
+            overflow: TextOverflow.visible,
+          );
+          if (!widget.showLinkPreviews) return richText;
+          return Column(
+            crossAxisAlignment: direction == TextDirection.rtl
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              richText,
+              ..._buildLinkPreviews(widget.content),
+            ],
+          );
+        }
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            final span = _buildHashtagTextSpan(isDarkMode);
-            final shouldShowToggle = widget.disableTrimLines
-                ? false
-                : _checkTextOverflow(span, constraints.maxWidth);
+            final shouldShowToggle =
+                _checkTextOverflow(span, constraints.maxWidth);
 
             return GestureDetector(
               onTap: shouldShowToggle
@@ -52,16 +87,12 @@ class _HashtagTextState extends State<HashtagText> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
-                    maxLines: widget.disableTrimLines
-                        ? null
-                        : (isExpanded ? null : widget.trimLines),
-                    overflow: widget.disableTrimLines
+                    maxLines: isExpanded ? null : widget.trimLines,
+                    overflow: isExpanded
                         ? TextOverflow.visible
-                        : (isExpanded
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis),
+                        : TextOverflow.ellipsis,
                     text: span,
-                    textDirection: _getTextDirection(widget.content),
+                    textDirection: direction,
                   ),
                   if (shouldShowToggle || isExpanded)
                     Text(
@@ -72,7 +103,8 @@ class _HashtagTextState extends State<HashtagText> {
                         color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
                       ),
                     ),
-                  ..._buildLinkPreviews(widget.content),
+                  if (widget.showLinkPreviews)
+                    ..._buildLinkPreviews(widget.content),
                 ],
               ),
             );
@@ -83,21 +115,23 @@ class _HashtagTextState extends State<HashtagText> {
   }
 
   TextSpan _buildHashtagTextSpan(bool isDarkMode) {
-    final defaultTextStyle = TextStyle(
-      fontSize: 16,
-      fontFamily: 'Tajawal',
-      fontWeight: FontWeight.w500,
-      height: 1.4,
-      color: isDarkMode ? AppColors.darkTitle : Colors.black,
-    );
+    final defaultTextStyle = widget.style ??
+        TextStyle(
+          fontSize: 16,
+          fontFamily: 'Tajawal',
+          fontWeight: FontWeight.w500,
+          height: 1.4,
+          color: isDarkMode ? AppColors.darkTitle : Colors.black,
+        );
 
-    final hashtagStyle = defaultTextStyle.copyWith(
-      color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
-      fontWeight: FontWeight.w700,
-    );
+    final hashtagStyle = widget.hashtagStyle ??
+        defaultTextStyle.copyWith(
+          color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
+          fontWeight: FontWeight.w700,
+        );
 
     final boldStyle = defaultTextStyle.copyWith(
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w800,
     );
 
     final spans = <TextSpan>[];
@@ -116,7 +150,8 @@ class _HashtagTextState extends State<HashtagText> {
 
       final matchedText = match.group(0)!;
       if (matchedText.startsWith('http')) {
-        spans.add(const TextSpan(text: ' '));
+        // Skip URL text — chat/community show a preview card instead.
+        // Replacing with a space used to leave a blank line under the card.
       } else if (matchedText.startsWith('#')) {
         spans.add(TextSpan(
           text: _directionalHashtag(matchedText),
@@ -143,13 +178,14 @@ class _HashtagTextState extends State<HashtagText> {
   }
 
   TextSpan _buildNormalTextSpan(String text, bool isDarkMode) {
-    final defaultStyle = TextStyle(
-      fontSize: 16,
-      fontFamily: 'Tajawal',
-      fontWeight: FontWeight.w500,
-      height: 1.4,
-      color: isDarkMode ? AppColors.darkTitle : Colors.black,
-    );
+    final defaultStyle = widget.style ??
+        TextStyle(
+          fontSize: 16,
+          fontFamily: 'Tajawal',
+          fontWeight: FontWeight.w500,
+          height: 1.4,
+          color: isDarkMode ? AppColors.darkTitle : Colors.black,
+        );
 
     final highlightStyle = defaultStyle.copyWith(
       backgroundColor:
@@ -215,19 +251,7 @@ class _HashtagTextState extends State<HashtagText> {
   }
 
   TextDirection _getTextDirection(String text) {
-    // Match create-post: direction from the first strong letter, not "any Arabic".
-    // Otherwise mixed EN/AR hashtags get reordered and '#' jumps after words.
-    for (final rune in text.trimLeft().runes) {
-      final ch = String.fromCharCode(rune);
-      if (RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]')
-          .hasMatch(ch)) {
-        return TextDirection.rtl;
-      }
-      if (RegExp(r'[A-Za-z]').hasMatch(ch)) {
-        return TextDirection.ltr;
-      }
-    }
-    return TextDirection.ltr;
+    return ChatTextDirection.resolve(text);
   }
 
   bool _checkTextOverflow(TextSpan span, double maxWidth) {

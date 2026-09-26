@@ -16,6 +16,7 @@ import 'package:egy_akin/features/home/presentation/cubit/home_cubit.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/features/profile/domain/usecases/upload_profile_image_usecase.dart';
 import 'package:egy_akin/features/profile/presentation/cubit/profile_state.dart';
+import 'package:egy_akin/features/chat/data/services/chat_session_cleanup.dart';
 import 'package:egy_akin/injection_container.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -194,6 +195,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     final result = await _signOutUsecase.execute(NoParams());
     // Always clear local session — logout can 403 for blocked accounts.
+    await clearChatSessionOnSignOut();
     await sl<AppPreferences>().removeDoctorData();
     await sl<AppPreferences>().removeData(AppLocalStrings.permissions);
     await LocalProfileImageHelper.clear();

@@ -19,13 +19,13 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.0.17</string>
+		<string>1.0.18</string>
 		<key>CFBundleVersion</key>
-		<string>11</string>
+		<string>39</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>FirebaseAppDelegateProxyEnabled</key>
-		<false/>
+		<true/>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>https</string>
@@ -43,7 +43,9 @@
 		<key>NSCameraUsageDescription</key>
 		<string>EgyAkin would like to use your camera.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>EgyAkin requires access to the photo library to upload your profile photo.</string>
+		<string>EgyAkin needs access to your photos so you can share images in chat and update your profile photo.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>EgyAkin needs permission to save images to your photo library.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>EgyAkin needs microphone access to record your answers and fill form fields.</string>
 		<key>GIDClientID</key>

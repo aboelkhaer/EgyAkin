@@ -1,6 +1,9 @@
+import 'package:egy_akin/app/shared/functions/community_groups_local_sync.dart';
 import 'package:egy_akin/features/all_groups_in_community/domain/usecases/get_my_groups_usecase.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/my_groups_cubit/my_groups_in_community_state.dart';
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:get_it/get_it.dart';
 import '../../../../../exports.dart';
 
 class MyGroupsInCommunityCubit extends Cubit<MyGroupsInCommunityState> {
@@ -137,6 +140,22 @@ class MyGroupsInCommunityCubit extends Cubit<MyGroupsInCommunityState> {
       },
     ));
 
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, _, __, ___) {
+        GroupModel? updated;
+        for (final group in response.data?.data ?? const <GroupModel>[]) {
+          if (group.id.toString() == groupId) {
+            updated = group;
+            break;
+          }
+        }
+        if (updated != null) {
+          CommunityGroupsLocalSync.syncGroup(updated);
+        }
+      },
+    );
+
     final result = await _joinGroupInCommunityUsecase.execute(groupId);
     result.fold(
       (failure) {
@@ -151,8 +170,101 @@ class MyGroupsInCommunityCubit extends Cubit<MyGroupsInCommunityState> {
         ));
       },
       (success) {
-        // Optionally handle success case if needed
+        try {
+          final id = int.tryParse(groupId);
+          if (id != null &&
+              id > 0 &&
+              GetIt.I.isRegistered<InboxCubit>()) {
+            GetIt.I<InboxCubit>().notifySocialGroupJoined(groupId: id);
+          }
+        } catch (_) {}
       },
     );
+  }
+
+  void applyGroupUpdate(GroupModel group) {
+    final groupId = group.id?.toString();
+    if (groupId == null) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final groups = value.response.data?.data;
+        if (groups == null) return value;
+        final index = groups.indexWhere((g) => g.id?.toString() == groupId);
+        if (index < 0) return value;
+        final updated = [...groups];
+        updated[index] = group;
+        return MyGroupsInCommunityState.loaded(
+          value.response.copyWith(
+            data: value.response.data!.copyWith(data: updated),
+          ),
+          '',
+          '',
+          false,
+        );
+      },
+    ));
+  }
+
+  void upsertGroup(GroupModel group) {
+    final groupId = group.id?.toString();
+    if (groupId == null) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final nested = value.response.data;
+        final groups = [...(nested?.data ?? const <GroupModel>[])];
+        final index = groups.indexWhere((g) => g.id?.toString() == groupId);
+        if (index >= 0) {
+          groups[index] = group;
+        } else {
+          groups.insert(0, group);
+        }
+        final previousTotal = nested?.total;
+        return MyGroupsInCommunityState.loaded(
+          value.response.copyWith(
+            data: nested?.copyWith(
+              data: groups,
+              total: previousTotal == null
+                  ? groups.length
+                  : index >= 0
+                      ? previousTotal
+                      : previousTotal + 1,
+            ),
+          ),
+          '',
+          '',
+          false,
+        );
+      },
+    ));
+  }
+
+  void removeGroupFromList(String groupId) {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final nested = value.response.data;
+        final groups = nested?.data;
+        if (groups == null) return value;
+        final updated =
+            groups.where((g) => g.id?.toString() != groupId).toList();
+        if (updated.length == groups.length) return value;
+        final previousTotal = nested?.total;
+        return MyGroupsInCommunityState.loaded(
+          value.response.copyWith(
+            data: nested!.copyWith(
+              data: updated,
+              total: previousTotal == null
+                  ? updated.length
+                  : (previousTotal - 1).clamp(0, previousTotal),
+            ),
+          ),
+          '',
+          '',
+          false,
+        );
+      },
+    ));
   }
 }

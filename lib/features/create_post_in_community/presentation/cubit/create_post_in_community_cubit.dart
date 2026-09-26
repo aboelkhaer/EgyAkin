@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:egy_akin/app/constants/app_strings.dart';
 import 'package:egy_akin/app/services/localization_service.dart';
+import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/poll_model.dart';
@@ -449,6 +450,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
           );
         },
         (response) {
+          ProfilePostCounts.onOwnPostCreated();
           emit(
             state.maybeMap(
               orElse: () => state,
@@ -691,6 +693,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         );
       },
       (response) async {
+        ProfilePostCounts.onOwnPostCreated();
         emit(
           state.maybeMap(
             orElse: () => state,

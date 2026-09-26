@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../exports.dart';
 
@@ -308,6 +310,13 @@ class GroupMembersCubit extends Cubit<GroupMembersState> {
               updatedMembers.add(pendingDoctor);
               sl<GroupDetailsInCommunityCubit>()
                   .increaseOrDecreaseMembers(true);
+              // Notify invitee devices so the social group chat appears in Chats.
+              final gid = int.tryParse(groupId);
+              if (gid != null &&
+                  gid > 0 &&
+                  GetIt.I.isRegistered<InboxCubit>()) {
+                GetIt.I<InboxCubit>().notifySocialGroupJoined(groupId: gid);
+              }
             }
 
             // Create updated response

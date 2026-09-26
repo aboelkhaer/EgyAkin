@@ -1,7 +1,6 @@
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
-import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
+import 'package:egy_akin/features/community/presentation/widgets/post_like_action.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/images_in_single_post.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../../../exports.dart';
 
 class FeedContentInCommunity extends StatelessWidget {
@@ -161,13 +160,9 @@ class FeedContentInCommunity extends StatelessWidget {
         ),
         feed.mediaPath == null || feed.mediaPath!.isEmpty
             ? const SizedBox.shrink()
-            : KeyboardVisibilityBuilder(
-                builder: (context, isKeyboardVisible) {
-                  return ImagesInSinglePost(
-                    mediaPaths: feed.mediaPath!, // Pass the list of image URLs
-                    heroTag: feed.id.toString(), // Pass the Hero tag
-                  );
-                },
+            : ImagesInSinglePost(
+                mediaPaths: feed.mediaPath!,
+                heroTag: feed.id.toString(),
               ),
         Container(
           width: double.infinity,
@@ -227,84 +222,15 @@ class FeedContentInCommunity extends StatelessWidget {
 
                   return Row(
                     children: [
-                      InkWell(
-                        onTap: () => cubit.addOrRemoveLike(),
-                        borderRadius: BorderRadius.circular(20.r),
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 180),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 6.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: feedResponse.isLiked == true
-                                ? (isDarkMode
-                                    ? const Color(0xFF5C1A1A)
-                                    : const Color(0xFFFFE4E6))
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                feedResponse.isLiked == true
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                size: 16.sp,
-                                color: feedResponse.isLiked == true
-                                    ? (isDarkMode
-                                        ? const Color(0xFFFDA4AF)
-                                        : const Color(0xFFE11D48))
-                                    : Colors.grey.shade400,
-                              ),
-                              SizedBox(width: 5.w),
-                              GestureDetector(
-                                onTap: () {
-                                  if ((feedResponse.likesCount ?? 0) <= 0) {
-                                    return;
-                                  }
-                                  showCustomBottomSheet(
-                                    context: context,
-                                    builder: (context) {
-                                      return BlocProvider(
-                                        create: (context) => GroupMembersCubit(
-                                          sl(),
-                                          sl(),
-                                          sl(),
-                                          sl(),
-                                        ),
-                                        child: GroupMembersScreen(
-                                          groupId: '',
-                                          currentDoctorModel:
-                                              currentDoctorModel,
-                                          homeDataModel: homeDataModel,
-                                          postId: feedResponse.id.toString(),
-                                          isPostLikes: true,
-                                          ownerId: '',
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Text(
-                                  feedResponse.likesCount?.toString() ?? '0',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: feedResponse.isLiked == true
-                                        ? (isDarkMode
-                                            ? const Color(0xFFFDA4AF)
-                                            : const Color(0xFFE11D48))
-                                        : Colors.grey.shade400,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      // Heart = like/unlike · count = open likers
+                      PostLikeAction(
+                        isLiked: feedResponse.isLiked == true,
+                        likesCount: feedResponse.likesCount ?? 0,
+                        isDark: isDarkMode,
+                        homeDataModel: homeDataModel,
+                        currentDoctorModel: currentDoctorModel,
+                        postId: feedResponse.id.toString(),
+                        onToggleLike: () => cubit.addOrRemoveLike(),
                       ),
                       SizedBox(width: 14.w),
                       Row(
@@ -319,6 +245,8 @@ class FeedContentInCommunity extends StatelessWidget {
                             commentsCount?.toString() ?? '0',
                             style: TextStyle(
                               fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.1,
                               color: Colors.grey.shade400,
                             ),
                           ),
@@ -349,7 +277,7 @@ class FeedContentInCommunity extends StatelessWidget {
                             feedResponse.isSaved == true
                                 ? Icons.bookmark
                                 : Icons.bookmark_outline,
-                            size: 18.sp,
+                            size: 20.sp,
                             color: feedResponse.isSaved == true
                                 ? (isDarkMode
                                     ? const Color(0xFFFBBF24)

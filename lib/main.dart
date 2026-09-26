@@ -1,4 +1,6 @@
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/chat/data/services/chat_push_delivery_ack.dart';
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/app/services/deep_link_navigation_service.dart';
@@ -6,18 +8,56 @@ import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+/// FCM background isolate — must be a top-level function registered
+/// *before* [runApp]. Posts delivered receipt per backend contract.
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  // Background isolate has its own binding + prefs.
+  WidgetsFlutterBinding.ensureInitialized();
+  await _ensureFirebaseInitialized();
+  await ChatPushDeliveryAck.ackFromRemoteMessageData(message.data);
+}
+
+/// AppDelegate already calls `FirebaseApp.configure()` on iOS. Dart may still
+/// see `Firebase.apps` as empty, then hit `[core/duplicate-app]` — treat that
+/// as success so Messaging keeps using `[DEFAULT]`.
+Future<void> _ensureFirebaseInitialized() async {
+  if (Firebase.apps.isNotEmpty) return;
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    final message = e.toString();
+    if (message.contains('duplicate-app') || Firebase.apps.isNotEmpty) {
+      return;
+    }
+    debugPrint('Firebase.initializeApp failed: $e');
+    rethrow;
+  }
 }
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   // Keep the native splash up until Flutter splash is ready (avoids white flash).
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // Safety net: never leave TestFlight users stuck on the dark native splash
+  // if startup hangs before SplashScreen can call remove().
+  Future<void>.delayed(const Duration(seconds: 4), () {
+    try {
+      FlutterNativeSplash.remove();
+    } catch (_) {}
+  });
 
   // Set up global error handlers to prevent app crashes
   FlutterError.onError = (FlutterErrorDetails details) {
+    final message = details.exceptionAsString();
+    // Broken OG / CDN URLs often return HTML or empty bytes labeled as .png.
+    // UI already falls back via CachedNetworkImage.errorWidget — don't dump.
+    if (message.contains('Invalid image data')) {
+      debugPrint('Skipped invalid image decode: $message');
+      return;
+    }
     FlutterError.presentError(details);
     debugPrint('FlutterError: ${details.exception}');
     debugPrint('Stack trace: ${details.stack}');
@@ -30,17 +70,41 @@ void main() async {
     return true; // Return true to prevent app from crashing
   };
 
-  await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform, name: 'EgyAkin');
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  try {
+    await _ensureFirebaseInitialized()
+        .timeout(const Duration(seconds: 8));
+  } catch (e) {
+    debugPrint('Firebase init skipped/failed at startup: $e');
+  }
 
-  await di.diInit();
-  Bloc.observer = MyBlocObserver();
+  // Register BEFORE runApp (backend requirement for delivery receipts).
+  try {
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    debugPrint('FCM background handler register failed: $e');
+  }
+
+  try {
+    await di.diInit().timeout(const Duration(seconds: 12));
+    Bloc.observer = MyBlocObserver();
+  } catch (e) {
+    debugPrint('diInit failed at startup: $e');
+  }
 
   // Load saved language + translations before first frame so splash
   // does not briefly show English keys.
-  await LocalizationService.instance.initialize();
+  try {
+    await LocalizationService.instance
+        .initialize()
+        .timeout(const Duration(seconds: 5));
+  } catch (e) {
+    debugPrint('Localization init failed at startup: $e');
+  }
 
+  // Do NOT await cold-start push capture here. Initializing
+  // flutter_local_notifications before runApp can deadlock the iOS
+  // main isolate (blank dark splash forever on TestFlight). MyApp
+  // already captures cold-start after the first frame.
   runApp(const MyApp());
 }
 
@@ -65,7 +129,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    notificationServices = NotificationServices();
+    notificationServices = di.sl<NotificationServices>();
     _localizationBloc = LocalizationBloc();
     _themeBloc = ThemeBloc();
 
@@ -73,6 +137,8 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeNotificationServices();
       _initializeDeepLinks();
+      // App-wide online for any route (Splash, Home, deep link, etc.).
+      _bootstrapChatPresence();
     });
     // Locale is already loaded in main(); sync bloc state immediately
     // (don't wait for first frame or English keys flash on splash).
@@ -80,10 +146,27 @@ class _MyAppState extends State<MyApp> {
     _initializeTheme();
   }
 
+  void _bootstrapChatPresence() {
+    if (!di.sl.isRegistered<ChatRealtimeService>()) return;
+    unawaited(di.sl<ChatRealtimeService>().bootstrapFromLocalSession());
+  }
+
   Future<void> _initializeNotificationServices() async {
-    await notificationServices.requestNotificationPermissions();
-    notificationServices.firebaseInit(navigatorKey.currentContext!);
-    await notificationServices.getDeviceToken();
+    // Cold-start capture after first frame — never block UI startup.
+    try {
+      await notificationServices
+          .captureColdStartLaunch()
+          .timeout(const Duration(seconds: 6));
+    } catch (e) {
+      debugPrint('Cold-start capture failed/timed out: $e');
+    }
+    try {
+      await notificationServices.requestNotificationPermissions();
+      notificationServices.firebaseInit();
+      await notificationServices.getDeviceToken();
+    } catch (e) {
+      debugPrint('Notification services init failed: $e');
+    }
   }
 
   Future<void> _initializeDeepLinks() async {

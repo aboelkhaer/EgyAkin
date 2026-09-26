@@ -395,12 +395,13 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   Future<void> _openFilter() async {
     if (_preparingFilters) return;
 
-    final hasFilters = (_filterCubit.filtersOptions.data?.isNotEmpty ?? false) ||
-        _filterCubit.state.maybeWhen(
-          loaded: (response, _, __, ___, ____, _____, ______, _______) =>
-              response.filters?.isNotEmpty ?? false,
-          orElse: () => false,
-        );
+    final hasFilters =
+        (_filterCubit.filtersOptions.data?.isNotEmpty ?? false) ||
+            _filterCubit.state.maybeWhen(
+              loaded: (response, _, __, ___, ____, _____, ______, _______) =>
+                  response.filters?.isNotEmpty ?? false,
+              orElse: () => false,
+            );
 
     if (!hasFilters) {
       setState(() => _preparingFilters = true);
@@ -658,8 +659,9 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
 
                   // Toggle badges prefer home totals; list header can use
                   // filter/API totals when a filter is active.
-                  final myCount =
-                      homeMyCount > 0 ? homeMyCount : (myApiTotal ?? myApiPatients.length);
+                  final myCount = homeMyCount > 0
+                      ? homeMyCount
+                      : (myApiTotal ?? myApiPatients.length);
                   final allCount = homeAllCount > 0
                       ? homeAllCount
                       : (allApiTotal ?? allApiPatients.length);
@@ -673,8 +675,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                       : context.tr(AppStrings.allPatients);
 
                   final showClearFilters = _usingFilteredResults;
-                  final isPendingOutcomeFilter =
-                      _usingFilteredResults &&
+                  final showDownloadButton = _canExport &&
+                      patients.isNotEmpty &&
+                      (_usingFilteredResults || !_showMyOnly);
+                  final isPendingOutcomeFilter = _usingFilteredResults &&
                       _filterCubit.formData[_finalSubmitFilterId] == 'Yes' &&
                       _filterCubit.formData[_outcomeFilterId] == 'No';
                   final isDraftsFilter = _usingFilteredResults &&
@@ -751,8 +755,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w700,
-                                        color: HomeDashboardColors.title(
-                                            isDark),
+                                        color:
+                                            HomeDashboardColors.title(isDark),
                                       ),
                                     ),
                                   ),
@@ -771,12 +775,11 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                     ),
                                     SizedBox(width: 12.w),
                                   ],
-                                  if (_usingFilteredResults &&
-                                      _canExport &&
-                                      patients.isNotEmpty) ...[
+                                  if (showDownloadButton) ...[
                                     GestureDetector(
                                       onTap: (isExportLoading ||
                                               isApplyFilterLoading ||
+                                              isLoadingAllPatients ||
                                               patients.isEmpty)
                                           ? null
                                           : _downloadPatients,
@@ -786,8 +789,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                             SizedBox(
                                               width: 14.sp,
                                               height: 14.sp,
-                                              child:
-                                                  CircularProgressIndicator(
+                                              child: CircularProgressIndicator(
                                                 strokeWidth: 2,
                                                 color: primary,
                                               ),
@@ -873,8 +875,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                           : (_usingFilteredResults
                                               ? filteredPatients
                                               : myApiPatients),
-                                      showLoadMoreFooter: _showMyOnly &&
-                                          showLoadMoreFooter,
+                                      showLoadMoreFooter:
+                                          _showMyOnly && showLoadMoreFooter,
                                       showClearFilters: showClearFilters,
                                       onOpenPatient: _openPatientSections,
                                       onOpenOutcome: _openOutcome,
@@ -894,8 +896,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                           : (_usingFilteredResults
                                               ? filteredPatients
                                               : allApiPatients),
-                                      showLoadMoreFooter: !_showMyOnly &&
-                                          showLoadMoreFooter,
+                                      showLoadMoreFooter:
+                                          !_showMyOnly && showLoadMoreFooter,
                                       showClearFilters: showClearFilters,
                                       onOpenPatient: _openPatientSections,
                                       onOpenOutcome: _openOutcome,
@@ -1055,8 +1057,7 @@ class _PatientsSearchField extends StatelessWidget {
                     isSyndicateCardRequired:
                         homeData.isSyndicateCardRequired ?? 'Required',
                     currentDoctorRole: homeData.role.toString(),
-                    currentDoctorPoints:
-                        int.parse(homeData.scoreValue ?? '0'),
+                    currentDoctorPoints: int.parse(homeData.scoreValue ?? '0'),
                     homeDataModel: homeData,
                     patientsOnly: true,
                   ),
@@ -1068,9 +1069,8 @@ class _PatientsSearchField extends StatelessWidget {
             height: 40.h,
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             decoration: BoxDecoration(
-              color: isDark
-                  ? HomeDashboardColors.surfaceBg(isDark)
-                  : Colors.white,
+              color:
+                  isDark ? HomeDashboardColors.surfaceBg(isDark) : Colors.white,
               borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: HomeDashboardColors.border(isDark)),
             ),

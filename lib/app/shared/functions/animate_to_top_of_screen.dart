@@ -4,23 +4,19 @@ import '../../../exports.dart';
 
 void animateToTopOfScreen(ScrollController scrollController) {
   SchedulerBinding.instance.addPostFrameCallback((_) {
-    if (scrollController.hasClients && scrollController.positions.length == 1) {
+    if (!scrollController.hasClients || scrollController.positions.length != 1) {
+      return;
+    }
+    try {
       final maxScroll = scrollController.position.minScrollExtent;
-      scrollController
-          .animateTo(
+      if (scrollController.offset <= maxScroll + 0.5) return;
+      scrollController.animateTo(
         maxScroll,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-      )
-          .then((_) {
-        debugPrint('Animation to top of screen completed.');
-      }).catchError((error) {
-        debugPrint('Error during animation: $error');
-      });
-    } else if (!scrollController.hasClients) {
-      debugPrint('ScrollController has no clients.');
-    } else {
-      debugPrint('ScrollController is attached to multiple positions.');
+      );
+    } catch (_) {
+      // Controller may detach mid-frame during tab switches.
     }
   });
 }

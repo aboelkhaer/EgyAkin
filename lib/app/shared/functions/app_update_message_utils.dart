@@ -7,7 +7,7 @@ import '../../../exports.dart';
 class AppUpdateMessageUtils {
   AppUpdateMessageUtils._();
 
-  static const int currentVersion = 9;
+  static const int currentVersion = 11;
 
   static Future<bool> shouldShow(AppPreferences prefs) async {
     final dismissedVersion =

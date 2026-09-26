@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
+import 'package:egy_akin/app/shared/functions/saved_posts_local_sync.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
@@ -224,8 +226,26 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   // make delete post function
   deletePost(
-    String postId,
-  ) async {
+    String postId, {
+    bool? wasSaved,
+  }) async {
+    var saved = wasSaved ?? false;
+    var foundInFeed = false;
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (feedsResponse, _, __, ___, ____, _____) {
+        for (final post in feedsResponse.data?.data ?? const []) {
+          if (post.id.toString() == postId) {
+            foundInFeed = true;
+            saved = post.isSaved ?? false;
+            break;
+          }
+        }
+      },
+    );
+    if (!foundInFeed && wasSaved != null) {
+      saved = wasSaved;
+    }
     postIdDeleted = postId;
     emit(
       state.maybeMap(
@@ -265,6 +285,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         // Keep post in list briefly so the feed can animate it out.
         removingPostIds.add(postId);
         postIdDeleted = '';
+        ProfilePostCounts.onOwnPostDeleted(wasSaved: saved);
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => CommunityState.loaded(
@@ -451,6 +472,7 @@ class CommunityCubit extends Cubit<CommunityState> {
 
     _updatingSavePostIds.add(postId);
     bool wasSaved = false;
+    PostCommunityModel? targetPost;
 
     emit(
       state.maybeMap(
@@ -464,6 +486,7 @@ class CommunityCubit extends Cubit<CommunityState> {
 
           final post = posts[index];
           wasSaved = post.isSaved ?? false;
+          targetPost = post;
 
           // Determine new state based on parameter
           final newSavedStatus = saveOrUnsave == 'save';
@@ -479,6 +502,15 @@ class CommunityCubit extends Cubit<CommunityState> {
         orElse: () => state,
       ),
     );
+
+    if (targetPost != null) {
+      SavedPostsLocalSync.apply(
+        saveOrUnsave: saveOrUnsave,
+        post: targetPost!,
+      );
+    }
+
+    ProfilePostCounts.onSaveOrUnsave(saveOrUnsave);
 
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
@@ -513,6 +545,13 @@ class CommunityCubit extends Cubit<CommunityState> {
             orElse: () => state,
           ),
         );
+        ProfilePostCounts.revertSaveOrUnsave(saveOrUnsave);
+        if (targetPost != null) {
+          SavedPostsLocalSync.revert(
+            saveOrUnsave: saveOrUnsave,
+            post: targetPost!,
+          );
+        }
       },
       (_) {
         // Optionally handle success

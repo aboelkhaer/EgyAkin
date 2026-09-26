@@ -46,10 +46,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         final title = isDark ? AppColors.darkTitle : AppColors.title;
         final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
 
-        return Scaffold(
+    return Scaffold(
           backgroundColor: scaffold,
           resizeToAvoidBottomInset: true,
-          appBar: AppBar(
+      appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
             backgroundColor: scaffold,
@@ -65,11 +65,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             ),
           ),
           body: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                passwordChagedSuccessfully: () {
-                  Navigator.of(context).pop();
-                  customSnackBar(
+          listener: (context, state) {
+            state.maybeWhen(
+              passwordChagedSuccessfully: () {
+                Navigator.of(context).pop();
+                customSnackBar(
                     message:
                         context.tr(AppStrings.passwordUpdatedSuccessfully),
                     context: context,
@@ -77,11 +77,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 },
                 error: (message) {
                   customSnackBar(message: message, context: context);
-                },
-                orElse: () {},
-              );
-            },
-            builder: (context, state) {
+              },
+              orElse: () {},
+            );
+          },
+          builder: (context, state) {
               final isLoading = state.maybeWhen(
                 loading: () => true,
                 orElse: () => false,
@@ -676,8 +676,8 @@ class _ResendRow extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
+        ),
+      ),
     );
   }
 }

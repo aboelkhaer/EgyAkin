@@ -1,6 +1,31 @@
+import 'package:egy_akin/app/shared/functions/community_groups_local_sync.dart';
+import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
+import 'package:egy_akin/app/shared/functions/saved_posts_local_sync.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../exports.dart';
+
+void _notifySocialGroupInboxJoined(String groupId) {
+  final id = int.tryParse(groupId);
+  if (id == null || id <= 0) return;
+  try {
+    if (GetIt.I.isRegistered<InboxCubit>()) {
+      GetIt.I<InboxCubit>().notifySocialGroupJoined(groupId: id);
+    }
+  } catch (_) {}
+}
+
+void _notifySocialGroupInboxRemoved(String groupId) {
+  final id = int.tryParse(groupId);
+  if (id == null || id <= 0) return;
+  try {
+    if (GetIt.I.isRegistered<InboxCubit>()) {
+      GetIt.I<InboxCubit>().notifySocialGroupRemoved(groupId: id);
+    }
+  } catch (_) {}
+}
 
 class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   GroupDetailsInCommunityCubit(
@@ -233,6 +258,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         return value; // Return unchanged state if the group ID doesn't match
       },
     ));
+    _syncGroupListsFromState();
     final result = await _leaveGroupInCommunityUsecase.execute(groupId);
 
     result.fold(
@@ -253,7 +279,10 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           ),
         );
       },
-      (r) {},
+      (r) {
+        // Left successfully — drop social group chat from inbox.
+        _notifySocialGroupInboxRemoved(groupId);
+      },
     );
   }
 
@@ -302,6 +331,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         return value; // Return unchanged state if the group ID doesn't match
       },
     ));
+    _syncGroupListsFromState();
     final result = await _joinGroupInCommunityUsecase.execute(groupId);
     result.fold(
       (failure) {
@@ -320,7 +350,15 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         ));
       },
       (success) {
-        // Optionally handle success case if needed
+        // Public join (or approved) — social group chat should appear in Chats.
+        final privacy = state.maybeWhen(
+          loaded: (details, _, __, ___, ____, _____, ______, _______) =>
+              details.data?.group?.privacy,
+          orElse: () => null,
+        );
+        if (privacy != GroupPrivacy.private.name) {
+          _notifySocialGroupInboxJoined(groupId);
+        }
       },
     );
   }
@@ -457,6 +495,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
     _isUpdatingPostSaveStatus = true;
 
     bool isCurrentlySaved = false;
+    PostCommunityModel? targetPost;
 
     emit(
       state.maybeMap(
@@ -475,6 +514,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           final updatedPosts = posts.data!.map((post) {
             if (post.id.toString() == postId) {
               isCurrentlySaved = post.isSaved ?? false;
+              targetPost = post;
 
               // Determine new state based on explicit action
               final newSavedStatus = saveOrUnsave == 'save';
@@ -494,6 +534,15 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         },
       ),
     );
+
+    if (targetPost != null) {
+      SavedPostsLocalSync.apply(
+        saveOrUnsave: saveOrUnsave,
+        post: targetPost!,
+      );
+    }
+
+    ProfilePostCounts.onSaveOrUnsave(saveOrUnsave);
 
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
@@ -538,6 +587,13 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             },
           ),
         );
+        ProfilePostCounts.revertSaveOrUnsave(saveOrUnsave);
+        if (targetPost != null) {
+          SavedPostsLocalSync.revert(
+            saveOrUnsave: saveOrUnsave,
+            post: targetPost!,
+          );
+        }
       },
       (success) {
         // Success case - no action needed
@@ -548,8 +604,21 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   }
 
   deletePost(String postId) async {
+    var wasSaved = false;
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (groupDetails, _, __, ___, ____, _____, ______, _______) {
+        for (final post in groupDetails.data?.posts?.data ?? const []) {
+          if (post.id.toString() == postId) {
+            wasSaved = post.isSaved ?? false;
+            break;
+          }
+        }
+      },
+    );
     await sl<CommunityCubit>().deletePost(
       postId,
+      wasSaved: wasSaved,
     );
     emit(
       state.maybeMap(
@@ -624,6 +693,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           ),
         ),
       );
+      CommunityGroupsLocalSync.removeGroup(groupId);
+      _notifySocialGroupInboxRemoved(groupId);
     });
   }
 
@@ -893,6 +964,27 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           ),
         ),
       );
+      final group = state.maybeWhen(
+        loaded: (details, _, __, ___, ____, _____, ______, _______) =>
+            details.data?.group,
+        orElse: () => null,
+      );
+      if (group != null) {
+        if (status == AcceptOrDeclineMemberInGroup.accepted.name) {
+          CommunityGroupsLocalSync.syncGroup(
+            group.copyWith(
+              userStatus: GroupInviteStatus.accepted.name,
+              memberCount: (group.memberCount ?? 0) + 1,
+            ),
+          );
+          // Invitee accepted → social group chat should show in their Chats.
+          _notifySocialGroupInboxJoined(groupId);
+        } else {
+          CommunityGroupsLocalSync.syncGroup(
+            group.copyWith(userStatus: null),
+          );
+        }
+      }
       getGroupDetails(groupId);
     });
   }
@@ -940,5 +1032,17 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         },
       ),
     );
+    _syncGroupListsFromState();
+  }
+
+  void _syncGroupListsFromState() {
+    final group = state.maybeWhen(
+      loaded: (details, _, __, ___, ____, _____, ______, _______) =>
+          details.data?.group,
+      orElse: () => null,
+    );
+    if (group != null) {
+      CommunityGroupsLocalSync.syncGroup(group);
+    }
   }
 }

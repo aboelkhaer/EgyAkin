@@ -22,6 +22,10 @@ import 'package:egy_akin/features/send_consultation/data/models/get_members_for_
 import 'package:egy_akin/features/send_consultation/data/models/invite_external_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
+import 'package:egy_akin/features/chat/data/models/chat_conversations_list_models.dart';
+import 'package:egy_akin/features/chat/data/models/chat_media_list_models.dart';
+import 'package:egy_akin/features/inbox/data/models/get_inbox_model_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../exports.dart';
 part 'api_services.g.dart';
@@ -728,4 +732,216 @@ abstract class ApiServices {
     @Part(name: 'images[]') List<File> images,
     @Part(name: 'files[]') List<File> files,
   );
+
+  // Chat & Inbox (V3)
+  @GET(ApiEndPoint.inbox)
+  Future<GetInboxModelResponse> getInbox(
+    @Query('filter') String filter,
+    @Query('page') int page,
+    @Query('per_page') int perPage, {
+    @Query('archived') int? archived,
+  });
+
+  /// Conversation list — same envelope for normal (`archived` omit/0) and
+  /// archived (`archived=1`). Optional `type` / `page` filters.
+  @GET(ApiEndPoint.chatConversations)
+  Future<ChatConversationsListModelResponse> getChatConversations({
+    @Query('archived') int? archived,
+    @Query('type') String? type,
+    @Query('page') int? page,
+  });
+
+  /// Media gallery for a conversation. `type` is `image` or `file`.
+  @GET('${ApiEndPoint.chatConversations}/{id}/media')
+  Future<ChatMediaListModelResponse> getChatConversationMedia(
+    @Path('id') int id, {
+    @Query('type') required String type,
+    @Query('chat_type') String? chatType,
+    @Query('page') int? page,
+  });
+
+  /// Path `{id}` = **context_id** (+ `chat_type` query). Default addressing.
+  @GET('${ApiEndPoint.chatConversations}/{id}/messages')
+  Future<ChatMessagesListModelResponse> getChatMessages(
+    @Path('id') int contextId,
+    @Query('chat_type') String chatType,
+    @Query('before') int? before,
+  );
+
+  /// Path `{id}` = **context_id** (+ `chat_type` part).
+  @POST('${ApiEndPoint.chatConversations}/{id}/messages')
+  @MultiPart()
+  Future<ChatMessageEnvelopeModelResponse> sendChatMessage(
+    @Path('id') int contextId,
+    @Part(name: 'chat_type') String chatType,
+    @Part(name: 'content') String? content,
+    @Part(name: 'reply_to_id') int? replyToId,
+    @Part(name: 'is_forwarded') String? isForwarded,
+    @Part(name: 'images[]') List<File> images,
+    @Part(name: 'voices[]') List<File> voices,
+    @Part(name: 'voice_durations[]') List<String> voiceDurations,
+    @Part(name: 'files[]') List<File> files,
+    @CancelRequest() CancelToken? cancelToken,
+  );
+
+  /// Forward a message into another conversation (server copies attachments).
+  /// Path `{id}` = **source conversation_id** (not context_id).
+  /// Body: `{ "targets": [{ "id": <context_id>, "chat_type": "private" }] }`.
+  @POST('${ApiEndPoint.chatConversations}/{id}/messages/{messageId}/forward')
+  Future<ChatMessageEnvelopeModelResponse> forwardChatMessage(
+    @Path('id') int conversationId,
+    @Path('messageId') int messageId,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// Path `{id}` = **context_id**.
+  @POST('${ApiEndPoint.chatConversations}/{id}/typing')
+  Future<ChatEnvelopeModel> sendChatTyping(
+    @Path('id') int contextId,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// Path `{id}` = **conversation_id** (not context_id).
+  @POST('${ApiEndPoint.chatConversations}/{id}/reactions')
+  Future<ChatReactionsEnvelopeModelResponse> toggleChatReaction(
+    @Path('id') int conversationId,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// Delete message for everyone (own messages).
+  /// Path `{id}` = **conversation_id** (not context_id).
+  @DELETE('${ApiEndPoint.chatConversations}/{id}/messages/{messageId}')
+  Future<ChatEnvelopeModel> deleteChatMessageForEveryone(
+    @Path('id') int conversationId,
+    @Path('messageId') int messageId,
+  );
+
+  /// Delete message for me only (others' messages).
+  /// Path `{id}` = **conversation_id** (not context_id).
+  /// Body: `{ "conversation_id": 1, "message_id": 2 }`.
+  @DELETE('${ApiEndPoint.chatConversations}/{id}/messages/{messageId}/mine')
+  Future<ChatEnvelopeModel> deleteChatMessageForMe(
+    @Path('id') int conversationId,
+    @Path('messageId') int messageId,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// Edit message text (WhatsApp-style).
+  /// Path `{id}` = **conversation_id** (not context_id).
+  /// Body: `{ "chat_type": "private", "content": "Edited text" }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}/messages/{messageId}')
+  Future<ChatMessageEnvelopeModelResponse> editChatMessage(
+    @Path('id') int conversationId,
+    @Path('messageId') int messageId,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @GET(ApiEndPoint.chatUsersSearch)
+  Future<ChatUsersSearchModelResponse> searchChatUsers(
+    @Query('q') String query,
+  );
+
+  @GET(ApiEndPoint.chatMessagesSearch)
+  Future<ChatMessageSearchModelResponse> searchChatMessages(
+    @Query('q') String query,
+    @Query('page') int page,
+    @Query('per_page') int perPage,
+  );
+
+  @POST(ApiEndPoint.chatConversations)
+  Future<ChatConversationEnvelopeModelResponse> createGroupConversation(
+    @Body() Map<String, dynamic> body,
+  );
+
+  @GET('${ApiEndPoint.chatConversations}/{id}')
+  Future<ChatConversationEnvelopeModelResponse> getChatConversation(
+    @Path('id') int id,
+    @Query('chat_type') String chatType,
+  );
+
+  /// Rename / update group meta. Prefer query `chat_type` (body alone can be ignored).
+  /// JSON body: `{ "chat_type": "...", "name": "..." }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}')
+  Future<ChatConversationEnvelopeModelResponse> updateChatConversation(
+    @Path('id') int id,
+    @Query('chat_type') String chatType,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// Update group image (multipart).
+  /// Uses POST + `_method=PUT` so PHP/Laravel populates the uploaded file
+  /// (multipart bodies on real HTTP PUT are ignored).
+  @MultiPart()
+  @POST('${ApiEndPoint.chatConversations}/{id}')
+  Future<ChatConversationEnvelopeModelResponse> updateChatConversationMedia(
+    @Path('id') int id,
+    @Query('chat_type') String chatType,
+    @Part(name: '_method') String method,
+    @Part(name: 'chat_type') String chatTypePart,
+    @Part(name: 'image') File image,
+  );
+
+  @POST('${ApiEndPoint.chatConversations}/{id}/participants')
+  Future<ChatEnvelopeModel> addChatParticipants(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @POST('${ApiEndPoint.chatConversations}/{id}/participants/me')
+  Future<ChatEnvelopeModel> leaveChatConversation(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @DELETE('${ApiEndPoint.chatConversations}/{id}/participants/{userId}')
+  Future<ChatEnvelopeModel> removeChatParticipant(
+    @Path('id') int id,
+    @Path('userId') int userId,
+    @Query('chat_type') String chatType,
+  );
+
+  /// PUT body: `{ "chat_type": "...", "mute": true|false }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}/mute')
+  Future<ChatEnvelopeModel> setChatConversationMute(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// PUT body: `{ "chat_type": "...", "pinned": true|false }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}/pin')
+  Future<ChatEnvelopeModel> setChatConversationPin(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// PUT body: `{ "chat_type": "...", "archived": true|false }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}/archive')
+  Future<ChatEnvelopeModel> setChatConversationArchive(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// PUT body: `{ "chat_type": "...", "hidden": true }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}/hidden')
+  Future<ChatEnvelopeModel> setChatConversationHidden(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// PUT body: `{ "chat_type": "...", "unread": true|false }`.
+  @PUT('${ApiEndPoint.chatConversations}/{id}/unread')
+  Future<ChatEnvelopeModel> setChatConversationUnread(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @POST('${ApiEndPoint.chatConversations}/{id}/receipts/delivered')
+  Future<ChatEnvelopeModel> markChatDelivered(
+    @Path('id') int id,
+    @Query('chat_type') String chatType,
+  );
+
+  /// Not under `/api/v3` — Ably auth for chat realtime.
+  @POST(ApiEndPoint.ablyToken)
+  Future<AblyTokenRequestModel> getAblyToken();
 }

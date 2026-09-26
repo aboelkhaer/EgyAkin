@@ -1,9 +1,14 @@
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/app/services/deep_link_handler.dart';
+import 'package:egy_akin/features/chat/data/services/chat_push_navigation.dart';
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/home_patients_tab.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/patients_header.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_state.dart';
+import 'package:egy_akin/features/inbox/presentation/pages/inbox_screen.dart';
 
 import '../../../../exports.dart';
 
@@ -18,6 +23,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   HomeCubit? cubit;
   int _deepLinkRetryCount = 0;
+  List<Widget>? _cachedTabScreens;
+  bool? _cachedHideClinical;
 
   @override
   void didChangeDependencies() {
@@ -37,7 +44,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       cubit!.tabsController.jumpToTab(cubit!.mapNavPage(widget.page));
       // Rebuild nav from local user_type before getHome emits loading.
       setState(() {});
+      // Enter presence:app as soon as we have a local user id — do not wait
+      // for getHome(), or peers only see Online after a chat room opens.
+      _ensureChatPresence();
       await cubit!.getHome();
+      if (!mounted) return;
+      // Refresh with profile fields from /home (name/image) if they changed.
+      _ensureChatPresence();
     }();
   }
 
@@ -50,13 +63,116 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state != AppLifecycleState.resumed) return;
-    // Guide: refresh /user/me on resume (no polling / no full home reload).
-    cubit?.refreshAccountState();
+    if (state == AppLifecycleState.resumed) {
+      // Guide: refresh /user/me on resume (no polling / no full home reload).
+      cubit?.refreshAccountState();
+      // Force Online again immediately — do not wait for pull-to-refresh.
+      _ensureChatPresence();
+      _onAppForegroundedPresence();
+      // Notification taps that queued while nav/session was not ready.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future<void>.delayed(const Duration(milliseconds: 350), () {
+          if (!mounted) return;
+          // Second pass after UI settles (covers slow Ably wake).
+          _onAppForegroundedPresence();
+          final loaded = cubit?.state.maybeWhen(
+                loaded: (
+                  _,
+                  __,
+                  ___,
+                  ____,
+                  _____,
+                  ______,
+                  _______,
+                  ________,
+                  _________,
+                  __________,
+                ) =>
+                    true,
+                orElse: () => false,
+              ) ??
+              false;
+          if (loaded) {
+            ChatPushNavigation.markHomeShellReady();
+          } else {
+            ChatPushNavigation.flushPending();
+          }
+        });
+      });
+      return;
+    }
+    // Leave Online only after a real background — ChatRealtimeService debounces
+    // pause/hidden (WhatsApp-style). Do NOT also leave here (double leave made
+    // users flash Online then Offline while still in the app).
+    if (state == AppLifecycleState.detached) {
+      if (sl.isRegistered<ChatRealtimeService>()) {
+        unawaited(sl<ChatRealtimeService>().onAppPaused());
+      }
+    }
+  }
+
+  void _ensureChatPresence() {
+    final homeCubit = cubit;
+    if (homeCubit == null) return;
+    final userId = homeCubit.currentDoctorModel.id ?? 0;
+    if (userId == 0) {
+      // Local doctor not loaded yet — still try prefs-based bootstrap.
+      if (sl.isRegistered<ChatRealtimeService>()) {
+        unawaited(
+          sl<ChatRealtimeService>()
+              .bootstrapFromLocalSession(forceReenter: true),
+        );
+      }
+      return;
+    }
+    if (!sl.isRegistered<InboxCubit>()) return;
+    final inbox = sl<InboxCubit>();
+    inbox.initIfNeeded(currentUserId: userId);
+    final displayName = doctorName(
+      firstName: homeCubit.currentDoctorModel.firstName,
+      lastName: homeCubit.currentDoctorModel.lastName,
+      role: homeCubit.homeDataModel.isSyndicateCardRequired ?? '',
+    );
+    final imageUrl = homeCubit.currentDoctorModel.image;
+    // Single Online path — do NOT also call bootstrap + onAppResumed here.
+    // Triple enter/cancel storms made Online one-way for minutes.
+    inbox.startLiveUpdates(
+      currentUserId: userId,
+      displayName: displayName,
+      imageUrl: imageUrl,
+    );
+  }
+
+  void _onAppForegroundedPresence() {
+    final homeCubit = cubit;
+    if (homeCubit == null) return;
+    final userId = homeCubit.currentDoctorModel.id ?? 0;
+    if (userId == 0) {
+      if (sl.isRegistered<ChatRealtimeService>()) {
+        unawaited(
+          sl<ChatRealtimeService>()
+              .bootstrapFromLocalSession(forceReenter: true),
+        );
+      }
+      return;
+    }
+    if (!sl.isRegistered<InboxCubit>()) return;
+    final displayName = doctorName(
+      firstName: homeCubit.currentDoctorModel.firstName,
+      lastName: homeCubit.currentDoctorModel.lastName,
+      role: homeCubit.homeDataModel.isSyndicateCardRequired ?? '',
+    );
+    unawaited(
+      sl<InboxCubit>().onAppForegrounded(
+        currentUserId: userId,
+        displayName: displayName,
+        imageUrl: homeCubit.currentDoctorModel.image,
+      ),
+    );
   }
 
   void _clampTabForCurrentNav(HomeCubit homeCubit) {
-    final maxIndex = homeCubit.hideClinicalTabs ? 2 : 3;
+    final maxIndex = homeCubit.hideClinicalTabs ? 3 : 4;
     if (homeCubit.tabsController.index <= maxIndex) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -65,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _checkForPendingDeepLinks() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () async {
       if (mounted) {
         final homeCubit = context.read<HomeCubit>();
         final hasHomeData = homeCubit.homeDataModel.data != null;
@@ -74,6 +190,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         if (hasHomeData && hasDoctorData) {
           final deepLinkHandler = DeepLinkHandler();
           deepLinkHandler.checkAndProcessPendingDeepLinks(context);
+          // Cold-start chat push tap (app was killed).
+          // Re-pull native/prefs payload in case FCM getInitialMessage was null.
+          if (sl.isRegistered<NotificationServices>()) {
+            await sl<NotificationServices>().recaptureColdStartIfNeeded();
+          }
+          ChatPushNavigation.markHomeShellReady();
+          ChatPushNavigation.flushPendingWithRetries();
           _checkPendingInviteConsultation();
         } else if (_deepLinkRetryCount < 5) {
           _deepLinkRetryCount++;
@@ -193,7 +316,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               );
                             }
 
-                            Future.delayed(const Duration(seconds: 1), () {
+                            // Mark ready immediately so cold-start push can
+                            // flush as soon as the home shell is up.
+                            ChatPushNavigation.markHomeShellReady(flush: false);
+                            Future.delayed(const Duration(milliseconds: 300),
+                                () {
                               if (mounted) _checkForPendingDeepLinks();
                             });
                           },
@@ -225,7 +352,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             return const SizedBox.shrink();
                           }
                           if (index == homeCubit.profileTabIndex ||
-                              index == homeCubit.communityTabIndex) {
+                              index == homeCubit.communityTabIndex ||
+                              index == homeCubit.inboxTabIndex) {
                             return const SizedBox.shrink();
                           }
 
@@ -281,94 +409,120 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       },
                     ),
                     Expanded(
-                      child: PersistentTabView(
-                        context,
-                        key: ValueKey(
-                          hideClinical ? 'nav_normal' : 'nav_clinical',
-                        ),
-                        controller: homeCubit.tabsController,
-                        items: _navBarsItems(
-                          context,
-                          isDarkMode,
-                          hideClinical: hideClinical,
-                        ),
-                        screens: _buildScreens(
-                          homeCubit,
-                          hideClinical: hideClinical,
-                        ),
-                        onItemSelected: (value) {
-                          homeCubit.hideHomeHeader(value);
-                          if (hideClinical &&
-                              value == homeCubit.notificationsTabIndex) {
-                            homeCubit.removeNotificationCount();
-                            final notifCubit =
-                                context.read<NotificationCubit>();
-                            // Avoid full reload on every tab open — use cache
-                            // unless there are unread items (or never loaded).
-                            final hasUnread = homeCubit.isUnreadNotification ||
-                                (int.tryParse(
-                                          homeCubit.homeDataModel.unreadCount ??
-                                              '0',
-                                        ) ??
-                                        0) >
-                                    0;
-                            notifCubit.ensureNotificationsLoaded(
-                              force: hasUnread,
-                            );
-                          }
-                        },
-                        // Keep safe-area padding OUT of the floating pill so
-                        // there is no empty gap under the icons.
-                        confineInSafeArea: false,
-                        backgroundColor:
-                            isDarkMode ? AppColors.darkCardBG : Colors.white,
-                        popAllScreensOnTapAnyTabs: true,
-                        handleAndroidBackButtonPress: true,
-                        resizeToAvoidBottomInset: true,
-                        stateManagement: true,
-                        hideNavigationBarWhenKeyboardShows: true,
-                        margin: EdgeInsets.fromLTRB(
-                          14.w,
-                          0,
-                          14.w,
-                          20.h,
-                        ),
-                        bottomScreenMargin: 78.h,
-                        padding: const NavBarPadding.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        decoration: NavBarDecoration(
-                          borderRadius: BorderRadius.circular(32.r),
-                          colorBehindNavBar:
-                              HomeDashboardColors.scaffold(isDarkMode),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black
-                                  .withOpacity(isDarkMode ? 0.35 : 0.1),
-                              blurRadius: 14,
-                              offset: const Offset(0, 4),
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: homeCubit.hideFloatingNavBar,
+                        builder: (context, hideNav, _) {
+                          return PersistentTabView(
+                            context,
+                            key: ValueKey(
+                              hideClinical ? 'nav_normal' : 'nav_clinical',
                             ),
-                          ],
-                          border: Border.all(
-                            color: isDarkMode
-                                ? AppColors.darkBorder.withOpacity(0.6)
-                                : const Color(0xFFE8E8EE),
-                          ),
-                        ),
-                        popAllScreensOnTapOfSelectedTab: true,
-                        itemAnimationProperties: const ItemAnimationProperties(
-                          duration: Duration(milliseconds: 200),
-                          curve: Curves.ease,
-                        ),
-                        screenTransitionAnimation:
-                            const ScreenTransitionAnimation(
-                          animateTabTransition: true,
-                          curve: Curves.ease,
-                          duration: Duration(milliseconds: 200),
-                        ),
-                        navBarStyle: NavBarStyle.style7,
-                        navBarHeight: 72,
+                            controller: homeCubit.tabsController,
+                            items: _navBarsItems(
+                              context,
+                              isDarkMode,
+                              hideClinical: hideClinical,
+                            ),
+                            screens: _screensFor(
+                              homeCubit,
+                              hideClinical: hideClinical,
+                            ),
+                            onItemSelected: (value) {
+                              homeCubit.hideHomeHeader(value);
+                              if (value == homeCubit.inboxTabIndex) {
+                                final userId =
+                                    homeCubit.currentDoctorModel.id ?? 0;
+                                final inbox = context.read<InboxCubit>();
+                                inbox.initIfNeeded(currentUserId: userId);
+                                inbox.startLiveUpdates(
+                                  currentUserId: userId,
+                                  displayName: doctorName(
+                                    firstName:
+                                        homeCubit.currentDoctorModel.firstName,
+                                    lastName:
+                                        homeCubit.currentDoctorModel.lastName,
+                                    role: homeCubit.homeDataModel
+                                            .isSyndicateCardRequired ??
+                                        '',
+                                  ),
+                                  imageUrl: homeCubit.currentDoctorModel.image,
+                                );
+                              }
+                              if (hideClinical &&
+                                  value == homeCubit.notificationsTabIndex) {
+                                homeCubit.removeNotificationCount();
+                                final notifCubit =
+                                    context.read<NotificationCubit>();
+                                // Avoid full reload on every tab open — use cache
+                                // unless there are unread items (or never loaded).
+                                final hasUnread =
+                                    homeCubit.isUnreadNotification ||
+                                        (int.tryParse(
+                                                  homeCubit.homeDataModel
+                                                          .unreadCount ??
+                                                      '0',
+                                                ) ??
+                                                0) >
+                                            0;
+                                notifCubit.ensureNotificationsLoaded(
+                                  force: hasUnread,
+                                );
+                              }
+                            },
+                            // Keep safe-area padding OUT of the floating pill so
+                            // there is no empty gap under the icons.
+                            confineInSafeArea: false,
+                            backgroundColor: isDarkMode
+                                ? AppColors.darkCardBG
+                                : Colors.white,
+                            popAllScreensOnTapAnyTabs: true,
+                            handleAndroidBackButtonPress: true,
+                            resizeToAvoidBottomInset: true,
+                            stateManagement: true,
+                            hideNavigationBarWhenKeyboardShows: true,
+                            hideNavigationBar: hideNav,
+                            // Content extends under the floating pill (opacity < 1
+                            // on items). Keep margin fixed — only the bar slides.
+                            margin: EdgeInsets.fromLTRB(14.w, 0, 14.w, 20.h),
+                            bottomScreenMargin: 0,
+                            padding: const NavBarPadding.symmetric(
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            decoration: NavBarDecoration(
+                              borderRadius: BorderRadius.circular(32.r),
+                              colorBehindNavBar:
+                                  HomeDashboardColors.scaffold(isDarkMode),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black
+                                      .withOpacity(isDarkMode ? 0.35 : 0.1),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                              border: Border.all(
+                                color: isDarkMode
+                                    ? AppColors.darkBorder.withOpacity(0.6)
+                                    : const Color(0xFFE8E8EE),
+                              ),
+                            ),
+                            popAllScreensOnTapOfSelectedTab: true,
+                            itemAnimationProperties:
+                                const ItemAnimationProperties(
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.ease,
+                            ),
+                            screenTransitionAnimation:
+                                const ScreenTransitionAnimation(
+                              animateTabTransition: true,
+                              curve: Curves.ease,
+                              duration: Duration(milliseconds: 200),
+                            ),
+                            navBarStyle: NavBarStyle.style7,
+                            navBarHeight: 72,
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -379,6 +533,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         );
       },
     );
+  }
+
+  List<Widget> _screensFor(
+    HomeCubit cubit, {
+    required bool hideClinical,
+  }) {
+    if (_cachedTabScreens == null || _cachedHideClinical != hideClinical) {
+      _cachedHideClinical = hideClinical;
+      _cachedTabScreens = _buildScreens(
+        cubit,
+        hideClinical: hideClinical,
+      );
+    }
+    return _cachedTabScreens!;
   }
 
   List<Widget> _buildScreens(
@@ -441,16 +609,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       },
     );
 
+    final inbox = InboxScreen(
+      currentDoctorModel: cubit.currentDoctorModel,
+      homeDataModel: cubit.homeDataModel,
+    );
+
     if (hideClinical) {
-      // Community · Notifications · Profile
-      return [community, notifications, profile];
+      // Community · Inbox · Notifications · Profile
+      return [community, inbox, notifications, profile];
     }
 
-    // Home · Patients · Community · Profile (inbox removed)
+    // Home · Patients · Community · Inbox · Profile
     return [
       HomeTab(cubit: cubit),
       HomePatientsTab(cubit: cubit),
       community,
+      inbox,
       profile,
     ];
   }
@@ -511,6 +685,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       activeColorPrimary: activeColor,
       inactiveColorPrimary: inactiveColor,
       activeColorSecondary: Colors.white,
+      // <1 keeps screen padding fixed so hide/show doesn't resize content.
+      opacity: 0.99,
+      onSelectedTabPressWhenNoScreensPushed: () {
+        cubit?.requestCommunityFeedsScrollToTop();
+      },
+    );
+    final inboxItem = PersistentBottomNavBarItem(
+      icon: const _InboxUnreadBadgeIcon(
+        icon: Icons.forum_rounded,
+      ),
+      inactiveIcon: const _InboxUnreadBadgeIcon(
+        icon: Icons.forum_outlined,
+      ),
+      title: context.tr(AppStrings.inbox),
+      textStyle: titleStyle,
+      activeColorPrimary: activeColor,
+      inactiveColorPrimary: inactiveColor,
+      activeColorSecondary: Colors.white,
+      opacity: 0.99,
     );
     final notificationsItem = PersistentBottomNavBarItem(
       icon: _badgeIcon(icon: Icons.notifications_outlined, count: unread),
@@ -521,6 +714,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       activeColorPrimary: activeColor,
       inactiveColorPrimary: inactiveColor,
       activeColorSecondary: Colors.white,
+      opacity: 0.99,
     );
     final profileItem = PersistentBottomNavBarItem(
       // Selected style7 pill shows avatar + "Profile" (matches mockup).
@@ -556,10 +750,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       activeColorPrimary: activeColor,
       inactiveColorPrimary: inactiveColor,
       activeColorSecondary: Colors.white,
+      opacity: 0.99,
     );
 
     if (hideClinical) {
-      return [communityItem, notificationsItem, profileItem];
+      return [communityItem, inboxItem, notificationsItem, profileItem];
     }
 
     return [
@@ -570,6 +765,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         activeColorPrimary: activeColor,
         inactiveColorPrimary: inactiveColor,
         activeColorSecondary: Colors.white,
+        opacity: 0.99,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.groups_rounded, size: 22.sp),
@@ -578,9 +774,66 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         activeColorPrimary: activeColor,
         inactiveColorPrimary: inactiveColor,
         activeColorSecondary: Colors.white,
+        opacity: 0.99,
       ),
       communityItem,
+      inboxItem,
       profileItem,
     ];
+  }
+}
+
+/// Rebuilds only the inbox nav badge when unread count changes — not the
+/// entire [PersistentTabView] on every inbox typing/presence emit.
+class _InboxUnreadBadgeIcon extends StatelessWidget {
+  final IconData icon;
+
+  const _InboxUnreadBadgeIcon({required this.icon});
+
+  static int _unreadOf(InboxState state) {
+    return state.maybeWhen(
+      loaded: (threads, _, __, ___, ____, _____, ______, _______) =>
+          threads.fold<int>(0, (sum, t) => sum + t.unreadCount),
+      orElse: () => 0,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<InboxCubit, InboxState>(
+      buildWhen: (prev, next) => _unreadOf(prev) != _unreadOf(next),
+      builder: (context, state) {
+        final n = _unreadOf(state);
+        final count = n <= 0 ? '0' : (n > 99 ? '99+' : '$n');
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(icon, size: 22.sp),
+            if (count != '0')
+              Positioned(
+                right: -6,
+                top: -4,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                  decoration: BoxDecoration(
+                    color: HomeDashboardColors.danger,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  constraints: BoxConstraints(minWidth: 14.r),
+                  child: Text(
+                    count,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 }

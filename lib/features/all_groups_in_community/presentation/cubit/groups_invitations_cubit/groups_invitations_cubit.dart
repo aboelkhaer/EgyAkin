@@ -1,6 +1,8 @@
 import 'package:egy_akin/features/all_groups_in_community/data/models/get_all_groups_in_community_model_response.dart';
 import 'package:egy_akin/features/all_groups_in_community/data/models/get_doctor_invitation_for_groups_model_response.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/groups_invitations_cubit/groups_invitations_state.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../../exports.dart';
 
@@ -143,6 +145,16 @@ class GroupsInvitationsCubit extends Cubit<GroupsInvitationsState> {
             );
           },
         ));
+        if (status == AcceptOrDeclineMemberInGroup.accepted.name) {
+          try {
+            final id = int.tryParse(groupId);
+            if (id != null &&
+                id > 0 &&
+                GetIt.I.isRegistered<InboxCubit>()) {
+              GetIt.I<InboxCubit>().notifySocialGroupJoined(groupId: id);
+            }
+          } catch (_) {}
+        }
       },
     );
 
@@ -216,7 +228,16 @@ class GroupsInvitationsCubit extends Cubit<GroupsInvitationsState> {
           ),
         ));
       },
-      (success) async {},
+      (success) async {
+        try {
+          final id = int.tryParse(groupId);
+          if (id != null &&
+              id > 0 &&
+              GetIt.I.isRegistered<InboxCubit>()) {
+            GetIt.I<InboxCubit>().notifySocialGroupJoined(groupId: id);
+          }
+        } catch (_) {}
+      },
     );
   }
 }

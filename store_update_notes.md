@@ -1,29 +1,33 @@
 # Store Update Notes
 
-Short notes for **Google Play Store** and **Apple App Store** (max 500 chars for Google Play).
+What’s New copy for **Google Play** (max 500 characters) and **Apple App Store**.
+
+Use the same English (or Arabic) text in both stores unless you localize the listing separately.
 
 ---
 
 ## English
 
-**Google Play & App Store:**
 ```
-• Permissions control post edit/delete, patient name, final submit, and delete.
-• Marked patients count fixes after account switch.
-• New multiple-choice filter; reset clears all fields.
-• Outcome forms: decimal questions, permission checks, better translations.
-• Doctor profile and patient section visibility by permission.
+What’s new in this version
+
+• Full redesign across Home, Profile, Community, Consultations, Patients, and more — clearer layout and smoother navigation in light and dark mode.
+• Faster lists: saved posts, consultations, marked patients, and groups update instantly.
+• Live profile stats for saved posts, all posts, and patients.
+• Smarter consultations: open/closed status syncs right away; cleaner send flow.
+• Better dose recommendation search and smoother Add Patient / section screens.
 ```
 
 ---
 
 ## Arabic
 
-**متجر Google Play و App Store:**
 ```
-• الصلاحيات تتحكم بتعديل/حذف المنشور واسم المريض والتقديم النهائي والحذف.
-• إصلاح عدد المرضى المعلمين بعد تغيير الحساب.
-• فلتر اختيار متعدد جديد؛ إعادة التعيين تمسح كل الحقول.
-• نماذج النتائج: أسئلة عشرية، التحقق من الصلاحيات، ترجمة أفضل.
-• ظهور ملف الطبيب وأقسام المريض حسب الصلاحية.
+ما الجديد في هذا الإصدار
+
+• إعادة تصميم كاملة للرئيسية والملف الشخصي والمجتمع والاستشارات والمرضى والمزيد — واجهة أوضح وتنقل أسلس في الوضع الفاتح والداكن.
+• قوائم أسرع: المنشورات المحفوظة والاستشارات والمرضى المعلمون والمجموعات تتحدث فوراً.
+• إحصائيات الملف الشخصي مباشرة للمنشورات المحفوظة وجميع المنشورات والمرضى.
+• استشارات أذكى: حالة الفتح/الإغلاق تظهر مباشرة مع تدفق إرسال أوضح.
+• بحث أفضل لتوصيات الجرعات وشاشات إضافة المريض والأقسام أكثر سلاسة.
 ```

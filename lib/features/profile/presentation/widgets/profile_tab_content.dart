@@ -217,8 +217,7 @@ class ProfileTabContent extends StatelessWidget {
                   child: _StatsGrid(
                     isDark: isDark,
                     showClinicalStats: isResearchUser,
-                    patients:
-                        context.read<HomeCubit>().doctorPatientCount ?? '0',
+                    patients: homeCubit.myPlusMarkedPatientsCount,
                     score: context.read<HomeCubit>().doctorScore ??
                         currentDoctorPoints.toString(),
                     savedPosts: effectiveHome.savedPosts ?? '0',

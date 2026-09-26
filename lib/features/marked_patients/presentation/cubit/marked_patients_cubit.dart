@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/marked_patients/data/models/get_marked_patients_model_response.dart';
 import 'package:egy_akin/features/marked_patients/domain/usecases/get_marked_patients_usecase.dart';
 import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_state.dart';
 
@@ -13,7 +14,82 @@ class MarkedPatientsCubit extends Cubit<MarkedPatientsState> {
   bool isLastPage = false;
   ScrollController? scrollController;
 
-  getMarkedPatients() async {
+  bool get hasLoadedList => state.maybeWhen(
+        loaded: (_, __) => true,
+        orElse: () => false,
+      );
+
+  Future<void> ensureMarkedPatientsLoaded() async {
+    if (hasLoadedList) return;
+    await getMarkedPatients();
+  }
+
+  /// Removes [patientId] from the loaded list. Returns the removed item if found.
+  PatientHomeDataModel? removePatientById(String patientId) {
+    PatientHomeDataModel? removed;
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, isSeeMore) {
+        final list = [...(response.data?.data ?? const <PatientHomeDataModel>[])];
+        final index = list.indexWhere(
+          (p) => p.id?.toString() == patientId,
+        );
+        if (index < 0) return;
+        removed = list.removeAt(index);
+        final previousTotal = response.data?.total;
+        emit(
+          MarkedPatientsState.loaded(
+            response.copyWith(
+              data: response.data?.copyWith(
+                data: list,
+                total: previousTotal == null
+                    ? list.length
+                    : (previousTotal - 1).clamp(0, previousTotal),
+              ),
+            ),
+            false,
+          ),
+        );
+      },
+    );
+    return removed;
+  }
+
+  /// Inserts [patient] at the top of the loaded list if it is not already there.
+  void addPatientIfAbsent(PatientHomeDataModel patient) {
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, isSeeMore) {
+        final list = [...(response.data?.data ?? const <PatientHomeDataModel>[])];
+        if (list.any((p) => p.id?.toString() == patient.id?.toString())) {
+          return;
+        }
+        final next = [patient, ...list];
+        final previousTotal = response.data?.total;
+        final nested = response.data;
+        emit(
+          MarkedPatientsState.loaded(
+            response.copyWith(
+              data: nested == null
+                  ? GetMarkedPatientsDataModelResponse(
+                      data: next,
+                      total: next.length,
+                    )
+                  : nested.copyWith(
+                      data: next,
+                      total: previousTotal == null
+                          ? next.length
+                          : previousTotal + 1,
+                    ),
+            ),
+            false,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> getMarkedPatients() async {
     emit(const MarkedPatientsState.loading());
     currentPage = 1;
     isLastPage = false;

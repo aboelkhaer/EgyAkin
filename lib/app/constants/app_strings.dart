@@ -228,7 +228,7 @@ class AppStrings {
   static const String profile = 'Profile';
   static const String home = 'Home';
   static const String community = 'Community';
-  static const String inbox = 'Inbox';
+  static const String inbox = 'Chats';
   static const String patient = 'Patient';
   static const String score = 'Score';
   static const String savedPosts = 'Saved Posts';
@@ -467,10 +467,20 @@ class AppStrings {
       'You left some sections in binding, continue?';
   static const String egyAkinFeed = 'EgyAkin Feed';
   static const String failedToShare = 'Failed to share';
+  static const String saveImage = 'Save image';
+  static const String imageSaved = 'Image saved';
+  static const String failedToSaveImage = 'Failed to save image';
+  static const String share = 'Share';
   static const String checkOutThisPostOnEgyAkin =
       'Check out this post on EgyAkin!';
   static const String openInApp = 'Open in app';
   static const String dontHaveTheAppYet = 'Don\'t have the app yet?';
+  static const String sharePost = 'Share post';
+  static const String shareVia = 'Share via';
+  static const String copyLink = 'Copy link';
+  static const String copied = 'Copied';
+  static const String linkReady = 'Ready to paste';
+  static const String tapToContinue = 'Tap to continue';
   static const String startTypingToSearchForPosts =
       'Start typing to search for posts';
   static const String createPost = 'Create Post';
@@ -483,6 +493,15 @@ class AppStrings {
       'Your poll has already been published.';
   static const String gallery = 'Gallery';
   static const String camera = 'Camera';
+  static const String document = 'Document';
+  static const String albums = 'Albums';
+  static const String addACaption = 'Add a caption...';
+  static const String photoAccessNeeded =
+      'Photo access is needed to share images in chat.';
+  static const String openSettings = 'Open Settings';
+  static const String noPhotosYet = 'No photos yet';
+  static const String hdQuality = 'HD';
+  static const String selectedCount = '{count} selected';
   static const String createPoll = 'Create Poll';
   static const String askAQuestion = 'Ask a question (optional)';
   static const String options = 'Options';
@@ -594,7 +613,6 @@ class AppStrings {
       'The Syndicate card is being processed for verification.';
   static const String filter = 'Filter';
   static const String addDoctorsToConsultation = 'Add doctors to consultation';
-  static const String createGroup = 'Create Group';
   static const String updateGroup = 'Update Group';
   static const String create = 'Create';
   static const String update = 'Update';
@@ -659,6 +677,35 @@ class AppStrings {
   // Update Dialog strings
   static const String whatsNew = 'What\'s New';
   static const String updateDialogContent = 'update_dialog_content';
+  static const String newRelease = 'New release';
+  static const String appFullyRedesignedTitle = 'app_fully_redesigned_title';
+  static const String appFullyRedesignedSubtitle =
+      'app_fully_redesigned_subtitle';
+  static const String gotItExploreTheApp = 'got_it_explore_the_app';
+  static const String updateFeatureRedesignTitle =
+      'update_feature_redesign_title';
+  static const String updateFeatureRedesignBody =
+      'update_feature_redesign_body';
+  static const String updateFeatureFasterListsTitle =
+      'update_feature_faster_lists_title';
+  static const String updateFeatureFasterListsBody =
+      'update_feature_faster_lists_body';
+  static const String updateFeatureProfileStatsTitle =
+      'update_feature_profile_stats_title';
+  static const String updateFeatureProfileStatsBody =
+      'update_feature_profile_stats_body';
+  static const String updateFeatureConsultationsTitle =
+      'update_feature_consultations_title';
+  static const String updateFeatureConsultationsBody =
+      'update_feature_consultations_body';
+  static const String updateFeatureDoseSearchTitle =
+      'update_feature_dose_search_title';
+  static const String updateFeatureDoseSearchBody =
+      'update_feature_dose_search_body';
+  static const String updateFeatureAddPatientTitle =
+      'update_feature_add_patient_title';
+  static const String updateFeatureAddPatientBody =
+      'update_feature_add_patient_body';
   static const String clearUpdateMessageToShowItAgain =
       'Clear Update Message to show it again';
   static const String adminOnlyClearUpdateMessageFlag =
@@ -674,13 +721,20 @@ class AppStrings {
   static const String continueWithGoogle = 'Continue with Google';
   static const String continueWithApple = 'Continue with Apple';
   static const String onlineNow = 'Online now';
+  static const String offline = 'Offline';
   static const String today = 'Today';
   static const String reply = 'Reply';
   static const String forward = 'Forward';
+  static const String forwarded = 'Forwarded';
   static const String copy = 'Copy';
   static const String star = 'Star';
   static const String moreOptions = 'More...';
   static const String messageCopied = 'Message copied';
+  static const String reactions = 'Reactions';
+  static const String oneReaction = '1 reaction';
+  static const String reactionsCount = '{count} reactions';
+  static const String reactedWith = 'Reacted with {emoji}';
+  static const String unknownUser = 'Unknown user';
   static const String comingSoon = 'Coming Soon';
   static const String socialLoginComingSoon =
       'Social login features are coming soon!';
@@ -775,6 +829,9 @@ class AppStrings {
   static const String updatedJustNow = 'Updated just now';
   static const String pendingConsultations = 'Pending consultations';
   static const String openChat = 'Open chat';
+  static const String caseChat = 'Case chat';
+  static const String caseChatSubtitle =
+      'Discuss this patient with the care team';
   static const String seeAllLower = 'See all';
   static const String noPatientsYet = 'No patients yet';
   static const String addYourFirstPatient = 'Add your first patient';
@@ -822,12 +879,190 @@ class AppStrings {
   static const String markedPatients = 'Marked Patients';
 
   // Inbox
-  static const String composeComingSoon = 'Compose coming soon';
+  static const String newMessage = 'New message';
+  static const String startChatWithMember = 'Chat with member';
+  static const String startChatWithMemberSubtitle =
+      'Start a direct conversation';
+  static const String chat = 'Chat';
+  static const String startGroupChat = 'Group chat';
+  static const String startGroupChatSubtitle = 'Chat with multiple people';
+  static const String searchMemberToChat = 'Search by doctor name or email';
+  static const String typeAtLeastTwoCharactersToSearch =
+      'Type at least 2 characters to search';
+  static const String chatNotReady =
+      'Chat is not ready yet. Please wait a moment.';
+  static const String deleteMessageQuestion = 'Delete this message?';
+  static const String deleteMessagesQuestion = 'Delete {count} messages?';
+  static const String deleteMessageForMeOnly =
+      'This message will be deleted for you only. Other people in the chat will still see it.';
+  static const String deleteMessagesForMeOnly =
+      'These messages will be deleted for you only. Other people in the chat will still see them.';
+  static const String deleteMessageForEveryone =
+      'This message will be deleted for everyone in the chat.';
+  static const String deleteMessagesForEveryone =
+      'These messages will be deleted for everyone in the chat.';
+  static const String deleteMessageFailed =
+      'Could not delete message. Please try again.';
+  static const String deleteMessage = 'Delete message';
+  static const String deleteMessages = 'Delete messages';
+  static const String selectMessages = 'Select messages';
+  static const String select = 'Select';
+  static const String editingMessage = 'Editing message';
+  static const String edited = 'Edited';
+  static const String editMessageFailed =
+      'Could not edit message. Please try again.';
+  static const String youDeletedThisMessage = 'You deleted this message.';
+  static const String thisMessageWasDeleted = 'This message was deleted.';
+  static const String deletedForMe = 'Deleted for me';
+  static const String chatInfo = 'Chat info';
+  static const String groupChat = 'Group chat';
+  static const String muteNotifications = 'Mute notifications';
+  static const String muteNotificationsSubtitle =
+      'Silence message sounds for this chat on this device';
+  static const String archive = 'Archive';
+  static const String more = 'More';
+  static const String chatArchived = 'Chat archived';
+  static const String archiveFailed = 'Could not archive chat';
+  static const String archivedChats = 'Archived';
+  static const String archivedChatsHint = 'Hidden from your inbox';
+  static const String unarchive = 'Unarchive';
+  static const String unarchiveFailed = 'Could not unarchive chat';
+  static const String noArchivedChats = 'No archived chats';
+  static const String noArchivedChatsSubtitle =
+      'Chats you archive will show up here';
+  static const String deleteChat = 'Delete';
+  static const String deleteChatFull = 'Delete chat';
+  static const String deleteChatQuestion = 'Delete this chat from your inbox?';
+  static const String chatDeleted = 'Chat deleted';
+  static const String deleteChatFailed = 'Could not delete chat';
+  static const String markAsUnread = 'Unread';
+  static const String markAsRead = 'Read';
+  static const String markedUnread = 'Marked as unread';
+  static const String markedRead = 'Marked as read';
+  static const String markUnreadFailed = 'Could not mark as unread';
+  static const String pinChat = 'Pin';
+  static const String unpinChat = 'Unpin';
+  static const String chatPinned = 'Chat pinned';
+  static const String chatUnpinned = 'Chat unpinned';
+  static const String pinFailed = 'Could not update pin';
+  static const String mute = 'Mute';
+  static const String unmute = 'Unmute';
+  static const String chatMuted = 'Chat muted';
+  static const String chatUnmuted = 'Chat unmuted';
+  static const String muteFailed = 'Could not update mute';
+  static const String contactInfo = 'Contact info';
+  static const String block = 'Block';
+  static const String blockFailed = 'Could not block user';
+  static const String userBlocked = 'User blocked';
+  static const String searchInChat = 'Search in chat';
+  static const String mediaGallery = 'Media';
+  static const String documents = 'Documents';
+  static const String voices = 'Voices';
+  static const String noDocumentsYet = 'No documents yet';
+  static const String noVoicesYet = 'No voices yet';
+  static const String searchingMessages = 'Searching…';
+  static const String searchForMessages = 'Search for messages';
+  static const String findMessagesInThisChat =
+      'Find text shared in this conversation';
+  static const String searchByType = 'Search by type';
+  static const String results = 'results';
+  static const String photos = 'Photos';
+  static const String videos = 'Videos';
+  static const String links = 'Links';
+  static const String audio = 'Audio';
+  static const String forwardTo = 'Forward to';
+  static const String messageForwarded = 'Message forwarded';
+  static const String messagesForwarded = 'Messages forwarded';
+  static const String cannotForwardMedia =
+      'This media can’t be forwarded from here. Try copying text or re-sending the file.';
+  static const String typeToSearchMessages = 'Type to search messages';
+  static const String noMediaYet = 'No media yet';
+  static const String imagePlaceholder = '[Image]';
+  static const String voicePlaceholder = '[Voice]';
+  static const String filePlaceholder = '[File]';
+  static const String groupNameRequired = 'Enter a group name';
+  static const String groupNameHint = 'Group name';
+  static const String editGroupName = 'Edit group name';
+  static const String renameGroupSubtitle =
+      'Choose a clear name so everyone recognizes this group.';
+  static const String changeGroupPhoto = 'Change group photo';
+  static const String updateGroupPhoto = 'Update group photo';
+  static const String useThisPhotoAsGroupPicture =
+      'Use this photo as the group picture?';
+  static const String groupUpdated = 'Group updated';
+  static const String groupUpdateFailed = 'Could not update group';
+  static const String updatingGroup = 'Updating group…';
+  static const String youChangedGroupNameTo =
+      'You changed the group name to {name}';
+  static const String youRemovedFromGroup = 'You removed {name}';
+  static const String youAddedToGroup = 'You added {name}';
+  static const String selectAtLeastOneMember = 'Select at least one member';
+  static const String addMembers = 'Add members';
+  static const String membersAdded = 'Members added';
+  static const String couldNotAddMembers = 'Could not add members';
+  static const String alreadyInGroup = 'Already in this group';
+  static const String noMembersAvailableToAdd = 'No members available to add';
+  static const String createGroup = 'Create group';
+  static const String isTyping = 'is typing…';
+  static const String typing = 'typing…';
+  static const String isRecording = 'is recording…';
+  static const String recording = 'recording…';
+  static const String isSendingImage = 'is sending an image…';
+  static const String isSendingImages = 'is sending images…';
+  static const String sendingImage = 'sending an image…';
+  static const String sendingImages = 'sending images…';
+  static const String isSendingFile = 'is sending a file…';
+  static const String isSendingFiles = 'is sending files…';
+  static const String sendingFile = 'sending a file…';
+  static const String sendingFiles = 'sending files…';
+  static const String slideToCancel = 'Slide to cancel';
+  static const String releaseToCancel = 'Release to cancel';
+  static const String microphonePermissionRequired =
+      'Microphone permission is required';
+  static const String holdToRecord = 'Hold to record';
+  static const String recordingTooShort = 'Recording is too short';
+  static const String tapToSend = 'Tap to send';
+  static const String photo = 'Photo';
+  static const String voiceMessage = 'Voice message';
+  static const String originalMessageNotAvailable =
+      'Original message is not available';
+  static const String goToMessage = 'Go to message';
   static const String all = 'All';
+  static const String individual = 'Individual';
+  static const String socialGroup = 'Social Groups';
   static const String noMessages = 'No messages';
+  static const String noMessagesYet = 'No messages yet';
+  static const String sendFirstMessage =
+      'Send the first message to start the conversation.';
+  static const String sendFirstMessageInGroup =
+      'Send the first message in this group.';
   static const String priorityUpper = 'PRIORITY';
   static const String earlierUpper = 'EARLIER';
   static const String searchMessages = 'Search messages...';
+  static const String searchChatsAndMessages = 'Search chats & messages';
+  static const String searchChatsAndMessagesTitle = 'Search everything';
+  static const String searchChatsAndMessagesHint =
+      'Find chats by name or messages across all conversations.';
+  static const String chatsSection = 'Chats';
+  static const String messagesSection = 'Messages';
+  static const String tryDifferentKeywords = 'Try different keywords';
+  static const String messageInfo = 'Info';
+  static const String seenBy = 'Seen by';
+  static const String deliveredTo = 'Delivered to';
+  static const String remainingMembers = 'Remaining';
+  static const String seenByCount = '{count} seen';
+  static const String seenByCountOfMembers =
+      '{count} seen · {remaining} remaining';
+  static const String noOneHasSeenYet = 'No one has seen this yet';
+  static const String seenByWillAppearHere =
+      'Read receipts will appear here when members open the chat.';
+  static const String messageInfoEmpty =
+      'Delivery details will appear here when members receive the message.';
+  static const String chatTypePrivate = 'Private';
+  static const String chatTypeGroup = 'Group';
+  static const String chatTypeSocialGroup = 'Social';
+  static const String chatTypeCaseGroup = 'Case';
+  static const String sentByInChat = 'in {chat}';
   static const String urgentUpper = 'URGENT';
 
   // Community
@@ -1046,6 +1281,10 @@ class AppStrings {
   static const String loadingMembers = 'Loading members…';
   static const String couldntLoadMembers = 'Couldn’t load members';
   static const String closeAndOpenMembersAgain = 'Close and open members again';
+  static const String removeMember = 'Remove member';
+  static const String removeMemberConfirm =
+      'Remove this member from the group?';
+  static const String remove = 'Remove';
   static const String checkConnectionAndRetry =
       'Check your connection and retry';
   static const String likedThisPost = 'Liked this post';
@@ -1148,6 +1387,11 @@ class AppStrings {
   static const String updateRequired = 'Update Required';
   static const String aNewVersionIsAvailablePleaseUpdate =
       'A new version is available. Please update to continue using the app.';
+  static const String forceUpdateMustUpdateToContinue =
+      'force_update_must_update_to_continue';
+  static const String currentVersionLabel = 'current_version_label';
+  static const String latestVersionLabel = 'latest_version_label';
+  static const String storeVersionLabel = 'store_version_label';
   static const String updateNow = 'Update Now';
   static const String couldNotLaunchAppStore = 'Could not launch app store';
   static const String appIsCurrentlyUnavailablePleaseTryLater =
@@ -1170,6 +1414,7 @@ class AppStrings {
   static const String inFullQualityEllipsis = 'in full quality…';
   static const String photoSingular = 'photo';
   static const String photosPlural = 'photos';
+  static const String attachmentsPlural = 'attachments';
   static const String postingIn = 'Posting in';
   static const String publishingTo = 'Publishing to';
   static const String attachmentsUpper = 'ATTACHMENTS';

@@ -327,7 +327,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                         cubit.addSaveOrUnsaveOnPost(
                                           feed.id.toString(),
                                           saveOrUnsave:
-                                              feed.isSaved! ? 'unsave' : 'save',
+                                              feed.isSaved == true ? 'unsave' : 'save',
                                         );
                                       },
                                       onDeleteAdditional: () {

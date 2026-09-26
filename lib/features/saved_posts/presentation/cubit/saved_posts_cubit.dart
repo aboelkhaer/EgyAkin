@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
 import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_state.dart';
 
 import '../../../../exports.dart';
@@ -29,9 +30,88 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
 
   int changeCounter = 0;
 
-  getSavedPosts(String doctorId) async {
+  bool get hasLoadedList => state.maybeWhen(
+        loaded: (_, __, ___, ____, _____, ______, _______) => true,
+        orElse: () => false,
+      );
+
+  Future<void> ensureSavedPostsLoaded(String doctorId) async {
+    if (hasLoadedList) return;
+    await getSavedPosts(doctorId);
+  }
+
+  void upsertSavedPost(PostCommunityModel post) {
+    if (post.id == null) return;
+    final savedPost = post.copyWith(isSaved: true);
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          final data = value.response.data;
+          if (data == null) return value;
+          final list = [...(data.data ?? const <PostCommunityModel>[])];
+          final id = savedPost.id.toString();
+          final existed = list.any((p) => p.id.toString() == id);
+          list.removeWhere((p) => p.id.toString() == id);
+          list.insert(0, savedPost);
+          changeCounter++;
+          final total = data.total;
+          return SavedPostsState.loaded(
+            value.response.copyWith(
+              data: data.copyWith(
+                data: list,
+                total: existed || total == null ? total : total + 1,
+              ),
+            ),
+            '',
+            '',
+            false,
+            false,
+            false,
+            changeCounter,
+          );
+        },
+      ),
+    );
+  }
+
+  void removeSavedPost(String postId) {
+    if (postId.isEmpty || postId == 'null') return;
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          final data = value.response.data;
+          if (data == null) return value;
+          final list = [...(data.data ?? const <PostCommunityModel>[])];
+          final index = list.indexWhere((p) => p.id.toString() == postId);
+          if (index < 0) return value;
+          list.removeAt(index);
+          changeCounter++;
+          final total = data.total;
+          return SavedPostsState.loaded(
+            value.response.copyWith(
+              data: data.copyWith(
+                data: list,
+                total: total == null ? null : (total - 1).clamp(0, 1 << 30),
+              ),
+            ),
+            '',
+            '',
+            false,
+            false,
+            false,
+            changeCounter,
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> getSavedPosts(String doctorId) async {
     emit(const SavedPostsState.loading());
     currentPage = 1;
+    isLastPage = false;
     final result = await _getSavedPostsUsecase.execute(
         GetSavedPostsUsecaseInput(doctorId: doctorId, page: currentPage));
     result.fold(
@@ -235,61 +315,35 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
   Future<void> addSaveOrUnsaveOnPost(
     String postId, {
     required String saveOrUnsave, // 'save' or 'unsave' (required)
+    PostCommunityModel? post,
   }) async {
     // Prevent multiple simultaneous actions
     if (_isUpdatingPostSaveStatus) return;
     _isUpdatingPostSaveStatus = true;
 
-    bool isCurrentlySaved = false; // Store current save status for rollback
-
-    /// **1️⃣ Optimistically Update UI**
-    emit(
-      state.maybeMap(
-        loaded: (value) {
-          final response = value.response;
-          if (response.data == null || response.data!.data == null) {
-            debugPrint("[Save] ❌ No data found in response");
-            return value;
+    PostCommunityModel? targetPost;
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, _, __, ___, ____, _____, ______) {
+        for (final post in response.data?.data ?? const []) {
+          if (post.id.toString() == postId) {
+            targetPost = post;
+            break;
           }
-
-          final postList = response.data!.data!;
-
-          /// **Find Post & Update Save Status**
-          final updatedPosts = postList.map((post) {
-            if (post.id == int.tryParse(postId)) {
-              isCurrentlySaved = post.isSaved ?? false;
-
-              // Determine new state based on explicit action
-              final newSavedStatus = saveOrUnsave == 'save';
-              debugPrint(
-                  "[Save] 🔄 Changing save status from $isCurrentlySaved to $newSavedStatus");
-
-              return post.copyWith(
-                isSaved: newSavedStatus,
-              );
-            }
-            return post;
-          }).toList();
-
-          /// **Update State with a New Instance**
-          final updatedResponse = response.copyWith(
-            data: response.data!.copyWith(data: [...updatedPosts]),
-          );
-
-          debugPrint("[Save] ✅ UI Updated Optimistically");
-          return SavedPostsState.loaded(
-            updatedResponse,
-            '',
-            '',
-            false,
-            false,
-            false,
-            changeCounter,
-          );
-        },
-        orElse: () => state,
-      ),
+        }
+      },
     );
+    targetPost ??= post;
+
+    if (targetPost != null) {
+      if (saveOrUnsave == 'save') {
+        upsertSavedPost(targetPost!);
+      } else {
+        removeSavedPost(postId);
+      }
+    }
+
+    ProfilePostCounts.onSaveOrUnsave(saveOrUnsave);
 
     /// **2️⃣ Send API Request**
     debugPrint("[Save] 📡 Sending $saveOrUnsave request for post $postId");
@@ -303,49 +357,14 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
     result.fold(
       (failure) {
         debugPrint("[Save] ❌ API Failed: ${failure.message}");
-
-        /// **3️⃣ Rollback UI on Failure**
-        emit(
-          state.maybeMap(
-            loaded: (value) {
-              final response = value.response;
-              if (response.data == null || response.data!.data == null) {
-                return value;
-              }
-
-              final postList = response.data!.data!;
-
-              /// **Revert Save Status**
-              final revertedPosts = postList.map((post) {
-                if (post.id == int.tryParse(postId)) {
-                  debugPrint(
-                      "[Save] ↩️ Reverting to original save status: $isCurrentlySaved");
-                  return post.copyWith(
-                    isSaved: isCurrentlySaved,
-                  );
-                }
-                return post;
-              }).toList();
-
-              /// **Update State with Reverted Data**
-              final revertedResponse = response.copyWith(
-                data: response.data!.copyWith(data: [...revertedPosts]),
-              );
-
-              debugPrint("[Save] 🔄 Rollback UI Due to API Failure");
-              return SavedPostsState.loaded(
-                revertedResponse,
-                '',
-                '',
-                false,
-                false,
-                false,
-                changeCounter,
-              );
-            },
-            orElse: () => state,
-          ),
-        );
+        if (targetPost != null) {
+          if (saveOrUnsave == 'save') {
+            removeSavedPost(postId);
+          } else {
+            upsertSavedPost(targetPost!);
+          }
+        }
+        ProfilePostCounts.revertSaveOrUnsave(saveOrUnsave);
       },
       (success) {
         debugPrint("[Save] ✅ API Success: $saveOrUnsave applied successfully");
@@ -398,6 +417,7 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
       },
       (success) {
         // delete post from the list
+        ProfilePostCounts.onOwnPostDeleted(wasSaved: true);
 
         emit(
           state.maybeMap(

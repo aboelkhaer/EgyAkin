@@ -161,51 +161,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     }
   }
 
-  IconData _iconForQuestion(String? question) {
-    final q = (question ?? '').toLowerCase();
-    if (q.contains('name')) return Icons.person_outline_rounded;
-    if (q.contains('hospital')) return Icons.apartment_rounded;
-    if (q.contains('department')) return Icons.medical_services_outlined;
-    if (q.contains('collect') || q.contains('from')) {
-      return Icons.groups_outlined;
-    }
-    if (q.contains('email')) return Icons.mail_outline_rounded;
-    if (q.contains('age')) return Icons.cake_outlined;
-    if (q.contains('gender') || q.contains('sex')) {
-      return Icons.wc_outlined;
-    }
-    if (q.contains('occupation') || q.contains('job')) {
-      return Icons.work_outline_rounded;
-    }
-    if (q.contains('phone') || q.contains('mobile')) {
-      return Icons.phone_outlined;
-    }
-    if (q.contains('national') || q.contains('id')) {
-      return Icons.badge_outlined;
-    }
-    if (q.contains('address')) return Icons.location_on_outlined;
-    if (q.contains('duration') || q.contains('time')) {
-      return Icons.schedule_outlined;
-    }
-    if (q.contains('complain') || q.contains('symptom')) {
-      return Icons.monitor_heart_outlined;
-    }
-    if (q.contains('marital')) return Icons.favorite_border_rounded;
-    if (q.contains('education')) return Icons.school_outlined;
-    if (q.contains('habit')) return Icons.smoking_rooms_outlined;
-    if (q.contains('child') || q.contains('kids') || q.contains('offspring')) {
-      return Icons.child_care_outlined;
-    }
-    return Icons.edit_outlined;
-  }
-
-  bool _isOthersSelected(AddPatientCubit cubit, String questionId) {
-    final data = cubit.formData[questionId];
-    if (data is! Map) return false;
-    final answers = data[AppStrings.answers];
-    return answers == AppStrings.others || answers == 'Others';
-  }
-
   bool _shouldShowAiBadge({
     required AddPatientCubit cubit,
     required QuestionModel question,
@@ -261,8 +216,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
         final scaffold = HomeDashboardColors.scaffold(isDark);
         final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
-        final inputBg =
-            isDark ? const Color(0xFF141416) : const Color(0xFFF3F4F6);
         final titleColor = HomeDashboardColors.title(isDark);
         final muted = HomeDashboardColors.subtitle(isDark);
 
@@ -510,10 +463,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                           question.mandatory == true ||
                                               question.question ==
                                                   AppStrings.nationalID;
-                                      final isMultiple = question.type ==
-                                          AppStrings.multipleType;
                                       final questionId = question.id.toString();
                                       const errorRed = Color(0xFFEF4444);
+                                      final showAi = _shouldShowAiBadge(
+                                        cubit: cubit,
+                                        question: question,
+                                        questionId: questionId,
+                                      );
 
                                       return ValueListenableBuilder<String?>(
                                         valueListenable: _invalidHighlightId,
@@ -623,9 +579,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                    color: isInvalidHighlight
-                                                                        ? errorRed
-                                                                        : primary,
+                                                                    color:
+                                                                        primary,
                                                                   ),
                                                                 ),
                                                                 TextSpan(
@@ -635,12 +590,14 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
-                                                                        11.sp,
+                                                                        12.sp,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w700,
                                                                     color:
                                                                         titleColor,
+                                                                    height:
+                                                                        1.25,
                                                                   ),
                                                                 ),
                                                                 if (isRequired)
@@ -649,10 +606,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
-                                                                          11.sp,
+                                                                          12.sp,
                                                                       fontWeight:
                                                                           FontWeight
-                                                                              .w700,
+                                                                              .w800,
                                                                       color:
                                                                           errorRed,
                                                                     ),
@@ -661,12 +618,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                             ),
                                                           ),
                                                         ),
-                                                        if (_shouldShowAiBadge(
-                                                          cubit: cubit,
-                                                          question: question,
-                                                          questionId:
-                                                              questionId,
-                                                        )) ...[
+                                                        if (showAi) ...[
                                                           SizedBox(width: 8.w),
                                                           const AiFilledFieldBanner(
                                                             compact: true,
@@ -674,208 +626,25 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                         ],
                                                       ],
                                                     ),
-                                                    SizedBox(height: 8.h),
-                                                    if (isMultiple)
-                                                      buildQuestionWidget(
+                                                    SizedBox(height: 10.h),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        cubit.clearInvalidHighlight(
+                                                          questionId,
+                                                        );
+                                                        _invalidHighlightId
+                                                            .value = null;
+                                                      },
+                                                      behavior: HitTestBehavior
+                                                          .translucent,
+                                                      child:
+                                                          buildQuestionWidget(
                                                         questions,
                                                         index,
                                                         size,
                                                         cubit,
-                                                      )
-                                                    else ...[
-                                                      // No fixed height — FormField error
-                                                      // text must be allowed to grow.
-                                                      Container(
-                                                        constraints:
-                                                            BoxConstraints(
-                                                          minHeight: 44.h,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: inputBg,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                            12.r,
-                                                          ),
-                                                          border: Border.all(
-                                                            color: isInvalidHighlight
-                                                                ? errorRed
-                                                                    .withOpacity(
-                                                                        0.85)
-                                                                : primary
-                                                                    .withOpacity(
-                                                                        0.75),
-                                                            width: 1.2,
-                                                          ),
-                                                        ),
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 10.w,
-                                                          vertical: 2.h,
-                                                        ),
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .only(
-                                                                top: 12.h,
-                                                              ),
-                                                              child: Icon(
-                                                                _iconForQuestion(
-                                                                  question
-                                                                      .question,
-                                                                ),
-                                                                size: 15.sp,
-                                                                color:
-                                                                    isInvalidHighlight
-                                                                        ? errorRed
-                                                                        : muted,
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                width: 6.w),
-                                                            Expanded(
-                                                              child:
-                                                                  buildQuestionWidget(
-                                                                questions,
-                                                                index,
-                                                                size,
-                                                                cubit,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
                                                       ),
-                                                      if (question.type ==
-                                                              AppStrings
-                                                                  .questionTypeSelect &&
-                                                          _isOthersSelected(
-                                                            cubit,
-                                                            questionId,
-                                                          )) ...[
-                                                        SizedBox(height: 8.h),
-                                                        Container(
-                                                          height: 44.h,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: inputBg,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                              12.r,
-                                                            ),
-                                                            border: Border.all(
-                                                              color: primary
-                                                                  .withOpacity(
-                                                                      0.75),
-                                                              width: 1.2,
-                                                            ),
-                                                          ),
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 10.w,
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .edit_note_rounded,
-                                                                size: 15.sp,
-                                                                color: muted,
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 6.w),
-                                                              Expanded(
-                                                                child:
-                                                                    CustomTextFormField(
-                                                                  title: context
-                                                                      .tr(
-                                                                    AppStrings
-                                                                        .answerHere,
-                                                                  ),
-                                                                  initialValue:
-                                                                      () {
-                                                                    final raw =
-                                                                        cubit.formData[
-                                                                            questionId];
-                                                                    if (raw
-                                                                        is Map) {
-                                                                      final other =
-                                                                          raw[AppStrings
-                                                                              .otherField];
-                                                                      if (other
-                                                                          is String) {
-                                                                        return other;
-                                                                      }
-                                                                    }
-                                                                    return '';
-                                                                  }(),
-                                                                  textInputType:
-                                                                      TextInputType
-                                                                          .text,
-                                                                  textInputAction:
-                                                                      TextInputAction
-                                                                          .next,
-                                                                  fillColor: Colors
-                                                                      .transparent,
-                                                                  isCreatePostInCommunity:
-                                                                      true,
-                                                                  contentPadding:
-                                                                      EdgeInsets
-                                                                          .symmetric(
-                                                                    horizontal:
-                                                                        2.w,
-                                                                    vertical:
-                                                                        8.h,
-                                                                  ),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        12.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
-                                                                  validator:
-                                                                      (_) =>
-                                                                          null,
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    final map = Map<
-                                                                        String,
-                                                                        dynamic>.from(
-                                                                      cubit.formData[questionId]
-                                                                              as Map? ??
-                                                                          {
-                                                                            AppStrings.answers:
-                                                                                AppStrings.others,
-                                                                            AppStrings.otherField:
-                                                                                '',
-                                                                          },
-                                                                    );
-                                                                    map[AppStrings
-                                                                            .otherField] =
-                                                                        value;
-                                                                    cubit.formData[
-                                                                            questionId] =
-                                                                        map;
-                                                                    cubit
-                                                                        .clearAiFilledMark(
-                                                                      questionId,
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ],
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -1062,6 +831,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           }(),
           index: index,
           isAddPatient: true,
+          compact: true,
           showAiFilledBanner: false,
           onClearAiFilledMark: () => cubit.clearAiFilledMark(qid),
           textInputFormatter:
@@ -1125,6 +895,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           index: index,
           formData: cubit.formData,
           isAddPatient: true,
+          overlayLeadingInset: 0,
+          embedOthersField: true,
+          showFieldBorder: true,
           showAiFilledBanner: false,
           onClearAiFilledMark: () => cubit.clearAiFilledMark(qidSelect),
           selected: initialValueInSelectQuestion(
@@ -1147,7 +920,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             _invalidHighlightId.value = null;
             setState(() {
               answerMapForSelect[AppStrings.answers] = val ?? '';
-              if (val != AppStrings.others) {
+              if (val != AppStrings.others && val != 'Others') {
                 answerMapForSelect[AppStrings.otherField] = AppStrings.empty;
               }
               cubit.formData[qidSelect] = Map<dynamic, dynamic>.from(

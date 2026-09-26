@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/community/data/models/trending_fake_data.dart';
 import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_state.dart';
+import 'package:egy_akin/features/community/presentation/widgets/community_chrome_scope.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../../exports.dart';
@@ -77,6 +78,7 @@ class _TrendingTabState extends State<TrendingTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final chromeInset = CommunityChromeScope.of(context);
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
@@ -97,23 +99,23 @@ class _TrendingTabState extends State<TrendingTab>
             },
             builder: (context, state) {
               return state.maybeWhen(
-                orElse: () => const SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    child: LoadingForGroupRow(
-                      count: 12,
-                      isTrends: true,
-                    ),
+                orElse: () => SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(20, chromeInset + 20, 20, 20),
+                  child: const LoadingForGroupRow(
+                    count: 12,
+                    isTrends: true,
                   ),
                 ),
                 error: (_) => RefreshIndicator(
                   onRefresh: _onRefresh,
                   color: primary,
+                  edgeOffset: chromeInset,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(
                       parent: BouncingScrollPhysics(),
                     ),
+                    padding: EdgeInsets.only(top: chromeInset),
                     children: [
                       SizedBox(height: 120.h),
                       Center(
@@ -132,10 +134,12 @@ class _TrendingTabState extends State<TrendingTab>
                     return RefreshIndicator(
                       onRefresh: _onRefresh,
                       color: primary,
+                      edgeOffset: chromeInset,
                       child: ListView(
                         physics: const AlwaysScrollableScrollPhysics(
                           parent: BouncingScrollPhysics(),
                         ),
+                        padding: EdgeInsets.only(top: chromeInset),
                         children: [
                           SizedBox(height: 120.h),
                           Center(
@@ -167,12 +171,18 @@ class _TrendingTabState extends State<TrendingTab>
                   return RefreshIndicator(
                     onRefresh: _onRefresh,
                     color: primary,
+                    edgeOffset: chromeInset,
                     child: ListView(
                       controller: _scrollController,
                       physics: const AlwaysScrollableScrollPhysics(
                         parent: BouncingScrollPhysics(),
                       ),
-                      padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 100.h),
+                      padding: EdgeInsets.fromLTRB(
+                        14.w,
+                        chromeInset + 6.h,
+                        14.w,
+                        100.h,
+                      ),
                       children: [
                         _FeaturedRow(
                           topic: featured,

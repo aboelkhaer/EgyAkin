@@ -1,3 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:egy_akin/features/chat/data/services/chat_push_delivery_ack.dart';
+import 'package:egy_akin/features/chat/data/services/chat_push_navigation.dart';
+import 'package:egy_akin/injection_container.dart' as di;
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'exports.dart';
 
 class NotificationServices {
@@ -5,27 +14,29 @@ class NotificationServices {
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  final Set<String> shownNotifications = {}; // Track shown notifications
-  int notificationCounter = 0; // Counter for unique notification IDs
+  final Set<String> shownNotifications = {};
+  int notificationCounter = 0;
+  bool _firebaseHandlersBound = false;
+  bool _localNotificationsReady = false;
+  Future<void>? _localNotificationsInit;
+  bool _coldStartCaptureStarted = false;
+  bool _initialMessageHandled = false;
 
-  NotificationServices() {
-    _initializeLocalNotifications();
-    createNotificationChannel();
-  }
+  static const _iosPushChannel = MethodChannel('com.incode.EgyAkin/push');
+
+  NotificationServices();
+
   Future<void> createNotificationChannel() async {
     AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance_channel', // Channel ID
-      'high_importance_channel', // Channel name
-      description:
-          'This channel is used for important notifications.', // Channel description
+      'high_importance_channel',
+      'high_importance_channel',
+      description: 'This channel is used for important notifications.',
       importance: Importance.max,
       playSound: true,
       enableVibration: true,
-      showBadge: true, // Shows badge for the app icon
-
+      showBadge: true,
       sound: const RawResourceAndroidNotificationSound('notification'),
-      vibrationPattern:
-          Int64List.fromList([0, 1000, 500, 1000]), // Vibration pattern
+      vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
     );
 
     await _localNotificationsPlugin
@@ -73,111 +84,533 @@ class NotificationServices {
       default:
         break;
     }
+
+    // Prefer local notifications for foreground banners so taps always carry
+    // our JSON payload (system iOS banners often don't route with data).
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: true,
+      sound: false,
+    );
   }
 
-  Future<void> _initializeLocalNotifications() async {
+  /// Capture killed→tap payloads as early as possible (before permissions /
+  /// splash finish). Queues only — does not navigate until home is ready.
+  Future<void> captureColdStartLaunch() async {
+    if (_coldStartCaptureStarted) return;
+    _coldStartCaptureStarted = true;
+
+    // Local-notification launch path (Android / some iOS) — init plugin first.
+    await ensureLocalNotificationsReady(openLaunchPayload: false);
+    await _captureLocalNotificationLaunchDetails();
+
+    // iOS AppDelegate writes flutter.* SharedPreferences keys at launch —
+    // readable immediately, no MethodChannel race.
+    await _captureSharedPrefsColdStartFallback();
+
+    // FCM terminated-state message + MethodChannel fallback (retrying).
+    unawaited(_captureInitialMessageForColdStart());
+    unawaited(_captureIosNativeColdStartFallback());
+  }
+
+  Future<void> ensureLocalNotificationsReady({
+    bool openLaunchPayload = true,
+  }) async {
+    if (_localNotificationsReady) {
+      await _localNotificationsInit;
+      return;
+    }
+    _localNotificationsInit ??= _initLocalNotifications(
+      openLaunchPayload: openLaunchPayload,
+    );
+    await _localNotificationsInit;
+  }
+
+  Future<void> _initLocalNotifications({
+    required bool openLaunchPayload,
+  }) async {
+    await createNotificationChannel();
+
     const androidInitSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosInitSettings = DarwinInitializationSettings();
+    const iosInitSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
 
     const initSettings = InitializationSettings(
       android: androidInitSettings,
       iOS: iosInitSettings,
     );
 
-    await _localNotificationsPlugin.initialize(initSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse response) {
-      if (response.payload != null) {
-        debugPrint('Notification tapped with payload: ${response.payload}');
-      }
-    });
-  }
+    await _localNotificationsPlugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        try {
+          if (response.payload == null) return;
+          debugPrint('Notification tapped with payload: ${response.payload}');
+          unawaited(
+            ChatPushDeliveryAck.ackFromPayloadString(response.payload),
+          );
+          _openFromPayload(response.payload);
+        } catch (e, st) {
+          debugPrint('Local notification tap failed: $e\n$st');
+        }
+      },
+    );
 
-  void firebaseInit(BuildContext context) {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleForegroundMessage(message);
-    });
+    _localNotificationsReady = true;
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _handleMessage(context, message);
-    });
-
-    _handleInitialMessage(context);
-  }
-
-  Future<void> _handleInitialMessage(BuildContext context) async {
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      _handleMessage(context, initialMessage);
+    if (openLaunchPayload) {
+      await _captureLocalNotificationLaunchDetails();
     }
+  }
+
+  Future<void> _captureLocalNotificationLaunchDetails() async {
+    try {
+      final launch =
+          await _localNotificationsPlugin.getNotificationAppLaunchDetails();
+      if (launch?.didNotificationLaunchApp != true) return;
+      final payload = launch?.notificationResponse?.payload;
+      if (payload == null || payload.isEmpty) return;
+
+      // Android can keep returning the same launch details on later cold
+      // starts. Skip if we already consumed this exact launch payload.
+      final prefs = await SharedPreferences.getInstance();
+      const handledKey = 'local_notif_launch_handled_v1';
+      final responseId = launch?.notificationResponse?.id?.toString() ?? '';
+      final fingerprint = '$responseId|${payload.hashCode}|$payload';
+      if (prefs.getString(handledKey) == fingerprint) {
+        debugPrint(
+          'Ignoring already-handled local notification launch payload',
+        );
+        return;
+      }
+      await prefs.setString(handledKey, fingerprint);
+
+      debugPrint('App launched from local notification payload');
+      unawaited(ChatPushDeliveryAck.ackFromPayloadString(payload));
+      _queueOrOpenFromPayload(payload);
+    } catch (e, st) {
+      debugPrint('getNotificationAppLaunchDetails failed: $e\n$st');
+    }
+  }
+
+  /// iOS UIScene can resolve getInitialMessage as null forever if called too
+  /// early — wait briefly, then call ONCE (the API is one-shot).
+  Future<void> _captureInitialMessageForColdStart() async {
+    if (_initialMessageHandled) return;
+    try {
+      if (Platform.isIOS) {
+        // Give scene / notificationResponse time to land before the one-shot.
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+      }
+      if (_initialMessageHandled) return;
+      _initialMessageHandled = true;
+      final initialMessage =
+          await FirebaseMessaging.instance.getInitialMessage();
+      if (initialMessage == null) {
+        debugPrint('getInitialMessage: null (no FCM cold-start open)');
+        // Re-check native prefs — UNUserNotificationCenter may have stored
+        // after our first SharedPreferences read.
+        await _captureSharedPrefsColdStartFallback();
+        return;
+      }
+      debugPrint(
+        'getInitialMessage: cold-start data=${initialMessage.data}',
+      );
+      _queueOrOpenFromRemoteMessage(initialMessage);
+      unawaited(
+        ChatPushDeliveryAck.ackFromRemoteMessageData(initialMessage.data),
+      );
+    } catch (e, st) {
+      _initialMessageHandled = true;
+      debugPrint('getInitialMessage failed: $e\n$st');
+    }
+  }
+
+  /// Called from home after shell load — pull any late native/prefs payload.
+  Future<void> recaptureColdStartIfNeeded() async {
+    await _captureSharedPrefsColdStartFallback();
+    if (Platform.isIOS) {
+      try {
+        final raw = await _iosPushChannel.invokeMethod<dynamic>(
+          'takeColdStartPushUserInfo',
+        );
+        if (raw is Map) {
+          final data = ChatPushNavigation.normalizeData(
+            Map<String, dynamic>.from(raw),
+          );
+          if (data.isNotEmpty) {
+            ChatPushNavigation.queueColdStartData(data);
+          }
+        }
+      } catch (_) {}
+    }
+  }
+
+  /// AppDelegate mirrors launch userInfo into SharedPreferences (`flutter.*`).
+  Future<void> _captureSharedPrefsColdStartFallback() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      const jsonKey = 'egyakin_cold_start_push_v1';
+      const tsKey = 'egyakin_cold_start_push_ts';
+      final raw = prefs.getString(jsonKey);
+      final ts = prefs.getDouble(tsKey) ?? 0;
+      if (raw == null || raw.isEmpty) return;
+
+      final age = DateTime.now().millisecondsSinceEpoch / 1000.0 - ts;
+      await prefs.remove(jsonKey);
+      await prefs.remove(tsKey);
+      if (ts > 0 && (age < 0 || age > 120)) {
+        debugPrint('SharedPrefs cold-start push expired age=$age');
+        return;
+      }
+
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return;
+      final data = ChatPushNavigation.normalizeData(
+        Map<String, dynamic>.from(decoded),
+      );
+      if (data.isEmpty) return;
+      debugPrint(
+        'SharedPrefs cold-start push keys=${data.keys.toList()}',
+      );
+      final queued = ChatPushNavigation.queueColdStartData(data);
+      if (queued) {
+        unawaited(ChatPushDeliveryAck.ackFromRemoteMessageData(data));
+        ChatPushNavigation.flushPending();
+      }
+    } catch (e, st) {
+      debugPrint('SharedPrefs cold-start push failed: $e\n$st');
+    }
+  }
+
+  Future<void> _captureIosNativeColdStartFallback() async {
+    if (!Platform.isIOS) return;
+    try {
+      // Retry — channel may register a few hundred ms after launch.
+      for (var attempt = 0; attempt < 8; attempt++) {
+        if (attempt > 0) {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        } else {
+          await Future<void>.delayed(const Duration(milliseconds: 600));
+        }
+        try {
+          final raw = await _iosPushChannel.invokeMethod<dynamic>(
+            'takeColdStartPushUserInfo',
+          );
+          if (raw is! Map) {
+            // Also re-check SharedPreferences on each attempt.
+            await _captureSharedPrefsColdStartFallback();
+            continue;
+          }
+          final data = ChatPushNavigation.normalizeData(
+            Map<String, dynamic>.from(raw),
+          );
+          if (data.isEmpty) continue;
+          debugPrint('iOS native cold-start push fallback keys=${data.keys}');
+          final queued = ChatPushNavigation.queueColdStartData(data);
+          if (queued) {
+            unawaited(ChatPushDeliveryAck.ackFromRemoteMessageData(data));
+            ChatPushNavigation.flushPending();
+          }
+          return;
+        } on MissingPluginException {
+          await _captureSharedPrefsColdStartFallback();
+        } catch (_) {
+          await _captureSharedPrefsColdStartFallback();
+        }
+      }
+    } catch (e, st) {
+      debugPrint('iOS cold-start push fallback failed: $e\n$st');
+    }
+  }
+
+  void firebaseInit() {
+    if (_firebaseHandlersBound) return;
+    _firebaseHandlersBound = true;
+
+    // Cold-start capture may already be in flight from [captureColdStartLaunch].
+    unawaited(captureColdStartLaunch());
+    unawaited(ensureLocalNotificationsReady());
+
+    // App in FOREGROUND: show banner / refresh inbox — do not navigate.
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      unawaited(_handleForegroundMessage(message));
+    });
+
+    // App was BACKGROUNDED: user tapped the system notification.
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      unawaited(_handleMessageOpened(message));
+    });
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    debugPrint("Received FCM message: ${message.data}");
+    try {
+      debugPrint('Received FCM message: ${message.data}');
 
-    RemoteNotification? notification = message.notification;
+      unawaited(ChatPushDeliveryAck.ackFromRemoteMessageData(message.data));
+      ChatPushNavigation.onForegroundChatPush(message.data);
 
-    if (notification != null) {
-      debugPrint("Notification id: ${notification.hashCode}");
-      debugPrint("Notification title: ${notification.title}");
-      debugPrint("Notification body: ${notification.body}");
+      final notification = message.notification;
+      if (notification == null && message.data.isEmpty) return;
 
-      // Check for silent notifications
       if (message.data['silent'] == 'true') {
-        debugPrint("Received a silent notification. Not showing locally.");
-        return; // Skip showing local notification
+        debugPrint('Received a silent notification. Not showing locally.');
+        return;
       }
 
-      // Use a unique notification ID that fits within the 32-bit range
-      int notificationId = notificationCounter++;
-
-      // Only show the notification if it hasn't been shown yet
-      if (!shownNotifications.contains(notificationId.toString())) {
-        shownNotifications.add(notificationId.toString());
-        await _showNotification(message, notificationId.toString());
-      } else {
-        debugPrint("Notification already shown: $notificationId");
+      // Always show a local notification with JSON payload so tap opens chat.
+      await ensureLocalNotificationsReady();
+      final notificationId = notificationCounter++;
+      final idKey = notificationId.toString();
+      if (!shownNotifications.contains(idKey)) {
+        shownNotifications.add(idKey);
+        await _showNotification(message, idKey);
       }
+    } catch (e, st) {
+      debugPrint('Foreground push handle failed: $e\n$st');
     }
   }
 
-  Future<void> _handleMessage(
-      BuildContext context, RemoteMessage message) async {
-    debugPrint('In handleMessage function');
-    String? notificationType = message.data['type'];
+  Future<void> _handleMessageOpened(RemoteMessage message) async {
+    try {
+      debugPrint(
+        'In handleMessageOpened function data=${message.data} '
+        'notif=${message.notification?.title}',
+      );
+      // Navigate first — ack must never delay / crash the open path.
+      // Defer one frame so resume / Metal surface can settle (esp. iOS).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _openFromRemoteMessage(message);
+      });
+      unawaited(ChatPushDeliveryAck.ackFromRemoteMessageData(message.data));
+    } catch (e, st) {
+      debugPrint('Push open handle failed: $e\n$st');
+    }
+  }
 
-    if (notificationType == 'text') {
-      // Navigator.of(context).pushNamed('/textScreen');
-    } else if (notificationType == 'alert') {
-      // Navigator.of(context).pushNamed('/alertScreen');
+  void _queueOrOpenFromRemoteMessage(RemoteMessage message) {
+    final data = ChatPushNavigation.normalizeData(
+      Map<String, dynamic>.from(message.data),
+    );
+    if (data.isEmpty) {
+      debugPrint(
+        'Push cold-start: empty data map — cannot route '
+        '(backend must put chat_type/context_id in FCM data)',
+      );
+      return;
+    }
+    // Always queue first on cold start; home flush opens when ready.
+    final queued = ChatPushNavigation.queueColdStartData(data);
+    if (!queued) {
+      _openNonChatTarget(data);
+      return;
+    }
+    ChatPushNavigation.flushPending();
+  }
+
+  void _openFromRemoteMessage(RemoteMessage message) {
+    final data = ChatPushNavigation.normalizeData(
+      Map<String, dynamic>.from(message.data),
+    );
+    // If data is empty on iOS, still try to open when session can flush later.
+    if (data.isEmpty) {
+      debugPrint(
+        'Push open: empty data map — cannot route '
+        '(backend must put chat_type/context_id in FCM data)',
+      );
+      // Still flush any previously queued local-notification payload.
+      ChatPushNavigation.flushPending();
+      return;
+    }
+    final openedChat = ChatPushNavigation.openFromData(data);
+    if (!openedChat) {
+      _openNonChatTarget(data);
+    }
+  }
+
+  void _queueOrOpenFromPayload(String? payload) {
+    if (payload == null || payload.trim().isEmpty) return;
+    try {
+      final decoded = jsonDecode(payload);
+      if (decoded is! Map) return;
+      final data = ChatPushNavigation.normalizeData(
+        Map<String, dynamic>.from(decoded),
+      );
+      final queued = ChatPushNavigation.queueColdStartData(data);
+      if (!queued) {
+        _openNonChatTarget(data);
+        return;
+      }
+      ChatPushNavigation.flushPending();
+    } catch (e) {
+      debugPrint('Push payload cold-start queue failed: $e');
+    }
+  }
+
+  void _openFromPayload(String? payload) {
+    if (payload == null || payload.trim().isEmpty) return;
+    try {
+      final decoded = jsonDecode(payload);
+      if (decoded is! Map) return;
+      final data = ChatPushNavigation.normalizeData(
+        Map<String, dynamic>.from(decoded),
+      );
+      final openedChat = ChatPushNavigation.openFromData(data);
+      if (!openedChat) {
+        _openNonChatTarget(data);
+      }
+    } catch (e) {
+      debugPrint('Push payload open failed: $e');
+    }
+  }
+
+  /// Best-effort routing for non-chat pushes (matches in-app notification types).
+  void _openNonChatTarget(Map<String, dynamic> data) {
+    final type = (data['type'] ?? '').toString().trim();
+    if (type.isEmpty) {
+      debugPrint('Push open: unknown payload keys=${data.keys.toList()}');
+      return;
+    }
+    if (!_sessionReadyForNav()) {
+      debugPrint('Push open: session not ready for type=$type');
+      return;
+    }
+
+    try {
+      final home = di.sl<HomeCubit>();
+      final doctor = home.currentDoctorModel;
+      final homeData = home.homeDataModel;
+      final typeId = data['type_id'] ?? data['typeId'] ?? data['id'];
+      final role = home.currentDoctorRole;
+      final points = int.tryParse(home.doctorScore ?? '') ?? 0;
+
+      switch (type) {
+        case 'Consultation':
+          final consultationId = typeId?.toString();
+          if (consultationId == null || consultationId.isEmpty) break;
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.consultationDetails,
+            arguments: AppRoutesArgs.consultationDetailsRouteArgs(
+              homeDataModel: homeData,
+              currentDoctorModel: doctor,
+              patientName: (data['patient_name'] ?? data['patientName'] ?? '')
+                  .toString(),
+              consultationId: consultationId,
+              isReceivedConsultation: true,
+              isOpen: data['is_open']?.toString() != 'false',
+            ),
+          );
+          return;
+        case 'New Patient':
+          final patientId =
+              (data['patient_id'] ?? data['patientId'] ?? typeId)?.toString();
+          if (patientId == null || patientId.isEmpty) break;
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.patientSections,
+            arguments: AppRoutesArgs.patientSectionsRouteArguments(
+              patientId: patientId,
+              currentDoctorRole: role,
+              currentDoctorPoints: points,
+              currentDoctorModel: doctor,
+              homeDataModel: homeData,
+              isAllDataOpen: false,
+            ),
+          );
+          return;
+        case 'Post':
+        case 'PostLike':
+        case 'PostComment':
+        case 'CommentLike':
+          final feedId = typeId?.toString();
+          if (feedId == null || feedId.isEmpty) break;
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.showSingleFeed,
+            arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+              homeDataModel: homeData,
+              currentDoctorModel: doctor,
+              feed: const PostCommunityModel(),
+              isComeFromNotification: true,
+              feedId: feedId,
+              showPostFrom: ShowPostFromEnum.notification.name,
+            ),
+          );
+          return;
+        case 'group_invitation':
+        case 'group_invitation_accepted':
+        case 'group_join_request':
+          final groupId = typeId?.toString();
+          if (groupId == null || groupId.isEmpty) break;
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.groupDetailsInCommunity,
+            arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
+              groupId: groupId,
+              currentDoctorModel: doctor,
+              homeDataModel: homeData,
+            ),
+          );
+          return;
+        default:
+          debugPrint('Push open: no route for type=$type');
+      }
+    } catch (e, st) {
+      debugPrint('Non-chat push open failed: $e\n$st');
+    }
+  }
+
+  bool _sessionReadyForNav() {
+    try {
+      if (!di.sl.isRegistered<HomeCubit>()) return false;
+      final home = di.sl<HomeCubit>();
+      final doctorId = home.currentDoctorModel.id;
+      if (doctorId == null || doctorId == 0) return false;
+      return home.state.maybeWhen(
+        loaded: (
+          _,
+          __,
+          ___,
+          ____,
+          _____,
+          ______,
+          _______,
+          ________,
+          _________,
+          __________,
+        ) =>
+            true,
+        orElse: () => false,
+      );
+    } catch (_) {
+      return false;
     }
   }
 
   Future<void> _showNotification(
-      RemoteMessage message, String notificationId) async {
+    RemoteMessage message,
+    String notificationId,
+  ) async {
     final androidDetails = AndroidNotificationDetails(
-      'high_importance_channel', // Channel ID
-      'high_importance_channel', // Channel name
+      'high_importance_channel',
+      'high_importance_channel',
       channelDescription:
-          'This channel is used for important notifications.', // Channel description
+          'This channel is used for important notifications.',
       importance: Importance.max,
       priority: Priority.high,
-      playSound: true, // Ensure playSound is true
+      playSound: true,
       channelShowBadge: true,
       enableVibration: true,
       icon: '@mipmap/ic_launcher',
       sound: const RawResourceAndroidNotificationSound('notification'),
-      vibrationPattern:
-          Int64List.fromList([0, 1000, 500, 1000]), // Vibration pattern
+      vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
     );
 
     const iOSDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-      // sound:
-      //     'notification',
       presentBanner: true,
       interruptionLevel: InterruptionLevel.timeSensitive,
       presentList: true,
@@ -188,11 +621,26 @@ class NotificationServices {
       iOS: iOSDetails,
     );
 
+    final title = message.notification?.title ??
+        (message.data['title'] ?? message.data['sender_name'] ?? 'EgyAkin')
+            .toString();
+    final body = message.notification?.body ??
+        (message.data['body'] ?? message.data['content'] ?? '').toString();
+
+    // Prefer full data map so tap can open the chat / target screen.
+    final payloadMap = ChatPushNavigation.normalizeData(
+      Map<String, dynamic>.from(message.data),
+    );
+    if (payloadMap.isEmpty && message.notification != null) {
+      // Nothing to route — still show the banner.
+    }
+
     await _localNotificationsPlugin.show(
-        int.parse(notificationId), // Unique ID for each notification
-        message.notification?.title ?? 'No Title',
-        message.notification?.body ?? 'No Body',
-        notificationDetails,
-        payload: message.data.toString());
+      int.parse(notificationId),
+      title,
+      body.isEmpty ? null : body,
+      notificationDetails,
+      payload: jsonEncode(payloadMap.isEmpty ? message.data : payloadMap),
+    );
   }
 }

@@ -80,61 +80,13 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                             files:
                                 convertDynamicListToStringList(question.answer))
                         : Text(
-                            question.type == AppStrings.questionTypeMultiple
-                                ? convertDynamicToString(question)
-                                : question.type == AppStrings.questionTypeSelect
-                                    ? showAnswerWithSelectType(question.answer)
-                                    : question.type ==
-                                            AppStrings.questionTypeDate
-                                        ? formatDateTime(question.answer)
-                                        : question.type ==
-                                                AppStrings
-                                                    .questionTypeRepeatable
-                                            ? formatRepeatableAnswerForDisplay(
-                                                question.answer)
-                                            : question.question ==
-                                                AppStrings.nationalID
-                                            ? (currentDoctorId == doctorId ||
-                                                    canViewPatientIdentity)
-                                                ? question.answer ?? '...'
-                                                : hideNationalId(
-                                                    question.answer ?? '...')
-                                            : question.question == 'Name'
-                                                ? (currentDoctorId ==
-                                                            doctorId ||
-                                                        canViewPatientIdentity)
-                                                    ? question.answer ?? '...'
-                                                    : isAllDataOpen
-                                                        ? question.answer ??
-                                                            '...'
-                                                        : convertTextToSymbols(
-                                                            question.answer)
-                                                : question.question == 'Phone'
-                                                    ? (currentDoctorId ==
-                                                                doctorId ||
-                                                            canViewPatientIdentity)
-                                                        ? question.answer ??
-                                                            '...'
-                                                        : isAllDataOpen
-                                                            ? question.answer ??
-                                                                '...'
-                                                            : hideNationalId(
-                                                                question.answer)
-                                                    : question.question ==
-                                                            'Email'
-                                                        ? currentDoctorId ==
-                                                                doctorId
-                                                            ? question.answer ??
-                                                                '...'
-                                                            : isAllDataOpen
-                                                                ? question
-                                                                        .answer ??
-                                                                    '...'
-                                                                : hideEmail(
-                                                                    question
-                                                                        .answer)
-                                                        : question.answer ??
-                                                            '...',
+                            _resolvedSubmittedAnswer(
+                              question: question,
+                              currentDoctorId: currentDoctorId,
+                              doctorId: doctorId,
+                              isAllDataOpen: isAllDataOpen,
+                              canViewPatientIdentity: canViewPatientIdentity,
+                            ),
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: isDarkMode
@@ -158,15 +110,96 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
   }
 }
 
-String getAnswerText(dynamic answer) {
-  if (answer is String) {
-    return answer; // If it's already a string, return it.
-  } else if (answer is Map<String, dynamic>) {
-    // If it's a Map, attempt to retrieve the string.
-    return answer.values.isNotEmpty
-        ? answer.values.first.toString()
-        : ''; // Adjust this based on your expected key.
-  } else {
-    return ''; // Return a default value if the type is unexpected.
+String _resolvedSubmittedAnswer({
+  required QuestionModel question,
+  required String currentDoctorId,
+  required String doctorId,
+  required bool isAllDataOpen,
+  required bool canViewPatientIdentity,
+}) {
+  final raw = answerAsDisplayString(question);
+  final q = question.question;
+
+  if (q == AppStrings.nationalID) {
+    if (currentDoctorId == doctorId || canViewPatientIdentity) return raw;
+    return hideNationalId(raw);
   }
+  if (q == 'Name') {
+    if (currentDoctorId == doctorId ||
+        canViewPatientIdentity ||
+        isAllDataOpen) {
+      return raw;
+    }
+    return convertTextToSymbols(raw);
+  }
+  if (q == 'Phone') {
+    if (currentDoctorId == doctorId ||
+        canViewPatientIdentity ||
+        isAllDataOpen) {
+      return raw;
+    }
+    return hideNationalId(raw);
+  }
+  if (q == 'Email') {
+    if (currentDoctorId == doctorId || isAllDataOpen) return raw;
+    return hideEmail(raw);
+  }
+  return raw;
+}
+
+String getAnswerText(dynamic answer) {
+  if (answer == null) return '';
+  if (answer is String) return answer;
+  if (answer is num || answer is bool) return answer.toString();
+  if (answer is Map) {
+    final map = Map<String, dynamic>.from(
+      answer.map((k, v) => MapEntry(k.toString(), v)),
+    );
+    if (map.containsKey(AppStrings.answers)) {
+      return showAnswerWithSelectType(map);
+    }
+    return map.values.isNotEmpty ? map.values.first.toString() : '';
+  }
+  if (answer is List) {
+    return answer.map((e) => e?.toString() ?? '').join(', ');
+  }
+  return answer.toString();
+}
+
+/// Safe display text for any question answer (API may send int/num for labs).
+String answerAsDisplayString(QuestionModel question) {
+  final answer = question.answer;
+  if (answer == null) return '...';
+
+  final type = question.type;
+  if (type == AppStrings.questionTypeMultiple) {
+    try {
+      return convertDynamicToString(question);
+    } catch (_) {
+      return getAnswerText(answer);
+    }
+  }
+  if (type == AppStrings.questionTypeSelect) {
+    if (answer is Map) {
+      return showAnswerWithSelectType(
+        Map<String, dynamic>.from(
+          answer.map((k, v) => MapEntry(k.toString(), v)),
+        ),
+      );
+    }
+    return getAnswerText(answer);
+  }
+  if (type == AppStrings.questionTypeDate) {
+    final asText = getAnswerText(answer);
+    if (asText.isEmpty) return '...';
+    try {
+      return formatDateTime(asText);
+    } catch (_) {
+      return asText;
+    }
+  }
+  if (type == AppStrings.questionTypeRepeatable) {
+    return formatRepeatableAnswerForDisplay(answer);
+  }
+  return getAnswerText(answer);
 }

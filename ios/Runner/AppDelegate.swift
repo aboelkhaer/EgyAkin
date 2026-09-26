@@ -1,45 +1,64 @@
 import UIKit
 import Flutter
-import Firebase
+import FirebaseCore
+import FirebaseMessaging
+import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   let gcmMessageIDKey = "gcm.message_id"
+  private static let coldStartPushKey = "egyakin_cold_start_push_userinfo"
+  private static let coldStartPushTsKey = "egyakin_cold_start_push_ts"
+  /// Readable from Flutter SharedPreferences (keys are prefixed with `flutter.`).
+  private static let flutterColdStartJsonKey = "flutter.egyakin_cold_start_push_v1"
+  private static let flutterColdStartTsKey = "flutter.egyakin_cold_start_push_ts"
 
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     applySavedThemeStyle()
-    FirebaseApp.configure()
 
-    // [START set_messaging_delegate]
-    Messaging.messaging().delegate = self
-    // [END set_messaging_delegate]
-
-    // Register for remote notifications. This shows a permission dialog on first run, to
-    // show the dialog at a more appropriate time move this registration accordingly.
-    // [START register_for_notifications]
-    if #available(iOS 10.0, *) {
-      // For iOS 10 display notification (sent via APNS)
-      UNUserNotificationCenter.current().delegate = self
-      let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-      UNUserNotificationCenter.current().requestAuthorization(
-        options: authOptions,
-        completionHandler: { _, _ in }
-      )
-    } else {
-      let settings: UIUserNotificationSettings =
-        UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-      application.registerUserNotificationSettings(settings)
+    // Default Firebase app only — Dart must also use the default app
+    // (no custom name). Named apps break Messaging on notification taps.
+    if FirebaseApp.app() == nil {
+      FirebaseApp.configure()
     }
 
+    Messaging.messaging().delegate = self
+
+    // Persist remote-notification launch so Dart can open chat if
+    // getInitialMessage() loses the UIScene race.
+    if let remote = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
+      Self.storeColdStartPushUserInfo(remote)
+    }
+
+    // Do NOT set UNUserNotificationCenter.delegate here before plugins —
+    // that fights flutter_local_notifications / FlutterAppDelegate and can
+    // native-crash when the user taps a push on a real device.
     application.registerForRemoteNotifications()
+
     GeneratedPluginRegistrant.register(with: self)
     let launched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
+    // After FlutterAppDelegate wires delegates, keep Messaging in the loop.
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self
+    }
+
     applySavedThemeStyle()
     setupNativeThemeChannel()
+    // FlutterViewController may not exist on the first tick — retry.
+    setupNativePushChannelWithRetry()
     return launched
+  }
+
+  override func application(
+    _ application: UIApplication,
+    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+  ) {
+    Messaging.messaging().apnsToken = deviceToken
+    super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
   }
 
   private func applySavedThemeStyle() {
@@ -58,7 +77,6 @@ import Firebase
       default:
         style = .unspecified
       }
-      // Apply as early as possible so launch + system UI match app theme.
       if let window = window {
         window.overrideUserInterfaceStyle = style
       }
@@ -93,32 +111,172 @@ import Firebase
     }
   }
 
-  // [START receive_message]
-  override func application(_ application: UIApplication,
-                   didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                   fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult)
-                     -> Void) {
-    // If you are receiving a notification message while your app is in the background,
-    // this callback will not be fired till the user taps on the notification launching the application.
-    // TODO: Handle data of notification
-    // With swizzling disabled you must let Messaging know about the message, for Analytics
-    // Messaging.messaging().appDidReceiveMessage(userInfo)
-    // Print message ID.
+  private func setupNativePushChannelWithRetry(attempt: Int = 0) {
+    if setupNativePushChannel() { return }
+    guard attempt < 20 else {
+      print("EgyAkin push channel: FlutterViewController never ready")
+      return
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+      self?.setupNativePushChannelWithRetry(attempt: attempt + 1)
+    }
+  }
+
+  @discardableResult
+  private func setupNativePushChannel() -> Bool {
+    guard let controller = window?.rootViewController as? FlutterViewController else {
+      return false
+    }
+
+    let channel = FlutterMethodChannel(
+      name: "com.incode.EgyAkin/push",
+      binaryMessenger: controller.binaryMessenger
+    )
+
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "takeColdStartPushUserInfo" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      result(Self.takeColdStartPushUserInfo())
+    }
+    return true
+  }
+
+  /// Store notification userInfo for Dart cold-start open (TTL ~120s).
+  static func storeColdStartPushUserInfo(_ userInfo: [AnyHashable: Any]) {
+    let serializable = Self.stringifyUserInfo(userInfo)
+    guard !serializable.isEmpty else { return }
+    let defaults = UserDefaults.standard
+    let now = Date().timeIntervalSince1970
+    defaults.set(serializable, forKey: coldStartPushKey)
+    defaults.set(now, forKey: coldStartPushTsKey)
+
+    // Mirror into SharedPreferences-compatible keys so Dart can read without
+    // a MethodChannel (channel setup often loses the launch race).
+    if let jsonData = try? JSONSerialization.data(
+      withJSONObject: serializable,
+      options: []
+    ),
+      let json = String(data: jsonData, encoding: .utf8)
+    {
+      defaults.set(json, forKey: flutterColdStartJsonKey)
+      defaults.set(now, forKey: flutterColdStartTsKey)
+      defaults.synchronize()
+      print("EgyAkin stored cold-start push for Dart (\(serializable.keys.count) keys)")
+    }
+  }
+
+  static func takeColdStartPushUserInfo() -> [String: String]? {
+    let defaults = UserDefaults.standard
+    let ts = defaults.double(forKey: coldStartPushTsKey)
+    let age = Date().timeIntervalSince1970 - ts
+    let raw = defaults.dictionary(forKey: coldStartPushKey) as? [String: String]
+    defaults.removeObject(forKey: coldStartPushKey)
+    defaults.removeObject(forKey: coldStartPushTsKey)
+    // Keep flutter.* keys — Dart SharedPreferences take owns those.
+    guard let raw, !raw.isEmpty, ts > 0, age >= 0, age < 120 else {
+      return nil
+    }
+    return raw
+  }
+
+  private static func stringifyUserInfo(_ userInfo: [AnyHashable: Any]) -> [String: String] {
+    var out: [String: String] = [:]
+    for (key, value) in userInfo {
+      let k = String(describing: key)
+      if let s = value as? String {
+        out[k] = s
+      } else if let n = value as? NSNumber {
+        out[k] = n.stringValue
+      } else if let dict = value as? [AnyHashable: Any] {
+        // Flatten one level of nested maps (common FCM shapes).
+        for (innerKey, innerVal) in dict {
+          let ik = "\(k).\(String(describing: innerKey))"
+          if let s = innerVal as? String {
+            out[ik] = s
+          } else if let n = innerVal as? NSNumber {
+            out[ik] = n.stringValue
+          } else {
+            out[ik] = String(describing: innerVal)
+          }
+        }
+        // Also keep a JSON-ish blob when possible for Dart normalizeData.
+        if let data = try? JSONSerialization.data(withJSONObject: dict, options: []),
+           let json = String(data: data, encoding: .utf8) {
+          out[k] = json
+        }
+      } else {
+        out[k] = String(describing: value)
+      }
+    }
+    return out
+  }
+
+  override func application(
+    _ application: UIApplication,
+    didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+    fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+  ) {
+    // Required when method swizzling is disabled / for analytics handoff.
+    Messaging.messaging().appDidReceiveMessage(userInfo)
+
     if let messageID = userInfo[gcmMessageIDKey] {
       print("Message ID: \(messageID)")
     }
-
-    // Print full message.
     print(userInfo)
 
-    completionHandler(UIBackgroundFetchResult.newData)
+    super.application(
+      application,
+      didReceiveRemoteNotification: userInfo,
+      fetchCompletionHandler: completionHandler
+    )
   }
-  // [END receive_message]
 
+  // Foreground presentation — keep Flutter/FCM in control; avoid crashing
+  // by always calling the completion handler on the main queue.
+  override func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    willPresent notification: UNNotification,
+    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+  ) {
+    let userInfo = notification.request.content.userInfo
+    Messaging.messaging().appDidReceiveMessage(userInfo)
+    super.userNotificationCenter(
+      center,
+      willPresent: notification,
+      withCompletionHandler: completionHandler
+    )
+  }
+
+  override func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    didReceive response: UNNotificationResponse,
+    withCompletionHandler completionHandler: @escaping () -> Void
+  ) {
+    let userInfo = response.notification.request.content.userInfo
+    Messaging.messaging().appDidReceiveMessage(userInfo)
+
+    // Always stash cold/background taps. Foreground taps go through FCM
+    // onMessageOpenedApp / local plugin; leftover prefs are TTL-cleared.
+    let state = UIApplication.shared.applicationState
+    if state != .active {
+      Self.storeColdStartPushUserInfo(userInfo)
+    } else if Self.defaultsMissingColdStart() {
+      // Rare: process just became active from a killed tap before state flips.
+      Self.storeColdStartPushUserInfo(userInfo)
+    }
+
+    // Let FlutterAppDelegate / plugins deliver the tap to Dart.
+    super.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+  }
+
+  private static func defaultsMissingColdStart() -> Bool {
+    UserDefaults.standard.string(forKey: flutterColdStartJsonKey) == nil
+  }
 }
 
 extension AppDelegate: MessagingDelegate {
-  // [START refresh_token]
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     print("Firebase registration token: \(String(describing: fcmToken))")
 
@@ -128,8 +286,5 @@ extension AppDelegate: MessagingDelegate {
       object: nil,
       userInfo: dataDict
     )
-    // TODO: If necessary send token to application server.
-    // Note: This callback is fired at each app startup and whenever a new token is generated.
   }
-  // [END refresh_token]
 }

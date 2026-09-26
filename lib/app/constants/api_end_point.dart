@@ -1,9 +1,9 @@
 class ApiEndPoint {
   //! test url
-  // static const baseUrl = 'https://test.egyakin.com';
+  static const baseUrl = 'https://test.egyakin.com';
 
   //! production url
-  static const baseUrl = 'https://api.egyakin.com';
+  // static const baseUrl = 'https://api.egyakin.com';
 
   // versioning
   static const versioning = 'v3';
@@ -165,4 +165,15 @@ class ApiEndPoint {
   static const userMe = '$baseUrl/api/$versioning/user/me';
   static const processSection =
       '$baseUrl/api/$versioning/ai-form/process-section';
+
+  // Chat & Inbox (V3)
+  static const inbox = '$baseUrl/api/$versioning/inbox';
+  static const chatConversations =
+      '$baseUrl/api/$versioning/chat/conversations';
+  static const chatUsersSearch = '$baseUrl/api/$versioning/chat/users/search';
+  static const chatMessagesSearch =
+      '$baseUrl/api/$versioning/chat/messages/search';
+
+  /// Ably TokenRequest — app root, not under `/api/v3`.
+  static const ablyToken = '$baseUrl/broadcasting/ably-token';
 }

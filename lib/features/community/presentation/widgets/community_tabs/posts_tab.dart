@@ -1,5 +1,6 @@
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
+import 'package:egy_akin/features/community/presentation/widgets/community_chrome_scope.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_removal_animator.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import '../../../../../app/services/theme_bloc.dart';
@@ -62,7 +63,6 @@ class _PostsTabState extends State<PostsTab> {
         !cubit.isLastPage &&
         widget.feedsScrollController.position.pixels >=
             widget.feedsScrollController.position.maxScrollExtent - 300) {
-      debugPrint('Triggering loadMoreFeeds');
       _isLoadingMore = true;
       cubit.isLoadingMoreForScroll = true;
       cubit.loadMoreFeeds();
@@ -86,6 +86,7 @@ class _PostsTabState extends State<PostsTab> {
   @override
   Widget build(BuildContext context) {
     CommunityCubit cubit = CommunityCubit.get(context);
+    final chromeInset = CommunityChromeScope.of(context);
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
@@ -98,11 +99,19 @@ class _PostsTabState extends State<PostsTab> {
                 : const Color(0xFFF5F5F7),
           ),
           child: BlocBuilder<CommunityCubit, CommunityState>(
+            buildWhen: (previous, current) {
+              // Avoid rebuilding the whole list on unrelated cubit noise.
+              return previous.runtimeType != current.runtimeType ||
+                  previous != current;
+            },
             builder: (context, state) {
               return state.maybeWhen(
                 orElse: () {
-                  return const ShimmerLoadingFeeds(
-                    numberOfShimmer: 5,
+                  return Padding(
+                    padding: EdgeInsets.only(top: chromeInset),
+                    child: const ShimmerLoadingFeeds(
+                      numberOfShimmer: 5,
+                    ),
                   );
                 },
                 loaded: (
@@ -121,14 +130,17 @@ class _PostsTabState extends State<PostsTab> {
                     children: [
                       Expanded(
                         child: RefreshIndicator(
+                          edgeOffset: chromeInset,
                           onRefresh: () async {
                             await cubit.getAllFeeds();
                           },
                           child: feeds.isEmpty
                               ? SingleChildScrollView(
                                   controller: widget.feedsScrollController,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
+                                  physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics(),
+                                  ),
+                                  padding: EdgeInsets.only(top: chromeInset),
                                   child: Column(
                                     children: [
                                       if (widget.listHeader != null)
@@ -155,9 +167,17 @@ class _PostsTabState extends State<PostsTab> {
                                       feeds.length +
                                       (isSeeMore ? 1 : 0),
                                   controller: widget.feedsScrollController,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(bottom: 60.h),
+                                  physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics(),
+                                  ),
+                                  // Prefetch off-screen items for Facebook-like smoothness.
+                                  cacheExtent: 900,
+                                  keyboardDismissBehavior:
+                                      ScrollViewKeyboardDismissBehavior.onDrag,
+                                  padding: EdgeInsets.only(
+                                    top: chromeInset,
+                                    bottom: 60.h,
+                                  ),
                                   itemBuilder: (context, index) {
                                     if (headerCount == 1 && index == 0) {
                                       return widget.listHeader!;
@@ -183,19 +203,21 @@ class _PostsTabState extends State<PostsTab> {
 
                                     final feed = feeds[feedIndex];
                                     final postId = feed.id.toString();
-                                    return PostRemovalAnimator(
-                                      key: ValueKey('feed_$postId'),
-                                      animateOut:
-                                          cubit.removingPostIds.contains(postId),
-                                      onExitComplete: () =>
-                                          cubit.finishRemovingPost(postId),
-                                      child: PostCard(
-                                        feed: feed,
-                                        homeDataModel: widget.homeDataModel,
-                                        currentDoctorModel:
-                                            widget.currentDoctorModel,
-                                        showPostFrom:
-                                            ShowPostFromEnum.feedsTab.name,
+                                    return RepaintBoundary(
+                                      child: PostRemovalAnimator(
+                                        key: ValueKey('feed_$postId'),
+                                        animateOut: cubit.removingPostIds
+                                            .contains(postId),
+                                        onExitComplete: () =>
+                                            cubit.finishRemovingPost(postId),
+                                        child: PostCard(
+                                          feed: feed,
+                                          homeDataModel: widget.homeDataModel,
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          showPostFrom:
+                                              ShowPostFromEnum.feedsTab.name,
+                                        ),
                                       ),
                                     );
                                   },

@@ -207,6 +207,7 @@ _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(
       age: _flexibleNumFromJson(json['age']),
       egfr: _flexibleNumFromJson(json['egfr']),
       egfrPrevious: _flexibleNumFromJson(json['egfr_previous']),
+      egfrDelta: _flexibleNumFromJson(json['egfr_delta']),
       bmi: _flexibleNumFromJson(json['bmi']),
       updatedAt: json['updated_at'] as String?,
       doctor: json['doctor'] == null
@@ -234,6 +235,7 @@ Map<String, dynamic> _$$PatientHomeDataModelImplToJson(
       'age': instance.age,
       'egfr': instance.egfr,
       'egfr_previous': instance.egfrPrevious,
+      'egfr_delta': instance.egfrDelta,
       'bmi': instance.bmi,
       'updated_at': instance.updatedAt,
       'doctor': instance.doctor,

@@ -101,6 +101,9 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
         final primary = HomeDashboardColors.primary(isDark);
         final scaffold = HomeDashboardColors.scaffold(isDark);
 
+        // No nested Scaffold — the host bottom sheet already provides one
+        // (with its own ScaffoldMessenger) so snackbars stay on top at the
+        // bottom of the sheet instead of under the modal barrier.
         return ColoredBox(
           color: scaffold,
           child: Column(
@@ -248,6 +251,17 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                       duration: const Duration(milliseconds: 280),
                       switchInCurve: Curves.easeOutCubic,
                       switchOutCurve: Curves.easeInCubic,
+                      // Default Stack centers children — short likes lists
+                      // were floating mid/bottom. Pin content to the top.
+                      layoutBuilder: (currentChild, previousChildren) {
+                        return Stack(
+                          alignment: Alignment.topCenter,
+                          children: <Widget>[
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
                       child: state.maybeWhen(
                         orElse: () => _MembersLoading(key: const ValueKey('loading'), isDark: isDark),
                         error: (_) => DashboardEmptyState(
@@ -288,7 +302,12 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                             return ListView.separated(
                               key: const ValueKey('likes-list'),
                               controller: cubit.scrollController,
-                              padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 28.h),
+                              padding: EdgeInsets.fromLTRB(
+                                16.w,
+                                4.h,
+                                16.w,
+                                20.h,
+                              ),
                               itemCount: likes.length,
                               separatorBuilder: (_, __) =>
                                   SizedBox(height: 8.h),

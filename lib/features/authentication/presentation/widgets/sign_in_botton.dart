@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -101,6 +102,12 @@ class SignInBotton extends StatelessWidget {
       listener: (context, state) {
         state.maybeWhen(
           loaded: (doctorData, isSignInSuccess, isRegisterSuccess) {
+            // Online immediately after login — don't wait for Home to open.
+            if (sl.isRegistered<ChatRealtimeService>()) {
+              unawaited(
+                sl<ChatRealtimeService>().bootstrapFromLocalSession(),
+              );
+            }
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.home, arguments: 0);
           },

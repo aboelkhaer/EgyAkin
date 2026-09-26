@@ -12,6 +12,19 @@ import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 
+/// iOS edge-swipe pops with a null result; this route fills in the
+/// section-completed flag so the patients list still updates.
+class SectionDetailsPageRoute extends MaterialPageRoute<bool> {
+  SectionDetailsPageRoute({required super.builder, super.settings});
+
+  bool Function()? resultFallback;
+
+  @override
+  bool didPop(bool? result) {
+    return super.didPop(result ?? resultFallback?.call());
+  }
+}
+
 class PatientSectionDetailsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final SectionModel sectionModel;
@@ -75,6 +88,14 @@ class _PatientSectionDetailsScreenState
           widget.patientId.toString());
     }
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final route = ModalRoute.of(context);
+      if (route is SectionDetailsPageRoute) {
+        route.resultFallback = () =>
+            PatientSectionDetailsCubit.get(context).markSectionCompletedOnPop;
+      }
+    });
   }
 
   @override
@@ -412,13 +433,7 @@ class _PatientSectionDetailsScreenState
                   statusBarIconBrightness: Brightness.dark,
                   statusBarBrightness: Brightness.light,
                 ),
-          child: PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, _) {
-              if (didPop) return;
-              _popSectionDetails(context);
-            },
-            child: Scaffold(
+          child: Scaffold(
               backgroundColor: scaffold,
               body: Column(
                 children: [
@@ -634,7 +649,6 @@ class _PatientSectionDetailsScreenState
                 ],
               ),
             ),
-          ),
         );
       },
     );

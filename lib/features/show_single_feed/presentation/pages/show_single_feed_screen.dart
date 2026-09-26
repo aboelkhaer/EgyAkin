@@ -30,16 +30,9 @@ class ShowSingleFeedScreen extends StatefulWidget {
   State<ShowSingleFeedScreen> createState() => _ShowSingleFeedScreenState();
 }
 
-class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
-    with SingleTickerProviderStateMixin {
+class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
   late final ShowSingleFeedCubit _cubit;
   late final ScrollController _scrollController;
-  late final AnimationController _contentController;
-  late final Animation<double> _headerFade;
-  late final Animation<Offset> _headerSlide;
-  late final Animation<double> _bodyFade;
-  late final Animation<Offset> _bodySlide;
-  late final Animation<Offset> _composerSlide;
 
   PostCommunityModel? _currentFeed;
 
@@ -53,55 +46,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
 
     _scrollController = ScrollController()..addListener(_onScroll);
     _cubit.feedScrollController = _scrollController;
-
-    // Soft content motion (starts nearly visible to avoid flash with route fade).
-    _contentController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 520),
-    );
-    _headerFade = Tween<double>(begin: 0.88, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.0, 0.55, curve: Curves.easeOut),
-      ),
-    );
-    _headerSlide = Tween<Offset>(
-      begin: const Offset(0, -0.03),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.0, 0.55, curve: Curves.easeOutCubic),
-      ),
-    );
-    _bodyFade = Tween<double>(begin: 0.9, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.15, 0.85, curve: Curves.easeOut),
-      ),
-    );
-    _bodySlide = Tween<Offset>(
-      begin: const Offset(0, 0.035),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.15, 0.9, curve: Curves.easeOutCubic),
-      ),
-    );
-    _composerSlide = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.35, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _contentController.forward();
-    });
 
     if (widget.isComeFromNotification) {
       _loadFeedFromNotification();
@@ -158,7 +102,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
     }
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _contentController.dispose();
     super.dispose();
   }
 
@@ -217,7 +160,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
     showDeleteFeedPostDialog(
       context: context,
       onConfirm: () {
-        sl<CommunityCubit>().deletePost(feed.id.toString());
+        sl<CommunityCubit>().deletePost(
+          feed.id.toString(),
+          wasSaved: feed.isSaved,
+        );
         navigatorKey.currentState?.pop();
       },
     );
@@ -332,11 +278,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
                           isDark: isDark,
                           primary: primary,
                           scrollController: _scrollController,
-                          headerFade: _headerFade,
-                          headerSlide: _headerSlide,
-                          bodyFade: _bodyFade,
-                          bodySlide: _bodySlide,
-                          composerSlide: _composerSlide,
                           feed: resolvedFeed,
                           homeDataModel: widget.homeDataModel,
                           currentDoctorModel: widget.currentDoctorModel,
@@ -365,11 +306,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
                     isDark: isDark,
                     primary: primary,
                     scrollController: _scrollController,
-                    headerFade: _headerFade,
-                    headerSlide: _headerSlide,
-                    bodyFade: _bodyFade,
-                    bodySlide: _bodySlide,
-                    composerSlide: _composerSlide,
                     feed: feedToUse,
                     homeDataModel: widget.homeDataModel,
                     currentDoctorModel: widget.currentDoctorModel,
@@ -452,15 +388,10 @@ class _UnavailableBody extends StatelessWidget {
   }
 }
 
-class _FeedScaffold extends StatelessWidget {
+class _FeedScaffold extends StatefulWidget {
   final bool isDark;
   final Color primary;
   final ScrollController scrollController;
-  final Animation<double> headerFade;
-  final Animation<Offset> headerSlide;
-  final Animation<double> bodyFade;
-  final Animation<Offset> bodySlide;
-  final Animation<Offset> composerSlide;
   final PostCommunityModel feed;
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
@@ -474,11 +405,6 @@ class _FeedScaffold extends StatelessWidget {
     required this.isDark,
     required this.primary,
     required this.scrollController,
-    required this.headerFade,
-    required this.headerSlide,
-    required this.bodyFade,
-    required this.bodySlide,
-    required this.composerSlide,
     required this.feed,
     required this.homeDataModel,
     required this.currentDoctorModel,
@@ -488,6 +414,77 @@ class _FeedScaffold extends StatelessWidget {
     required this.onOpenDoctor,
     required this.onMenuSelected,
   });
+
+  @override
+  State<_FeedScaffold> createState() => _FeedScaffoldState();
+}
+
+class _FeedScaffoldState extends State<_FeedScaffold>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _intro;
+  late final Animation<double> _headerFade;
+  late final Animation<Offset> _headerSlide;
+  late final Animation<double> _cardFade;
+  late final Animation<Offset> _cardSlide;
+  late final Animation<double> _cardScale;
+  late final Animation<double> _commentsFade;
+  late final Animation<Offset> _commentsSlide;
+  late final Animation<double> _composerFade;
+  late final Animation<Offset> _composerSlide;
+
+  @override
+  void initState() {
+    super.initState();
+    _intro = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 560),
+    );
+
+    CurvedAnimation interval(double begin, double end) {
+      return CurvedAnimation(
+        parent: _intro,
+        curve: Interval(begin, end, curve: Curves.easeOutCubic),
+      );
+    }
+
+    final header = interval(0.0, 0.45);
+    _headerFade = header;
+    _headerSlide = Tween<Offset>(
+      begin: const Offset(0, -0.08),
+      end: Offset.zero,
+    ).animate(header);
+
+    final card = interval(0.12, 0.62);
+    _cardFade = card;
+    _cardSlide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(card);
+    _cardScale = Tween<double>(begin: 0.97, end: 1).animate(card);
+
+    final comments = interval(0.28, 0.78);
+    _commentsFade = comments;
+    _commentsSlide = Tween<Offset>(
+      begin: const Offset(0, 0.05),
+      end: Offset.zero,
+    ).animate(comments);
+
+    final composer = interval(0.4, 1.0);
+    _composerFade = composer;
+    _composerSlide = Tween<Offset>(
+      begin: const Offset(0, 0.12),
+      end: Offset.zero,
+    ).animate(composer);
+
+    // Play alongside the Cupertino push — soft stagger, no layout thrash.
+    _intro.forward();
+  }
+
+  @override
+  void dispose() {
+    _intro.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -504,70 +501,83 @@ class _FeedScaffold extends StatelessWidget {
         Column(
           children: [
             FadeTransition(
-              opacity: headerFade,
+              opacity: _headerFade,
               child: SlideTransition(
-                position: headerSlide,
+                position: _headerSlide,
                 child: _FeedHeader(
-                  isDark: isDark,
-                  primary: primary,
+                  isDark: widget.isDark,
+                  primary: widget.primary,
                   topInset: top,
-                  feed: feed,
-                  canManage: canManage,
-                  menuItems: menuItems,
-                  onBack: onBack,
-                  onOpenDoctor: onOpenDoctor,
-                  onMenuSelected: onMenuSelected,
+                  feed: widget.feed,
+                  canManage: widget.canManage,
+                  menuItems: widget.menuItems,
+                  onBack: widget.onBack,
+                  onOpenDoctor: widget.onOpenDoctor,
+                  onMenuSelected: widget.onMenuSelected,
                 ),
               ),
             ),
             Expanded(
-              child: FadeTransition(
-                opacity: bodyFade,
-                child: SlideTransition(
-                  position: bodySlide,
-                  // onTap (not pointer-down) so Reply/Like still win the gesture.
-                  child: GestureDetector(
-                    onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                    behavior: HitTestBehavior.opaque,
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics(),
-                      ),
-                      controller: scrollController,
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      padding: EdgeInsets.only(
-                        top: cubit.replyAnchorTopPadding,
-                        bottom: composerReserve + bottomInset + keyboard,
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 8.h),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Container(
-                              width: double.infinity,
-                              decoration:
-                                  HomeDashboardDecor.card(isDark).copyWith(
-                                borderRadius: BorderRadius.circular(18.r),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: FeedContentInCommunity(
-                                homeDataModel: homeDataModel,
-                                currentDoctorModel: currentDoctorModel,
-                                feed: feed,
+              // onTap (not pointer-down) so Reply/Like still win the gesture.
+              child: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                behavior: HitTestBehavior.opaque,
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  controller: widget.scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.only(
+                    top: cubit.replyAnchorTopPadding,
+                    bottom: composerReserve + bottomInset + keyboard,
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 8.h),
+                      FadeTransition(
+                        opacity: _cardFade,
+                        child: SlideTransition(
+                          position: _cardSlide,
+                          child: ScaleTransition(
+                            scale: _cardScale,
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 12.w),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: HomeDashboardDecor.card(
+                                  widget.isDark,
+                                ).copyWith(
+                                  borderRadius: BorderRadius.circular(18.r),
+                                ),
+                                clipBehavior: Clip.antiAlias,
+                                child: FeedContentInCommunity(
+                                  homeDataModel: widget.homeDataModel,
+                                  currentDoctorModel:
+                                      widget.currentDoctorModel,
+                                  feed: widget.feed,
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(height: 12.h),
-                          CommentsInCommunity(
-                            homeDataModel: homeDataModel,
-                            currentDoctorModel: currentDoctorModel,
-                            feed: feed,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      SizedBox(height: 12.h),
+                      FadeTransition(
+                        opacity: _commentsFade,
+                        child: SlideTransition(
+                          position: _commentsSlide,
+                          child: CommentsInCommunity(
+                            homeDataModel: widget.homeDataModel,
+                            currentDoctorModel: widget.currentDoctorModel,
+                            feed: widget.feed,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -578,16 +588,21 @@ class _FeedScaffold extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: 0,
-          child: SlideTransition(
-            position: composerSlide,
-            child: KeyedSubtree(
-              key: cubit.composerKey,
-              child: WriteCommentInCommunity(
-                accountVerification: homeDataModel.verified ?? false,
-                isSyndicateCardRequired:
-                    homeDataModel.isSyndicateCardRequired ?? 'Required',
-                feed: feed,
-                currentDoctorModel: currentDoctorModel,
+          child: FadeTransition(
+            opacity: _composerFade,
+            child: SlideTransition(
+              position: _composerSlide,
+              child: KeyedSubtree(
+                key: cubit.composerKey,
+                child: WriteCommentInCommunity(
+                  accountVerification:
+                      widget.homeDataModel.verified ?? false,
+                  isSyndicateCardRequired:
+                      widget.homeDataModel.isSyndicateCardRequired ??
+                          'Required',
+                  feed: widget.feed,
+                  currentDoctorModel: widget.currentDoctorModel,
+                ),
               ),
             ),
           ),

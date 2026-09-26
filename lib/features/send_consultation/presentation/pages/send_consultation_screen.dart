@@ -72,8 +72,8 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
   }) {
     final added = cubit.queuePendingExternalInvite(email: email);
     if (!added) {
-      customSnackBar(
-        context: context,
+                          customSnackBar(
+                              context: context,
         message: context.tr(AppStrings.emailInviteAlreadyAdded),
       );
       return;
@@ -81,14 +81,14 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
 
     animateToRightEndOfScreen(cubit.horizontalScrollController);
     customSnackBar(
-      context: context,
+                            context: context,
       message: context.tr(AppStrings.emailAddedToInviteList),
     );
   }
 
   String _title(BuildContext context) {
-    if (widget.isSendConsultation) {
-      if (widget.isForAddNewDoctors) {
+                              if (widget.isSendConsultation) {
+                                if (widget.isForAddNewDoctors) {
         return _isInviteeViewOnly
             ? context.tr(AppStrings.invitedDoctors)
             : context.tr(AppStrings.addDoctorsToConsultation);
@@ -139,10 +139,10 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
 
     if (widget.isForAddNewDoctors && membersForConsultation?.data != null) {
       for (final member in membersForConsultation!.data!) {
-        if (!allDoctors.any((d) => d.id == member.id)) {
-          allDoctors.add(member);
-        }
-      }
+                                if (!allDoctors.any((d) => d.id == member.id)) {
+                                  allDoctors.add(member);
+                                }
+                              }
     }
     return allDoctors;
   }
@@ -208,11 +208,11 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
     required GetMembersForConsultationModelResponse? membersForConsultation,
   }) {
     if (_isExistingMember(doctor, membersForConsultation)) {
-      cubit.removeMemberFromConsultation(
+                                                            cubit.removeMemberFromConsultation(
         widget.consultationId,
         doctor.id.toString(),
       );
-    } else {
+                                                          } else {
       cubit.doctorsChecked.removeWhere((d) => d.id == doctor.id);
       cubit.updateScreen();
     }
@@ -272,33 +272,33 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
           backgroundColor: HomeDashboardColors.scaffold(isDark),
           resizeToAvoidBottomInset: true,
           body: BlocConsumer<SendConsultationCubit, SendConsultationState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                orElse: () {},
+                listener: (context, state) {
+                  state.maybeWhen(
+                    orElse: () {},
                 error: (message) {
                   if (message.isNotEmpty) {
                     customSnackBar(context: context, message: message);
                   }
                 },
-                loaded: (
-                  isSearching,
-                  isSearched,
-                  message,
-                  response,
-                  counterChanges,
-                  isSendingConsultation,
-                  isSendedConsultation,
-                  membersForConsultation,
-                  isRemoveMemberFromConsultationLoading,
-                  isRemoveMemberFromConsultationLoaded,
-                ) {
+                    loaded: (
+                      isSearching,
+                      isSearched,
+                      message,
+                      response,
+                      counterChanges,
+                      isSendingConsultation,
+                      isSendedConsultation,
+                      membersForConsultation,
+                      isRemoveMemberFromConsultationLoading,
+                      isRemoveMemberFromConsultationLoaded,
+                    ) {
                   if (message.isNotEmpty) {
-                    customSnackBar(context: context, message: message);
-                  }
+                        customSnackBar(context: context, message: message);
+                      }
+                    },
+                  );
                 },
-              );
-            },
-            builder: (context, state) {
+                builder: (context, state) {
               final selectedCount = cubit.totalInviteCount;
               final keyboardOpen =
                   MediaQuery.viewInsetsOf(context).bottom > 0;
@@ -322,19 +322,19 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                         title: context.tr(AppStrings.somethingWentWrong),
                         subtitle: message,
                       ),
-                      loaded: (
-                        isSearching,
-                        isSearched,
-                        message,
-                        response,
+                    loaded: (
+                      isSearching,
+                      isSearched,
+                      message,
+                      response,
                         counterChanges,
-                        isSendingConsultation,
-                        isSendedConsultation,
-                        membersForConsultation,
-                        isRemoveMemberFromConsultationLoading,
-                        isRemoveMemberFromConsultationLoaded,
-                      ) {
-                        if (isSendingConsultation) {
+                      isSendingConsultation,
+                      isSendedConsultation,
+                      membersForConsultation,
+                      isRemoveMemberFromConsultationLoading,
+                      isRemoveMemberFromConsultationLoaded,
+                    ) {
+                      if (isSendingConsultation) {
                           return SendConsultationSendingOverlay(
                             isDark: isDark,
                             label: widget.isSendConsultation
@@ -516,9 +516,9 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
               context: context,
               cubit: cubit,
               email: query,
-            ),
-          );
-        }
+                                ),
+                        );
+                      }
 
         return SendConsultationEmptyState(
           isDark: isDark,
@@ -553,9 +553,9 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                       doctor: doctor,
                       value: value,
                       membersForConsultation: membersForConsultation,
-                    ),
-          );
-        },
+          ),
+        );
+      },
       );
     }
 

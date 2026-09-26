@@ -77,6 +77,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
     }
     if (_markedCubit != null && !_markedCubit!.isClosed) {
       _markedCubit!.scrollController?.dispose();
+      _markedCubit!.scrollController = null;
     }
     super.dispose();
   }
@@ -84,7 +85,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
   void _loadMarkedIfNeeded() {
     if (!_isOwnProfile || _markedLoaded) return;
     _markedLoaded = true;
-    context.read<MarkedPatientsCubit>().getMarkedPatients();
+    context.read<MarkedPatientsCubit>().ensureMarkedPatientsLoaded();
   }
 
   void _onMyScroll() {

@@ -6,7 +6,7 @@ import '../../../../exports.dart';
 class MoreCubit extends Cubit<MoreState> {
   MoreCubit(this._changeLanguageUsecase) : super(const MoreState.initial());
   static MoreCubit get(context) => BlocProvider.of(context);
-  NotificationServices notificationServices = NotificationServices();
+  final NotificationServices notificationServices = sl<NotificationServices>();
   final ChangeLanguageUsecase _changeLanguageUsecase;
   String fcmToken = '';
 

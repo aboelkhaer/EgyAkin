@@ -1,7 +1,5 @@
-import 'dart:convert';
-import 'dart:math' as math;
-
-import 'package:http/http.dart' as http;
+import 'package:egy_akin/app/shared/functions/force_update_dialog.dart';
+import 'package:egy_akin/app/shared/functions/store_version_lookup.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -9,6 +7,7 @@ import 'package:pub_semver/pub_semver.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/deep_link_handler.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'dart:math' as math;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,9 +29,21 @@ class _SplashScreenState extends State<SplashScreen>
   late final Animation<double> _taglineFade;
   late final Animation<double> _footerFade;
 
-  bool _isUpToDate = true;
   String currentUserVersion = '';
   bool _isConnected = true;
+
+  bool _settingsReady = false;
+  bool _updateCheckDone = false;
+  bool _forceUpdateRequired = false;
+  bool _forceUpdateDialogShown = false;
+  bool _appFreeze = false;
+  bool _appFreezeDialogShown = false;
+  bool _hasNavigated = false;
+  String? _storeUrl;
+  String? _latestStoreVersion;
+
+  bool? _isAuth;
+  bool? _isWelcomed;
 
   @override
   void initState() {
@@ -90,8 +101,12 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _introController.forward();
-    _checkConnection();
-    checkForUpdates();
+    _bootstrap();
+  }
+
+  Future<void> _bootstrap() async {
+    await _checkConnection();
+    await checkForUpdates();
   }
 
   @override
@@ -104,14 +119,23 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> checkForUpdates() async {
     await getCurrentVersion();
-    await sl<AppPreferences>().setData('userAppVersion', currentUserVersion);
+    if (currentUserVersion.isNotEmpty) {
+      await sl<AppPreferences>().setData('userAppVersion', currentUserVersion);
+    }
 
     if (!mounted) return;
 
-    if (Theme.of(context).platform == TargetPlatform.android) {
-      await _checkForAndroidUpdate();
-    } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-      await _checkForiOSUpdate();
+    try {
+      if (Theme.of(context).platform == TargetPlatform.android) {
+        await _checkForAndroidUpdate();
+      } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+        await _checkForiOSUpdate();
+      }
+    } finally {
+      if (mounted) {
+        _updateCheckDone = true;
+        await _tryProceed();
+      }
     }
   }
 
@@ -129,57 +153,38 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkForAndroidUpdate() async {
     try {
-      final updateInfo = await InAppUpdate.checkForUpdate();
-      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        if (!mounted) return;
-        setState(() => _isUpToDate = false);
-
-        if (updateInfo.immediateUpdateAllowed) {
-          await InAppUpdate.performImmediateUpdate();
-        } else {
-          _showForceUpdateDialog(isAndroid: true);
-        }
+      final storeInfo = await StoreVersionLookup.fetch(isAndroid: true);
+      if (storeInfo != null) {
+        _latestStoreVersion = storeInfo.version;
+        _storeUrl = storeInfo.storeUrl;
+      } else {
+        _storeUrl = kAndroidPlayStoreUrl;
       }
+
+      // Prefer semver compare against the live Play Store version name.
+      // Play's in-app update flag alone is not enough (can disagree with versionName).
+      _forceUpdateRequired = _isStoreNewerThanCurrent();
     } catch (e) {
+      // Debug / sideload builds often fail Play update checks — that's OK.
       debugPrint('Android update check failed: $e');
     }
   }
 
   Future<void> _checkForiOSUpdate() async {
     try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final response = await http.get(
-        Uri.parse(
-            'https://itunes.apple.com/lookup?bundleId=${packageInfo.packageName}'),
-      );
+      final storeInfo = await StoreVersionLookup.fetch(isAndroid: false);
+      if (storeInfo == null) return;
 
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        if (jsonData['resultCount'] > 0) {
-          final appStoreVersion =
-              _parseVersion(jsonData['results'][0]['version']);
-          final currentVersion = _parseVersion(packageInfo.version);
-          final appStoreUrl = jsonData['results'][0]['trackViewUrl'];
-
-          if (appStoreVersion != null &&
-              currentVersion != null &&
-              appStoreVersion > currentVersion) {
-            if (!mounted) return;
-            setState(() => _isUpToDate = false);
-            _showForceUpdateDialog(
-              isAndroid: false,
-              appStoreUrl: appStoreUrl,
-            );
-          }
-        }
-      }
+      _latestStoreVersion = storeInfo.version;
+      _storeUrl = storeInfo.storeUrl;
+      _forceUpdateRequired = _isStoreNewerThanCurrent();
     } catch (e) {
       debugPrint('iOS update check failed: $e');
     }
   }
 
   Version? _parseVersion(String? versionString) {
-    if (versionString == null) return null;
+    if (versionString == null || versionString.trim().isEmpty) return null;
     try {
       return Version.parse(versionString.split('.').take(3).join('.'));
     } catch (e) {
@@ -188,47 +193,50 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  void _showForceUpdateDialog({required bool isAndroid, String? appStoreUrl}) {
+  /// True only when the store marketing version is strictly greater than installed.
+  bool _isStoreNewerThanCurrent() {
+    final current = _parseVersion(currentUserVersion);
+    final store = _parseVersion(_latestStoreVersion);
+    if (current == null || store == null) return false;
+    return store > current;
+  }
+
+  Future<void> _ensureStoreVersionLoaded({required bool isAndroid}) async {
+    if ((_latestStoreVersion ?? '').isNotEmpty) return;
+    final storeInfo = await StoreVersionLookup.fetch(isAndroid: isAndroid);
+    if (storeInfo == null) return;
+    _latestStoreVersion = storeInfo.version;
+    _storeUrl ??= storeInfo.storeUrl;
+  }
+
+  Future<void> _showForceUpdateIfNeeded() async {
+    if (!mounted || _forceUpdateDialogShown) return;
+
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    await _ensureStoreVersionLoaded(isAndroid: isAndroid);
     if (!mounted) return;
 
-    showDialog(
+    // Never block users when their installed version is already >= store.
+    if (!_isStoreNewerThanCurrent()) {
+      _forceUpdateRequired = false;
+      await _navigateToNextScreen();
+      return;
+    }
+
+    _forceUpdateDialogShown = true;
+    await showForceUpdateDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: Text(context.tr(AppStrings.updateRequired)),
-          content: Text(
-            context.tr(AppStrings.aNewVersionIsAvailablePleaseUpdate),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                if (isAndroid) {
-                  await InAppUpdate.performImmediateUpdate();
-                } else {
-                  final url =
-                      appStoreUrl ?? 'https://apps.apple.com/app/id6738606085';
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            context.tr(AppStrings.couldNotLaunchAppStore),
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                }
-              },
-              child: Text(context.tr(AppStrings.updateNow)),
-            ),
-          ],
-        ),
-      ),
+      isAndroid: isAndroid,
+      storeUrl: _storeUrl,
+      currentVersion: currentUserVersion,
+      latestVersion: _latestStoreVersion,
+      onAndroidInAppUpdate: isAndroid
+          ? () async {
+              final result = await InAppUpdate.performImmediateUpdate();
+              if (result == AppUpdateResult.success) return;
+              throw StateError('In-app update result: $result');
+            }
+          : null,
     );
   }
 
@@ -237,77 +245,127 @@ class _SplashScreenState extends State<SplashScreen>
     if (mounted) setState(() {});
   }
 
-  void _navigateToNextScreen() {
-    if (!_isUpToDate) return;
+  Future<void> _onSplashLoaded({
+    required bool isAuth,
+    required bool isWelcomed,
+    required bool isAppFreeze,
+    required bool isForceUpdate,
+  }) async {
+    _isAuth = isAuth;
+    _isWelcomed = isWelcomed;
+    _appFreeze = isAppFreeze;
 
-    final cubit = SplashCubit.get(context);
-    cubit.state.maybeWhen(
-      loaded: (isAuth, isWelcomed, isAppFreeze, isForceUpdate) async {
-        if (isAppFreeze) {
-          _showErrorDialog(
-            context.tr(AppStrings.appIsCurrentlyUnavailablePleaseTryLater),
-          );
-          return;
-        }
+    // Backend force_update only applies when the store version is actually newer.
+    if (isForceUpdate) {
+      _storeUrl ??= Theme.of(context).platform == TargetPlatform.android
+          ? kAndroidPlayStoreUrl
+          : kIosAppStoreUrl;
+      final isAndroid = Theme.of(context).platform == TargetPlatform.android;
+      await _ensureStoreVersionLoaded(isAndroid: isAndroid);
+      _forceUpdateRequired = _isStoreNewerThanCurrent();
+    }
 
-        if (!_isConnected) return;
+    _settingsReady = true;
+    await _tryProceed();
+  }
 
-        final deepLinkHandler = DeepLinkHandler();
-        final hasPendingDeepLink = deepLinkHandler.hasPendingDeepLink();
-        final inviteToken =
-            await deepLinkHandler.getPendingInviteToken(clear: false);
+  Future<void> _tryProceed() async {
+    if (!mounted || _hasNavigated) return;
+    if (!_settingsReady || !_updateCheckDone) return;
 
-        if (hasPendingDeepLink) {
-          debugPrint(
-              'Splash screen: Found pending deep link, navigating to home to process it');
-        }
+    if (_appFreeze) {
+      if (!_appFreezeDialogShown) {
+        _appFreezeDialogShown = true;
+        _showErrorDialog(
+          context.tr(AppStrings.appIsCurrentlyUnavailablePleaseTryLater),
+        );
+      }
+      return;
+    }
 
-        if (inviteToken != null && inviteToken.isNotEmpty) {
-          if (isAuth) {
-            // Invite is redeemed only at registration.
-            debugPrint(
-                'Splash: invite link while logged in — show message on home');
-            await sl<AppPreferences>().setData(
-              AppLocalStrings.pendingInviteConsultationId,
-              '__logged_in_invite__',
-            );
-            if (!mounted) return;
-            Navigator.pushReplacementNamed(
-              context,
-              AppRoutes.home,
-              arguments: 0,
-            );
-            return;
-          }
-          if (!mounted) return;
-          Navigator.pushReplacementNamed(context, AppRoutes.register);
-          return;
-        }
+    // Final guard: only force update when store > current.
+    if (_forceUpdateRequired && !_isStoreNewerThanCurrent()) {
+      _forceUpdateRequired = false;
+    }
 
-        if (isAuth && isWelcomed) {
-          Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: 0);
-        } else if (isWelcomed) {
-          Navigator.pushReplacementNamed(context, AppRoutes.signIn);
-        } else {
-          Navigator.pushReplacementNamed(context, AppRoutes.welcome);
-        }
-      },
-      orElse: () => Navigator.pushReplacementNamed(context, AppRoutes.welcome),
-    );
+    if (_forceUpdateRequired) {
+      await _showForceUpdateIfNeeded();
+      return;
+    }
+
+    await _navigateToNextScreen();
+  }
+
+  Future<void> _navigateToNextScreen() async {
+    if (!mounted || _hasNavigated || _forceUpdateRequired || _appFreeze) {
+      return;
+    }
+    if (!_isConnected) return;
+
+    final isAuth = _isAuth ?? false;
+    final isWelcomed = _isWelcomed ?? false;
+    _hasNavigated = true;
+
+    final deepLinkHandler = DeepLinkHandler();
+    final hasPendingDeepLink = deepLinkHandler.hasPendingDeepLink();
+    final inviteToken =
+        await deepLinkHandler.getPendingInviteToken(clear: false);
+
+    if (!mounted) return;
+
+    if (hasPendingDeepLink) {
+      debugPrint(
+        'Splash screen: Found pending deep link, navigating to home to process it',
+      );
+    }
+
+    if (inviteToken != null && inviteToken.isNotEmpty) {
+      if (isAuth) {
+        debugPrint(
+          'Splash: invite link while logged in — show message on home',
+        );
+        await sl<AppPreferences>().setData(
+          AppLocalStrings.pendingInviteConsultationId,
+          '__logged_in_invite__',
+        );
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.home,
+          arguments: 0,
+        );
+        return;
+      }
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, AppRoutes.register);
+      return;
+    }
+
+    if (isAuth && isWelcomed) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: 0);
+    } else if (isWelcomed) {
+      Navigator.pushReplacementNamed(context, AppRoutes.signIn);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+    }
   }
 
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.tr(AppStrings.error)),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.tr(AppStrings.ok)),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: Text(context.tr(AppStrings.error)),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.tr(AppStrings.ok)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -345,7 +403,20 @@ class _SplashScreenState extends State<SplashScreen>
               child: Scaffold(
                 backgroundColor: bg,
                 body: BlocListener<SplashCubit, SplashState>(
-                  listener: (context, state) => _navigateToNextScreen(),
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      loaded:
+                          (isAuth, isWelcomed, isAppFreeze, isForceUpdate) {
+                        _onSplashLoaded(
+                          isAuth: isAuth,
+                          isWelcomed: isWelcomed,
+                          isAppFreeze: isAppFreeze,
+                          isForceUpdate: isForceUpdate,
+                        );
+                      },
+                      orElse: () {},
+                    );
+                  },
                   child: Stack(
                     fit: StackFit.expand,
                     children: [

@@ -1,7 +1,22 @@
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.dart';
+import 'package:egy_akin/features/chat_room/presentation/pages/chat_forward_picker_screen.dart';
+import 'package:egy_akin/features/chat_room/presentation/pages/chat_info_screen.dart';
+import 'package:egy_akin/features/chat_room/presentation/pages/chat_add_members_screen.dart';
+import 'package:egy_akin/features/chat_room/presentation/pages/chat_media_gallery_screen.dart';
 import 'package:egy_akin/features/chat_room/presentation/pages/chat_room_screen.dart';
+import 'package:egy_akin/features/chat_room/presentation/pages/chat_search_screen.dart';
+import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_member_search_cubit.dart';
+import 'package:egy_akin/features/inbox/presentation/pages/inbox_archived_screen.dart';
+import 'package:egy_akin/features/inbox/presentation/pages/inbox_global_search_screen.dart';
+import 'package:egy_akin/features/inbox/presentation/pages/inbox_group_create_screen.dart';
+import 'package:egy_akin/features/inbox/presentation/pages/inbox_member_search_screen.dart';
 import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_cubit.dart';
 import 'package:egy_akin/features/marked_patients/presentation/pages/marked_patients_screen.dart';
+import 'package:egy_akin/app/routes/fade_swipe_back_page_route.dart';
+import 'package:egy_akin/app/routes/slide_from_right_page_route.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../exports.dart';
@@ -55,6 +70,15 @@ class AppRoutes {
   static const String webview = '/webview';
   static const String markedPatients = '/markedPatients';
   static const String chatRoom = '/chatRoom';
+  static const String inboxMemberSearch = '/inboxMemberSearch';
+  static const String inboxGroupCreate = '/inboxGroupCreate';
+  static const String inboxArchived = '/inboxArchived';
+  static const String inboxGlobalSearch = '/inboxGlobalSearch';
+  static const String chatInfo = '/chatInfo';
+  static const String chatAddMembers = '/chatAddMembers';
+  static const String chatForward = '/chatForward';
+  static const String chatSearch = '/chatSearch';
+  static const String chatMediaGallery = '/chatMediaGallery';
 }
 
 class RouteGenerator {
@@ -184,6 +208,7 @@ class RouteGenerator {
                 BlocProvider.value(value: di.sl<TrendingCubit>()),
                 BlocProvider.value(value: di.sl<GroupsCubit>()),
                 BlocProvider.value(value: di.sl<CommunityCubit>()),
+                BlocProvider.value(value: di.sl<InboxCubit>()),
               ],
               child: HomeScreen(
                 page: arguments,
@@ -488,7 +513,7 @@ class RouteGenerator {
               args.containsKey('currentDoctorPoints') &&
               args.containsKey('homeDataModel') &&
               args.containsKey('isAllDataOpen')) {
-            return MaterialPageRoute(
+            return SectionDetailsPageRoute(
               builder: (_) => BlocProvider<PatientSectionDetailsCubit>(
                 create: (context) => di.sl<PatientSectionDetailsCubit>(),
                 child: PatientSectionDetailsScreen(
@@ -627,8 +652,8 @@ class RouteGenerator {
                   BlocProvider<ProfilePatientsCubit>(
                     create: (context) => di.sl<ProfilePatientsCubit>(),
                   ),
-                  BlocProvider<MarkedPatientsCubit>(
-                    create: (context) => di.sl<MarkedPatientsCubit>(),
+                  BlocProvider<MarkedPatientsCubit>.value(
+                    value: di.resolveMarkedPatientsCubit(),
                   ),
                   BlocProvider.value(value: di.resolveHomeCubit()),
                 ],
@@ -744,8 +769,8 @@ class RouteGenerator {
           if (args.containsKey('homeDataModel') &&
               args.containsKey('currentDoctorModel')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider<ConsultationCubit>(
-                create: (context) => di.sl<ConsultationCubit>(),
+              builder: (_) => BlocProvider<ConsultationCubit>.value(
+                value: di.resolveConsultationCubit(),
                 child: ConsultationScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
@@ -955,11 +980,11 @@ class RouteGenerator {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider(
-                    create: (context) => di.sl<AllGroupsInCommunityCubit>(),
+                  BlocProvider.value(
+                    value: di.resolveAllGroupsInCommunityCubit(),
                   ),
-                  BlocProvider(
-                    create: (context) => di.sl<MyGroupsInCommunityCubit>(),
+                  BlocProvider.value(
+                    value: di.resolveMyGroupsInCommunityCubit(),
                   ),
                   BlocProvider(
                     create: (context) => di.sl<GroupMembersCubit>(),
@@ -1029,7 +1054,8 @@ class RouteGenerator {
                   BlocProvider(
                       create: (context) =>
                           di.sl<CreateGroupInCommunityCubit>()),
-                  BlocProvider.value(value: di.sl<MyGroupsInCommunityCubit>()),
+                  BlocProvider.value(
+                      value: di.resolveMyGroupsInCommunityCubit()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
                   BlocProvider.value(value: di.sl<TrendingCubit>()),
                   BlocProvider.value(value: di.sl<GroupsCubit>()),
@@ -1055,9 +1081,9 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
-            return PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  MultiBlocProvider(
+            return FadeSwipeBackPageRoute(
+              settings: settings,
+              builder: (context) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(value: di.sl<CommunitySearchCubit>()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
@@ -1070,15 +1096,6 @@ class RouteGenerator {
                   initialValueInSearch: args['initialValueInSearch'] as String?,
                 ),
               ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              transitionDuration: const Duration(
-                  milliseconds: 300), // Adjust duration as needed
             );
           } else {
             return unDefinedRoute();
@@ -1100,7 +1117,7 @@ class RouteGenerator {
               builder: (_) => MultiBlocProvider(
                 providers: [
                   // BlocProvider(create: (context) => di.sl<SavedPostsCubit>()),
-                  BlocProvider.value(value: di.sl<SavedPostsCubit>()),
+                  BlocProvider.value(value: di.resolveSavedPostsCubit()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
                 ],
                 child: SavedPostsScreen(
@@ -1178,8 +1195,8 @@ class RouteGenerator {
               builder: (_) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(value: di.resolveHomeCubit()),
-                  BlocProvider<MarkedPatientsCubit>(
-                    create: (context) => di.sl<MarkedPatientsCubit>(),
+                  BlocProvider<MarkedPatientsCubit>.value(
+                    value: di.resolveMarkedPatientsCubit(),
                   ),
                 ],
                 child: MarkedPatientsScreen(
@@ -1201,12 +1218,76 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
+            final doctor = args['currentDoctorModel'] as DoctorModel;
+            final chatType = args['chatType'] as String?;
+            final contextId = args['contextId'] as int?;
+            // Use create (not .value) so the factory cubit is closed on pop —
+            // otherwise Ably listeners + cubit state leak and can crash on
+            // push-notification / repeated chat opens.
             return MaterialPageRoute(
-              builder: (_) => MultiBlocProvider(
-                providers: [
-                  BlocProvider.value(value: di.sl<ChatRoomCubit>()),
-                ],
+              builder: (_) => BlocProvider(
+                create: (_) {
+                  final cubit = di.sl<ChatRoomCubit>();
+                  if (chatType != null && contextId != null) {
+                    var userId = doctor.id;
+                    if (userId == null || userId == 0) {
+                      userId = di.sl<HomeCubit>().currentDoctorModel.id;
+                    }
+                    final myName = [
+                      doctor.firstName,
+                      doctor.lastName,
+                    ]
+                        .where((p) => (p ?? '').trim().isNotEmpty)
+                        .join(' ')
+                        .trim();
+                    cubit.init(
+                      contextId: contextId,
+                      chatType: chatType,
+                      currentUserId: userId ?? 0,
+                      conversationId: args['conversationId'] as int?,
+                      peerDisplayName: args['peerDisplayName'] as String?,
+                      myDisplayName: myName.isEmpty ? null : myName,
+                      myImageUrl: doctor.image,
+                      peerIsOnline: args['peerIsOnline'] as bool?,
+                      initialParticipants:
+                          args['initialParticipants'] as List<ChatUserModel>?,
+                    );
+                  }
+                  return cubit;
+                },
                 child: ChatRoomScreen(
+                  currentDoctorModel:
+                      args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  peerDisplayName: args['peerDisplayName'] as String?,
+                  peerInitials: args['peerInitials'] as String?,
+                  peerVerified: args['peerVerified'] as bool?,
+                  peerIsOnline: args['peerIsOnline'] as bool?,
+                  chatType: args['chatType'] as String?,
+                  contextId: args['contextId'] as int?,
+                  conversationId: args['conversationId'] as int?,
+                  peerImageUrl: args['peerImageUrl'] as String?,
+                  focusMessageId: args['focusMessageId'] as String?,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.inboxMemberSearch:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => di.sl<InboxMemberSearchCubit>(),
+                child: InboxMemberSearchScreen(
                   currentDoctorModel:
                       args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
@@ -1219,6 +1300,218 @@ class RouteGenerator {
         } else {
           return unDefinedRoute();
         }
+
+      case AppRoutes.inboxGroupCreate:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => InboxGroupCreateScreen(
+                currentDoctorModel:
+                    args['currentDoctorModel'] as DoctorModel,
+                homeDataModel: args['homeDataModel'] as HomeModelResponse,
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+
+      case AppRoutes.inboxArchived:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: di.sl<InboxCubit>(),
+                child: InboxArchivedScreen(
+                  currentDoctorModel:
+                      args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
+
+      case AppRoutes.inboxGlobalSearch:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return FadeSwipeBackPageRoute(
+              settings: settings,
+              builder: (_) => BlocProvider.value(
+                value: di.sl<InboxCubit>(),
+                child: InboxGlobalSearchScreen(
+                  currentDoctorModel:
+                      args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
+
+      case AppRoutes.chatInfo:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return SlideFromRightPageRoute(
+              settings: settings,
+              builder: (_) => ChatInfoScreen(
+                currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                displayName: args['displayName'] as String? ?? '',
+                imageUrl: args['imageUrl'] as String?,
+                initials: args['initials'] as String?,
+                isVerified: args['isVerified'] as bool? ?? false,
+                chatType: args['chatType'] as String?,
+                contextId: args['contextId'] as int?,
+                conversationId: args['conversationId'] as int?,
+                isGroup: args['isGroup'] as bool? ?? false,
+                messages: (args['messages'] as List<ChatMessageItem>?) ??
+                    const [],
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
+
+      case AppRoutes.chatAddMembers:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel') &&
+              args.containsKey('conversationId') &&
+              args.containsKey('chatType')) {
+            final existing = <int>{};
+            final raw = args['existingMemberIds'];
+            if (raw is Set<int>) {
+              existing.addAll(raw);
+            } else if (raw is Iterable) {
+              for (final id in raw) {
+                if (id is int) existing.add(id);
+                if (id is num) existing.add(id.toInt());
+              }
+            }
+            return MaterialPageRoute(
+              builder: (_) => ChatAddMembersScreen(
+                currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                conversationId: args['conversationId'] as int,
+                chatType: args['chatType'] as String,
+                existingMemberIds: existing,
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
+
+      case AppRoutes.chatForward:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel') &&
+              (args.containsKey('messages') || args.containsKey('message'))) {
+            final messagesArg = args['messages'];
+            final List<ChatMessageItem> messages;
+            if (messagesArg is List<ChatMessageItem>) {
+              messages = messagesArg;
+            } else if (messagesArg is List) {
+              messages = messagesArg.whereType<ChatMessageItem>().toList();
+            } else if (args['message'] is ChatMessageItem) {
+              messages = [args['message'] as ChatMessageItem];
+            } else {
+              return unDefinedRoute();
+            }
+            if (messages.isEmpty) return unDefinedRoute();
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: di.sl<InboxCubit>(),
+                child: ChatForwardPickerScreen(
+                  currentDoctorModel:
+                      args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  messages: messages,
+                  sourceConversationId: args['sourceConversationId'] as int?,
+                  excludeChatType: args['excludeChatType'] as String?,
+                  excludeContextId: args['excludeContextId'] as int?,
+                ),
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
+
+      case AppRoutes.chatSearch:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => ChatSearchScreen(
+                currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                peerDisplayName: args['peerDisplayName'] as String?,
+                peerImageUrl: args['peerImageUrl'] as String?,
+                messages: (args['messages'] as List<ChatMessageItem>?) ??
+                    const [],
+                chatType: args['chatType'] as String?,
+                contextId: args['contextId'] as int?,
+                conversationId: args['conversationId'] as int?,
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
+
+      case AppRoutes.chatMediaGallery:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => ChatMediaGalleryScreen(
+                currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                displayName: args['displayName'] as String? ?? '',
+                messages: (args['messages'] as List<ChatMessageItem>?) ??
+                    const [],
+                chatType: args['chatType'] as String?,
+                contextId: args['contextId'] as int?,
+                conversationId: args['conversationId'] as int?,
+                peerImageUrl: args['peerImageUrl'] as String?,
+              ),
+            );
+          }
+          return unDefinedRoute();
+        }
+        return unDefinedRoute();
 
       default:
         return unDefinedRoute();

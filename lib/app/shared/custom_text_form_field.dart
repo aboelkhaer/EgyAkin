@@ -345,7 +345,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             prefixIconConstraints: widget.prefixIconConstraints ??
                 BoxConstraints(
                   minWidth: 40,
-                  minHeight: widget.isChatInput ? 36.h : (widget.height ?? 40.h),
+                  minHeight: widget.isChatInput
+                      ? (widget.height ?? 36.h)
+                      : (widget.height ?? 40.h),
                 ),
           ),
           readOnly: widget.readOnly,
@@ -387,7 +389,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
         if (widget.isChatInput) {
           return SizedBox(
-            height: 36.h,
+            height: widget.height ?? 36.h,
             child: field,
           );
         }

@@ -1,4 +1,5 @@
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 
 class AppRoutesArgs {
@@ -482,10 +483,32 @@ class AppRoutesArgs {
   static Map<String, dynamic> chatRoomRouteArgs({
     required DoctorModel currentDoctorModel,
     required HomeModelResponse homeDataModel,
+    String? peerDisplayName,
+    String? peerInitials,
+    bool? peerVerified,
+    bool? peerIsOnline,
+    String? chatType,
+    int? contextId,
+    int? conversationId,
+    String? peerImageUrl,
+    List<ChatUserModel>? initialParticipants,
+    String? focusMessageId,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'homeDataModel': homeDataModel,
+      if (peerDisplayName != null) 'peerDisplayName': peerDisplayName,
+      if (peerInitials != null) 'peerInitials': peerInitials,
+      if (peerVerified != null) 'peerVerified': peerVerified,
+      if (peerIsOnline != null) 'peerIsOnline': peerIsOnline,
+      if (chatType != null) 'chatType': chatType,
+      if (contextId != null) 'contextId': contextId,
+      if (conversationId != null) 'conversationId': conversationId,
+      if (peerImageUrl != null) 'peerImageUrl': peerImageUrl,
+      if (initialParticipants != null && initialParticipants.isNotEmpty)
+        'initialParticipants': initialParticipants,
+      if (focusMessageId != null && focusMessageId.isNotEmpty)
+        'focusMessageId': focusMessageId,
     };
   }
 }

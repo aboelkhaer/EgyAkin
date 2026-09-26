@@ -28,14 +28,12 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SavedPostsCubit>().getSavedPosts(widget.doctorId);
+    _cubit = context.read<SavedPostsCubit>();
+    _cubit!.getSavedPosts(widget.doctorId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit = context.read<SavedPostsCubit>();
-
-      if (!_cubit!.isClosed) {
-        _cubit!.scrollController = ScrollController();
-        _cubit!.scrollController!.addListener(_onScroll);
-      }
+      if (_cubit == null || _cubit!.isClosed) return;
+      _cubit!.scrollController = ScrollController();
+      _cubit!.scrollController!.addListener(_onScroll);
     });
   }
 
@@ -147,7 +145,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                             },
                             color: primary,
                             child: ListView.builder(
-                              itemCount: response.data!.data!.length,
+                              itemCount: posts.length,
                               physics: const AlwaysScrollableScrollPhysics(),
                               controller: cubit.scrollController,
                               padding: EdgeInsets.fromLTRB(
@@ -157,22 +155,24 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                 60.h,
                               ),
                               itemBuilder: (context, index) {
-                                var feed = response.data!.data![index];
+                                var feed = posts[index];
                                 final poll = feed
                                     .poll; // Store poll in a variable to avoid multiple null checks
 
-                                if (poll != null) {
+                                if (poll != null &&
+                                    feed.id != null &&
+                                    _cubit != null) {
                                   // Ensure initial values are set in postSelectedOptions
                                   if (poll.allowMultipleChoice == true &&
                                       !_cubit!.postSelectedOptions
                                           .containsKey(feed.id)) {
                                     _cubit!.postSelectedOptions[feed.id!] = {
-                                      ...poll.options
-                                              ?.where((option) =>
-                                                  option.isVoted ?? false)
-                                              .map((option) => option.id!)
-                                              .toSet() ??
-                                          {}
+                                      ...?poll.options
+                                          ?.where((option) =>
+                                              (option.isVoted ?? false) &&
+                                              option.id != null)
+                                          .map((option) => option.id!)
+                                          .toSet()
                                     };
                                   }
 
@@ -182,12 +182,13 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                           .containsKey(feed.id)) {
                                     _cubit!.postSelectedOption[feed.id!] = poll
                                         .options
-                                        ?.firstWhere(
-                                            (option) => option.isVoted ?? false,
-                                            orElse: () =>
-                                                const PollOptionsModelResponse(
-                                                    id: -1))
-                                        .id;
+                                        ?.where(
+                                            (option) => option.isVoted ?? false)
+                                        .map((option) => option.id)
+                                        .firstWhere(
+                                          (id) => id != null,
+                                          orElse: () => -1,
+                                        );
                                   }
                                 }
                                 return PostCard(
@@ -249,7 +250,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                     cubit.addSaveOrUnsaveOnPost(
                                       feed.id.toString(),
                                       saveOrUnsave:
-                                          feed.isSaved! ? 'unsave' : 'save',
+                                          feed.isSaved == true ? 'unsave' : 'save',
                                     );
                                   },
                                   onDeleteAdditional: () {

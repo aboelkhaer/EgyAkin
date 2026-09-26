@@ -3,8 +3,11 @@ import '../../services/localization_service.dart';
 
 String showAnswerWithSelectType(Map<String, dynamic> answer,
     {LocalizationService? localization}) {
-  final String answers = answer[AppStrings.answers] ?? '...';
-  final String otherField = answer[AppStrings.otherField] ?? '';
+  final rawAnswers = answer[AppStrings.answers];
+  final String answers =
+      rawAnswers == null ? '...' : rawAnswers.toString();
+  final rawOther = answer[AppStrings.otherField];
+  final String otherField = rawOther == null ? '' : rawOther.toString();
 
   if (answers == AppStrings.others) {
     final loc = localization ?? LocalizationService.instance;

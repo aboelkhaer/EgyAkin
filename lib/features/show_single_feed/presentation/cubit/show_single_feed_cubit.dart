@@ -723,12 +723,14 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           // Toggle the save status
           final isCurrentlySaved = currentFeed.isSaved ?? false;
 
+          final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
+
           //! feedsTab
           if (showPostFrom == ShowPostFromEnum.feedsTab.name) {
             // Call the save or unsave API
             sl<CommunityCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
             );
 
             // Update the post state with the new save status
@@ -742,42 +744,44 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           if (showPostFrom == ShowPostFromEnum.groupsTab.name) {
             sl<GroupsCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
             );
           }
           //! groupDetails
           if (showPostFrom == ShowPostFromEnum.groupDetails.name) {
             sl<GroupDetailsInCommunityCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
             );
           }
           //! searchTab
           if (showPostFrom == ShowPostFromEnum.searchTab.name) {
             sl<CommunitySearchCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
             );
           }
           //! allDoctorPosts
           if (showPostFrom == ShowPostFromEnum.allDoctorPosts.name) {
             sl<AllDoctorPostsCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
             );
           }
           //! savedPosts
           if (showPostFrom == ShowPostFromEnum.savedPosts.name) {
             sl<SavedPostsCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
+              post: currentFeed,
             );
           }
           //! notification
           if (showPostFrom == ShowPostFromEnum.notification.name) {
             sl<SavedPostsCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
-              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+              saveOrUnsave: saveOrUnsave,
+              post: currentFeed,
             );
           }
 

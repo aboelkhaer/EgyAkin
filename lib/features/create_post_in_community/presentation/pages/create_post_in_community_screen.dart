@@ -153,7 +153,7 @@ class _CreatePostInCommunityScreenState
 
     if (value.trim().isNotEmpty) {
       final firstChar = value.trim()[0];
-      final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(firstChar);
+        final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(firstChar);
       _textDirectionNotifier.value =
           hasArabic ? TextDirection.rtl : TextDirection.ltr;
     } else {
@@ -444,16 +444,16 @@ class _CreatePostInCommunityScreenState
                               cubit.pickImageAndShowIt(true, context),
                           submitListener: BlocListener<
                               CreatePostInCommunityCubit,
-                              CreatePostInCommunityState>(
-                            listener: (context, state) {
-                              state.maybeWhen(
-                                orElse: () {},
-                                error: (message) {
-                                  customSnackBar(
-                                    context: context,
-                                    message: message,
-                                  );
-                                },
+                    CreatePostInCommunityState>(
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      orElse: () {},
+                      error: (message) {
+                        customSnackBar(
+                          context: context,
+                          message: message,
+                        );
+                      },
                                 loaded: (
                                   postLength,
                                   changeCounter,
@@ -462,18 +462,18 @@ class _CreatePostInCommunityScreenState
                                   isUploadPostLoaded,
                                   message,
                                 ) {
-                                  if (message != '') {
+                        if (message != '') {
                                     customSnackBar(
                                       context: context,
                                       message: message,
                                     );
-                                  }
-                                  if (isUploadPostLoaded) {
+                        }
+                        if (isUploadPostLoaded) {
                                     _handleUploadSuccess();
-                                  }
-                                },
-                              );
-                            },
+                        }
+                      },
+                    );
+                  },
                             child: const SizedBox.shrink(),
                           ),
                           onSubmit: () => cubit.submitPost(
@@ -486,14 +486,14 @@ class _CreatePostInCommunityScreenState
                     ),
                     BlocBuilder<CreatePostInCommunityCubit,
                         CreatePostInCommunityState>(
-                      builder: (context, state) {
-                        return state.maybeWhen(
+                  builder: (context, state) {
+                    return state.maybeWhen(
                           orElse: () => const SizedBox.shrink(),
-                          loaded: (
+                      loaded: (
                             _,
                             __,
-                            isImagePick,
-                            isUploadPostLoading,
+                        isImagePick,
+                        isUploadPostLoading,
                             ___,
                             ____,
                           ) {
@@ -515,10 +515,10 @@ class _CreatePostInCommunityScreenState
                       },
                     ),
                   ],
-                );
-              },
-            ),
-          ),
+                    );
+                  },
+                ),
+              ),
         );
       },
     );
@@ -602,7 +602,7 @@ class _QualityChip extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           child: Row(
-            children: [
+                    children: [
               Icon(
                 icon,
                 size: 18.sp,
@@ -610,9 +610,9 @@ class _QualityChip extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                     Text(
                       title,
                       style: TextStyle(
@@ -690,18 +690,18 @@ class _PostBusyOverlay extends StatelessWidget {
                 child: Container(
                   width: 280.w,
                   padding: EdgeInsets.fromLTRB(22.w, 24.h, 22.w, 22.h),
-                  decoration: BoxDecoration(
+                                    decoration: BoxDecoration(
                     color: palette.sheet,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(color: palette.line.withOpacity(0.85)),
-                    boxShadow: [
-                      BoxShadow(
+                                      boxShadow: [
+                                        BoxShadow(
                         color: Colors.black.withOpacity(0.22),
                         blurRadius: 28,
                         offset: const Offset(0, 12),
-                      ),
-                    ],
-                  ),
+                                        ),
+                                      ],
+                                    ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -825,7 +825,7 @@ class _StudioTopBar extends StatelessWidget {
       bottom: false,
       child: Padding(
         padding: EdgeInsets.fromLTRB(14.w, 6.h, 18.w, 8.h),
-        child: Row(
+                                    child: Row(
           children: [
             Material(
               color: palette.sheet.withOpacity(0.9),
@@ -850,8 +850,8 @@ class _StudioTopBar extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+                                      children: [
+                                        Text(
                     isEdit
                         ? context.tr(AppStrings.editDraftUpper)
                         : context.tr(AppStrings.newPostUpper),
@@ -875,12 +875,12 @@ class _StudioTopBar extends StatelessWidget {
                       height: 1.1,
                     ),
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
     );
   }
 }
@@ -930,9 +930,9 @@ class _IdentityPill extends StatelessWidget {
           ),
           SizedBox(width: 10.w),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                 Row(
                   children: [
                     Flexible(
@@ -940,7 +940,7 @@ class _IdentityPill extends StatelessWidget {
                         name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                                        style: TextStyle(
                           fontSize: 12.5.sp,
                           fontWeight: FontWeight.w700,
                           color: palette.ink,
@@ -1181,38 +1181,38 @@ class _WritingSheetState extends State<_WritingSheet> {
                           letterSpacing: -0.15,
                         ),
                         onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                        decoration: InputDecoration(
+                                        decoration: InputDecoration(
                           hintText: widget.hint,
-                          hintStyle: TextStyle(
+                                          hintStyle: TextStyle(
                             color: palette.muted.withOpacity(0.85),
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w500,
                             height: 1.55,
-                          ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          filled: false,
+                                          ),
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          focusedErrorBorder: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          filled: false,
                           contentPadding: EdgeInsets.zero,
                           counterText: '',
-                        ),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
+                                        ),
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
                         minLines: 7,
-                        maxLength: 3000,
-                        textDirection: textDirection,
+                                        maxLength: 3000,
+                                        textDirection: textDirection,
                         onChanged: widget.onChanged,
-                      );
-                    },
-                  ),
+                                      );
+                                    },
+                                  ),
                 ),
               ),
-            ],
-          ),
-        ),
+                                ],
+                              ),
+                            ),
       ),
     );
   }
@@ -1250,9 +1250,9 @@ class _CharacterMeter extends StatelessWidget {
           ),
         ),
         SizedBox(width: 10.w),
-        Text(
+                                                Text(
           '$length / $max',
-          style: TextStyle(
+                                                  style: TextStyle(
             fontSize: 10.sp,
             fontWeight: FontWeight.w600,
             color: nearLimit ? Colors.red : palette.muted,
@@ -1325,9 +1325,9 @@ class _BallotCard extends StatelessWidget {
           ),
           if (poll.question?.isNotEmpty ?? false) ...[
             SizedBox(height: 12.h),
-            Text(
+                                                  Text(
               poll.question!,
-              style: TextStyle(
+                                                    style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 15.sp,
                 color: palette.ink,
@@ -1339,7 +1339,7 @@ class _BallotCard extends StatelessWidget {
           ...?(poll.options?.asMap().entries.map((entry) {
             final i = entry.key;
             final option = entry.value;
-            return Padding(
+                                                  return Padding(
               padding: EdgeInsets.only(bottom: 8.h),
               child: Container(
                 width: double.infinity,
@@ -1348,8 +1348,8 @@ class _BallotCard extends StatelessWidget {
                   color: palette.toolBg.withOpacity(palette.isDark ? 0.7 : 1),
                   borderRadius: BorderRadius.circular(14.r),
                 ),
-                child: Row(
-                  children: [
+                                                    child: Row(
+                                                      children: [
                     Container(
                       width: 22.w,
                       height: 22.w,
@@ -1368,31 +1368,31 @@ class _BallotCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 10.w),
-                    Expanded(
-                      child: Text(
-                        option,
-                        style: TextStyle(
+                                                        Expanded(
+                                                          child: Text(
+                                                            option,
+                                                            style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                           color: palette.ink,
-                        ),
-                      ),
-                    ),
-                  ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                 ),
-              ),
-            );
-          })),
+                                                    ),
+                                                  );
+                                                })),
           if ((poll.allowMultipleChoices ?? false) ||
               (poll.allowAddOptions ?? false)) ...[
             SizedBox(height: 4.h),
             if (poll.allowMultipleChoices ?? false)
-              buildSettingItem(
+                                                        buildSettingItem(
                 icon: Icons.check_box_outlined,
                 label: context.tr(AppStrings.allowMultipleChoices),
               ),
             if (poll.allowAddOptions ?? false)
-              buildSettingItem(
+                                                        buildSettingItem(
                 icon: Icons.add_circle_outline,
                 label: context.tr(AppStrings.allowAddOptions),
               ),
@@ -1431,9 +1431,9 @@ class _MiniIconBtn extends StatelessWidget {
             size: 16.sp,
             color: danger ? Colors.red : palette.ink,
           ),
-        ),
-      ),
-    );
+                                      ),
+                                    ),
+                                  );
   }
 }
 
@@ -1459,9 +1459,9 @@ class _MediaFilmstrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final total = localCount + remoteCount;
-    return Column(
+                                return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+                                  children: [
         Text(
           '${context.tr(AppStrings.attachmentsUpper)} · $total',
           style: TextStyle(
@@ -1478,12 +1478,12 @@ class _MediaFilmstrip extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: total,
             separatorBuilder: (_, __) => SizedBox(width: 10.w),
-            itemBuilder: (context, index) {
+                                          itemBuilder: (context, index) {
               final isLocal = index < localCount;
               final localIndex = index;
               final remoteIndex = index - localCount;
-              return Stack(
-                children: [
+                                            return Stack(
+                                              children: [
                   Container(
                     width: 108.w,
                     height: 108.h,
@@ -1504,7 +1504,7 @@ class _MediaFilmstrip extends StatelessWidget {
                       shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
-                        onTap: () {
+                                                  onTap: () {
                           if (isLocal) {
                             onRemoveLocal(localIndex);
                           } else {
@@ -1513,20 +1513,20 @@ class _MediaFilmstrip extends StatelessWidget {
                         },
                         child: Padding(
                           padding: EdgeInsets.all(5.w),
-                          child: Icon(
+                                                    child: Icon(
                             Icons.close_rounded,
                             size: 14.sp,
                             color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
       ],
     );
   }
@@ -1560,17 +1560,17 @@ class _StudioDock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreatePostInCommunityCubit, CreatePostInCommunityState>(
-      builder: (context, state) {
-        return state.maybeWhen(
-          orElse: () => const SizedBox.shrink(),
-          loaded: (
-            postLength,
-            changeCounter,
-            isImagePick,
-            isUploadPostLoading,
-            isUploadPostLoaded,
-            message,
-          ) {
+                          builder: (context, state) {
+                            return state.maybeWhen(
+                              orElse: () => const SizedBox.shrink(),
+                              loaded: (
+                                postLength,
+                                changeCounter,
+                                isImagePick,
+                                isUploadPostLoading,
+                                isUploadPostLoaded,
+                                message,
+                              ) {
             final cubit = CreatePostInCommunityCubit.get(context);
             final hasPoll = poll != null || (cubit.editableFeed?.poll != null);
             final hasImages = cubit.imagesPicked.isNotEmpty ||
@@ -1591,10 +1591,10 @@ class _StudioDock extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 18.h),
                     color: palette.sheet,
-                    child: Text(
+                                    child: Text(
                       context.tr(AppStrings.yourPollHasBeenPublished),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                                      style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                         color: palette.muted,
@@ -1615,7 +1615,7 @@ class _StudioDock extends StatelessWidget {
 
             return Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+                                        children: [
                 submitListener,
                 Container(
                   decoration: BoxDecoration(
@@ -1697,9 +1697,9 @@ class _StudioDock extends StatelessWidget {
                                       child: Center(
                                         child: isUploadPostLoading
                                             ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
                                                   SizedBox(
                                                     width: 16.w,
                                                     height: 16.w,
@@ -1720,7 +1720,7 @@ class _StudioDock extends StatelessWidget {
                                                             AppStrings
                                                                 .publishingEllipsis,
                                                           ),
-                                                    style: TextStyle(
+                                              style: TextStyle(
                                                       fontSize: 12.sp,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -1745,30 +1745,30 @@ class _StudioDock extends StatelessWidget {
                                                             .tr(AppStrings.save)
                                                         : context.tr(
                                                             AppStrings.addPost),
-                                                    style: TextStyle(
+                                              style: TextStyle(
                                                       fontSize: 12.sp,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color: Colors.white,
                                                       letterSpacing: -0.2,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                      ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                     ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
     );
   }
 }

@@ -1,5 +1,5 @@
-import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/my_groups_cubit/my_groups_in_community_state.dart';
+import 'package:egy_akin/features/community/presentation/widgets/community_chrome_scope.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../../exports.dart';
@@ -28,7 +28,7 @@ class _GroupsTabState extends State<GroupsTab>
   @override
   void initState() {
     super.initState();
-    _myGroupsCubit = sl<MyGroupsInCommunityCubit>();
+    _myGroupsCubit = resolveMyGroupsInCommunityCubit();
     // Load once when the tab is first created; keep-alive prevents
     // reloading when switching away to Feeds/Trending.
     final alreadyLoaded = _myGroupsCubit.state.maybeWhen(
@@ -39,12 +39,6 @@ class _GroupsTabState extends State<GroupsTab>
       _myGroupsCubit.callMyGroups = 1;
       _myGroupsCubit.getMyGroups();
     }
-  }
-
-  @override
-  void dispose() {
-    _myGroupsCubit.close();
-    super.dispose();
   }
 
   @override
@@ -148,29 +142,14 @@ class _GroupsTabViewState extends State<_GroupsTabView> {
         status != GroupInviteStatus.pending.name;
   }
 
-  Future<void> _onJoin(GroupModel group) async {
+  void _onJoin(GroupModel group) {
     if (group.id == null || !_canJoin(group)) return;
-
-    final hasPermission =
-        await PermissionHelper.hasPermission(AppPermissions.joinGroup);
-    if (!mounted) return;
-    if (!hasPermission) {
-      showCustomDialog(
-        context: context,
-        title: context.tr(AppStrings.attention),
-        description: context.tr(AppStrings.youDontHavePermissionToJoinGroups),
-        coloredButtonText: context.tr(AppStrings.ok),
-        coloredButtonOnTap: () => Navigator.of(context).pop(),
-        isNoColorShow: false,
-      );
-      return;
-    }
-
     context.read<GroupsCubit>().joinGroup(group.id.toString());
   }
 
   @override
   Widget build(BuildContext context) {
+    final chromeInset = CommunityChromeScope.of(context);
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
@@ -180,6 +159,7 @@ class _GroupsTabViewState extends State<_GroupsTabView> {
           color: HomeDashboardColors.scaffold(isDark),
           child: RefreshIndicator(
             color: primary,
+            edgeOffset: chromeInset,
             onRefresh: _refresh,
             child: BlocListener<GroupsCubit, GroupsState>(
               listener: (context, state) {
@@ -202,7 +182,7 @@ class _GroupsTabViewState extends State<_GroupsTabView> {
                 physics: const BouncingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
-                padding: EdgeInsets.fromLTRB(0, 8.h, 0, 110.h),
+                padding: EdgeInsets.fromLTRB(0, chromeInset + 8.h, 0, 110.h),
                 children: [
                   _SectionHeader(
                     title: context.tr(AppStrings.yourGroups),
@@ -472,7 +452,7 @@ class _YourGroupCard extends StatelessWidget {
               SizedBox(height: 8.h),
               Text(
                 group.name ?? '',
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: titleStyle,
               ),

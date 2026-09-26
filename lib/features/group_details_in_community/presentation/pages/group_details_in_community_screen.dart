@@ -4,6 +4,7 @@ import 'package:egy_akin/app/shared/functions/date_formate_for_group.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
@@ -110,9 +111,9 @@ class _GroupDetailsInCommunityScreenState
     );
     if (!hasPosts) return;
     if (_scrollController.position.extentAfter > 280) return;
-    _cubit.isLoadingMoreForScroll = true;
-    _cubit.loadMoreFeeds(widget.groupId);
-  }
+      _cubit.isLoadingMoreForScroll = true;
+      _cubit.loadMoreFeeds(widget.groupId);
+    }
 
   bool _isMember(GroupModel g) =>
       g.userStatus == GroupInviteStatus.accepted.name ||
@@ -130,6 +131,31 @@ class _GroupDetailsInCommunityScreenState
     Navigator.push(
       context,
       FullScreenImage.route(imageUrl: url, isLocal: false),
+    );
+  }
+
+  void _openGroupChat(GroupModel group) {
+    final groupId = int.tryParse(widget.groupId) ?? group.id;
+    if (groupId == null) {
+      customSnackBar(
+        context: context,
+        message: context.tr(AppStrings.somethingWentWrong),
+      );
+      return;
+    }
+
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.chatRoom,
+      arguments: AppRoutesArgs.chatRoomRouteArgs(
+        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: widget.homeDataModel,
+        peerDisplayName: group.name?.trim().isNotEmpty == true
+            ? group.name!.trim()
+            : context.tr(AppStrings.chat),
+        peerImageUrl: group.groupImage?.toString(),
+        chatType: ChatApiType.socialGroup,
+        contextId: groupId,
+      ),
     );
   }
 
@@ -153,7 +179,7 @@ class _GroupDetailsInCommunityScreenState
   }
 
   void _openEdit(GroupModel group) {
-    navigatorKey.currentState?.pushNamed(
+                              navigatorKey.currentState?.pushNamed(
       AppRoutes.createGroupInCommunity,
       arguments: AppRoutesArgs.createGroupInCommunityRouteArgs(
         currentDoctorModel: widget.currentDoctorModel,
@@ -172,19 +198,19 @@ class _GroupDetailsInCommunityScreenState
     );
 
     await navigatorKey.currentState?.pushNamed(
-      AppRoutes.createPostInCommunity,
+                                AppRoutes.createPostInCommunity,
       arguments: AppRoutesArgs.createPostInCommunityRouteArgs(
-        currentDoctorModel: widget.currentDoctorModel,
-        homeDataModel: widget.homeDataModel,
-        groupId: widget.groupId,
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                  homeDataModel: widget.homeDataModel,
+                                  groupId: widget.groupId,
         groupName:
             (groupName != null && groupName.isNotEmpty) ? groupName : null,
         onPostUploaded: () async {
           await _cubit.getGroupDetails(widget.groupId);
           _syncNewPostFabAfterLayout();
-        },
-      ),
-    );
+                                  },
+                                ),
+                              );
     if (!mounted) return;
     _syncNewPostFabAfterLayout();
   }
@@ -224,9 +250,9 @@ class _GroupDetailsInCommunityScreenState
           child: Scaffold(
             backgroundColor: scaffold,
             floatingActionButton: BlocBuilder<GroupDetailsInCommunityCubit,
-                GroupDetailsInCommunityState>(
+                              GroupDetailsInCommunityState>(
               buildWhen: (prev, next) => prev != next,
-              builder: (context, state) {
+                            builder: (context, state) {
                 final canPost = state.maybeWhen(
                   loaded:
                       (groupDetails, _, __, ___, ____, _____, ______, _______) {
@@ -241,7 +267,7 @@ class _GroupDetailsInCommunityScreenState
                   duration: const Duration(milliseconds: 280),
                   curve: Curves.easeOutCubic,
                   offset: _showNewPostFab ? Offset.zero : const Offset(0, 1.4),
-                  child: AnimatedOpacity(
+                                    child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 220),
                     curve: Curves.easeOut,
                     opacity: _showNewPostFab ? 1 : 0,
@@ -263,58 +289,58 @@ class _GroupDetailsInCommunityScreenState
                       ),
                     ),
                   ),
-                );
-              },
-            ),
+                              );
+                            },
+                          ),
             body: BlocConsumer<GroupDetailsInCommunityCubit,
-                GroupDetailsInCommunityState>(
-              listener: (context, state) {
-                state.maybeWhen(
-                  orElse: () {},
+                                GroupDetailsInCommunityState>(
+                              listener: (context, state) {
+                                state.maybeWhen(
+                                  orElse: () {},
                   error: (message) =>
                       customSnackBar(context: context, message: message),
-                  loaded: (
+                                  loaded: (
                     _,
-                    snackBarMessage,
+                                    snackBarMessage,
                     __,
                     ___,
-                    isDeleteGroupLoaded,
+                                    isDeleteGroupLoaded,
                     ____,
                     _____,
                     ______,
-                  ) {
-                    if (snackBarMessage != '') {
-                      customSnackBar(
+                                  ) {
+                                    if (snackBarMessage != '') {
+                                      customSnackBar(
                           context: context, message: snackBarMessage);
-                    }
-                    if (isDeleteGroupLoaded) {
-                      navigatorKey.currentState
+                                    }
+                                    if (isDeleteGroupLoaded) {
+                                      navigatorKey.currentState
                           ?.pushReplacementNamed(AppRoutes.home, arguments: 0);
-                      Future.delayed(Duration.zero, () {
-                        navigatorKey.currentState?.pushNamed(
-                          AppRoutes.community,
+                                      Future.delayed(Duration.zero, () {
+                                        navigatorKey.currentState?.pushNamed(
+                                          AppRoutes.community,
                           arguments: AppRoutesArgs.communityRouteArgs(
-                            homeDataModel: widget.homeDataModel,
+                                            homeDataModel: widget.homeDataModel,
                             currentDoctorModel: widget.currentDoctorModel,
-                            initialTab: 2,
-                          ),
-                        );
-                      });
-                    }
-                  },
-                );
-              },
-              builder: (context, state) {
-                return state.maybeWhen(
+                                            initialTab: 2,
+                                          ),
+                                        );
+                                      });
+                                    }
+                                  },
+                                );
+                              },
+                              builder: (context, state) {
+                                return state.maybeWhen(
                   orElse: () => _Loading(isDark: isDark),
-                  loaded: (
-                    groupDetails,
+                                  loaded: (
+                                    groupDetails,
                     _,
                     __,
-                    isDeleteGroupLoading,
+                                    isDeleteGroupLoading,
                     ___,
                     ____,
-                    isSeeMore,
+                                    isSeeMore,
                     isAcceptOrDecline,
                   ) {
                     final group = groupDetails.data?.group;
@@ -415,6 +441,7 @@ class _GroupDetailsInCommunityScreenState
                                     cubit.deleteGroup(group.id.toString()),
                                 onMembers: () => _openMembers(group),
                                 onInvite: () => _openInvite(group),
+                                onChat: () => _openGroupChat(group),
                                 onCreatePost: _openCreatePost,
                                 onJoin: () =>
                                     cubit.joinGroup(group.id.toString()),
@@ -436,10 +463,10 @@ class _GroupDetailsInCommunityScreenState
                                         .declined.name,
                                     doctorId:
                                         widget.currentDoctorModel.id.toString(),
-                                  );
-                                },
-                              ),
+                                );
+                              },
                             ),
+                          ),
                             if (_tab == 1)
                               SliverToBoxAdapter(
                                 child: Padding(
@@ -508,7 +535,7 @@ class _GroupDetailsInCommunityScreenState
                                     child: SizedBox(
                                       width: 18,
                                       height: 18,
-                                      child: CircularProgressIndicator(
+                                  child: CircularProgressIndicator(
                                         strokeWidth: 2.4,
                                         color: primary,
                                       ),
@@ -558,7 +585,7 @@ class _GroupDetailsInCommunityScreenState
           cubit.addVoteAndUnVote(post.poll!.id.toString(), optionId);
           if (isSelected) {
             cubit.postSelectedOptions[post.id!]!.add(optionId);
-          } else {
+                                        } else {
             cubit.postSelectedOptions[post.id!]!.remove(optionId);
           }
           cubit.refreshScreen();
@@ -573,7 +600,7 @@ class _GroupDetailsInCommunityScreenState
       onSaveAndUnSaveAdditional: () {
         cubit.addSaveOrUnsaveOnPost(
           post.id.toString(),
-          saveOrUnsave: post.isSaved! ? 'unsave' : 'save',
+          saveOrUnsave: post.isSaved == true ? 'unsave' : 'save',
         );
       },
       onDeleteAdditional: () => cubit.deletePost(post.id.toString()),
@@ -633,6 +660,7 @@ class _ProfileHeader extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onMembers;
   final VoidCallback onInvite;
+  final VoidCallback onChat;
   final VoidCallback onCreatePost;
   final VoidCallback onJoin;
   final VoidCallback onAccept;
@@ -666,6 +694,7 @@ class _ProfileHeader extends StatelessWidget {
     required this.onDelete,
     required this.onMembers,
     required this.onInvite,
+    required this.onChat,
     required this.onCreatePost,
     required this.onJoin,
     required this.onAccept,
@@ -684,13 +713,13 @@ class _ProfileHeader extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+                  children: [
         // ── Hero band (same language as doctor profile) ──
         SizedBox(
           width: double.infinity,
           child: Stack(
             clipBehavior: Clip.none,
-            children: [
+                        children: [
               // Rounded cover / gradient only (avatar & chrome stay unclipped)
               Positioned.fill(
                 child: ClipRRect(
@@ -700,9 +729,9 @@ class _ProfileHeader extends StatelessWidget {
                   ),
                   child: Stack(
                     fit: StackFit.expand,
-                    children: [
+                            children: [
                       DecoratedBox(
-                        decoration: BoxDecoration(
+                                decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -730,11 +759,11 @@ class _ProfileHeader extends StatelessWidget {
                             onTap: canOpenMedia ? onOpenCover : null,
                             child: CustomCachedNetworkImage(
                               imageUrl: group.headerPicture.toString(),
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
+                                                        width: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
                       // Keep chrome + title readable over busy cover art
                       IgnorePointer(
                         child: DecoratedBox(
@@ -757,9 +786,9 @@ class _ProfileHeader extends StatelessWidget {
                                       Colors.white.withOpacity(0.92),
                                     ],
                             ),
-                          ),
-                        ),
-                      ),
+                                      ),
+                                    ),
+                                  ),
                     ],
                   ),
                 ),
@@ -789,9 +818,9 @@ class _ProfileHeader extends StatelessWidget {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
+                                        children: [
+                                          Row(
+                                            children: [
                       _GlassIconButton(
                         isDark: isDark,
                         icon: Icons.arrow_back_ios_new_rounded,
@@ -801,16 +830,16 @@ class _ProfileHeader extends StatelessWidget {
                       if (canEdit)
                         AdminOnlyBadge(
                           showBadge: showAdminEditBadge,
-                          style: BadgeStyle.premium,
-                          fontSize: 6.sp,
+                                                      style: BadgeStyle.premium,
+                                                      fontSize: 6.sp,
                           badgePadding: EdgeInsets.symmetric(
-                            horizontal: 3.w,
+                                                              horizontal: 3.w,
                             vertical: 0.5.h,
                           ),
-                          showIcon: false,
-                          glowEffect: true,
-                          pulseAnimation: true,
-                          badgeText: 'A',
+                                                      showIcon: false,
+                                                      glowEffect: true,
+                                                      pulseAnimation: true,
+                                                      badgeText: 'A',
                           top: -6,
                           right: -6,
                           child: _GlassIconButton(
@@ -841,19 +870,19 @@ class _ProfileHeader extends StatelessWidget {
                                 value: 'delete',
                                 child: AdminOnlyBadge(
                                   showBadge: showAdminDeleteBadge,
-                                  style: BadgeStyle.premium,
-                                  fontSize: 6.sp,
+                                                      style: BadgeStyle.premium,
+                                                      fontSize: 6.sp,
                                   badgePadding: EdgeInsets.symmetric(
-                                    horizontal: 3.w,
+                                                              horizontal: 3.w,
                                     vertical: 0.5.h,
                                   ),
-                                  showIcon: false,
-                                  glowEffect: true,
-                                  pulseAnimation: true,
-                                  badgeText: 'A',
-                                  top: -5,
+                                                      showIcon: false,
+                                                      glowEffect: true,
+                                                      pulseAnimation: true,
+                                                      badgeText: 'A',
+                                                      top: -5,
                                   right: -5,
-                                  child:
+                                                                child:
                                       Text(context.tr(AppStrings.deleteGroup)),
                                 ),
                               ),
@@ -872,7 +901,7 @@ class _ProfileHeader extends StatelessWidget {
                   SizedBox(height: 14.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                                                      children: [
                       GestureDetector(
                         onTap: canOpenMedia && imageUrl.isNotEmpty
                             ? onOpenAvatar
@@ -930,7 +959,7 @@ class _ProfileHeader extends StatelessWidget {
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                                                      children: [
                             Container(
                               margin: EdgeInsets.only(bottom: 4.h),
                               padding: EdgeInsets.symmetric(
@@ -987,15 +1016,15 @@ class _ProfileHeader extends StatelessWidget {
                                               : const Color(0xFF115E59)),
                                       letterSpacing: 0.2,
                                     ),
-                                  ),
-                                ],
-                              ),
+                                                        ),
+                                                      ],
+                                                    ),
                             ),
-                            Text(
+                                              Text(
                               group.name ?? '',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                                                style: TextStyle(
                                 fontSize: 18.sp,
                                 height: 1.15,
                                 fontWeight: FontWeight.w800,
@@ -1014,9 +1043,9 @@ class _ProfileHeader extends StatelessWidget {
                                         Shadow(
                                           color: Colors.white.withOpacity(0.9),
                                           blurRadius: 12,
-                                        ),
-                                      ],
-                              ),
+                                              ),
+                                            ],
+                                          ),
                             ),
                             SizedBox(height: 4.h),
                             Text(
@@ -1037,9 +1066,9 @@ class _ProfileHeader extends StatelessWidget {
                                         ),
                                       ],
                               ),
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
                       ),
                     ],
                   ),
@@ -1062,10 +1091,10 @@ class _ProfileHeader extends StatelessWidget {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: Container(
-                  width: double.infinity,
+                                          width: double.infinity,
                   padding:
                       EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
-                  decoration: BoxDecoration(
+                                          decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
                     color: (isDark ? const Color(0xFF1E1B2E) : Colors.white)
                         .withOpacity(isDark ? 0.92 : 0.95),
@@ -1087,7 +1116,7 @@ class _ProfileHeader extends StatelessWidget {
                           onTap: canOpenMembers ? onMembers : null,
                         ),
                       ),
-                      Container(
+                                        Container(
                         width: 1,
                         height: 28.h,
                         color:
@@ -1131,7 +1160,7 @@ class _ProfileHeader extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
           child: canPost
               ? Row(
-                  children: [
+                                        children: [
                     Expanded(
                       child: _ActionBtn(
                         label: context.tr(AppStrings.invite),
@@ -1143,7 +1172,19 @@ class _ProfileHeader extends StatelessWidget {
                         onTap: onInvite,
                       ),
                     ),
-                    SizedBox(width: 10.w),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: _ActionBtn(
+                        label: context.tr(AppStrings.chat),
+                        icon: Icons.chat_bubble_outline_rounded,
+                        filled: false,
+                        primary: primary,
+                        isDark: isDark,
+                        compact: true,
+                        onTap: onChat,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
                     Expanded(
                       child: _ActionBtn(
                         key: newPostKey,
@@ -1267,7 +1308,7 @@ class _MiniStat extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              child: Text(
+                                            child: Text(
                 value,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1343,9 +1384,9 @@ class _MiniStat extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
           child: child,
         ),
-      ),
-    );
-  }
+                                      ),
+                                    );
+                                  }
 }
 
 class _SimpleTab extends StatelessWidget {
@@ -1369,8 +1410,8 @@ class _SimpleTab extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: Column(
-          children: [
+                                    child: Column(
+                                      children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               child: Text(
@@ -1513,8 +1554,8 @@ class _JoinRow extends StatelessWidget {
         );
       }
       return Row(
-        children: [
-          Expanded(
+                                                            children: [
+                                                              Expanded(
             child: _ActionBtn(
               label: context.tr(AppStrings.decline),
               icon: Icons.close_rounded,
@@ -1526,7 +1567,7 @@ class _JoinRow extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10.w),
-          Expanded(
+                                                              Expanded(
             child: _ActionBtn(
               label: context.tr(AppStrings.acceptInvitation),
               icon: Icons.check_rounded,
@@ -1535,9 +1576,9 @@ class _JoinRow extends StatelessWidget {
               isDark: isDark,
               onTap: onAccept,
               compact: true,
-            ),
-          ),
-        ],
+                                                                ),
+                                                              ),
+                                                            ],
       );
     }
     final pending = (invited && group.privacy == GroupStatus.private.name) ||
@@ -1547,22 +1588,22 @@ class _JoinRow extends StatelessWidget {
       height: 38.h,
       child: ElevatedButton(
         onPressed: pending ? null : onJoin,
-        style: ElevatedButton.styleFrom(
+                                                style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           disabledBackgroundColor: primary.withOpacity(0.35),
-          foregroundColor: Colors.white,
+                                                  foregroundColor: Colors.white,
           elevation: 0,
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           minimumSize: Size(0, 38.h),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(
+                                                  shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
           ),
         ),
-        child: Text(
+                                                child: Text(
           pending
               ? context.tr(AppStrings.pending)
-              : context.tr(AppStrings.join),
+                                                          : context.tr(AppStrings.join),
           style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w700),
         ),
       ),
@@ -1600,8 +1641,8 @@ class _AboutBody extends StatelessWidget {
             children: [
               Text(
                 context.tr(AppStrings.description),
-                style: TextStyle(
-                  fontSize: 13.sp,
+                                                  style: TextStyle(
+                                                    fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
                   color: HomeDashboardColors.title(isDark),
                 ),
@@ -1655,8 +1696,8 @@ class _AboutBody extends StatelessWidget {
                 icon: Icons.shield_outlined,
                 label: context.tr(AppStrings.adminOfGroup),
                 value: owner.isEmpty ? '—' : owner,
-              ),
-              Divider(
+                          ),
+                          Divider(
                 height: 18.h,
                 color: HomeDashboardColors.border(isDark).withOpacity(0.8),
               ),
@@ -1666,9 +1707,9 @@ class _AboutBody extends StatelessWidget {
                 label: context.tr(AppStrings.created),
                 value: createdLabel,
               ),
-            ],
-          ),
-        ),
+                        ],
+                      ),
+                    ),
       ],
     );
   }
@@ -1690,7 +1731,7 @@ class _AboutRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+                                    children: [
         Container(
           width: 34.r,
           height: 34.r,
@@ -1804,10 +1845,10 @@ class _Loading extends StatelessWidget {
                               color: Colors.white10,
                               borderRadius: BorderRadius.circular(6.r),
                             ),
-                          ),
-                        ],
-                      ),
                     ),
+                  ],
+                ),
+              ),
                   ],
                 ),
               ],
@@ -1895,10 +1936,10 @@ class _Loading extends StatelessWidget {
                         SizedBox(height: 12.h),
                         _LoadBar(height: 96.h, radius: 12, color: bone),
                       ],
-                    ),
-                  ),
-                );
-              },
+            ),
+          ),
+        );
+      },
             ),
           ),
         ],

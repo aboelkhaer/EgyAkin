@@ -6,6 +6,13 @@ import 'package:egy_akin/features/chat_room/data/datasources/chat_room_datasourc
 import 'package:egy_akin/features/chat_room/data/repositories/chat_room_repo_impl.dart';
 import 'package:egy_akin/features/chat_room/domain/repositories/chat_room_repo.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.dart';
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
+import 'package:egy_akin/features/inbox/data/datasources/inbox_datasource.dart';
+import 'package:egy_akin/features/inbox/data/repositories/inbox_repo_impl.dart';
+import 'package:egy_akin/features/inbox/domain/repositories/inbox_repo.dart';
+import 'package:egy_akin/features/inbox/domain/usecases/get_inbox_usecase.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_member_search_cubit.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/ai_form_upload/data/datasources/ai_form_upload_datasource.dart';
@@ -81,6 +88,75 @@ ShowSingleFeedCubit resolveShowSingleFeedCubit() {
   return sl<ShowSingleFeedCubit>();
 }
 
+/// Shared consultation lists so lock/unlock updates My/Received tabs in place.
+ConsultationCubit resolveConsultationCubit() {
+  if (!sl.isRegistered<ConsultationCubit>()) {
+    sl.registerLazySingleton(() => ConsultationCubit(sl(), sl()));
+  }
+  final current = sl<ConsultationCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<ConsultationCubit>();
+  sl.registerLazySingleton(() => ConsultationCubit(sl(), sl()));
+  return sl<ConsultationCubit>();
+}
+
+/// App-wide SavedPostsCubit so save/unsave can add or remove posts in place.
+SavedPostsCubit resolveSavedPostsCubit() {
+  if (!sl.isRegistered<SavedPostsCubit>()) {
+    sl.registerLazySingleton(
+      () => SavedPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()),
+    );
+  }
+  final current = sl<SavedPostsCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<SavedPostsCubit>();
+  sl.registerLazySingleton(
+    () => SavedPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()),
+  );
+  return sl<SavedPostsCubit>();
+}
+
+/// App-wide MarkedPatientsCubit so mark/unmark can update the list in place.
+MarkedPatientsCubit resolveMarkedPatientsCubit() {
+  if (!sl.isRegistered<MarkedPatientsCubit>()) {
+    sl.registerLazySingleton(() => MarkedPatientsCubit(sl()));
+  }
+  final current = sl<MarkedPatientsCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<MarkedPatientsCubit>();
+  sl.registerLazySingleton(() => MarkedPatientsCubit(sl()));
+  return sl<MarkedPatientsCubit>();
+}
+
+/// Shared My Groups list so join/leave on group details updates the Groups tab.
+MyGroupsInCommunityCubit resolveMyGroupsInCommunityCubit() {
+  if (!sl.isRegistered<MyGroupsInCommunityCubit>()) {
+    sl.registerLazySingleton(() => MyGroupsInCommunityCubit(sl(), sl()));
+  }
+  final current = sl<MyGroupsInCommunityCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<MyGroupsInCommunityCubit>();
+  sl.registerLazySingleton(() => MyGroupsInCommunityCubit(sl(), sl()));
+  return sl<MyGroupsInCommunityCubit>();
+}
+
+/// Shared All Groups list so membership changes apply without refetching.
+AllGroupsInCommunityCubit resolveAllGroupsInCommunityCubit() {
+  if (!sl.isRegistered<AllGroupsInCommunityCubit>()) {
+    sl.registerLazySingleton(() => AllGroupsInCommunityCubit(sl(), sl()));
+  }
+  final current = sl<AllGroupsInCommunityCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<AllGroupsInCommunityCubit>();
+  sl.registerLazySingleton(() => AllGroupsInCommunityCubit(sl(), sl()));
+  return sl<AllGroupsInCommunityCubit>();
+}
+
 Future<void> diInit() async {
   //! Core
   final sharedPrefs = await SharedPreferences.getInstance();
@@ -129,7 +205,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
   sl.registerFactory(() => ScoreHistoryCubit(sl()));
   sl.registerFactory(() => AboutUsCubit());
-  sl.registerFactory(() => ConsultationCubit(sl(), sl()));
+  sl.registerLazySingleton(() => ConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl(), sl()));
   sl.registerLazySingleton(
       () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
@@ -151,8 +227,8 @@ Future<void> diInit() async {
         sl(),
       ));
   sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => AllGroupsInCommunityCubit(sl(), sl()));
-  sl.registerFactory(() => MyGroupsInCommunityCubit(sl(), sl()));
+  sl.registerLazySingleton(() => AllGroupsInCommunityCubit(sl(), sl()));
+  sl.registerLazySingleton(() => MyGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => InviteMemberToGroupInCommunityCubit());
   sl.registerFactory(
       () => CreateGroupInCommunityCubit(sl(), sl(), sl(), sl(), sl()));
@@ -164,10 +240,12 @@ Future<void> diInit() async {
   sl.registerLazySingleton(
       () => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => GroupsInvitationsCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => MarkedPatientsCubit(
+  sl.registerLazySingleton(() => MarkedPatientsCubit(
         sl(),
       ));
-  sl.registerFactory(() => ChatRoomCubit());
+  sl.registerLazySingleton(() => InboxCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => InboxMemberSearchCubit(sl()));
+  sl.registerFactory(() => ChatRoomCubit(sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -244,8 +322,10 @@ Future<void> diInit() async {
   sl.registerLazySingleton<MoreDataSource>(() => MoreDataSourceImpl(sl()));
   sl.registerLazySingleton<MarkedPatientsDataSource>(
       () => MarkedPatientsDataSourceImpl(sl()));
+  sl.registerLazySingleton<InboxDataSource>(() => InboxDataSourceImpl(sl()));
   sl.registerLazySingleton<ChatRoomDataSource>(
       () => ChatRoomDataSourceImpl(sl()));
+  sl.registerLazySingleton(() => ChatRealtimeService(sl()));
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(sl(), sl()));
@@ -325,6 +405,7 @@ Future<void> diInit() async {
       () => MoreRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<MarkedPatientsRepository>(
       () => MarkedPatientsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<InboxRepository>(() => InboxRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ChatRoomRepository>(
       () => ChatRoomRepositoryImpl(sl(), sl()));
 
@@ -502,6 +583,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<SendConsultationUsecase>()) {
     sl.registerFactory<SendConsultationUsecase>(
         () => SendConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetInboxUsecase>()) {
+    sl.registerFactory<GetInboxUsecase>(() => GetInboxUsecase(sl()));
   }
   if (!GetIt.I.isRegistered<GetCurrentDoctorConsultationUsecase>()) {
     sl.registerFactory<GetCurrentDoctorConsultationUsecase>(

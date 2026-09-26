@@ -1,3 +1,7 @@
+import 'package:egy_akin/app/shared/functions/community_groups_local_sync.dart';
+import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
+import 'package:egy_akin/app/shared/functions/saved_posts_local_sync.dart';
+
 import '../../../../../exports.dart';
 
 class GroupsCubit extends Cubit<GroupsState> {
@@ -152,6 +156,21 @@ class GroupsCubit extends Cubit<GroupsState> {
         );
       },
     ));
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, _, __, ___, ____) {
+        GroupModel? updated;
+        for (final group in response.data?.latestGroups ?? const <GroupModel>[]) {
+          if (group.id.toString() == groupId) {
+            updated = group;
+            break;
+          }
+        }
+        if (updated != null) {
+          CommunityGroupsLocalSync.syncGroup(updated);
+        }
+      },
+    );
 
     final result = await _joinGroupInCommunityUsecase.execute(groupId);
     result.fold(
@@ -303,6 +322,7 @@ class GroupsCubit extends Cubit<GroupsState> {
     _isUpdatingPostSaveStatus = true;
 
     bool isCurrentlySaved = false;
+    PostCommunityModel? targetPost;
 
     emit(
       state.maybeMap(
@@ -322,6 +342,7 @@ class GroupsCubit extends Cubit<GroupsState> {
           final updatedPosts = randomPosts.data!.map((post) {
             if (post.id.toString() == postId) {
               isCurrentlySaved = post.isSaved ?? false;
+              targetPost = post;
 
               // Determine new state based on explicit action
               final newSavedStatus = saveOrUnsave == 'save';
@@ -341,6 +362,15 @@ class GroupsCubit extends Cubit<GroupsState> {
         },
       ),
     );
+
+    if (targetPost != null) {
+      SavedPostsLocalSync.apply(
+        saveOrUnsave: saveOrUnsave,
+        post: targetPost!,
+      );
+    }
+
+    ProfilePostCounts.onSaveOrUnsave(saveOrUnsave);
 
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
@@ -386,6 +416,13 @@ class GroupsCubit extends Cubit<GroupsState> {
             },
           ),
         );
+        ProfilePostCounts.revertSaveOrUnsave(saveOrUnsave);
+        if (targetPost != null) {
+          SavedPostsLocalSync.revert(
+            saveOrUnsave: saveOrUnsave,
+            post: targetPost!,
+          );
+        }
       },
       (success) {
         // Success case - no action needed
@@ -396,7 +433,19 @@ class GroupsCubit extends Cubit<GroupsState> {
   }
 
   Future<void> deletePost(String postId) async {
-    await sl<CommunityCubit>().deletePost(postId);
+    var wasSaved = false;
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, _, __, ___, ____) {
+        for (final post in response.data?.randomPosts?.data ?? const []) {
+          if (post.id.toString() == postId) {
+            wasSaved = post.isSaved ?? false;
+            break;
+          }
+        }
+      },
+    );
+    await sl<CommunityCubit>().deletePost(postId, wasSaved: wasSaved);
 
     emit(
       state.maybeMap(
@@ -617,5 +666,54 @@ class GroupsCubit extends Cubit<GroupsState> {
         );
       },
     );
+  }
+
+  void applyGroupUpdate(GroupModel group) {
+    final groupId = group.id?.toString();
+    if (groupId == null) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final groups = value.response.data?.latestGroups;
+        if (groups == null) return value;
+        final index = groups.indexWhere((g) => g.id?.toString() == groupId);
+        if (index < 0) return value;
+        final updated = [...groups];
+        updated[index] = group;
+        changeCounter += 1;
+        return GroupsState.loaded(
+          value.response.copyWith(
+            data: value.response.data!.copyWith(latestGroups: updated),
+          ),
+          '',
+          '',
+          false,
+          changeCounter,
+        );
+      },
+    ));
+  }
+
+  void removeGroupFromList(String groupId) {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final groups = value.response.data?.latestGroups;
+        if (groups == null) return value;
+        final updated =
+            groups.where((g) => g.id?.toString() != groupId).toList();
+        if (updated.length == groups.length) return value;
+        changeCounter += 1;
+        return GroupsState.loaded(
+          value.response.copyWith(
+            data: value.response.data!.copyWith(latestGroups: updated),
+          ),
+          '',
+          '',
+          false,
+          changeCounter,
+        );
+      },
+    ));
   }
 }

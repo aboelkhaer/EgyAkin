@@ -1,6 +1,4 @@
 import 'package:flutter/scheduler.dart';
-import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
-import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/data/models/home_dashboard_fake_data.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_consultations_section.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
@@ -80,68 +78,12 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  void _openAddPatient({
-    required BuildContext context,
-    required DoctorModel currentDoctorModel,
-    required HomeModelResponse homeData,
-  }) {
-    if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
-      return;
-    }
-    if (!PermissionHelper.canPermission(AppPermissions.addPatientInHome)) {
-      return;
-    }
-    if (homeData.isUserBlocked == true) {
-      showBlockedDialog(
-        context: context,
-        onDismissed: () {
-          homeCubit.signOut();
-          navigatorKey.currentState?.pushReplacementNamed(AppRoutes.signIn);
-        },
-      );
-      return;
-    }
-    if (homeData.verified != true) {
-      showCustomDialog(
-        context: context,
-        title: context.tr(AppStrings.emailVerification),
-        description: context.tr(
-          AppStrings.youMustVerifyYourEmailAddressToEnjoyAllFeatures,
-        ),
-        noColoredButtonOnTap: () => Navigator.of(context).pop(),
-        coloredButtonText: context.tr(AppStrings.verify),
-        noColoredButtonText: context.tr(AppStrings.cancel),
-        coloredButtonOnTap: () {
-          Navigator.of(context).pop();
-          navigatorKey.currentState?.pushNamed(
-            AppRoutes.emailVerification,
-            arguments: AppRoutesArgs.emailVerificationRouteArgs(
-              currentDoctorModel: currentDoctorModel,
-            ),
-          );
-        },
-      );
-      return;
-    }
-
-    navigatorKey.currentState?.pushNamed(
-      AppRoutes.addPatient,
-      arguments: AppRoutesArgs.addPatientRouteArgs(
-        currentDoctorModel: homeCubit.currentDoctorModel,
-        currentDoctorRole: homeData.role.toString(),
-        currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
-        homeDataModel: homeData,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-        final primary =
-            isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+        final primary = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
 
         return Container(
           color: HomeDashboardColors.scaffold(isDarkMode),
@@ -209,361 +151,309 @@ class _HomeTabState extends State<HomeTab> {
               );
 
               final dashboard = Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w) +
-                      EdgeInsets.only(top: 6.h, bottom: 16.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      HomeSearchField(
-                        isDark: isDarkMode,
-                        onTap: () {
-                          _openSearch(
-                            currentDoctorModel: currentDoctor,
-                            homeData: homeData,
-                          );
-                        },
-                      ),
-                      SizedBox(height: 12.h),
-                      Builder(
-                        builder: (context) {
-                          final emailVerified = isDoctorEmailVerified(
-                            doctor: currentDoctor,
-                            homeData: homeData,
-                          );
-                          final bannerDismissed =
-                              homeCubit.isExistVerificationBanner ==
-                                  true;
+                padding: EdgeInsets.symmetric(horizontal: 16.w) +
+                    EdgeInsets.only(top: 6.h, bottom: 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    HomeSearchField(
+                      isDark: isDarkMode,
+                      onTap: () {
+                        _openSearch(
+                          currentDoctorModel: currentDoctor,
+                          homeData: homeData,
+                        );
+                      },
+                    ),
+                    SizedBox(height: 12.h),
+                    Builder(
+                      builder: (context) {
+                        final emailVerified = isDoctorEmailVerified(
+                          doctor: currentDoctor,
+                          homeData: homeData,
+                        );
+                        final bannerDismissed =
+                            homeCubit.isExistVerificationBanner == true;
 
-                          if (!emailVerified && !bannerDismissed) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: HomeEmailVerificationBanner(
+                        if (!emailVerified && !bannerDismissed) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: HomeEmailVerificationBanner(
+                              isDark: isDarkMode,
+                              currentDoctorModel: currentDoctor,
+                              onDismiss: () {
+                                homeCubit.setVerifyBanner();
+                              },
+                              onVerify: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.emailVerification,
+                                  arguments:
+                                      AppRoutesArgs.emailVerificationRouteArgs(
+                                    currentDoctorModel: currentDoctor,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }
+
+                        final showSyndicate = needsSyndicateCardVerification(
+                          doctor: currentDoctor,
+                          homeData: homeData,
+                        );
+                        if (!showSyndicate) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final isUploadingSyndicate = state.maybeWhen(
+                          loaded: (_, __, ___, ____, uploading, _____, ______,
+                                  _______, ________, _________) =>
+                              uploading,
+                          orElse: () => false,
+                        );
+
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: HomeSyndicateCardBanner(
+                            isDark: isDarkMode,
+                            isPending: isSyndicateCardPending(homeData),
+                            isUploading: isUploadingSyndicate,
+                            onDismiss: null,
+                            onUpload: () {
+                              homeCubit.uploadSyndicateCard();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    HomeStatsSection(
+                      isDark: isDarkMode,
+                      // Main counts from root home payload.
+                      myPatientsCount:
+                          _parseHomeInt(homeData.doctorPatientCount),
+                      allPatientsCount: _parseHomeInt(homeData.allPatientCount),
+                      score: _parseHomeInt(homeData.scoreValue),
+                      // Green deltas from data.week_recap.
+                      myPatientsDelta:
+                          homeData.data?.weekRecap?.patientsAdded ?? 0,
+                      allPatientsDelta:
+                          homeData.data?.weekRecap?.allPatientsAdded ?? 0,
+                      scoreDelta: homeData.data?.weekRecap?.pointsEarned ?? 0,
+                    ),
+                    SizedBox(height: 10.h),
+                    Builder(
+                      builder: (context) {
+                        final currentPatients =
+                            homeData.data?.currentPatients ??
+                                const <PatientHomeDataModel>[];
+                        // Prefer dedicated `data.drafts` when present; else
+                        // unfinished patients from `current_patient`.
+                        final apiDrafts = homeData.data?.drafts;
+                        final drafts = (apiDrafts != null &&
+                                apiDrafts.isNotEmpty)
+                            ? apiDrafts
+                            : currentPatients
+                                .where(
+                                  (patient) =>
+                                      patient.sections?.submitStatus != true,
+                                )
+                                .toList();
+                        final draftCount = _parseHomeInt(homeData.draftCount);
+                        // Only show when we have draft cards to render.
+                        final showDrafts = drafts.isNotEmpty;
+                        final outcomes = homeData.data?.pendingOutcomes ??
+                            const <PatientHomeDataModel>[];
+                        final outcomeCount =
+                            _parseHomeInt(homeData.pendingOutcomeCount);
+                        final showOutcomes =
+                            outcomes.isNotEmpty || outcomeCount > 0;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            DoctorsActivation(isDark: isDarkMode),
+                            if (showDrafts) ...[
+                              SizedBox(height: 12.h),
+                              HomeResumeDraftsSection(
                                 isDark: isDarkMode,
-                                currentDoctorModel: currentDoctor,
-                                onDismiss: () {
-                                  homeCubit.setVerifyBanner();
+                                drafts: drafts,
+                                draftCount:
+                                    draftCount > 0 ? draftCount : drafts.length,
+                                onViewAll: () {
+                                  widget.cubit.openMyPatientsDrafts();
                                 },
-                                onVerify: () {
+                                onResume: (patient) {
                                   navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.emailVerification,
+                                    AppRoutes.patientSections,
                                     arguments: AppRoutesArgs
-                                        .emailVerificationRouteArgs(
-                                      currentDoctorModel:
-                                          currentDoctor,
+                                        .patientSectionsRouteArguments(
+                                      patientId: patient.id.toString(),
+                                      currentDoctorModel: currentDoctor,
+                                      currentDoctorPoints:
+                                          _parseHomeInt(homeData.scoreValue),
+                                      currentDoctorRole:
+                                          homeData.role.toString(),
+                                      homeDataModel: homeData,
+                                      isAllDataOpen: false,
                                     ),
                                   );
                                 },
                               ),
-                            );
-                          }
-
-                          final showSyndicate =
-                              needsSyndicateCardVerification(
-                            doctor: currentDoctor,
-                            homeData: homeData,
-                          );
-                          if (!showSyndicate) {
-                            return const SizedBox.shrink();
-                          }
-
-                          final isUploadingSyndicate =
-                              state.maybeWhen(
-                            loaded: (_, __, ___, ____, uploading, _____,
-                                    ______, _______, ________,
-                                    _________) =>
-                                uploading,
-                            orElse: () => false,
-                          );
-
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: HomeSyndicateCardBanner(
-                              isDark: isDarkMode,
-                              isPending:
-                                  isSyndicateCardPending(homeData),
-                              isUploading: isUploadingSyndicate,
-                              onDismiss: null,
-                              onUpload: () {
-                                homeCubit.uploadSyndicateCard();
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      HomeStatsSection(
-                        isDark: isDarkMode,
-                        // Main counts from root home payload.
-                        myPatientsCount:
-                            _parseHomeInt(homeData.doctorPatientCount),
-                        allPatientsCount:
-                            _parseHomeInt(homeData.allPatientCount),
-                        score: _parseHomeInt(homeData.scoreValue),
-                        // Green deltas from data.week_recap.
-                        myPatientsDelta:
-                            homeData.data?.weekRecap?.patientsAdded ?? 0,
-                        allPatientsDelta:
-                            homeData.data?.weekRecap?.allPatientsAdded ?? 0,
-                        scoreDelta:
-                            homeData.data?.weekRecap?.pointsEarned ?? 0,
-                      ),
-                      SizedBox(height: 10.h),
-                      Builder(
-                        builder: (context) {
-                          final currentPatients =
-                              homeData.data?.currentPatients ??
-                                  const <PatientHomeDataModel>[];
-                          // Prefer dedicated `data.drafts` when present; else
-                          // unfinished patients from `current_patient`.
-                          final apiDrafts = homeData.data?.drafts;
-                          final drafts = (apiDrafts != null &&
-                                  apiDrafts.isNotEmpty)
-                              ? apiDrafts
-                              : currentPatients
-                                  .where(
-                                    (patient) =>
-                                        patient.sections?.submitStatus !=
-                                        true,
-                                  )
-                                  .toList();
-                          final draftCount =
-                              _parseHomeInt(homeData.draftCount);
-                          // Only show when we have draft cards to render.
-                          final showDrafts = drafts.isNotEmpty;
-                          final outcomes =
-                              homeData.data?.pendingOutcomes ??
-                                  const <PatientHomeDataModel>[];
-                          final outcomeCount =
-                              _parseHomeInt(homeData.pendingOutcomeCount);
-                          final showOutcomes =
-                              outcomes.isNotEmpty || outcomeCount > 0;
-
-                          return Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.stretch,
-                            children: [
-                              DoctorsActivation(isDark: isDarkMode),
-                              if (showDrafts) ...[
-                                SizedBox(height: 12.h),
-                                HomeResumeDraftsSection(
-                                  isDark: isDarkMode,
-                                  drafts: drafts,
-                                  draftCount: draftCount > 0
-                                      ? draftCount
-                                      : drafts.length,
-                                  onViewAll: () {
-                                    widget.cubit.openMyPatientsDrafts();
-                                  },
-                                  onResume: (patient) {
-                                    navigatorKey.currentState
-                                        ?.pushNamed(
-                                      AppRoutes.patientSections,
-                                      arguments: AppRoutesArgs
-                                          .patientSectionsRouteArguments(
-                                        patientId:
-                                            patient.id.toString(),
-                                        currentDoctorModel:
-                                            currentDoctor,
-                                        currentDoctorPoints:
-                                            _parseHomeInt(homeData.scoreValue),
-                                        currentDoctorRole:
-                                            homeData.role.toString(),
-                                        homeDataModel: homeData,
-                                        isAllDataOpen: false,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                              if (showOutcomes) ...[
-                                SizedBox(height: 14.h),
-                                HomeOutcomesSection(
-                                  isDark: isDarkMode,
-                                  outcomes: outcomes,
-                                  badgeCount: outcomeCount,
-                                  onViewAll: () {
-                                    widget.cubit
-                                        .openMyPatientsWithoutOutcome();
-                                  },
-                                  onAddOutcome: (patient) {
-                                    final patientId =
-                                        patient.id?.toString();
-                                    if (patientId == null ||
-                                        patientId.isEmpty) {
-                                      return;
-                                    }
-                                    navigatorKey.currentState
-                                        ?.pushNamed(
-                                      AppRoutes.outcome,
-                                      arguments: AppRoutesArgs
-                                          .outcomeRouteArgs(
-                                        verified:
-                                            homeData.verified ?? false,
-                                        outcomeStatus: false,
-                                        patientName:
-                                            patient.name?.toString() ??
-                                                '',
-                                        patientId: patientId,
-                                        currentDoctorModel:
-                                            currentDoctor,
-                                        doctorId: patient.doctor?.id
-                                                ?.toString() ??
-                                            currentDoctor.id
-                                                .toString(),
-                                        isSyndicateCardRequired:
-                                            homeData
-                                                    .isSyndicateCardRequired ??
-                                                '',
-                                        homeDataModel: homeData,
-                                        currentDoctorPoints:
-                                            _parseHomeInt(homeData.scoreValue),
-                                        currentDoctorRole:
-                                            homeData.role.toString(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
                             ],
-                          );
-                        },
-                      ),
-                      HomeConsultationsSection(
+                            if (showOutcomes) ...[
+                              SizedBox(height: 14.h),
+                              HomeOutcomesSection(
+                                isDark: isDarkMode,
+                                outcomes: outcomes,
+                                badgeCount: outcomeCount,
+                                onViewAll: () {
+                                  widget.cubit.openMyPatientsWithoutOutcome();
+                                },
+                                onAddOutcome: (patient) {
+                                  final patientId = patient.id?.toString();
+                                  if (patientId == null || patientId.isEmpty) {
+                                    return;
+                                  }
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.outcome,
+                                    arguments: AppRoutesArgs.outcomeRouteArgs(
+                                      verified: homeData.verified ?? false,
+                                      outcomeStatus: false,
+                                      patientName:
+                                          patient.name?.toString() ?? '',
+                                      patientId: patientId,
+                                      currentDoctorModel: currentDoctor,
+                                      doctorId:
+                                          patient.doctor?.id?.toString() ??
+                                              currentDoctor.id.toString(),
+                                      isSyndicateCardRequired:
+                                          homeData.isSyndicateCardRequired ??
+                                              '',
+                                      homeDataModel: homeData,
+                                      currentDoctorPoints:
+                                          _parseHomeInt(homeData.scoreValue),
+                                      currentDoctorRole:
+                                          homeData.role.toString(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ],
+                        );
+                      },
+                    ),
+                    HomeConsultationsSection(
+                      isDark: isDarkMode,
+                      currentDoctorModel: currentDoctor,
+                      homeDataModel: homeData,
+                      consultations:
+                          homeData.data?.pendingConsultations ?? const [],
+                    ),
+                    SizedBox(height: 20.h),
+                    HomePatientsSection(
+                      isDark: isDarkMode,
+                      myPatients: homeData.data?.currentPatients ?? const [],
+                      allPatients: homeData.data?.allPatients ?? const [],
+                      myPatientsCount:
+                          _parseHomeInt(homeData.doctorPatientCount),
+                      allPatientsCount: _parseHomeInt(homeData.allPatientCount),
+                      onSeeAll: () {
+                        widget.cubit.jumpToPatientsTab();
+                      },
+                      onPatientTap: (patient, {required isAllDataOpen}) {
+                        final patientId = patient.id?.toString();
+                        if (patientId == null || patientId.isEmpty) {
+                          return;
+                        }
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.patientSections,
+                          arguments:
+                              AppRoutesArgs.patientSectionsRouteArguments(
+                            patientId: patientId,
+                            currentDoctorModel: currentDoctor,
+                            currentDoctorPoints:
+                                _parseHomeInt(homeData.scoreValue),
+                            currentDoctorRole: homeData.role.toString(),
+                            homeDataModel: homeData,
+                            isAllDataOpen: isAllDataOpen,
+                          ),
+                        );
+                      },
+                      onOutcomeTap: (patient, {required isAllDataOpen}) {
+                        final patientId = patient.id?.toString();
+                        if (patientId == null || patientId.isEmpty) {
+                          return;
+                        }
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.outcome,
+                          arguments: AppRoutesArgs.outcomeRouteArgs(
+                            verified: homeData.verified ?? false,
+                            outcomeStatus:
+                                patient.sections?.outcomeStatus ?? false,
+                            patientName: patient.name?.toString() ?? '',
+                            patientId: patientId,
+                            currentDoctorModel: currentDoctor,
+                            doctorId: patient.doctor?.id?.toString() ??
+                                currentDoctor.id.toString(),
+                            isSyndicateCardRequired:
+                                homeData.isSyndicateCardRequired ?? '',
+                            homeDataModel: homeData,
+                            currentDoctorPoints:
+                                _parseHomeInt(homeData.scoreValue),
+                            currentDoctorRole: homeData.role.toString(),
+                          ),
+                        );
+                      },
+                      onAddCommentTap: (patient, {required isAllDataOpen}) {
+                        final patientId = patient.id?.toString();
+                        if (patientId == null || patientId.isEmpty) {
+                          return;
+                        }
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.comments,
+                          arguments: AppRoutesArgs.patientCommentsRouteArgs(
+                            patientId: patientId,
+                            currentDoctorModel: currentDoctor,
+                            verified: homeData.verified ?? false,
+                            patientName: patient.name?.toString() ?? '',
+                            currentDoctorPoints:
+                                _parseHomeInt(homeData.scoreValue),
+                            homeDataModel: homeData,
+                            isSyndicateCardRequired:
+                                homeData.isSyndicateCardRequired ?? '',
+                            currentDoctorRole: homeData.role.toString(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 8.h),
+                    HomeToolsSection(
+                      isDark: isDarkMode,
+                      tools: HomeDashboardFakeData.tools,
+                      currentDoctorModel: currentDoctor,
+                      homeDataModel: homeData,
+                    ),
+                    if (homeData.data?.weekRecap != null) ...[
+                      SizedBox(height: 14.h),
+                      HomeWeekSummarySection(
                         isDark: isDarkMode,
-                        currentDoctorModel: currentDoctor,
-                        homeDataModel: homeData,
-                        consultations:
-                            homeData.data?.pendingConsultations ?? const [],
+                        summary: homeData.data!.weekRecap!,
                       ),
-                      SizedBox(height: 20.h),
-                      HomePatientsSection(
-                        isDark: isDarkMode,
-                        myPatients:
-                            homeData.data?.currentPatients ?? const [],
-                        allPatients:
-                            homeData.data?.allPatients ?? const [],
-                        myPatientsCount:
-                            _parseHomeInt(homeData.doctorPatientCount),
-                        allPatientsCount:
-                            _parseHomeInt(homeData.allPatientCount),
-                        onSeeAll: () {
-                          widget.cubit.jumpToPatientsTab();
-                        },
-                        onAddPatient: isVerifiedUser(
-                                      homeData.isSyndicateCardRequired,
-                                    ) &&
-                                PermissionHelper.canPermission(
-                                  AppPermissions.addPatientInHome,
-                                )
-                            ? () => _openAddPatient(
-                                  context: context,
-                                  currentDoctorModel: currentDoctor,
-                                  homeData: homeData,
-                                )
-                            : null,
-                        onPatientTap:
-                            (patient, {required isAllDataOpen}) {
-                          final patientId = patient.id?.toString();
-                          if (patientId == null || patientId.isEmpty) {
-                            return;
-                          }
-                          navigatorKey.currentState?.pushNamed(
-                            AppRoutes.patientSections,
-                            arguments: AppRoutesArgs
-                                .patientSectionsRouteArguments(
-                              patientId: patientId,
-                              currentDoctorModel: currentDoctor,
-                              currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
-                              currentDoctorRole:
-                                  homeData.role.toString(),
-                              homeDataModel: homeData,
-                              isAllDataOpen: isAllDataOpen,
-                            ),
-                          );
-                        },
-                        onOutcomeTap:
-                            (patient, {required isAllDataOpen}) {
-                          final patientId = patient.id?.toString();
-                          if (patientId == null || patientId.isEmpty) {
-                            return;
-                          }
-                          navigatorKey.currentState?.pushNamed(
-                            AppRoutes.outcome,
-                            arguments: AppRoutesArgs.outcomeRouteArgs(
-                              verified: homeData.verified ?? false,
-                              outcomeStatus: patient
-                                      .sections?.outcomeStatus ??
-                                  false,
-                              patientName:
-                                  patient.name?.toString() ?? '',
-                              patientId: patientId,
-                              currentDoctorModel: currentDoctor,
-                              doctorId: patient.doctor?.id
-                                      ?.toString() ??
-                                  currentDoctor.id.toString(),
-                              isSyndicateCardRequired: homeData
-                                      .isSyndicateCardRequired ??
-                                  '',
-                              homeDataModel: homeData,
-                              currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
-                              currentDoctorRole:
-                                  homeData.role.toString(),
-                            ),
-                          );
-                        },
-                        onAddCommentTap:
-                            (patient, {required isAllDataOpen}) {
-                          final patientId = patient.id?.toString();
-                          if (patientId == null || patientId.isEmpty) {
-                            return;
-                          }
-                          navigatorKey.currentState?.pushNamed(
-                            AppRoutes.comments,
-                            arguments: AppRoutesArgs
-                                .patientCommentsRouteArgs(
-                              patientId: patientId,
-                              currentDoctorModel: currentDoctor,
-                              verified: homeData.verified ?? false,
-                              patientName:
-                                  patient.name?.toString() ?? '',
-                              currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
-                              homeDataModel: homeData,
-                              isSyndicateCardRequired: homeData
-                                      .isSyndicateCardRequired ??
-                                  '',
-                              currentDoctorRole:
-                                  homeData.role.toString(),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 8.h),
-                      HomeToolsSection(
-                        isDark: isDarkMode,
-                        tools: HomeDashboardFakeData.tools,
-                        currentDoctorModel: currentDoctor,
-                        homeDataModel: homeData,
-                      ),
-                      if (homeData.data?.weekRecap != null) ...[
-                        SizedBox(height: 14.h),
-                        HomeWeekSummarySection(
-                          isDark: isDarkMode,
-                          summary: homeData.data!.weekRecap!,
-                        ),
-                      ],
-                      if ((homeData.data?.researchInsights ??
-                              homeData.researchInsights) !=
-                          null) ...[
-                        SizedBox(height: 14.h),
-                        HomeNetworkInsightsSection(
-                          isDark: isDarkMode,
-                          insights: homeData.data?.researchInsights ??
-                              homeData.researchInsights!,
-                        ),
-                      ],
                     ],
-                  ),
-                )
-;
+                    if ((homeData.data?.researchInsights ??
+                            homeData.researchInsights) !=
+                        null) ...[
+                      SizedBox(height: 14.h),
+                      HomeNetworkInsightsSection(
+                        isDark: isDarkMode,
+                        insights: homeData.data?.researchInsights ??
+                            homeData.researchInsights!,
+                      ),
+                    ],
+                  ],
+                ),
+              );
 
               return RefreshIndicator(
                 color: primary,

@@ -8,6 +8,7 @@ import 'package:egy_akin/features/patient_sections/presentation/widgets/patient_
 import 'package:egy_akin/features/patient_sections/presentation/widgets/patient_sections_comments_preview.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/patient_sections_loading_shimmer.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 
 import '../../../../exports.dart';
 
@@ -229,6 +230,30 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
     return TimeAgoService.instance.formatTimeAgoFromString(
       latest.toIso8601String(),
       context,
+    );
+  }
+
+  void _openCaseChat({required String patientName}) {
+    final patientId = int.tryParse(widget.patientId);
+    if (patientId == null) {
+      customSnackBar(
+        context: context,
+        message: context.tr(AppStrings.somethingWentWrong),
+      );
+      return;
+    }
+
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.chatRoom,
+      arguments: AppRoutesArgs.chatRoomRouteArgs(
+        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: widget.homeDataModel,
+        peerDisplayName: patientName.isEmpty
+            ? context.tr(AppStrings.caseChat)
+            : patientName,
+        chatType: ChatApiType.caseGroup,
+        contextId: patientId,
+      ),
     );
   }
 
@@ -554,6 +579,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                           : ui.TextDirection.ltr,
                       isBookmarked: response.isMarked ?? false,
                       onBack: () => Navigator.of(context).pop(),
+                      onChat: () => _openCaseChat(patientName: patientName),
                       onBookmark: () => _onBookmarkTap(
                         cubit: cubit,
                         isBookmarked: response.isMarked ?? false,
@@ -725,6 +751,15 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                       ),
                     ),
                   ],
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 0),
+                      child: _CaseChatCard(
+                        isDark: isDark,
+                        onTap: () => _openCaseChat(patientName: patientName),
+                      ),
+                    ),
+                  ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.only(top: 8.h),
@@ -981,6 +1016,7 @@ class _CollapsingHeader extends StatelessWidget {
   final ui.TextDirection textDirection;
   final bool isBookmarked;
   final VoidCallback onBack;
+  final VoidCallback onChat;
   final VoidCallback onBookmark;
 
   const _CollapsingHeader({
@@ -992,6 +1028,7 @@ class _CollapsingHeader extends StatelessWidget {
     required this.textDirection,
     required this.isBookmarked,
     required this.onBack,
+    required this.onChat,
     required this.onBookmark,
   });
 
@@ -1025,6 +1062,15 @@ class _CollapsingHeader extends StatelessWidget {
                 onTap: onBack,
               ),
               const Spacer(),
+              _RoundIconButton(
+                icon: Icons.chat_bubble_outline_rounded,
+                background: circleBg,
+                borderColor: circleBorder,
+                iconColor: iconColor,
+                isDark: isDark,
+                onTap: onChat,
+              ),
+              SizedBox(width: 8.w),
               _RoundIconButton(
                 icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                 background: circleBg,
@@ -1130,6 +1176,89 @@ class _CollapsingHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CaseChatCard extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _CaseChatCard({
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cardBg = HomeDashboardColors.cardBg(isDark);
+    final border = HomeDashboardColors.border(isDark);
+    final titleColor = HomeDashboardColors.title(isDark);
+    final subtitleColor = HomeDashboardColors.subtitle(isDark);
+    final primary = HomeDashboardColors.primary(isDark);
+
+    return Material(
+      color: cardBg,
+      borderRadius: BorderRadius.circular(14.r),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14.r),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14.r),
+            border: Border.all(color: border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36.w,
+                height: 36.w,
+                decoration: BoxDecoration(
+                  color: primary.withOpacity(isDark ? 0.18 : 0.12),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  size: 18.sp,
+                  color: primary,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.tr(AppStrings.caseChat),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w700,
+                        color: titleColor,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      context.tr(AppStrings.caseChatSubtitle),
+                      style: TextStyle(
+                        fontSize: 10.5.sp,
+                        height: 1.3,
+                        color: subtitleColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: subtitleColor,
+                size: 20.sp,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

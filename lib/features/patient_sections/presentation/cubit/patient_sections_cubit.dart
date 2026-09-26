@@ -1,6 +1,8 @@
 import 'package:egy_akin/features/patient_sections/domain/usecases/make_mark_patient_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/make_unmark_patient_usecase.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/final_submit_incomplete_dialog.dart';
+import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_cubit.dart';
+import 'package:egy_akin/injection_container.dart';
 
 import '../../../../exports.dart';
 
@@ -269,30 +271,33 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         counterChanges,
       ),
     ));
+    final snapshot = _markedPatientSnapshot(patientId);
+    if (snapshot != null) {
+      _markedPatientsCubit()?.addPatientIfAbsent(snapshot);
+    }
+    _adjustHomeMarkedCount(1);
     final result = await _makeMarkPatientUsecase.execute(patientId);
     result.fold(
       (l) {
-        // Handle error - could show snackbar or update state
-        // emit(state.maybeMap(
-        //   orElse: () => state,
-        //   loaded: (value) => PatientSectionsState.loaded(
-        //     value.response.copyWith(isMarked: true),
-        //     value.isDelete,
-        //     value.isFinalSubmit,
-        //     l.message,
-        //     value.isLoading,
-        //     value.reportProgress,
-        //     value.filePath,
-        //     value.isDownloadingReport,
-        //     value.isDownloadedReport,
-        //     counterChanges,
-        //   ),
-        // ));
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionsState.loaded(
+            value.response.copyWith(isMarked: false),
+            value.isDelete,
+            value.isFinalSubmit,
+            '',
+            value.isLoading,
+            value.reportProgress,
+            value.filePath,
+            false,
+            false,
+            counterChanges,
+          ),
+        ));
+        _markedPatientsCubit()?.removePatientById(patientId);
+        _adjustHomeMarkedCount(-1);
       },
-      (r) async {
-        // Success - refresh the screen to update bookmark status
-        // refreshScreen();
-      },
+      (_) {},
     );
   }
 
@@ -313,29 +318,89 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         counterChanges,
       ),
     ));
+    final removed = _markedPatientsCubit()?.removePatientById(patientId);
+    _adjustHomeMarkedCount(-1);
     final result = await _makeUnMarkPatientUsecase.execute(patientId);
     result.fold(
       (l) {
-        // Handle error - could show snackbar or update state
-        // emit(state.maybeMap(
-        //   orElse: () => state,
-        //   loaded: (value) => PatientSectionsState.loaded(
-        //     value.response.copyWith(isMarked: false),
-        //     value.isDelete,
-        //     value.isFinalSubmit,
-        //     l.message,
-        //     value.isLoading,
-        //     value.reportProgress,
-        //     value.filePath,
-        //     value.isDownloadingReport,
-        //     value.isDownloadedReport,
-        //     counterChanges,
-        //   ),
-        // ));
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionsState.loaded(
+            value.response.copyWith(isMarked: true),
+            value.isDelete,
+            value.isFinalSubmit,
+            '',
+            value.isLoading,
+            value.reportProgress,
+            value.filePath,
+            false,
+            false,
+            counterChanges,
+          ),
+        ));
+        if (removed != null) {
+          _markedPatientsCubit()?.addPatientIfAbsent(removed);
+        }
+        _adjustHomeMarkedCount(1);
       },
-      (r) async {
-        // Success - refresh the screen to update bookmark status
-        // refreshScreen();
+      (_) {},
+    );
+  }
+
+  MarkedPatientsCubit? _markedPatientsCubit() {
+    if (!sl.isRegistered<MarkedPatientsCubit>()) return null;
+    final cubit = resolveMarkedPatientsCubit();
+    if (cubit.isClosed) return null;
+    return cubit;
+  }
+
+  void _adjustHomeMarkedCount(int delta) {
+    if (!sl.isRegistered<HomeCubit>()) return;
+    final home = sl<HomeCubit>();
+    if (home.isClosed) return;
+    home.adjustMarkedPatientsCount(delta);
+  }
+
+  PatientHomeDataModel? _markedPatientSnapshot(String patientId) {
+    if (sl.isRegistered<HomeCubit>()) {
+      final home = sl<HomeCubit>();
+      if (!home.isClosed) {
+        final fromHome = home.state.maybeMap(
+          orElse: () => null,
+          loaded: (value) {
+            final data = value.homeData.data;
+            final pools = <PatientHomeDataModel>[
+              ...?data?.currentPatients,
+              ...?data?.allPatients,
+              ...?data?.pendingOutcomes,
+              ...?data?.drafts,
+            ];
+            for (final patient in pools) {
+              if (patient.id?.toString() == patientId) return patient;
+            }
+            return null;
+          },
+        );
+        if (fromHome != null) return fromHome;
+      }
+    }
+
+    return state.maybeMap(
+      orElse: () => null,
+      loaded: (value) {
+        final response = value.response;
+        return PatientHomeDataModel(
+          id: int.tryParse(patientId),
+          name: response.patientName,
+          bmi: response.bmi,
+          egfr: num.tryParse(
+            response.gfr?.ckd?.currentGFR?.value ?? '',
+          ),
+          sections: SectionHomeDataModel(
+            patientId: int.tryParse(patientId),
+            submitStatus: response.submitStatus,
+          ),
+        );
       },
     );
   }

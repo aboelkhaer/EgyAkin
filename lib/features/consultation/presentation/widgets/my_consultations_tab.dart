@@ -41,9 +41,9 @@ class _MyConsultationsTabState extends State<MyConsultationsTab> {
             );
           },
           builder: (context, state) {
-            return state.maybeWhen(
-              orElse: () => const SizedBox.shrink(),
-              myConsultationsLoading: () => Center(
+            final cubit = ConsultationCubit.get(context);
+            if (cubit.isLoadingMy && cubit.myConsultations.isEmpty) {
+              return Center(
                 child: SizedBox(
                   width: 28.w,
                   height: 28.w,
@@ -52,24 +52,22 @@ class _MyConsultationsTabState extends State<MyConsultationsTab> {
                     color: primary,
                   ),
                 ),
-              ),
-              myConsultationsLoaded: (consultations) {
-                return RefreshIndicator(
-                  color: primary,
-                  onRefresh: () async {
-                    context
-                        .read<ConsultationCubit>()
-                        .getCurrentDoctorConsultations();
-                  },
-                  child: ConsultationList(
-                    consultations: consultations,
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                    isReceivedConsultation: false,
-                    isDarkMode: isDark,
-                  ),
-                );
+              );
+            }
+            return RefreshIndicator(
+              color: primary,
+              onRefresh: () async {
+                context
+                    .read<ConsultationCubit>()
+                    .getCurrentDoctorConsultations();
               },
+              child: ConsultationList(
+                consultations: cubit.myConsultations,
+                currentDoctorModel: widget.currentDoctorModel,
+                homeDataModel: widget.homeDataModel,
+                isReceivedConsultation: false,
+                isDarkMode: isDark,
+              ),
             );
           },
         );

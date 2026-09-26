@@ -434,7 +434,7 @@ class HomePatientCard extends StatelessWidget {
                             child: _PatientMetricsRow(
                               isDark: isDark,
                               egfr: patient.egfr ?? 0,
-                              egfrPrevious: patient.egfrPrevious,
+                              egfrDelta: patient.egfrDelta,
                               bmi: patient.bmi,
                             ),
                           ),
@@ -609,21 +609,20 @@ String _formatCompactNum(num value) {
 class _PatientMetricsRow extends StatelessWidget {
   final bool isDark;
   final num egfr;
-  final num? egfrPrevious;
+  final num? egfrDelta;
   final num? bmi;
 
   const _PatientMetricsRow({
     required this.isDark,
     required this.egfr,
-    required this.egfrPrevious,
+    required this.egfrDelta,
     required this.bmi,
   });
 
   @override
   Widget build(BuildContext context) {
     final muted = HomeDashboardColors.subtitle(isDark);
-    final previous = egfrPrevious ?? 0;
-    final delta = egfr - previous;
+    final delta = egfrDelta ?? 0;
     final egfrUp = delta > 0;
     final egfrFlat = delta == 0;
     final rowColor = egfrFlat

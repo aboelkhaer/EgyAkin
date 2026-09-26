@@ -60,7 +60,7 @@ class SendConsultationSearchField extends StatelessWidget {
             color: subtitle,
           ),
           contentPadding: EdgeInsets.symmetric(
-            horizontal: 4.w,
+            horizontal: 12.w,
             vertical: 12.h,
           ),
           prefixIcon: Icon(
@@ -68,51 +68,21 @@ class SendConsultationSearchField extends StatelessWidget {
             size: 20.sp,
             color: subtitle,
           ),
-          suffixIconConstraints: BoxConstraints(
-            minHeight: 46.h,
-            minWidth: 46.w,
-          ),
           suffixIcon: ValueListenableBuilder<TextEditingValue>(
             valueListenable: controller,
             builder: (context, value, _) {
               if (value.text.isEmpty) {
-                return IconButton(
-                  tooltip: context.tr(AppStrings.search),
-                  onPressed: _submit,
-                  visualDensity: VisualDensity.compact,
-                  icon: Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 18.sp,
-                    color: primary,
-                    textDirection: Directionality.of(context),
-                  ),
-                );
+                return const SizedBox.shrink();
               }
-
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    tooltip: context.tr(AppStrings.clear),
-                    onPressed: onClear,
-                    visualDensity: VisualDensity.compact,
-                    icon: Icon(
-                      Icons.close_rounded,
-                      size: 18.sp,
-                      color: subtitle,
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: context.tr(AppStrings.search),
-                    onPressed: _submit,
-                    visualDensity: VisualDensity.compact,
-                    icon: Icon(
-                      Icons.search_rounded,
-                      size: 20.sp,
-                      color: primary,
-                    ),
-                  ),
-                ],
+              return IconButton(
+                tooltip: context.tr(AppStrings.clear),
+                onPressed: onClear,
+                visualDensity: VisualDensity.compact,
+                icon: Icon(
+                  Icons.close_rounded,
+                  size: 18.sp,
+                  color: subtitle,
+                ),
               );
             },
           ),

@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
+
 import '../../../../exports.dart';
 
 class SplashCubit extends Cubit<SplashState> {
@@ -7,14 +9,19 @@ class SplashCubit extends Cubit<SplashState> {
 
   Future<void> loadData() async {
     bool isAuthentication = false;
-    await Future.delayed(const Duration(seconds: AppStrings.splashDelay));
     String? token =
         await sl<AppPreferences>().getString(AppLocalStrings.keyToken);
     bool? isWelcomed =
         await sl<AppPreferences>().getBool(AppLocalStrings.isWelcomed) ?? false;
     if (token != null && token != AppStrings.empty) {
       isAuthentication = true;
+      // Go Online during splash (before Home / any screen) so peers see
+      // Online within ~1s — not only after opening a chat room.
+      if (sl.isRegistered<ChatRealtimeService>()) {
+        unawaited(sl<ChatRealtimeService>().bootstrapFromLocalSession());
+      }
     }
+    await Future.delayed(const Duration(seconds: AppStrings.splashDelay));
     bool appFreeze = false;
     bool forceUpdate = false;
     final result = await _getAppSettingsUsecase.execute(NoParams());
@@ -23,13 +30,17 @@ class SplashCubit extends Cubit<SplashState> {
         appFreeze = false;
         forceUpdate = false;
       },
-      (result) async {
-        appFreeze = result.appFreeze!;
-        forceUpdate = result.forceUpdate!;
+      (settings) {
+        appFreeze = settings.appFreeze ?? false;
+        forceUpdate = settings.forceUpdate ?? false;
       },
     );
 
     emit(SplashState.loaded(
-        isAuthentication, isWelcomed, appFreeze, forceUpdate));
+      isAuthentication,
+      isWelcomed,
+      appFreeze,
+      forceUpdate,
+    ));
   }
 }

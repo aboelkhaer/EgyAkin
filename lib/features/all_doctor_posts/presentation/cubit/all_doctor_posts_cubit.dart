@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
+import 'package:egy_akin/app/shared/functions/saved_posts_local_sync.dart';
+
 import '../../../../exports.dart';
 
 class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
@@ -223,6 +226,7 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
     _isUpdatingPostSaveStatus = true;
 
     bool isCurrentlySaved = false; // Store current save status for rollback
+    PostCommunityModel? targetPost;
 
     /// **1️⃣ Optimistically Update UI**
     emit(
@@ -240,6 +244,7 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
           final updatedPosts = postList.map((post) {
             if (post.id == int.tryParse(postId)) {
               isCurrentlySaved = post.isSaved ?? false;
+              targetPost = post;
 
               // Determine new state based on explicit action
               final newSavedStatus = saveOrUnsave == 'save';
@@ -272,6 +277,15 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
         orElse: () => state,
       ),
     );
+
+    if (targetPost != null) {
+      SavedPostsLocalSync.apply(
+        saveOrUnsave: saveOrUnsave,
+        post: targetPost!,
+      );
+    }
+
+    ProfilePostCounts.onSaveOrUnsave(saveOrUnsave);
 
     /// **2️⃣ Send API Request**
     debugPrint("[Save] 📡 Sending $saveOrUnsave request for post $postId");
@@ -328,6 +342,13 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
             orElse: () => state,
           ),
         );
+        ProfilePostCounts.revertSaveOrUnsave(saveOrUnsave);
+        if (targetPost != null) {
+          SavedPostsLocalSync.revert(
+            saveOrUnsave: saveOrUnsave,
+            post: targetPost!,
+          );
+        }
       },
       (success) {
         debugPrint("[Save] ✅ API Success: $saveOrUnsave applied successfully");
@@ -341,6 +362,18 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
   String postIdDeleted = '';
   Future<void> deletePost(String postId) async {
     // Step 1: Delete the post using your Cubit or repository
+    var wasSaved = false;
+    state.maybeWhen(
+      orElse: () {},
+      loaded: (response, _, __, ___, ____, _____, ______) {
+        for (final post in response.data?.data ?? const []) {
+          if (post.id.toString() == postId) {
+            wasSaved = post.isSaved ?? false;
+            break;
+          }
+        }
+      },
+    );
 
     postIdDeleted = postId;
     emit(
@@ -380,6 +413,7 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
       },
       (success) {
         // delete post from the list
+        ProfilePostCounts.onOwnPostDeleted(wasSaved: wasSaved);
 
         emit(
           state.maybeMap(

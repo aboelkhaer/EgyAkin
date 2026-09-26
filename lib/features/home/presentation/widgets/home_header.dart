@@ -142,8 +142,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                                                       .currentDoctorModel
                                                       .lastName ??
                                                   '',
-                                              role: widget
-                                                  .cubit.homeDataModel
+                                              role: widget.cubit.homeDataModel
                                                   .isSyndicateCardRequired
                                                   .toString(),
                                             ),
@@ -151,8 +150,8 @@ class _HomeHeaderState extends State<HomeHeader> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
-                                        color: HomeDashboardColors.title(
-                                            isDark),
+                                        color:
+                                            HomeDashboardColors.title(isDark),
                                         fontSize: 13.sp,
                                       ),
                                     ),
@@ -170,10 +169,10 @@ class _HomeHeaderState extends State<HomeHeader> {
                                                 _______,
                                                 ________,
                                                 __________) =>
-                                            homeData
-                                                    .isSyndicateCardRequired ==
-                                                'Verified',
-                                        orElse: () => widget.cubit
+                                            homeData.isSyndicateCardRequired ==
+                                            'Verified',
+                                        orElse: () =>
+                                            widget.cubit
                                                 .isSyndicateCardRequired ==
                                             'Verified',
                                       );
@@ -198,18 +197,18 @@ class _HomeHeaderState extends State<HomeHeader> {
                   isDark: isDark,
                   hasUnread: widget.cubit.isUnreadNotification ||
                       (int.tryParse(
-                            widget.cubit.homeDataModel.unreadCount ?? '0',
-                          ) ??
-                          0) >
+                                widget.cubit.homeDataModel.unreadCount ?? '0',
+                              ) ??
+                              0) >
                           0,
                   onTap: () {
                     final cubit = widget.cubit;
                     // Hide the red badge as soon as notifications are opened.
                     if (cubit.isUnreadNotification ||
                         (int.tryParse(
-                              cubit.homeDataModel.unreadCount ?? '0',
-                            ) ??
-                            0) >
+                                  cubit.homeDataModel.unreadCount ?? '0',
+                                ) ??
+                                0) >
                             0) {
                       cubit.removeNotificationCount();
                     }
@@ -217,10 +216,8 @@ class _HomeHeaderState extends State<HomeHeader> {
                       AppRoutes.notification,
                       arguments: AppRoutesArgs.notificationRouteArgs(
                         currentDoctorModel: cubit.currentDoctorModel,
-                        accountVerification:
-                            cubit.accountVerification ?? false,
-                        isSyndicateCardRequired:
-                            cubit.isSyndicateCardRequired,
+                        accountVerification: cubit.accountVerification ?? false,
+                        isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                         currentDoctorRole: cubit.currentDoctorRole,
                         currentDoctorPoints: cubit.doctorScore == null
                             ? 0
@@ -321,8 +318,8 @@ class _NotificationBell extends StatelessWidget {
       builder: (context, state) {
         final unreadFromState = state.maybeWhen(
           orElse: () => null,
-          loaded: (homeData, _, __, ___, ____, _____, ______, _______,
-                  ________, _________) =>
+          loaded: (homeData, _, __, ___, ____, _____, ______, _______, ________,
+                  _________) =>
               homeData.unreadCount,
         );
         final showBadge = unreadFromState != null
@@ -439,8 +436,7 @@ class _AddButton extends StatelessWidget {
     required HomeModelResponse homeData,
     required DoctorModel currentDoctorModel,
   }) {
-    final syndicateVerified =
-        isVerifiedUser(homeData.isSyndicateCardRequired);
+    final syndicateVerified = isVerifiedUser(homeData.isSyndicateCardRequired);
 
     // Verified syndicate → Add patient (with email / block guards)
     if (syndicateVerified) {

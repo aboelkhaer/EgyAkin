@@ -22,6 +22,7 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
   bool _hasError = false;
   bool _isTikTok = false;
   bool _showLinkOnly = false;
+  bool _imageFailed = false;
 
   @override
   void initState() {
@@ -353,11 +354,21 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       baseColor: isDarkMode ? AppColors.darkBorder : Colors.grey[300]!,
       highlightColor: isDarkMode ? AppColors.darkCardBG : Colors.grey[100]!,
       child: Container(
-        height: 180,
+        height: 88,
         width: double.infinity,
         color: isDarkMode ? AppColors.darkCardBG : Colors.white,
       ),
     );
+  }
+
+  String _hostLabel() {
+    try {
+      final host = Uri.tryParse(widget.url)?.host ?? '';
+      if (host.isEmpty) return widget.url;
+      return host.startsWith('www.') ? host.substring(4) : host;
+    } catch (_) {
+      return widget.url;
+    }
   }
 
   Widget _buildLinkOnly(bool isDarkMode) {
@@ -412,12 +423,93 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     );
   }
 
+  Widget _buildMetaBlock(bool isDarkMode) {
+    final hasTitle = _title != null && _title!.trim().isNotEmpty;
+    final hasDescription =
+        _description != null && _description!.trim().isNotEmpty;
+    final host = _hostLabel();
+    final titleColor = isDarkMode ? AppColors.darkTitle : Colors.black;
+    final descColor =
+        isDarkMode ? AppColors.darkDescription : Colors.grey[700];
+    final hostColor =
+        isDarkMode ? AppColors.darkDescription : Colors.grey[600];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hasTitle)
+            Text(
+              _title!,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: titleColor,
+                height: 1.25,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          if (hasTitle && hasDescription) const SizedBox(height: 6),
+          if (hasDescription)
+            Text(
+              _description!,
+              style: TextStyle(
+                fontSize: 13,
+                color: descColor,
+                height: 1.3,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.link_rounded, size: 14, color: hostColor),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  host,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: hostColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (_isTikTok)
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text(
+                'Tap to watch on TikTok',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPreview(bool isDarkMode) {
     // Check if we have enough content to show a meaningful preview
     final hasTitle = _title != null && _title!.trim().isNotEmpty;
     final hasDescription =
         _description != null && _description!.trim().isNotEmpty;
-    final hasImage = _imageUrl != null && _imageUrl!.isNotEmpty;
+    final hasImage = !_imageFailed &&
+        _imageUrl != null &&
+        _imageUrl!.trim().isNotEmpty &&
+        !_isPdf;
 
     // If we don't have enough content, show link only
     // We need at least a title or description for a meaningful preview
@@ -425,10 +517,11 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       return _buildLinkOnly(isDarkMode);
     }
 
+    // WhatsApp / chat style: no OG image → text-only card (no app logo).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (hasImage && !_isPdf)
+        if (hasImage)
           ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8),
@@ -442,19 +535,12 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                   height: _isTikTok ? 300 : 150,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    // Show app_icon.png when image is not available
-                    return Container(
-                      height: _isTikTok ? 300 : 150,
-                      color:
-                          isDarkMode ? AppColors.darkBorder : Colors.grey[200],
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/images/app_icon.png',
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.contain,
-                      ),
-                    );
+                    // Drop the image block — same as chat link previews.
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted || _imageFailed) return;
+                      setState(() => _imageFailed = true);
+                    });
+                    return const SizedBox.shrink();
                   },
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
@@ -490,53 +576,7 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
               ],
             ),
           ),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade100,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (hasTitle)
-                Text(
-                  _title!,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: isDarkMode ? AppColors.darkTitle : Colors.black,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.left,
-                ),
-              if (hasTitle && hasDescription) const SizedBox(height: 6),
-              if (hasDescription)
-                Text(
-                  _description!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isDarkMode
-                        ? AppColors.darkDescription
-                        : Colors.grey[700],
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              if (_isTikTok)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text(
-                    'Tap to watch on TikTok',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
+        _buildMetaBlock(isDarkMode),
       ],
     );
   }

@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/utilities/enums.dart';
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/create_group_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_header_image_in_community_usecase.dart';
@@ -9,7 +11,9 @@ import 'package:egy_akin/features/create_group_in_community/domain/usecases/upda
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_texts_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_state.dart';
+import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
@@ -287,6 +291,17 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
             ),
           ),
         );
+        // New social group → refresh chats without a manual pull.
+        try {
+          if (GetIt.I.isRegistered<InboxCubit>()) {
+            unawaited(
+              GetIt.I<InboxCubit>().silentRefresh(bypassThrottle: true),
+            );
+          }
+          if (GetIt.I.isRegistered<ChatRealtimeService>()) {
+            unawaited(GetIt.I<ChatRealtimeService>().publishInboxRefresh());
+          }
+        } catch (_) {}
       },
     );
   }

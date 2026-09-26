@@ -1,13 +1,14 @@
 import '../../exports.dart';
-import '../services/theme_bloc.dart';
 
 DateTime? _lastSnackBarTime; // Track the last time a SnackBar was shown
 
 void customSnackBar({required BuildContext context, required String message}) {
-  final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-  if (!scaffoldMessenger.mounted) {
-    return; // Return if the ScaffoldMessenger is not mounted
+  // Prefer the nearest ScaffoldMessenger (e.g. the one wrapping a modal
+  // bottom sheet) so the bar paints on top of the sheet at its bottom —
+  // not on the root scaffold under the modal barrier.
+  final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
+  if (scaffoldMessenger == null || !scaffoldMessenger.mounted) {
+    return;
   }
 
   // Prevent repeated SnackBars within a short time frame
@@ -15,14 +16,13 @@ void customSnackBar({required BuildContext context, required String message}) {
   if (_lastSnackBarTime != null &&
       now.difference(_lastSnackBarTime!) <
           const Duration(seconds: AppStrings.snackBarDelay)) {
-    return; // Skip showing the SnackBar if it was shown recently
+    return;
   }
 
-  _lastSnackBarTime = now; // Update the last shown time
+  _lastSnackBarTime = now;
 
   scaffoldMessenger.hideCurrentSnackBar();
 
-  // Get theme state from context
   final themeBloc = context.read<ThemeBloc>();
   final themeState = themeBloc.state;
   final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
@@ -36,6 +36,8 @@ void customSnackBar({required BuildContext context, required String message}) {
     ),
     backgroundColor: isDarkMode ? AppColors.darkCardBG : AppColors.darkCardBG,
     duration: const Duration(seconds: AppStrings.snackBarDelay),
+    // Fixed pins flush to the scaffold bottom (above the sheet content).
+    behavior: SnackBarBehavior.fixed,
     action: SnackBarAction(
       label: context.tr(AppStrings.ok),
       textColor: isDarkMode ? AppColors.darkPrimary : Colors.white,

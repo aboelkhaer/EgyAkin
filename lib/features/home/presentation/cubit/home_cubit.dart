@@ -26,6 +26,7 @@ import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_use
 import 'package:egy_akin/features/home/data/models/user_me_response.dart';
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
+import 'package:egy_akin/features/chat/data/services/chat_session_cleanup.dart';
 import 'package:egy_akin/injection_container.dart';
 import 'package:egy_akin/main.dart';
 import 'package:flutter/material.dart';
@@ -81,16 +82,16 @@ class HomeCubit extends Cubit<HomeState> {
 
   bool get showClinicalTabs => !hideClinicalTabs;
 
-  /// Clinical: Home(0) Patients(1) Community(2) Profile(3)
-  /// Normal:   Community(0) Notifications(1) Profile(2)
+  /// Clinical: Home(0) Patients(1) Community(2) Inbox(3) Profile(4)
+  /// Normal:   Community(0) Inbox(1) Notifications(2) Profile(3)
   int get communityTabIndex => hideClinicalTabs ? 0 : 2;
-  int get notificationsTabIndex => 1; // only used when hideClinicalTabs
-  int get profileTabIndex => hideClinicalTabs ? 2 : 3;
+  int get inboxTabIndex => hideClinicalTabs ? 1 : 3;
+  int get notificationsTabIndex => hideClinicalTabs ? 2 : -1;
+  int get profileTabIndex => hideClinicalTabs ? 3 : 4;
   int get patientsTabIndex => 1;
   int get homeTabIndex => 0;
 
-  /// Maps legacy full-nav indices (routes still use 0..4 with old Inbox at 3)
-  /// onto the active bar (Inbox removed for all users).
+  /// Maps legacy full-nav indices (routes still use 0..4 with Inbox at 3).
   int mapNavPage(int page) {
     if (showClinicalTabs) {
       switch (page) {
@@ -101,8 +102,7 @@ class HomeCubit extends Cubit<HomeState> {
         case 2:
           return communityTabIndex;
         case 3:
-          // Legacy inbox → community (inbox tab removed).
-          return communityTabIndex;
+          return inboxTabIndex;
         case 4:
           return profileTabIndex;
         default:
@@ -112,11 +112,12 @@ class HomeCubit extends Cubit<HomeState> {
     }
     switch (page) {
       case 3:
-        return notificationsTabIndex;
+        return inboxTabIndex;
       case 4:
         return profileTabIndex;
-      case 0:
       case 1:
+        return inboxTabIndex;
+      case 0:
       case 2:
       default:
         return communityTabIndex;
@@ -129,6 +130,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   void jumpToProfileTab() {
     jumpToTabSafe(profileTabIndex);
+  }
+
+  void jumpToInboxTab() {
+    jumpToTabSafe(inboxTabIndex);
   }
 
   void jumpToNotificationsTab() {
@@ -144,7 +149,7 @@ class HomeCubit extends Cubit<HomeState> {
     jumpToTabSafe(patientsTabIndex);
   }
 
-  int get _maxTabIndex => hideClinicalTabs ? 2 : 3;
+  int get _maxTabIndex => hideClinicalTabs ? 3 : 4;
 
   /// Keeps PersistentTabController inside the active nav length (avoids
   /// RangeError when switching medical_statistics → normal).
@@ -196,13 +201,13 @@ class HomeCubit extends Cubit<HomeState> {
 
     final nowHidingClinical = hideClinicalTabs;
     final targetProfile = profileTabIndex;
-    // Expanding 3 → 4 tabs: do NOT jump to index 3 while PersistentTabView
-    // still has 3 items (throws). Keep index ≤ 2, emit, then jump after frame.
-    // Shrinking 4 → 3: jump to profile (2) before emit so rebuild is safe.
+    // Expanding normal → clinical: clamp index before the bar gains tabs.
+    // Shrinking clinical → normal: jump to profile on the new tab set.
     final expandingNav = wasHidingClinical && !nowHidingClinical;
     if (expandingNav) {
-      if (tabsController.index > 2) {
-        tabsController.jumpToTab(2);
+      const normalMaxIndex = 3;
+      if (tabsController.index > normalMaxIndex) {
+        tabsController.jumpToTab(normalMaxIndex);
       }
     } else {
       jumpToTabSafe(targetProfile);
@@ -265,6 +270,46 @@ class HomeCubit extends Cubit<HomeState> {
   bool? accountVerification;
   String? doctorPatientCount;
   String? doctorScore;
+
+  int _parseCount(String? raw) => int.tryParse((raw ?? '').trim()) ?? 0;
+
+  /// Profile "Patients" tile: my patients + marked patients.
+  String get myPlusMarkedPatientsCount {
+    final my = _parseCount(doctorPatientCount ?? homeDataModel.doctorPatientCount);
+    final marked = _parseCount(homeDataModel.markedPatientsCount);
+    return (my + marked).toString();
+  }
+
+  void adjustMarkedPatientsCount(int delta) {
+    if (delta == 0) return;
+    final current = _parseCount(homeDataModel.markedPatientsCount);
+    final next = (current + delta).clamp(0, 1 << 30);
+    homeDataModel = homeDataModel.copyWith(
+      markedPatientsCount: next.toString(),
+    );
+    refreshScreenOnly();
+  }
+
+  void adjustSavedPostsCount(int delta) {
+    if (delta == 0) return;
+    final current = _parseCount(homeDataModel.savedPosts);
+    final next = (current + delta).clamp(0, 1 << 30);
+    homeDataModel = homeDataModel.copyWith(
+      savedPosts: next.toString(),
+    );
+    refreshScreenOnly();
+  }
+
+  void adjustOwnPostsCount(int delta) {
+    if (delta == 0) return;
+    final current = _parseCount(homeDataModel.postsCount);
+    final next = (current + delta).clamp(0, 1 << 30);
+    homeDataModel = homeDataModel.copyWith(
+      postsCount: next.toString(),
+    );
+    refreshScreenOnly();
+  }
+
   bool isUnreadNotification = false;
   String isSyndicateCardRequired = '';
   String currentDoctorRole = '';
@@ -290,7 +335,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => HomeState.loaded(
-        value.homeData,
+        homeDataModel,
         value.currentDoctorModel,
         value.dotsPosition,
         value.homeIndex,
@@ -299,7 +344,7 @@ class HomeCubit extends Cubit<HomeState> {
         '',
         checkUpdateMessageCounter,
         false,
-        value.changesCounter,
+        value.changesCounter + 1,
       ),
     ));
   }
@@ -441,8 +486,26 @@ class HomeCubit extends Cubit<HomeState> {
     ));
   }
 
+  /// Floating bottom nav slides away while Community feed is scrolling down.
+  final ValueNotifier<bool> hideFloatingNavBar = ValueNotifier(false);
+
+  void setHideFloatingNavBar(bool hide) {
+    if (hideFloatingNavBar.value == hide) return;
+    hideFloatingNavBar.value = hide;
+  }
+
+  /// Bumped when Community nav is tapped while already on Community so Feeds
+  /// can scroll to top.
+  final ValueNotifier<int> communityFeedsScrollToTopSignal = ValueNotifier(0);
+
+  void requestCommunityFeedsScrollToTop() {
+    communityFeedsScrollToTopSignal.value++;
+  }
+
   hideHomeHeader(int tabIndex) {
     if (isClosed) return;
+    // Leaving a tab should always restore the floating nav.
+    setHideFloatingNavBar(false);
     final safeIndex = tabIndex.clamp(0, _maxTabIndex);
     if (tabIndex == 0) {
       resetHomeTabScrollToTop();
@@ -1094,6 +1157,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> _clearSignedInSession() async {
+    await clearChatSessionOnSignOut();
     await sl<AppPreferences>().removeDoctorData();
     await sl<AppPreferences>().removeData(AppLocalStrings.permissions);
     PermissionHelper.clearCache();

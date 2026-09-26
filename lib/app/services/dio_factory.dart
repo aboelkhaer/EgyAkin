@@ -16,21 +16,24 @@ class DioFactory {
 
   Future<Dio> getDio() async {
     Dio dio = Dio();
-    // token = await getStorageLib.getString(AppLocalStrings.keyToken);
-    Map<String, String> headers = {
-      contentType: applicationJson,
-      accept: applicationJson,
-
-      // xtent: xtentValue,
-    };
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         token = await appPreferences.getString(AppLocalStrings.keyToken) ?? '';
-        options.headers = headers;
-        options.headers[authorization] = 'Bearer $token';
         options.baseUrl = ApiEndPoint.baseUrl;
-        options.contentType = applicationJson;
+        options.headers[accept] = applicationJson;
+        options.headers[authorization] = 'Bearer $token';
+
+        // Never force JSON content-type onto multipart chat uploads
+        // (images/voices/files) — that drops attachments on the server.
+        final isMultipart = options.data is FormData ||
+            (options.contentType?.toLowerCase().contains('multipart') ?? false);
+        if (!isMultipart) {
+          options.headers[contentType] = applicationJson;
+          options.contentType = applicationJson;
+        } else {
+          options.headers.remove(contentType);
+        }
 
         options.sendTimeout = const Duration(seconds: AppStrings.apiTimeOut);
         options.receiveTimeout = const Duration(seconds: AppStrings.apiTimeOut);

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
+import 'package:egy_akin/features/community/presentation/widgets/post_like_action.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
@@ -45,7 +46,6 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CommunityCubit cubit = CommunityCubit.get(context);
-    final PageController pageController = PageController();
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
@@ -776,9 +776,15 @@ class PostCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      // Like — fixed size; highlight only toggles color
-                      InkWell(
-                        onTap: () {
+                      // Heart = like/unlike · count = open likers
+                      PostLikeAction(
+                        isLiked: feed.isLiked == true,
+                        likesCount: feed.likesCount ?? 0,
+                        isDark: isDarkMode,
+                        homeDataModel: homeDataModel,
+                        currentDoctorModel: currentDoctorModel,
+                        postId: feed.id.toString(),
+                        onToggleLike: () {
                           if (isGroupPosts || isCommunitySearch) {
                             onLikeAndUnlikeAdditional!();
                           } else {
@@ -789,53 +795,6 @@ class PostCard extends StatelessWidget {
                             );
                           }
                         },
-                        borderRadius: BorderRadius.circular(20.r),
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 180),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 6.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: feed.isLiked == true
-                                ? (isDarkMode
-                                    ? const Color(0xFF5C1A1A)
-                                    : const Color(0xFFFFE4E6))
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                feed.isLiked == true
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                size: 16.sp,
-                                color: feed.isLiked == true
-                                    ? (isDarkMode
-                                        ? const Color(0xFFFDA4AF)
-                                        : const Color(0xFFE11D48))
-                                    : Colors.grey.shade400,
-                              ),
-                              SizedBox(width: 5.w),
-                              Text(
-                                feed.likesCount?.toString() ?? '0',
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: feed.isLiked == true
-                                      ? (isDarkMode
-                                          ? const Color(0xFFFDA4AF)
-                                          : const Color(0xFFE11D48))
-                                      : Colors.grey.shade400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                       SizedBox(width: 14.w),
                       GestureDetector(
@@ -864,6 +823,8 @@ class PostCard extends StatelessWidget {
                               feed.commentsCount?.toString() ?? '0',
                               style: TextStyle(
                                 fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                height: 1.1,
                                 color: Colors.grey.shade400,
                               ),
                             ),
@@ -877,12 +838,12 @@ class PostCard extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           if (isGroupPosts || isCommunitySearch) {
-                            onSaveAndUnSaveAdditional!();
+                            onSaveAndUnSaveAdditional?.call();
                           } else {
                             cubit.addSaveOrUnsaveOnPost(
                               feed.id.toString(),
                               saveOrUnsave:
-                                  feed.isSaved! ? 'unsave' : 'save',
+                                  feed.isSaved == true ? 'unsave' : 'save',
                             );
                           }
                         },
@@ -906,7 +867,7 @@ class PostCard extends StatelessWidget {
                             feed.isSaved == true
                                 ? Icons.bookmark
                                 : Icons.bookmark_outline,
-                            size: 18.sp,
+                            size: 20.sp,
                             color: feed.isSaved == true
                                 ? (isDarkMode
                                     ? const Color(0xFFFBBF24)

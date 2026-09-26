@@ -104,8 +104,7 @@ class _PatientsAddButton extends StatelessWidget {
     required HomeModelResponse homeData,
     required DoctorModel currentDoctorModel,
   }) {
-    final syndicateVerified =
-        isVerifiedUser(homeData.isSyndicateCardRequired);
+    final syndicateVerified = isVerifiedUser(homeData.isSyndicateCardRequired);
 
     if (syndicateVerified) {
       if (!PermissionHelper.canPermission(AppPermissions.addPatientInHome)) {

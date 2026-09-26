@@ -41,9 +41,10 @@ class _ReceivedTabState extends State<ReceivedTab> {
             );
           },
           builder: (context, state) {
-            return state.maybeWhen(
-              orElse: () => const SizedBox.shrink(),
-              receivedConsultationsLoading: () => Center(
+            final cubit = ConsultationCubit.get(context);
+            if (cubit.isLoadingReceived &&
+                cubit.receivedConsultations.isEmpty) {
+              return Center(
                 child: SizedBox(
                   width: 28.w,
                   height: 28.w,
@@ -52,24 +53,20 @@ class _ReceivedTabState extends State<ReceivedTab> {
                     color: primary,
                   ),
                 ),
-              ),
-              receivedConsultationsLoaded: (consultations) {
-                return RefreshIndicator(
-                  color: primary,
-                  onRefresh: () async {
-                    context
-                        .read<ConsultationCubit>()
-                        .getReceivedConsultations();
-                  },
-                  child: ConsultationList(
-                    consultations: consultations,
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                    isReceivedConsultation: true,
-                    isDarkMode: isDark,
-                  ),
-                );
+              );
+            }
+            return RefreshIndicator(
+              color: primary,
+              onRefresh: () async {
+                context.read<ConsultationCubit>().getReceivedConsultations();
               },
+              child: ConsultationList(
+                consultations: cubit.receivedConsultations,
+                currentDoctorModel: widget.currentDoctorModel,
+                homeDataModel: widget.homeDataModel,
+                isReceivedConsultation: true,
+                isDarkMode: isDark,
+              ),
             );
           },
         );

@@ -29,7 +29,7 @@ class _MarkedPatientsScreenState extends State<MarkedPatientsScreen> {
       if (!_cubit!.isClosed) {
         _cubit!.scrollController = ScrollController();
         _cubit!.scrollController!.addListener(_onScroll);
-        _cubit!.getMarkedPatients();
+        _cubit!.ensureMarkedPatientsLoaded();
       }
     });
   }
@@ -37,7 +37,9 @@ class _MarkedPatientsScreenState extends State<MarkedPatientsScreen> {
   @override
   void dispose() {
     if (_cubit != null && !_cubit!.isClosed) {
+      _cubit!.scrollController?.removeListener(_onScroll);
       _cubit!.scrollController?.dispose();
+      _cubit!.scrollController = null;
     }
     super.dispose();
   }
