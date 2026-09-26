@@ -568,12 +568,18 @@ class InboxCubit extends Cubit<InboxState> {
               ? true
               : (isViewing || isMine ? false : _threads[idx].isPriority),
           lastMessageStatus: isMine
-              ? _mergedOutgoingStatus(
-                  previous: _threads[idx].lastMessageStatus,
-                  fromApi: ChatMappers.messageStatusFromApi(
-                    message.status,
-                    isOutgoing: true,
+              ? _capOutgoingStatus(
+                  conversationId,
+                  _mergedOutgoingStatus(
+                    previous: _threads[idx].lastMessageStatus,
+                    fromApi: ChatMappers.messageStatusFromApi(
+                      message.status,
+                      isOutgoing: true,
+                    ),
                   ),
+                  peerUserId: message.sender?.id == _currentUserId
+                      ? _threads[idx].counterpartUserId
+                      : message.sender?.id,
                 )
               : null,
           clearLastMessageStatus: !isMine,
@@ -747,11 +753,10 @@ class InboxCubit extends Cubit<InboxState> {
         if (!isOnline) {
           _setPeerActivity(conversationId, ChatComposerActivity.none);
         } else {
-          // Peer opened this chat room — blue ticks for 1:1 only.
-          final thread = _findThreadByConversation(conversationId);
-          if (thread != null && !thread.isGroupLike) {
-            _upgradeOutgoingStatus(conversationId, ChatMessageStatus.seen);
-          }
+          // Peer is in this conversation channel → delivered. Seen only comes
+          // from message.read while they are still present (opening the room
+          // alone used to blue-tick from a stale presence snapshot on Chats).
+          _upgradeOutgoingStatus(conversationId, ChatMessageStatus.delivered);
         }
       case ChatAppPresenceChangedEvent(:final userId, :final isOnline):
         if (userId == _currentUserId) break;
@@ -927,14 +932,47 @@ class InboxCubit extends Cubit<InboxState> {
     return _statusRank(previous) >= _statusRank(fromApi) ? previous : fromApi;
   }
 
+  /// Backend may emit `seen`/`message.read` when the peer only acked delivered
+  /// (or leftover conversation presence). Cap at delivered unless they are
+  /// actually in that chat room.
+  ChatMessageStatus _capOutgoingStatus(
+    int conversationId,
+    ChatMessageStatus status, {
+    int? peerUserId,
+  }) {
+    if (status != ChatMessageStatus.seen) return status;
+    final thread = _findThreadByConversation(conversationId);
+    if (thread != null && thread.isGroupLike) return status;
+    final peer = peerUserId ?? thread?.counterpartUserId;
+    if (peer != null &&
+        _realtime.isUserPresentInConversation(conversationId, peer)) {
+      return ChatMessageStatus.seen;
+    }
+    return ChatMessageStatus.delivered;
+  }
+
   InboxThread _mergeLiveOutgoingStatus(
     InboxThread thread,
     ChatMessageStatus live,
   ) {
-    final api = thread.lastMessageStatus;
-    if (api == null) return thread.copyWith(lastMessageStatus: live);
-    if (_statusRank(live) <= _statusRank(api)) return thread;
-    return thread.copyWith(lastMessageStatus: live);
+    final cappedLive = thread.conversationId == null
+        ? live
+        : _capOutgoingStatus(thread.conversationId!, live,
+            peerUserId: thread.counterpartUserId);
+    final api = thread.lastMessageStatus == null || thread.conversationId == null
+        ? thread.lastMessageStatus
+        : _capOutgoingStatus(
+            thread.conversationId!,
+            thread.lastMessageStatus!,
+            peerUserId: thread.counterpartUserId,
+          );
+    if (api == null) return thread.copyWith(lastMessageStatus: cappedLive);
+    if (_statusRank(cappedLive) <= _statusRank(api)) {
+      return api == thread.lastMessageStatus
+          ? thread
+          : thread.copyWith(lastMessageStatus: api);
+    }
+    return thread.copyWith(lastMessageStatus: cappedLive);
   }
 
   int _statusRank(ChatMessageStatus status) {
@@ -996,13 +1034,22 @@ class InboxCubit extends Cubit<InboxState> {
           ? true
           : (isViewing || isMine ? false : previous.isPriority),
       lastMessageStatus: isMine
-          ? _mergedOutgoingStatus(
-              previous: previous.lastMessageStatus,
-              fromApi: ChatMappers.messageStatusFromApi(
-                message.status,
-                isOutgoing: true,
-              ),
-            )
+          ? () {
+              final merged = _mergedOutgoingStatus(
+                previous: previous.lastMessageStatus,
+                fromApi: ChatMappers.messageStatusFromApi(
+                  message.status,
+                  isOutgoing: true,
+                ),
+              );
+              final cid = previous.conversationId;
+              if (cid == null) return merged;
+              return _capOutgoingStatus(
+                cid,
+                merged,
+                peerUserId: previous.counterpartUserId,
+              );
+            }()
           : null,
       clearLastMessageStatus: !isMine,
       peerActivity: isMine ? previous.peerActivity : ChatComposerActivity.none,
@@ -2171,7 +2218,22 @@ class InboxCubit extends Cubit<InboxState> {
                 t.conversationId!: t.lastMessageStatus!,
           };
           _threads = _withLivePresence(
-            items.map(ChatMappers.toInboxThread).toList(),
+            [
+              for (final item in items)
+                () {
+                  final t = ChatMappers.toInboxThread(item);
+                  final status = t.lastMessageStatus;
+                  final cid = t.conversationId;
+                  if (status == null || cid == null) return t;
+                  return t.copyWith(
+                    lastMessageStatus: _capOutgoingStatus(
+                      cid,
+                      status,
+                      peerUserId: t.counterpartUserId,
+                    ),
+                  );
+                }(),
+            ],
           );
           if (liveUnreadById.isNotEmpty) {
             _threads = [

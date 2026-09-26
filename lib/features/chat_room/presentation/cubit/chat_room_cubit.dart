@@ -734,6 +734,19 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     return _onlinePeerIds.isNotEmpty;
   }
 
+  /// Map send/API status for our own message. Never accept `seen` unless the
+  /// peer is actually in this chat room (backend may set seen on delivered).
+  ChatMessageStatus _statusFromSendResponse(String? status) {
+    final normalized = status?.trim().toLowerCase();
+    if (normalized == 'seen' || normalized == 'read') {
+      return _peerIsInThisConversation()
+          ? ChatMessageStatus.seen
+          : ChatMessageStatus.delivered;
+    }
+    if (normalized == 'delivered') return ChatMessageStatus.delivered;
+    return ChatMessageStatus.sent;
+  }
+
   /// Upgrade outgoing ticks only forward: sent → delivered → seen.
   /// Never touch messages that are still uploading / queued locally.
   /// Private (1:1) only — groups use per-member delivery/read receipts.
@@ -2380,11 +2393,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
                 if (message.id != null) message.id!: message,
               },
             ).copyWith(
-              status: message.status == 'seen'
-                  ? ChatMessageStatus.seen
-                  : message.status == 'delivered'
-                      ? ChatMessageStatus.delivered
-                      : ChatMessageStatus.sent,
+              status: _statusFromSendResponse(message.status),
               clientTempId: tempId,
             );
 

@@ -266,6 +266,7 @@ class InboxThreadCard extends StatelessWidget {
                 Row(
                   children: [
                     if (!thread.hasPeerActivity &&
+                        thread.unreadCount == 0 &&
                         thread.lastMessageStatus != null) ...[
                       _InboxStatusTicks(
                         status: thread.lastMessageStatus!,
@@ -521,6 +522,7 @@ class _AdHocGroupThreadRow extends StatelessWidget {
                 Row(
                   children: [
                     if (!thread.hasPeerActivity &&
+                        thread.unreadCount == 0 &&
                         thread.lastMessageStatus != null) ...[
                       _InboxStatusTicks(
                         status: thread.lastMessageStatus!,
@@ -621,7 +623,7 @@ class _InboxPreviewLine extends StatelessWidget {
     final color = unread
         ? HomeDashboardColors.title(isDark)
         : HomeDashboardColors.subtitle(isDark);
-    final weight = unread ? FontWeight.w600 : FontWeight.w500;
+    final weight = unread ? FontWeight.w700 : FontWeight.w500;
 
     IconData? icon;
     // Normalize API content like "[2 images]" before rendering.

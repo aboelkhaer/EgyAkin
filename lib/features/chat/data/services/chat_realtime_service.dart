@@ -353,10 +353,34 @@ class ChatRealtimeService with WidgetsBindingObserver {
   }
 
   /// Clear active chat synchronously (call from chat room dispose / pop).
+  /// Also leaves conversation presence immediately so the backend stops
+  /// treating us as reading while we are only on the Chats list.
   void clearActiveChat() {
+    final id = _activeChatConversationId;
     _activeChatConversationId = null;
     _localComposerActivity = ChatComposerActivity.none;
     _stopActivePresenceSync();
+    if (id != null) {
+      final binding = _bindings[id];
+      if (binding != null) {
+        unawaited(_leaveConversationPresence(binding, reason: 'clearActiveChat'));
+      }
+    }
+  }
+
+  /// Leave conversation presence. Safe when already absent. Always clear the
+  /// local flag — Ably may auto-re-enter after reconnect even if we think we
+  /// already left, which falsely marks messages as seen from Chats.
+  Future<void> _leaveConversationPresence(
+    _ChannelBinding binding, {
+    required String reason,
+  }) async {
+    try {
+      await binding.channel.presence.leave();
+    } catch (e) {
+      debugPrint('Ably presence leave ($reason) failed: $e');
+    }
+    binding.hasEnteredPresence = false;
   }
 
   /// Only skip when Ably itself refused every app-online channel we tried.
@@ -1785,6 +1809,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
         const ably.RealtimePresenceParams(waitForSync: true),
       );
       final currentlyOnline = <int>{};
+      var selfStillPresent = false;
       for (final member in members) {
         final clientId = member.clientId;
         final userId = _userIdFromPresence(member);
@@ -1793,6 +1818,11 @@ class ChatRealtimeService with WidgetsBindingObserver {
         }
         if (currentUserId != null) {
           if (clientId == '$currentUserId' || userId == currentUserId) {
+            // Still listed on a chat we are not viewing — leave so the peer
+            // stops getting blue ticks while we browse Chats.
+            if (conversationId != _activeChatConversationId) {
+              selfStillPresent = true;
+            }
             continue;
           }
         }
@@ -1811,14 +1841,41 @@ class ChatRealtimeService with WidgetsBindingObserver {
         );
       }
 
-      // Additive only. A presence.get() right after we send (typing stop /
-      // presence.update) often omits peers who are still Online and used to
-      // emit isOnline:false — header flipped Offline after every message.
-      // Real Offline still comes from leave/absent in [_emitPresence].
-      _lastOnlineByConversation[conversationId] = {
-        ...?_lastOnlineByConversation[conversationId],
-        ...currentlyOnline,
-      };
+      if (selfStillPresent) {
+        unawaited(
+          _leaveConversationPresence(
+            ready,
+            reason: 'stale self on $conversationId',
+          ),
+        );
+      }
+
+      final previous =
+          _lastOnlineByConversation[conversationId] ?? const <int>{};
+      final isActiveChat = conversationId == _activeChatConversationId;
+      if (isActiveChat) {
+        // Additive only in the open room. A presence.get() right after we
+        // send (typing stop / presence.update) often omits peers who are
+        // still present and used to flip the header offline.
+        _lastOnlineByConversation[conversationId] = {
+          ...previous,
+          ...currentlyOnline,
+        };
+      } else {
+        // Inbox listeners: drop peers no longer in the roster so a missed
+        // leave cannot keep message.read → blue ticks forever.
+        for (final leftId in previous.difference(currentlyOnline)) {
+          _eventsController.add(
+            ChatPresenceChangedEvent(
+              conversationId: conversationId,
+              clientId: null,
+              userId: leftId,
+              isOnline: false,
+            ),
+          );
+        }
+        _lastOnlineByConversation[conversationId] = currentlyOnline;
+      }
     } catch (e) {
       debugPrint('Ably presence get failed: $e');
     }
@@ -2402,16 +2459,9 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
       final isActive = conversationId == _activeChatConversationId;
       if (!isActive) {
-        // Inbox listeners must not stay present — that falsely marks messages
-        // as read while the user is only on the Chats list.
-        if (binding.hasEnteredPresence) {
-          try {
-            await binding.channel.presence.leave();
-          } catch (e) {
-            debugPrint('Ably presence leave (resume inbox) failed: $e');
-          }
-          binding.hasEnteredPresence = false;
-        }
+        // Always leave — Ably auto-re-entry can put us back after reconnect
+        // even when hasEnteredPresence is already false.
+        await _leaveConversationPresence(binding, reason: 'resume inbox');
         await _startPresenceListening(
           conversationId: conversationId,
           binding: binding,
@@ -2482,13 +2532,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
         // run on every incoming message, and the peer would see us leave the
         // room (Offline, no blue ticks) each time.
         final isOpenChat = conversationId == _activeChatConversationId;
-        if (binding.hasEnteredPresence && !enterPresence && !isOpenChat) {
-          try {
-            await binding.channel.presence.leave();
-          } catch (e) {
-            debugPrint('Ably presence leave (inbox) failed: $e');
-          }
-          binding.hasEnteredPresence = false;
+        if (!enterPresence && !isOpenChat && binding.hasEnteredPresence) {
+          // Leave even if the flag says we already left — SDK may have
+          // re-entered presence after a reconnect (false blue ticks on Chats).
+          await _leaveConversationPresence(binding, reason: 'inbox listen-only');
         } else if (enterPresence &&
             currentUserId != null &&
             !binding.hasEnteredPresence) {
@@ -2929,14 +2976,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
       _activeChatConversationId = null;
     }
     _stopActivePresenceSync();
-    if (binding.hasEnteredPresence) {
-      try {
-        await binding.channel.presence.leave();
-      } catch (e) {
-        debugPrint('Ably presence leave (downgrade) failed: $e');
-      }
-      binding.hasEnteredPresence = false;
-    }
+    await _leaveConversationPresence(binding, reason: 'downgrade');
     if (binding.presenceSubscription == null) {
       await _startPresenceListening(
         conversationId: conversationId,
@@ -2956,9 +2996,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
     await binding.presenceSubscription?.cancel();
     await binding.subscription.cancel();
     try {
-      if (binding.hasEnteredPresence) {
-        await binding.channel.presence.leave();
-      }
+      await _leaveConversationPresence(binding, reason: 'detach');
       await binding.channel.detach();
     } catch (_) {}
     if (_activeChatConversationId == conversationId) {
