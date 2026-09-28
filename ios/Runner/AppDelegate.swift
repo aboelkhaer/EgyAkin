@@ -12,6 +12,8 @@ import UserNotifications
   /// Readable from Flutter SharedPreferences (keys are prefixed with `flutter.`).
   private static let flutterColdStartJsonKey = "flutter.egyakin_cold_start_push_v1"
   private static let flutterColdStartTsKey = "flutter.egyakin_cold_start_push_ts"
+  /// Shared with the NotificationService extension (delivered receipts).
+  private static let appGroupId = "group.com.incodeco.EgyAkin"
 
   override func application(
     _ application: UIApplication,
@@ -39,6 +41,7 @@ import UserNotifications
     application.registerForRemoteNotifications()
 
     GeneratedPluginRegistrant.register(with: self)
+    setupSharedAuthChannel()
     let launched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
     // After FlutterAppDelegate wires delegates, keep Messaging in the loop.
@@ -107,6 +110,36 @@ import UserNotifications
       DispatchQueue.main.async {
         self?.applyInterfaceStyle(mode)
         result(nil)
+      }
+    }
+  }
+
+  /// Flutter writes the login token here after login / on start and clears
+  /// it on logout, so the NotificationService extension can ack deliveries
+  /// while the app is closed.
+  private func setupSharedAuthChannel() {
+    guard let registrar = registrar(forPlugin: "EgyAkinSharedAuth") else { return }
+    let channel = FlutterMethodChannel(
+      name: "com.incode.EgyAkin/shared_auth",
+      binaryMessenger: registrar.messenger()
+    )
+    channel.setMethodCallHandler { call, result in
+      let shared = UserDefaults(suiteName: Self.appGroupId)
+      switch call.method {
+      case "setSharedAuth":
+        let args = call.arguments as? [String: Any]
+        shared?.set(args?["token"] as? String, forKey: "auth_token")
+        shared?.set(
+          args?["chatConversationsUrl"] as? String,
+          forKey: "chat_conversations_url"
+        )
+        result(nil)
+      case "clearSharedAuth":
+        shared?.removeObject(forKey: "auth_token")
+        shared?.removeObject(forKey: "chat_conversations_url")
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
       }
     }
   }

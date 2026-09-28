@@ -903,6 +903,10 @@ class AppStrings {
       'These messages will be deleted for everyone in the chat.';
   static const String deleteMessageFailed =
       'Could not delete message. Please try again.';
+  static const String chatFileTooLarge =
+      '{name} is larger than {size} MB and can\'t be sent.';
+  static const String chatFileTypeNotAllowed =
+      '{name} can\'t be sent. Allowed files: PDF, Word, Excel, TXT and CSV.';
   static const String deleteMessage = 'Delete message';
   static const String deleteMessages = 'Delete messages';
   static const String selectMessages = 'Select messages';

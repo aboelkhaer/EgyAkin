@@ -1,5 +1,6 @@
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
+import 'package:egy_akin/app/services/app_screen_tracker.dart';
 import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/features/chat/data/services/chat_push_navigation.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
@@ -20,16 +21,58 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+class _HomeScreenState extends State<HomeScreen>
+    with WidgetsBindingObserver, RouteAware {
   HomeCubit? cubit;
   int _deepLinkRetryCount = 0;
   List<Widget>? _cachedTabScreens;
   bool? _cachedHideClinical;
+  PersistentTabController? _observedTabs;
+  bool _routeObserved = false;
+
+  void _observeTabs() {
+    final tabs = cubit?.tabsController;
+    if (tabs == null) return;
+    if (!identical(tabs, _observedTabs)) {
+      _observedTabs?.removeListener(_onTabChanged);
+      _observedTabs = tabs..addListener(_onTabChanged);
+    }
+    _onTabChanged();
+  }
+
+  /// The Chats list listens to its top chats only while it is the tab on
+  /// screen (live rows + typing / recording / sending).
+  void _onTabChanged() {
+    final homeCubit = cubit;
+    if (homeCubit == null) return;
+    final onInbox = homeCubit.tabsController.index == homeCubit.inboxTabIndex;
+    AppScreenTracker.setInboxTabSelected(onInbox);
+    if (!sl.isRegistered<InboxCubit>()) return;
+    sl<InboxCubit>().setChatsListVisible(onInbox);
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     cubit = context.read<HomeCubit>();
+    if (!_routeObserved) {
+      final route = ModalRoute.of(context);
+      if (route != null) {
+        appRouteObserver.subscribe(this, route);
+        _routeObserved = true;
+        AppScreenTracker.setHomeIsTopRoute(true);
+      }
+    }
+  }
+
+  @override
+  void didPushNext() {
+    AppScreenTracker.setHomeIsTopRoute(false);
+  }
+
+  @override
+  void didPopNext() {
+    AppScreenTracker.setHomeIsTopRoute(true);
   }
 
   @override
@@ -37,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     cubit = context.read<HomeCubit>();
+    _observeTabs();
     // Load local user_type first, then home — so loading nav is already correct.
     () async {
       await cubit!.getDoctorDataFromLocal(emitState: false);
@@ -44,11 +88,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       cubit!.tabsController.jumpToTab(cubit!.mapNavPage(widget.page));
       // Rebuild nav from local user_type before getHome emits loading.
       setState(() {});
+      // User type decides which index is the Chats tab.
+      _onTabChanged();
       // Enter presence:app as soon as we have a local user id — do not wait
       // for getHome(), or peers only see Online after a chat room opens.
       _ensureChatPresence();
       await cubit!.getHome();
       if (!mounted) return;
+      _onTabChanged();
       // Refresh with profile fields from /home (name/image) if they changed.
       _ensureChatPresence();
     }();
@@ -57,6 +104,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (_routeObserved) appRouteObserver.unsubscribe(this);
+    _observedTabs?.removeListener(_onTabChanged);
+    AppScreenTracker.setInboxTabSelected(false);
+    AppScreenTracker.setHomeIsTopRoute(true);
+    if (sl.isRegistered<InboxCubit>()) {
+      sl<InboxCubit>().setChatsListVisible(false);
+    }
     super.dispose();
   }
 

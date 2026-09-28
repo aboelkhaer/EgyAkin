@@ -30,6 +30,45 @@ abstract class ChatApiType {
   static const caseGroup = 'case_group';
   static const group = 'group';
   static const socialGroup = 'social_group';
+
+  /// Maps any spelling the server, pushes or older builds use to one of the
+  /// constants above. The server sends `individual` / `patients` and still
+  /// accepts `private` / `case_group` in requests. Null when unknown.
+  static String? fromApi(String? raw) {
+    final t = raw?.trim().toLowerCase().replaceAll('-', '_');
+    if (t == null || t.isEmpty) return null;
+    switch (t) {
+      case 'individual':
+      case 'private':
+      case 'private_chat':
+      case 'direct':
+      case 'dm':
+      case 'one_to_one':
+        return private;
+      case 'patients':
+      case 'case_group':
+      case 'casegroup':
+      case 'patient_group':
+      case 'patientgroup':
+      case 'patient':
+      case 'case':
+        return caseGroup;
+      case 'social_group':
+      case 'socialgroup':
+      case 'social':
+      case 'social_chat':
+      case 'community_group':
+        return socialGroup;
+      case 'group':
+      case 'adhoc_group':
+      case 'group_chat':
+      case 'ad_hoc':
+      case 'adhoc':
+        return group;
+      default:
+        return null;
+    }
+  }
 }
 
 @freezed

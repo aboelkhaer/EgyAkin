@@ -66,11 +66,15 @@ class ChatMessageMetaRow extends StatelessWidget {
   final bool alignEnd;
   final bool onPrimaryBackground;
 
+  /// White time/ticks over a photo (WhatsApp image-only bubble).
+  final bool onImageOverlay;
+
   const ChatMessageMetaRow({
     super.key,
     required this.message,
     this.alignEnd = false,
     this.onPrimaryBackground = false,
+    this.onImageOverlay = false,
   });
 
   @override
@@ -78,9 +82,22 @@ class ChatMessageMetaRow extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-        final timeColor = onPrimaryBackground
-            ? Colors.white.withOpacity(0.78)
-            : (isDarkMode ? AppColors.darkDescription : AppColors.description);
+        final timeColor = onImageOverlay
+            ? Colors.white
+            : onPrimaryBackground
+                ? Colors.white.withOpacity(0.78)
+                : (isDarkMode
+                    ? AppColors.darkDescription
+                    : AppColors.description);
+        final shadow = onImageOverlay
+            ? const [
+                Shadow(
+                  color: Color(0x99000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 1),
+                ),
+              ]
+            : null;
 
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -94,6 +111,8 @@ class ChatMessageMetaRow extends StatelessWidget {
                   fontSize: 9.5.sp,
                   fontStyle: FontStyle.italic,
                   color: timeColor,
+                  height: 1.0,
+                  shadows: shadow,
                 ),
               ),
               SizedBox(width: 4.w),
@@ -102,17 +121,53 @@ class ChatMessageMetaRow extends StatelessWidget {
               message.timeLabel,
               style: TextStyle(
                 fontSize: 10.sp,
+                height: 1.0,
                 color: timeColor,
+                shadows: shadow,
               ),
             ),
             if (message.isOutgoing &&
                 message.status != ChatMessageStatus.failed) ...[
               SizedBox(width: 3.w),
-              _MessageStatusTicks(
-                status: message.isUploading
-                    ? ChatMessageStatus.sending
-                    : message.status,
-                onPrimaryBackground: onPrimaryBackground,
+              // Fixed slot so clock → ticks never resize the bubble.
+              SizedBox(
+                width: 18.sp,
+                height: 14.sp,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        ...previousChildren,
+                        if (currentChild != null) currentChild,
+                      ],
+                    );
+                  },
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                  child: KeyedSubtree(
+                    key: ValueKey(
+                      message.isUploading
+                          ? ChatMessageStatus.sending
+                          : message.status,
+                    ),
+                    child: _MessageStatusTicks(
+                      status: message.isUploading
+                          ? ChatMessageStatus.sending
+                          : message.status,
+                      onPrimaryBackground:
+                          onPrimaryBackground || onImageOverlay,
+                      onImageOverlay: onImageOverlay,
+                    ),
+                  ),
+                ),
               ),
             ],
           ],
@@ -125,55 +180,66 @@ class ChatMessageMetaRow extends StatelessWidget {
 class _MessageStatusTicks extends StatelessWidget {
   final ChatMessageStatus status;
   final bool onPrimaryBackground;
+  final bool onImageOverlay;
 
   const _MessageStatusTicks({
     required this.status,
     required this.onPrimaryBackground,
+    this.onImageOverlay = false,
   });
 
   @override
   Widget build(BuildContext context) {
     // Delivered / sent stay muted; seen uses a clear blue so it's obvious.
-    final muted = onPrimaryBackground
-        ? Colors.white.withOpacity(0.72)
-        : const Color(0xFF9CA3AF);
-    final seenColor = onPrimaryBackground
-        ? const Color(0xFF7DD3FC) // light sky on purple bubble
-        : const Color(0xFF34B7F1); // WhatsApp-like blue
+    final muted = onImageOverlay
+        ? Colors.white
+        : onPrimaryBackground
+            ? Colors.white.withOpacity(0.72)
+            : const Color(0xFF9CA3AF);
+    final seenColor = onImageOverlay || onPrimaryBackground
+        ? const Color(0xFF53BDEB) // WhatsApp-like sky on media / purple
+        : const Color(0xFF34B7F1);
 
+    // One size for every status so the meta row / bubble width stays put.
+    const iconSize = 14.0;
+
+    Widget icon(IconData data, Color color) {
+      final child = Icon(data, size: iconSize.sp, color: color);
+      if (!onImageOverlay) return child;
+      return Icon(
+        data,
+        size: iconSize.sp,
+        color: color,
+        shadows: const [
+          Shadow(
+            color: Color(0x99000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
+      );
+    }
+
+    final Widget tick;
     switch (status) {
       case ChatMessageStatus.sending:
       case ChatMessageStatus.pending:
-        return Icon(
-          Icons.access_time_rounded,
-          size: 13.sp,
-          color: muted,
-        );
+        tick = icon(Icons.access_time_rounded, muted);
       case ChatMessageStatus.failed:
-        return Icon(
-          Icons.error_outline_rounded,
-          size: 14.sp,
-          color: const Color(0xFFEF4444),
-        );
+        tick = icon(Icons.error_outline_rounded, const Color(0xFFEF4444));
       case ChatMessageStatus.sent:
-        return Icon(
-          Icons.done_rounded,
-          size: 14.sp,
-          color: muted,
-        );
+        tick = icon(Icons.done_rounded, muted);
       case ChatMessageStatus.delivered:
-        return Icon(
-          Icons.done_all_rounded,
-          size: 14.sp,
-          color: muted,
-        );
+        tick = icon(Icons.done_all_rounded, muted);
       case ChatMessageStatus.seen:
-        return Icon(
-          Icons.done_all_rounded,
-          size: 14.sp,
-          color: seenColor,
-        );
+        tick = icon(Icons.done_all_rounded, seenColor);
     }
+
+    return SizedBox(
+      width: 18.sp,
+      height: 14.sp,
+      child: Center(child: tick),
+    );
   }
 }
 
@@ -255,7 +321,7 @@ class MessageBubbleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _ChatDeleteMorph(
-      key: ValueKey('delete_morph_${message.id}'),
+      key: ValueKey('delete_morph_${message.clientTempId ?? message.id}'),
       isDeleting: message.isDeleting,
       isDeleted: message.isDeleted,
       isOutgoing: isOutgoing,
@@ -564,31 +630,35 @@ class _LiveMessageBubbleBody extends StatelessWidget {
         !message.text.startsWith('[File:');
     // WhatsApp: for voice-only bubbles, time sits next to duration.
     final embedVoiceMeta = hasVoice && !hasCaptionText && !hasFiles;
+    // WhatsApp: image-only → time + ticks overlaid on the photo.
+    final embedImageMeta =
+        hasAttachmentImages && !hasCaptionText && !hasVoice && !hasFiles;
     final linkUrlInText = hasCaptionText ? firstChatUrl(message.text) : null;
     final hasLinkPreview = linkUrlInText != null;
     final urlOnlyLink = hasLinkPreview && isChatUrlOnlyMessage(message.text);
     // Full-bleed preview (image/title flush to bubble edges), like WhatsApp.
     final linkEdgeBleed =
         hasLinkPreview && !hasAttachmentImages && !hasVoice && !hasFiles;
+    // WhatsApp: photos sit edge-to-edge in the bubble (caption/meta get padding).
+    final imageEdgeBleed = hasAttachmentImages;
+    final edgeBleed = linkEdgeBleed || imageEdgeBleed;
 
-    final padT = linkEdgeBleed
-        ? 0.0
-        : (hasAttachmentImages ? 3.h : (hasVoice || hasFiles ? 5.h : 8.h));
+    final padT = edgeBleed ? 0.0 : (hasVoice || hasFiles ? 5.h : 8.h);
     // Keep bottom padding stable — reactions hang outside and must not
     // grow/shrink the bubble when added or removed.
-    final padB = embedVoiceMeta
-        ? 5.h
-        : (linkEdgeBleed ? 4.h : (hasVoice || hasFiles ? 4.h : 3.h));
-    final hPad = linkEdgeBleed
+    final padB = embedImageMeta
         ? 0.0
-        : (hasAttachmentImages ? 3.w : (hasVoice || hasFiles ? 3.w : 12.w));
+        : embedVoiceMeta
+            ? 5.h
+            : (edgeBleed ? 3.h : (hasVoice || hasFiles ? 3.h : 2.h));
+    final hPad = edgeBleed ? 0.0 : (hasVoice || hasFiles ? 3.w : 12.w);
     final chromeH = padT +
         padB +
         (showSenderName ? 18.h : 0) +
         (message.isForwarded ? 18.h : 0) +
         (message.replyTo != null ? 40.h : 0) +
         (hasCaptionText ? 28.h : 0) +
-        (embedVoiceMeta ? 0 : (hasVoice ? 6.h : 4.h) + 18.h) +
+        (embedVoiceMeta || embedImageMeta ? 0 : (hasVoice ? 6.h : 4.h) + 18.h) +
         12.h; // buffer so meta/ticks never clip under tight overlay max
 
     double? imageMaxHeight;
@@ -612,6 +682,13 @@ class _LiveMessageBubbleBody extends StatelessWidget {
       bottomRight: Radius.circular(isOutgoing ? 4.r : 14.r),
     );
 
+    // Cap width so long AR/EN text wraps. Image/link cards use a compact
+    // WhatsApp-style width — must match the grid so rows never overflow.
+    final screenW = MediaQuery.sizeOf(context).width;
+    final maxBubbleWidth = (linkEdgeBleed || imageEdgeBleed)
+        ? (screenW * 0.70).clamp(220.0, 292.0)
+        : screenW * 0.78;
+
     final rawCard = Container(
       clipBehavior: Clip.antiAlias,
       padding: EdgeInsets.fromLTRB(hPad, padT, hPad, padB),
@@ -633,7 +710,9 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                   ]),
       ),
       child: Column(
-        crossAxisAlignment: message.replyTo != null || linkEdgeBleed
+        crossAxisAlignment: message.replyTo != null ||
+                edgeBleed ||
+                hasAttachmentImages
             ? CrossAxisAlignment.stretch
             : (isOutgoing ? CrossAxisAlignment.end : CrossAxisAlignment.start),
         mainAxisSize: MainAxisSize.min,
@@ -641,14 +720,14 @@ class _LiveMessageBubbleBody extends StatelessWidget {
           if (showSenderName && message.senderName.trim().isNotEmpty)
             Padding(
               padding: EdgeInsets.fromLTRB(
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
-                    ? 8.w
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                    ? 10.w
                     : 0,
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
-                    ? 4.h
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                    ? 6.h
                     : 0,
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
-                    ? 8.w
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                    ? 10.w
                     : 0,
                 2.h,
               ),
@@ -670,19 +749,16 @@ class _LiveMessageBubbleBody extends StatelessWidget {
           if (message.isForwarded)
             Padding(
               padding: EdgeInsets.fromLTRB(
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
-                    ? 8.w
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                    ? 10.w
                     : 0,
                 showSenderName
                     ? 0
-                    : (hasAttachmentImages ||
-                            hasVoice ||
-                            hasFiles ||
-                            linkEdgeBleed
-                        ? 4.h
+                    : (hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                        ? 6.h
                         : 0),
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
-                    ? 8.w
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                    ? 10.w
                     : 0,
                 4.h,
               ),
@@ -698,16 +774,16 @@ class _LiveMessageBubbleBody extends StatelessWidget {
           if (message.replyTo != null)
             Padding(
               padding: EdgeInsets.fromLTRB(
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
                     ? 8.w
                     : 0,
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
-                    ? 4.h
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
+                    ? 6.h
                     : 0,
-                hasAttachmentImages || hasVoice || hasFiles || linkEdgeBleed
+                hasAttachmentImages || hasVoice || hasFiles || edgeBleed
                     ? 8.w
                     : 0,
-                0,
+                hasAttachmentImages ? 4.h : 0,
               ),
               child: _ReplyQuoteBanner(
                 reply: message.replyTo!,
@@ -718,17 +794,62 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                     : () => onReplyQuoteTap!(message.replyTo!),
               ),
             ),
-          // Image attachments.
+          // Image attachments — edge-to-edge WhatsApp style.
           if (hasAttachmentImages)
-            _ImageAttachmentGrid(
-              attachments: imageAttachments,
-              isUploading: message.isUploading,
-              showRetry: message.needsMediaUploadRetry,
-              uploadProgress: message.uploadProgress ?? 0,
-              isOutgoing: isOutgoing,
-              maxHeight: imageMaxHeight,
-              onCancelUpload: onCancelUpload,
-              onRetryUpload: onResend,
+            Builder(
+              builder: (context) {
+                final grid = _ImageAttachmentGrid(
+                  attachments: imageAttachments,
+                  isUploading: message.isUploading,
+                  showRetry: message.needsMediaUploadRetry,
+                  uploadProgress: message.uploadProgress ?? 0,
+                  isOutgoing: isOutgoing,
+                  maxWidth: maxBubbleWidth,
+                  maxHeight: imageMaxHeight,
+                  // Caption below → square image bottom; image-only → full radius.
+                  hasCaptionBelow: !embedImageMeta,
+                  imageAtTop: !showSenderName &&
+                      !message.isForwarded &&
+                      message.replyTo == null,
+                  bubbleRadius: bubbleRadius,
+                  onCancelUpload: onCancelUpload,
+                  onRetryUpload: onResend,
+                );
+                if (!embedImageMeta) return grid;
+                // Time + ticks overlaid on the photo (WhatsApp image-only).
+                return Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    grid,
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: IgnorePointer(
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(8.w, 28.h, 8.w, 6.h),
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0x00000000),
+                                Color(0x66000000),
+                              ],
+                            ),
+                          ),
+                          alignment: Alignment.bottomRight,
+                          child: ChatMessageMetaRow(
+                            message: message,
+                            alignEnd: true,
+                            onImageOverlay: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           // Voice notes.
           if (hasVoice)
@@ -807,8 +928,13 @@ class _LiveMessageBubbleBody extends StatelessWidget {
           if (hasCaptionText)
             Padding(
               padding: EdgeInsets.only(
-                left: (hasAttachmentImages || hasVoice || hasFiles) ? 8.w : 0,
-                right: (hasAttachmentImages || hasVoice || hasFiles) ? 8.w : 0,
+                left: (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
+                    ? 10.w
+                    : 0,
+                right:
+                    (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
+                        ? 10.w
+                        : 0,
                 top: message.attachments.isNotEmpty
                     ? 6.h
                     : (message.replyTo != null ? 2.h : 0),
@@ -827,7 +953,7 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                       : message.text;
                   final showCaption = !urlOnly && displayText.isNotEmpty;
                   final jumboCount = _jumboEmojiCount(displayText);
-                  // Slightly larger than default — composer field stays unchanged.
+                  // Same base type as the composer field (jumbo emoji scales up).
                   final fontSize = jumboCount == null
                       ? 15.sp
                       : jumboCount == 1
@@ -840,7 +966,7 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                         ? Colors.white
                         : (isDarkMode ? AppColors.darkTitle : AppColors.title),
                     fontSize: fontSize,
-                    height: jumboCount == null ? 1.32 : 1.12,
+                    height: jumboCount == null ? 1.2 : 1.1,
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Tajawal',
                     fontFamilyFallback: const [
@@ -897,11 +1023,8 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                         ),
                       if (showCaption)
                         Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            linkEdgeBleed ? 10.w : 0,
-                            linkUrl != null ? 6.h : 0,
-                            linkEdgeBleed ? 10.w : 0,
-                            0,
+                          padding: EdgeInsets.only(
+                            top: linkUrl != null ? 6.h : 0,
                           ),
                           child: Directionality(
                             textDirection: textDirection,
@@ -918,24 +1041,18 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                 },
               ),
             ),
-          if (!embedVoiceMeta) ...[
-            SizedBox(
-                height:
-                    hasVoice || hasFiles ? 4.h : (linkEdgeBleed ? 2.h : 1.h)),
+          if (!embedVoiceMeta && !embedImageMeta)
             Padding(
               padding: EdgeInsets.only(
-                left: (hasAttachmentImages ||
-                        hasVoice ||
-                        hasFiles ||
-                        linkEdgeBleed)
-                    ? 8.w
+                left: (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
+                    ? 10.w
                     : 0,
-                right: (hasAttachmentImages ||
-                        hasVoice ||
-                        hasFiles ||
-                        linkEdgeBleed)
-                    ? 8.w
-                    : 0,
+                right:
+                    (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
+                        ? 10.w
+                        : 0,
+                // Keep time tucked under the last text line (WhatsApp-tight).
+                top: hasVoice || hasFiles ? 2.h : 1.h,
               ),
               child: ChatMessageMetaRow(
                 message: message,
@@ -943,22 +1060,18 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                 onPrimaryBackground: isOutgoing,
               ),
             ),
-          ],
         ],
       ),
     );
 
     // Cap width so long AR/EN text wraps. IntrinsicWidth keeps short
-    // bubbles tight; link cards use a compact WhatsApp-style width.
-    final screenW = MediaQuery.sizeOf(context).width;
-    final maxBubbleWidth =
-        linkEdgeBleed ? (screenW * 0.70).clamp(220.0, 292.0) : screenW * 0.78;
+    // bubbles tight; link/image cards use a compact WhatsApp-style width.
     final useIntrinsicWidth =
-        !hasAttachmentImages && !hasVoice && !hasFiles && !linkEdgeBleed;
+        !hasAttachmentImages && !hasVoice && !hasFiles && !edgeBleed;
     final card = ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: maxBubbleWidth,
-        minWidth: linkEdgeBleed ? maxBubbleWidth : 0,
+        minWidth: (linkEdgeBleed || imageEdgeBleed) ? maxBubbleWidth : 0,
         maxHeight: (maxHeight != null && maxHeight!.isFinite)
             ? maxHeight!
             : double.infinity,
@@ -1677,8 +1790,10 @@ class _ReplyQuoteBanner extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 11.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w700,
+                        fontFamily: 'Tajawal',
+                        height: 1.2,
                         color: nameColor,
                       ),
                     ),
@@ -1688,14 +1803,14 @@ class _ReplyQuoteBanner extends StatelessWidget {
                         if (image != null || reply.imageCount > 0) ...[
                           Icon(
                             Icons.photo_camera_outlined,
-                            size: 12.sp,
+                            size: 14.sp,
                             color: textColor,
                           ),
                           SizedBox(width: 3.w),
                         ] else if (voice != null) ...[
                           Icon(
                             Icons.mic_rounded,
-                            size: 12.sp,
+                            size: 14.sp,
                             color: textColor,
                           ),
                           SizedBox(width: 3.w),
@@ -1706,8 +1821,17 @@ class _ReplyQuoteBanner extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11.sp,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Tajawal',
+                              height: 1.2,
                               color: textColor,
+                              fontFamilyFallback: const [
+                                'Apple Color Emoji',
+                                'Segoe UI Emoji',
+                                'Noto Color Emoji',
+                                'Android Emoji',
+                              ],
                             ),
                           ),
                         ),
@@ -1766,7 +1890,11 @@ class _ImageAttachmentGrid extends StatelessWidget {
   final bool showRetry;
   final double uploadProgress;
   final bool isOutgoing;
+  final double maxWidth;
   final double? maxHeight;
+  final bool hasCaptionBelow;
+  final bool imageAtTop;
+  final BorderRadius bubbleRadius;
   final VoidCallback? onCancelUpload;
   final VoidCallback? onRetryUpload;
 
@@ -1775,11 +1903,29 @@ class _ImageAttachmentGrid extends StatelessWidget {
     required this.isUploading,
     required this.uploadProgress,
     required this.isOutgoing,
+    required this.bubbleRadius,
+    required this.maxWidth,
     this.showRetry = false,
     this.maxHeight,
+    this.hasCaptionBelow = false,
+    this.imageAtTop = true,
     this.onCancelUpload,
     this.onRetryUpload,
   });
+
+  BorderRadius get _mediaRadius {
+    // Match bubble chrome: flush top when image leads; square bottom when
+    // caption/meta follow (WhatsApp image+text layout).
+    final top = imageAtTop ? Radius.circular(14.r) : Radius.zero;
+    if (hasCaptionBelow) {
+      return BorderRadius.only(topLeft: top, topRight: top);
+    }
+    if (imageAtTop) return bubbleRadius;
+    return BorderRadius.only(
+      bottomLeft: bubbleRadius.bottomLeft,
+      bottomRight: bubbleRadius.bottomRight,
+    );
+  }
 
   Future<void> _openViewer(BuildContext context, int index) async {
     final urls = <String>[];
@@ -1827,187 +1973,175 @@ class _ImageAttachmentGrid extends StatelessWidget {
     final count = attachments.length;
     if (count == 0) return const SizedBox.shrink();
 
-    final radius = BorderRadius.circular(10.r);
+    final radius = _mediaRadius;
+    // Match bubble ConstrainedBox exactly — fixed 240.w was overflowing by ~1px.
+    final gridW = maxWidth;
+    const gap = 2.0;
 
-    if (count == 1) {
-      // WhatsApp-like square tile filled with BoxFit.cover (crops tall shots).
-      final tileW = 240.w;
-      var tileH = tileW;
-      if (maxHeight != null && maxHeight!.isFinite) {
-        tileH = maxHeight!.clamp(120.h, tileW);
-      }
-      final tile = _SingleImageTile(
-        attachment: attachments.first,
-        width: tileW,
-        height: tileH,
-        borderRadius: 10.r,
-        onTap:
-            (isUploading || showRetry) ? null : () => _openViewer(context, 0),
-        onExpired: () => _onExpired(context),
-      );
-      if (!isUploading && !showRetry) return tile;
+    Widget wrapUpload(Widget child) {
+      if (!isUploading && !showRetry) return child;
       return _UploadOverlay(
         borderRadius: radius,
         progress: uploadProgress,
         isRetry: showRetry,
         onAction: showRetry ? onRetryUpload : onCancelUpload,
-        child: tile,
+        child: child,
+      );
+    }
+
+    Widget tileAt(
+      int index, {
+      required double height,
+      String? moreLabel,
+    }) {
+      return _SingleImageTile(
+        attachment: attachments[index],
+        width: double.infinity,
+        height: height,
+        clipRadius: BorderRadius.zero,
+        moreLabel: moreLabel,
+        onTap: (isUploading || showRetry)
+            ? null
+            : () => _openViewer(context, index),
+        onExpired: () => _onExpired(context),
+      );
+    }
+
+    Widget twoAcross({
+      required double height,
+      required int leftIndex,
+      required int rightIndex,
+      String? rightMoreLabel,
+    }) {
+      return SizedBox(
+        height: height,
+        child: Row(
+          children: [
+            Expanded(child: tileAt(leftIndex, height: height)),
+            const SizedBox(width: gap),
+            Expanded(
+              child: tileAt(
+                rightIndex,
+                height: height,
+                moreLabel: rightMoreLabel,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (count == 1) {
+      var tileH = gridW;
+      if (maxHeight != null && maxHeight!.isFinite) {
+        tileH = maxHeight!.clamp(120.h, gridW);
+      }
+      return wrapUpload(
+        SizedBox(
+          width: gridW,
+          height: tileH,
+          child: _SingleImageTile(
+            attachment: attachments.first,
+            width: double.infinity,
+            height: tileH,
+            clipRadius: radius,
+            onTap: (isUploading || showRetry)
+                ? null
+                : () => _openViewer(context, 0),
+            onExpired: () => _onExpired(context),
+          ),
+        ),
       );
     }
 
     // Multi-image collage — WhatsApp layouts:
     // 2 → side by side
-    // 3 → one full-width + two half-width (no empty cell)
-    // 4+ → 2×2 grid (extra images still open in the viewer)
-    final gridW = 220.w;
-    final gap = 2.w;
-    final halfW = (gridW - gap) / 2;
-
+    // 3 → one full-width + two half-width
+    // 4 → 2×2
+    // 5+ → 2×2 with "+N" on the last cell
     Widget grid;
     if (count == 2) {
       var tileH = 148.h;
-      var tileW = halfW;
       if (maxHeight != null && maxHeight!.isFinite && tileH > maxHeight!) {
-        final scale = maxHeight! / tileH;
-        tileH *= scale;
-        tileW *= scale;
+        tileH = maxHeight!;
       }
       grid = ClipRRect(
         borderRadius: radius,
         child: SizedBox(
-          width: tileW * 2 + gap,
-          child: Row(
-            children: [
-              _SingleImageTile(
-                attachment: attachments[0],
-                width: tileW,
-                height: tileH,
-                borderRadius: 2.r,
-                onTap: (isUploading || showRetry)
-                    ? null
-                    : () => _openViewer(context, 0),
-                onExpired: () => _onExpired(context),
-              ),
-              SizedBox(width: gap),
-              _SingleImageTile(
-                attachment: attachments[1],
-                width: tileW,
-                height: tileH,
-                borderRadius: 2.r,
-                onTap: (isUploading || showRetry)
-                    ? null
-                    : () => _openViewer(context, 1),
-                onExpired: () => _onExpired(context),
-              ),
-            ],
+          width: gridW,
+          child: twoAcross(
+            height: tileH,
+            leftIndex: 0,
+            rightIndex: 1,
           ),
         ),
       );
     } else if (count == 3) {
-      // Full-width hero on top, two equal tiles below — fills the bubble.
       var topH = 128.h;
       var bottomH = 108.h;
-      var width = gridW;
       final naturalH = topH + gap + bottomH;
       if (maxHeight != null && maxHeight!.isFinite && naturalH > maxHeight!) {
         final scale = maxHeight! / naturalH;
         topH *= scale;
         bottomH *= scale;
-        width *= scale;
       }
-      final bottomW = (width - gap) / 2;
       grid = ClipRRect(
         borderRadius: radius,
         child: SizedBox(
-          width: width,
+          width: gridW,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _SingleImageTile(
-                attachment: attachments[0],
-                width: width,
+              SizedBox(
+                width: gridW,
                 height: topH,
-                borderRadius: 2.r,
-                onTap: (isUploading || showRetry)
-                    ? null
-                    : () => _openViewer(context, 0),
-                onExpired: () => _onExpired(context),
+                child: tileAt(0, height: topH),
               ),
-              SizedBox(height: gap),
-              Row(
-                children: [
-                  _SingleImageTile(
-                    attachment: attachments[1],
-                    width: bottomW,
-                    height: bottomH,
-                    borderRadius: 2.r,
-                    onTap: (isUploading || showRetry)
-                        ? null
-                        : () => _openViewer(context, 1),
-                    onExpired: () => _onExpired(context),
-                  ),
-                  SizedBox(width: gap),
-                  _SingleImageTile(
-                    attachment: attachments[2],
-                    width: bottomW,
-                    height: bottomH,
-                    borderRadius: 2.r,
-                    onTap: (isUploading || showRetry)
-                        ? null
-                        : () => _openViewer(context, 2),
-                    onExpired: () => _onExpired(context),
-                  ),
-                ],
+              const SizedBox(height: gap),
+              twoAcross(
+                height: bottomH,
+                leftIndex: 1,
+                rightIndex: 2,
               ),
             ],
           ),
         ),
       );
     } else {
-      // 4+: 2×2 (show first 4; tap opens full gallery).
-      var tileW = halfW;
+      // 4+: 2×2; extras open in the viewer via "+N" on the last cell.
       var tileH = 108.h;
       final naturalH = tileH * 2 + gap;
       if (maxHeight != null && maxHeight!.isFinite && naturalH > maxHeight!) {
-        final scale = maxHeight! / naturalH;
-        tileW *= scale;
-        tileH *= scale;
+        tileH = (maxHeight! - gap) / 2;
       }
-      final shown = attachments.take(4).toList(growable: false);
+      final extra = count - 4;
+      final moreLabel = extra > 0 ? '+$extra' : null;
       grid = ClipRRect(
         borderRadius: radius,
         child: SizedBox(
-          width: tileW * 2 + gap,
-          child: Wrap(
-            spacing: gap,
-            runSpacing: gap,
+          width: gridW,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              for (var i = 0; i < shown.length; i++)
-                _SingleImageTile(
-                  attachment: shown[i],
-                  width: tileW,
-                  height: tileH,
-                  borderRadius: 2.r,
-                  onTap: (isUploading || showRetry)
-                      ? null
-                      : () => _openViewer(context, i),
-                  onExpired: () => _onExpired(context),
-                ),
+              twoAcross(
+                height: tileH,
+                leftIndex: 0,
+                rightIndex: 1,
+              ),
+              const SizedBox(height: gap),
+              twoAcross(
+                height: tileH,
+                leftIndex: 2,
+                rightIndex: 3,
+                rightMoreLabel: moreLabel,
+              ),
             ],
           ),
         ),
       );
     }
 
-    if (!isUploading && !showRetry) return grid;
-
-    return _UploadOverlay(
-      borderRadius: radius,
-      progress: uploadProgress,
-      isRetry: showRetry,
-      onAction: showRetry ? onRetryUpload : onCancelUpload,
-      child: grid,
-    );
+    return wrapUpload(grid);
   }
 }
 
@@ -2090,22 +2224,25 @@ class _SingleImageTile extends StatelessWidget {
   final ChatAttachmentItem attachment;
   final double width;
   final double height;
-  final double borderRadius;
+  final BorderRadius clipRadius;
   final VoidCallback? onTap;
   final VoidCallback? onExpired;
+
+  /// WhatsApp "+N" badge when this is the last cell of a 5+ collage.
+  final String? moreLabel;
 
   const _SingleImageTile({
     required this.attachment,
     required this.width,
     required this.height,
-    required this.borderRadius,
+    required this.clipRadius,
     this.onTap,
     this.onExpired,
+    this.moreLabel,
   });
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(borderRadius);
     return SizedBox(
       width: width,
       height: height,
@@ -2113,18 +2250,36 @@ class _SingleImageTile extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: radius,
+          borderRadius: clipRadius,
           child: ClipRRect(
-            borderRadius: radius,
+            borderRadius: clipRadius,
             clipBehavior: Clip.hardEdge,
-            child: SizedBox.expand(
-              child: ChatAttachmentImage(
-                attachment: attachment,
-                width: width,
-                height: height,
-                fit: BoxFit.cover,
-                onExpired: onExpired,
-              ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ChatAttachmentImage(
+                  attachment: attachment,
+                  width: width,
+                  height: height,
+                  fit: BoxFit.cover,
+                  onExpired: onExpired,
+                ),
+                if (moreLabel != null)
+                  ColoredBox(
+                    color: Colors.black.withOpacity(0.45),
+                    child: Center(
+                      child: Text(
+                        moreLabel!,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                          height: 1.0,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),

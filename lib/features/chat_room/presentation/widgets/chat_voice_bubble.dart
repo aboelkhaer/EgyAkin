@@ -16,6 +16,7 @@ class ChatVoiceBubble extends StatefulWidget {
   final bool isDarkMode;
   final String? senderImageUrl;
   final String? senderInitials;
+
   /// Message time shown on the same row as duration (WhatsApp).
   final String? timeLabel;
   final ChatMessageStatus? status;
@@ -157,9 +158,7 @@ class _ChatVoiceBubbleState extends State<ChatVoiceBubble> {
       _rememberDuration(_duration);
     } else {
       final known = ChatVoiceDurationCache.get(widget.attachment);
-      if (known != null &&
-          known > 0 &&
-          known != _duration.inMilliseconds) {
+      if (known != null && known > 0 && known != _duration.inMilliseconds) {
         _duration = Duration(milliseconds: known);
       }
     }
@@ -401,14 +400,11 @@ class _ChatVoiceBubbleState extends State<ChatVoiceBubble> {
         : (widget.isDarkMode
             ? Colors.white.withOpacity(0.12)
             : AppColors.primary.withOpacity(0.12));
-    final avatarFg =
-        widget.isOutgoing ? Colors.white70 : AppColors.primary;
+    final avatarFg = widget.isOutgoing ? Colors.white70 : AppColors.primary;
     final micBadgeBg = widget.isOutgoing
         ? (_isSeenOrPlayed ? Colors.white : _unplayedPlayColor)
         : (_isSeenOrPlayed ? AppColors.primary : _unplayedPlayColor);
-    final micBadgeFg = widget.isOutgoing
-        ? AppColors.primary
-        : Colors.white;
+    final micBadgeFg = widget.isOutgoing ? AppColors.primary : Colors.white;
 
     final totalMs =
         _duration.inMilliseconds <= 0 ? 1 : _duration.inMilliseconds;
@@ -477,8 +473,8 @@ class _ChatVoiceBubbleState extends State<ChatVoiceBubble> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       void seekAt(Offset local) {
-                        final v = (local.dx / constraints.maxWidth)
-                            .clamp(0.0, 1.0);
+                        final v =
+                            (local.dx / constraints.maxWidth).clamp(0.0, 1.0);
                         final seek = Duration(
                           milliseconds: (v * totalMs).round(),
                         );
@@ -533,11 +529,38 @@ class _ChatVoiceBubbleState extends State<ChatVoiceBubble> {
                           widget.status != null &&
                           widget.status != ChatMessageStatus.failed) ...[
                         SizedBox(width: 3.w),
-                        _VoiceStatusTicks(
-                          status: widget.status!,
-                          color: widget.status == ChatMessageStatus.seen
-                              ? const Color(0xFF53BDEB)
-                              : muted,
+                        SizedBox(
+                          width: 18.sp,
+                          height: 14.sp,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 180),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            layoutBuilder: (currentChild, previousChildren) {
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: <Widget>[
+                                  ...previousChildren,
+                                  if (currentChild != null) currentChild,
+                                ],
+                              );
+                            },
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
+                            child: KeyedSubtree(
+                              key: ValueKey(widget.status),
+                              child: _VoiceStatusTicks(
+                                status: widget.status!,
+                                color: widget.status == ChatMessageStatus.seen
+                                    ? const Color(0xFF53BDEB)
+                                    : muted,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ],
@@ -563,25 +586,31 @@ class _VoiceStatusTicks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Widget tick;
     switch (status) {
       case ChatMessageStatus.sending:
       case ChatMessageStatus.pending:
-        return SizedBox(
-          width: 12.r,
-          height: 12.r,
+        tick = SizedBox(
+          width: 12.sp,
+          height: 12.sp,
           child: CircularProgressIndicator(
             strokeWidth: 1.4,
             color: color,
           ),
         );
       case ChatMessageStatus.sent:
-        return Icon(Icons.done_rounded, size: 14.sp, color: color);
+        tick = Icon(Icons.done_rounded, size: 14.sp, color: color);
       case ChatMessageStatus.delivered:
       case ChatMessageStatus.seen:
-        return Icon(Icons.done_all_rounded, size: 14.sp, color: color);
+        tick = Icon(Icons.done_all_rounded, size: 14.sp, color: color);
       case ChatMessageStatus.failed:
-        return const SizedBox.shrink();
+        tick = const SizedBox.shrink();
     }
+    return SizedBox(
+      width: 18.sp,
+      height: 14.sp,
+      child: Center(child: tick),
+    );
   }
 }
 

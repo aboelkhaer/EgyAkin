@@ -147,7 +147,14 @@ class ChatMediaItemModel {
     final sender = _senderFromJson(json);
     return ChatMediaItemModel(
       id: _asInt(json['id']),
-      messageId: _asInt(json['message_id'] ?? json['messageId']),
+      messageId: _asInt(
+        json['message_id'] ??
+            json['messageId'] ??
+            json['chat_message_id'] ??
+            json['chatMessageId'] ??
+            json['msg_id'] ??
+            json['msgId'],
+      ),
       type: json['type']?.toString(),
       originalName:
           (json['original_name'] ?? json['name'] ?? json['file_name'])

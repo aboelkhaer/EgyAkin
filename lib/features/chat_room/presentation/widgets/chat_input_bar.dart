@@ -511,6 +511,15 @@ class _ChatInputBarState extends State<ChatInputBar>
           controller.hashtagStyle = TextStyle(
             color: isDarkMode ? AppColors.darkPrimary : AppColors.primary,
             fontWeight: FontWeight.w700,
+            fontSize: 15.sp,
+            height: 1.2,
+            fontFamily: 'Tajawal',
+            fontFamilyFallback: const [
+              'Apple Color Emoji',
+              'Segoe UI Emoji',
+              'Noto Color Emoji',
+              'Android Emoji',
+            ],
           );
         }
 
@@ -662,10 +671,17 @@ class _ChatInputBarState extends State<ChatInputBar>
                   );
                 },
                 style: TextStyle(
-                  fontSize: 13.sp,
-                  height: 1.25,
+                  fontSize: 15.sp,
+                  height: 1.2,
                   color: textColor,
                   fontWeight: FontWeight.w500,
+                  fontFamily: 'Tajawal',
+                  fontFamilyFallback: const [
+                    'Apple Color Emoji',
+                    'Segoe UI Emoji',
+                    'Noto Color Emoji',
+                    'Android Emoji',
+                  ],
                 ),
                 cursorColor: AppColors.primary,
                 decoration: InputDecoration(
@@ -674,8 +690,11 @@ class _ChatInputBarState extends State<ChatInputBar>
                   fillColor: fieldBg,
                   hintText: '${context.tr(AppStrings.message)}...',
                   hintStyle: TextStyle(
-                    fontSize: 13.sp,
+                    fontSize: 15.sp,
+                    height: 1.2,
                     color: hintColor,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Tajawal',
                   ),
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 14.w,

@@ -632,6 +632,21 @@ class _InboxPreviewLine extends StatelessWidget {
     if (kind == InboxPreviewKind.text) {
       kind = ChatMappers.previewKindFromText(label);
     }
+
+    final raw = thread.preview.trim();
+    if (ChatMappers.isDeletedTombstone(raw)) {
+      return _withIcon(
+        Icons.block_rounded,
+        context.tr(AppStrings.thisMessageWasDeleted),
+        color,
+        weight,
+      );
+    }
+    // Server labels ("Photo", "3 صور", "report.pdf") are already translated.
+    final labelKind = ChatMappers.mediaKindFromLabel(raw);
+    if (labelKind != null) {
+      return _withIcon(_iconFor(labelKind), raw, color, weight);
+    }
     final count = () {
       final fromText = ChatMappers.previewCountFromText(label);
       if (fromText > 1) return fromText;
@@ -652,6 +667,8 @@ class _InboxPreviewLine extends StatelessWidget {
         label = dur == null
             ? context.tr(AppStrings.voiceMessage)
             : '${context.tr(AppStrings.voiceMessage)} · $dur';
+      case InboxPreviewKind.video:
+        icon = _iconFor(InboxPreviewKind.video);
       case InboxPreviewKind.file:
         icon = Icons.insert_drive_file_rounded;
         if (count > 1) {
@@ -691,6 +708,29 @@ class _InboxPreviewLine extends StatelessWidget {
         }
     }
 
+    return _withIcon(icon, label, color, weight);
+  }
+
+  static IconData _iconFor(InboxPreviewKind kind) {
+    switch (kind) {
+      case InboxPreviewKind.photo:
+        return Icons.photo_camera_outlined;
+      case InboxPreviewKind.voice:
+        return Icons.mic_rounded;
+      case InboxPreviewKind.video:
+        return Icons.videocam_outlined;
+      case InboxPreviewKind.file:
+      case InboxPreviewKind.text:
+        return Icons.insert_drive_file_rounded;
+    }
+  }
+
+  Widget _withIcon(
+    IconData? icon,
+    String label,
+    Color color,
+    FontWeight weight,
+  ) {
     final text = Text(
       label,
       maxLines: 1,

@@ -250,14 +250,6 @@ class _ChatAddMembersScreenState extends State<ChatAddMembersScreen>
           for (final u in _selected)
             if (toAdd.contains(u.id)) ChatMappers.userDisplayName(u),
         ];
-        // Notify invitees so the group appears in their inbox without refresh.
-        unawaited(
-          di.sl<ChatRealtimeService>().publishConversationCreated(
-            conversationId: widget.conversationId,
-            contextId: widget.conversationId,
-            chatType: widget.chatType,
-          ),
-        );
         Navigator.of(context).pop(<String, dynamic>{
           'added': true,
           'names': addedNames,

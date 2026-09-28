@@ -42,10 +42,7 @@ class _InboxChatMoreSheet extends StatelessWidget {
     required this.primary,
   });
 
-  bool get _isGroup =>
-      thread.chatType == 'group' ||
-      thread.chatType == 'social_group' ||
-      thread.chatType == 'case_group';
+  bool get _isGroup => thread.isGroupLike;
 
   bool get _canBlock =>
       !_isGroup && (thread.counterpartUserId ?? 0) > 0;

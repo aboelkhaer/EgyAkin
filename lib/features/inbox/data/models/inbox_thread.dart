@@ -1,11 +1,12 @@
 // Inbox thread UI models for the Chats tab.
 
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/chat/data/models/chat_composer_activity.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
 
 enum InboxFilter { all, doctors, patients, groups, socialGroups, consults }
 
-enum InboxPreviewKind { text, photo, voice, file }
+enum InboxPreviewKind { text, photo, voice, video, file }
 
 enum InboxThreadKind {
   doctor,
@@ -55,6 +56,10 @@ class InboxThread {
   final bool isPinned;
   final bool isMuted;
 
+  /// Server id of the message shown in [preview]; null when unknown (e.g.
+  /// after an `inbox.updated` that carried no id).
+  final int? lastMessageId;
+
   const InboxThread({
     required this.id,
     required this.title,
@@ -85,6 +90,7 @@ class InboxThread {
     this.consultationDirection,
     this.isPinned = false,
     this.isMuted = false,
+    this.lastMessageId,
   });
 
   bool get hasPeerActivity => peerActivity.isActive || isTyping;
@@ -99,29 +105,8 @@ class InboxThread {
   String? get resolvedChatType {
     final raw = chatType ?? (source == 'consultation' ? 'private' : null);
     if (raw == null) return null;
-    final t = raw.trim().toLowerCase().replaceAll('-', '_');
-    switch (t) {
-      case 'private':
-      case 'direct':
-      case 'dm':
-        return 'private';
-      case 'case_group':
-      case 'casegroup':
-      case 'patient_group':
-      case 'patientgroup':
-      case 'patient':
-      case 'case':
-        return 'case_group';
-      case 'social_group':
-      case 'socialgroup':
-      case 'community_group':
-        return 'social_group';
-      case 'group':
-      case 'adhoc_group':
-        return 'group';
-      default:
-        return t;
-    }
+    return ChatApiType.fromApi(raw) ??
+        raw.trim().toLowerCase().replaceAll('-', '_');
   }
 
   /// Address id for chat endpoints — depends on [resolvedChatType].
@@ -162,6 +147,8 @@ class InboxThread {
     ChatComposerActivity? peerActivity,
     bool? isPinned,
     bool? isMuted,
+    int? lastMessageId,
+    bool clearLastMessageId = false,
   }) {
     final nextActivity = peerActivity ?? this.peerActivity;
     final nextTyping = isTyping ??
@@ -198,6 +185,8 @@ class InboxThread {
       consultationDirection: consultationDirection,
       isPinned: isPinned ?? this.isPinned,
       isMuted: isMuted ?? this.isMuted,
+      lastMessageId:
+          clearLastMessageId ? null : (lastMessageId ?? this.lastMessageId),
     );
   }
 }

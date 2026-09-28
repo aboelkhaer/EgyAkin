@@ -36,7 +36,6 @@ class InboxCubit extends Cubit<InboxState> {
   /// Live archived list (same realtime overlays as the main chats list).
   List<InboxThread> _archivedThreads = [];
   final ValueNotifier<int> archivedRevision = ValueNotifier<int>(0);
-  bool _archivedScreenActive = false;
   int _currentPage = 1;
   bool _isLastPage = false;
   bool _isLoadingMore = false;
@@ -45,6 +44,10 @@ class InboxCubit extends Cubit<InboxState> {
 
   /// Page-1 inbox request already running — drop duplicate opens.
   bool _inboxPageRequestInFlight = false;
+
+  /// Bumped on every page-1 fetch so a slow Individual response cannot overwrite
+  /// All after a quick filter tap.
+  int _inboxRequestEpoch = 0;
   DateTime? _lastRefreshTime;
   int? _currentUserId;
   String? _myDisplayName;
@@ -66,9 +69,21 @@ class InboxCubit extends Cubit<InboxState> {
   /// Avoid double-counting the same Ably `message.sent` (archived badge +2).
   final Set<int> _handledIncomingMessageIds = {};
 
-  /// Conversations that must stay on Ably (just sent / waiting for ✓✓ / seen).
-  /// Without this, the 20-channel cap drops them and receipts never arrive.
-  final List<int> _priorityRealtimeConversationIds = [];
+  /// Coalesces GET /inbox when only the server knows the right row state
+  /// (group receipts, edits/deletes of an unknown last message).
+  Timer? _serverStateRefreshDebounce;
+
+  /// Chats list / Archived on screen → listen to their top chats so rows
+  /// update live and show typing / recording / sending.
+  bool _chatsListVisible = false;
+  bool _archivedScreenVisible = false;
+  List<int> _inboxListenIds = const [];
+  Timer? _inboxListenLinger;
+  static const _inboxListenMax = 12;
+
+  /// Keep listening briefly after the list is hidden so quick tab switches
+  /// don't re-attach every channel.
+  static const _inboxListenLingerFor = Duration(seconds: 30);
 
   /// Last unread count we already POSTed `receipts/delivered` for.
   /// Key: `chatType:contextId`. Prevents Home open from re-acking forever.
@@ -122,17 +137,21 @@ class InboxCubit extends Cubit<InboxState> {
   Map<String, String> get filterTitles => Map.unmodifiable(_filterTitles);
   Map<String, String> get sectionTitles => Map.unmodifiable(_sectionTitles);
 
-  void _applyInboxMeta(InboxDataModel? data) {
+  void _applyInboxMeta(
+    InboxDataModel? data, {
+    InboxFilter? filterForTotal,
+  }) {
     if (data == null) return;
     if (data.counts != null) {
       _counts = _mergeInboxCounts(_counts, data.counts!);
     }
-    // Keep the active tab badge in sync with the list total.
+    // Keep the *requested* tab badge in sync with that response's list total
+    // (never the filter the user may have switched to while this was in flight).
     final total = data.meta?.total;
     if (total != null) {
       _counts = _countsWithFilterTotal(
         _counts ?? const InboxCountsModel(),
-        _filter,
+        filterForTotal ?? _filter,
         total,
       );
     }
@@ -233,7 +252,13 @@ class InboxCubit extends Cubit<InboxState> {
     _onlineByConversation.clear();
     _appOnlineUserIds.clear();
     _handledIncomingMessageIds.clear();
-    _priorityRealtimeConversationIds.clear();
+    _serverStateRefreshDebounce?.cancel();
+    _serverStateRefreshDebounce = null;
+    _inboxListenLinger?.cancel();
+    _inboxListenLinger = null;
+    _inboxListenIds = const [];
+    _chatsListVisible = false;
+    _archivedScreenVisible = false;
     _deliveredAckUnreadByKey.clear();
     _ackDeliveredDebounce?.cancel();
     _ackDeliveredDebounce = null;
@@ -250,13 +275,13 @@ class InboxCubit extends Cubit<InboxState> {
     _isLastPage = false;
     _isLoadingMore = false;
     _isRefreshing = false;
+    _inboxRequestEpoch++;
     _hasLoadedOnce = false;
     _lastRefreshTime = null;
     _inboxPageRequestInFlight = false;
     _currentUserId = null;
     _myDisplayName = null;
     _myImageUrl = null;
-    _archivedScreenActive = false;
 
     if (!isClosed) {
       emit(const InboxState.initial());
@@ -286,10 +311,6 @@ class InboxCubit extends Cubit<InboxState> {
         imageUrl: imageUrl ?? _myImageUrl,
         forceReenter: needEnter,
       );
-      await _realtime.refreshAppPresenceSnapshot();
-      if (isClosed) return;
-      _reapplyAppOnlineToThreads();
-      await _syncRealtimeChannels(currentUserId);
       await _realtime.refreshAppPresenceSnapshot();
       if (isClosed) return;
       _reapplyAppOnlineToThreads();
@@ -353,98 +374,71 @@ class InboxCubit extends Cubit<InboxState> {
     }
     if (isClosed) return;
     _reapplyAppOnlineToThreads();
-    unawaited(_syncRealtimeChannels(currentUserId));
-  }
-
-  /// Keep archived conversation channels subscribed while that screen is open.
-  void setArchivedScreenActive(bool active) {
-    _archivedScreenActive = active;
-    final uid = _currentUserId;
-    if (uid == null) return;
-    unawaited(_syncRealtimeChannels(uid));
   }
 
   void _notifyArchived() {
     archivedRevision.value++;
+    _syncInboxListeners();
   }
 
-  /// Cap Ably channel fan-out — attaching every conversation OOMs Simulator.
-  static const int _maxInboxRealtimeChannels = 24;
-
-  void _pinRealtimeConversation(int? conversationId) {
-    if (conversationId == null) return;
-    _priorityRealtimeConversationIds.remove(conversationId);
-    _priorityRealtimeConversationIds.insert(0, conversationId);
-    while (_priorityRealtimeConversationIds.length > 12) {
-      _priorityRealtimeConversationIds.removeLast();
-    }
-    final uid = _currentUserId;
-    if (uid != null) {
-      unawaited(_syncRealtimeChannels(uid));
-    }
+  /// Home tab switches: the Chats tab is (not) the one on screen.
+  void setChatsListVisible(bool visible) {
+    if (_chatsListVisible == visible) return;
+    _chatsListVisible = visible;
+    _syncInboxListeners();
   }
 
-  /// Subscribe to conversation channels for inbox (presence + messages).
-  /// Priority: open chat → recently sent / pending receipts → unread chats →
-  /// unread archived → other chats → other archived.
-  /// Archived must stay subscribed even when that screen is closed, or peers
-  /// never get `message.sent` and never ack delivered (sender stuck on ✓).
-  Future<void> _syncRealtimeChannels(int currentUserId) async {
-    final wanted = <int>{};
-    final activeId = _realtime.subscribedConversationId;
-    if (activeId != null) wanted.add(activeId);
+  void setArchivedScreenActive(bool active) {
+    if (_archivedScreenVisible == active) return;
+    _archivedScreenVisible = active;
+    _syncInboxListeners();
+  }
 
-    void addId(int? id) {
-      if (id == null) return;
-      if (wanted.length >= _maxInboxRealtimeChannels) return;
-      wanted.add(id);
-    }
-
-    void addFrom(Iterable<InboxThread> threads) {
+  /// Listen to the top rows of whichever list is on screen; stop a little
+  /// after both are hidden. Only calls the service when that set changes.
+  void _syncInboxListeners() {
+    final ids = <int>[];
+    void addFrom(List<InboxThread> threads) {
       for (final t in threads) {
-        if (wanted.length >= _maxInboxRealtimeChannels) return;
-        addId(t.conversationId);
+        if (ids.length >= _inboxListenMax) return;
+        final id = t.conversationId;
+        if (id != null && !ids.contains(id)) ids.add(id);
       }
     }
 
-    for (final id in _priorityRealtimeConversationIds) {
-      addId(id);
+    if (_archivedScreenVisible) addFrom(_archivedThreads);
+    if (_chatsListVisible) addFrom(_threads);
+
+    if (ids.isEmpty) {
+      if (_inboxListenIds.isEmpty) return;
+      _inboxListenLinger ??= Timer(_inboxListenLingerFor, () {
+        _inboxListenLinger = null;
+        _inboxListenIds = const [];
+        unawaited(_realtime.stopListeningToInbox());
+      });
+      return;
     }
+    _inboxListenLinger?.cancel();
+    _inboxListenLinger = null;
+    final sameSet = ids.length == _inboxListenIds.length &&
+        ids.every(_inboxListenIds.contains);
+    if (sameSet) return;
+    _inboxListenIds = ids;
+    unawaited(_realtime.listenToInboxConversations(ids));
+  }
 
-    // Keep channels for threads waiting on delivery/seen receipts.
-    addFrom(
-      _threads.where(
-        (t) =>
-            t.lastMessageStatus == ChatMessageStatus.sent ||
-            t.lastMessageStatus == ChatMessageStatus.delivered,
-      ),
-    );
-    addFrom(
-      _archivedThreads.where(
-        (t) =>
-            t.lastMessageStatus == ChatMessageStatus.sent ||
-            t.lastMessageStatus == ChatMessageStatus.delivered,
-      ),
-    );
+  /// A chat push arrived while the app is open — pick up the new row even if
+  /// that chat isn't one of the listened rows.
+  void refreshSoon() => _scheduleServerStateRefresh();
 
-    addFrom(_threads.where((t) => t.unreadCount > 0));
-    addFrom(_archivedThreads.where((t) => t.unreadCount > 0));
-    // Prefer full archived attach while that screen is open.
-    if (_archivedScreenActive) {
-      addFrom(_archivedThreads);
-    }
-    addFrom(_threads);
-    // Always attach archived chats even when Archived screen is closed —
-    // otherwise peers never receive messages / never ack delivered.
-    addFrom(_archivedThreads);
-    if (wanted.isEmpty) return;
-
-    await _realtime.subscribeInboxConversations(
-      conversationIds: wanted.toList(),
-      currentUserId: currentUserId,
-      displayName: _myDisplayName,
-      imageUrl: _myImageUrl,
-    );
+  /// GET /inbox shortly, coalescing bursts of receipts / edits / deletes.
+  void _scheduleServerStateRefresh() {
+    _serverStateRefreshDebounce?.cancel();
+    _serverStateRefreshDebounce = Timer(const Duration(seconds: 1), () {
+      _serverStateRefreshDebounce = null;
+      if (isClosed) return;
+      unawaited(silentRefresh(bypassThrottle: true));
+    });
   }
 
   void _onRealtimeEvent(ChatRealtimeEvent event) {
@@ -568,21 +562,17 @@ class InboxCubit extends Cubit<InboxState> {
               ? true
               : (isViewing || isMine ? false : _threads[idx].isPriority),
           lastMessageStatus: isMine
-              ? _capOutgoingStatus(
-                  conversationId,
-                  _mergedOutgoingStatus(
-                    previous: _threads[idx].lastMessageStatus,
-                    fromApi: ChatMappers.messageStatusFromApi(
-                      message.status,
-                      isOutgoing: true,
-                    ),
+              ? _mergedOutgoingStatus(
+                  previous: _threads[idx].lastMessageStatus,
+                  fromApi: ChatMappers.messageStatusFromApi(
+                    message.status,
+                    isOutgoing: true,
                   ),
-                  peerUserId: message.sender?.id == _currentUserId
-                      ? _threads[idx].counterpartUserId
-                      : message.sender?.id,
                 )
               : null,
           clearLastMessageStatus: !isMine,
+          lastMessageId: message.id,
+          clearLastMessageId: message.id == null,
           // Message arrived — drop "sending image/file" preview immediately.
           peerActivity:
               isMine ? _threads[idx].peerActivity : ChatComposerActivity.none,
@@ -618,62 +608,50 @@ class InboxCubit extends Cubit<InboxState> {
             }());
           }
         }
+      case ChatMessageReadEvent(:final conversationId, :final userId):
+        // Require a peer id — opening our own chat often emits message.read
+        // without user_id / as ourselves, which painted false blue ticks.
+        if (userId == null) break;
+        if (_currentUserId != null && userId == _currentUserId) break;
+        final readThread = _findThreadByConversation(conversationId);
+        if (readThread != null && !readThread.isGroupLike) {
+          final peerId = _presencePeerUserId(readThread);
+          // 1:1: only the counterpart reading may turn ticks blue.
+          if (peerId != null && userId != peerId) break;
+        }
+        // The server emits message.read only when the peer actually opened
+        // the messages.
+        _applyReceipt(conversationId, ChatMessageStatus.seen);
       case ChatMessageDeliveredEvent(:final conversationId, :final userId):
         // Peer acknowledged delivery of our messages.
+        if (userId == null) break;
         if (_currentUserId != null && userId == _currentUserId) break;
-        _upgradeOutgoingStatus(
-          conversationId,
-          ChatMessageStatus.delivered,
-        );
-      case ChatMessageReadEvent(:final conversationId, :final userId):
-        if (_currentUserId != null && userId == _currentUserId) break;
-        // Blue ticks only if peer is inside that chat room. Delivered while
-        // they browse Chats / other screens must not look like "seen".
-        final inChat = userId != null &&
-            _realtime.isUserPresentInConversation(conversationId, userId);
-        _upgradeOutgoingStatus(
-          conversationId,
-          inChat ? ChatMessageStatus.seen : ChatMessageStatus.delivered,
-        );
+        _applyReceipt(conversationId, ChatMessageStatus.delivered);
       case ChatMessageUpdatedEvent(:final message):
         final conversationId = message.conversationId;
-        if (conversationId == null) break;
+        final messageId = message.id;
+        if (conversationId == null || messageId == null) break;
         final content = (message.content ?? '').trim();
         if (content.isEmpty) break;
-        final timeLabel = ChatMappers.formatInboxTime(
-          message.updatedAt ??
-              message.createdAt ??
-              DateTime.now().toIso8601String(),
+        // An edit never makes the chat newer — keep the time label, and only
+        // touch the preview when the edited message is the one it shows.
+        _updateLastMessagePreview(
+          conversationId: conversationId,
+          messageId: messageId,
+          preview: content,
         );
-        final idx =
-            _threads.indexWhere((t) => t.conversationId == conversationId);
-        if (idx >= 0) {
-          _threads = [
-            for (var i = 0; i < _threads.length; i++)
-              if (i == idx)
-                _threads[i].copyWith(preview: content, timeLabel: timeLabel)
-              else
-                _threads[i],
-          ];
-          _sortPinnedFirst();
-          _emitLoaded();
-        }
-        final archIdx = _archivedThreads
-            .indexWhere((t) => t.conversationId == conversationId);
-        if (archIdx >= 0) {
-          _archivedThreads = [
-            for (var i = 0; i < _archivedThreads.length; i++)
-              if (i == archIdx)
-                _archivedThreads[i]
-                    .copyWith(preview: content, timeLabel: timeLabel)
-              else
-                _archivedThreads[i],
-          ];
-          _notifyArchived();
-        }
-      case ChatMessageDeletedEvent():
-      case ChatMessageReactedEvent():
-        break;
+      case ChatMessageDeletedEvent(:final conversationId, :final messageId):
+        _updateLastMessagePreview(
+          conversationId: conversationId,
+          messageId: messageId,
+          preview: ChatMappers.deletedForEveryoneContent,
+        );
+      case ChatMessageReactedEvent(:final conversationId):
+        // Server writes a reaction sentence into last_message.content — refresh
+        // the list (debounced) so the row picks it up without pull-to-refresh.
+        final inList = _threads.any((t) => t.conversationId == conversationId) ||
+            _archivedThreads.any((t) => t.conversationId == conversationId);
+        if (inList) refreshSoon();
       case ChatUserTypingEvent(
           :final conversationId,
           :final userId,
@@ -753,30 +731,175 @@ class InboxCubit extends Cubit<InboxState> {
         if (!isOnline) {
           _setPeerActivity(conversationId, ChatComposerActivity.none);
         } else {
-          // Peer is in this conversation channel → delivered. Seen only comes
-          // from message.read while they are still present (opening the room
-          // alone used to blue-tick from a stale presence snapshot on Chats).
-          _upgradeOutgoingStatus(conversationId, ChatMessageStatus.delivered);
+          // 1:1 peer in the chat channel has our messages. Groups need every
+          // member, which only the server counts.
+          final thread = _findThreadByConversation(conversationId);
+          if (thread != null && !thread.isGroupLike) {
+            _upgradeOutgoingStatus(conversationId, ChatMessageStatus.delivered);
+          }
         }
       case ChatAppPresenceChangedEvent(:final userId, :final isOnline):
         if (userId == _currentUserId) break;
         _setAppOnline(userId, isOnline: isOnline);
-      case ChatInboxInvalidateEvent(
-          :final conversationId,
-          :final contextId,
-          :final chatType,
-          :final removed,
-        ):
-        if (removed) {
-          removeThreadsMatching(
-            conversationId: conversationId,
-            contextId: contextId,
-            chatType: chatType,
-          );
-        } else if (conversationId != null) {
-          _pinRealtimeConversation(conversationId);
+      case ChatInboxUpdatedEvent():
+        _applyInboxUpdated(event);
+    }
+  }
+
+  /// 1:1 rows follow receipts live. Group ticks go ✓✓ / blue only when every
+  /// member has the message, which only the server counts — ask it.
+  void _applyReceipt(int conversationId, ChatMessageStatus status) {
+    final thread = _findThreadByConversation(conversationId);
+    if (thread == null) return;
+    if (thread.isGroupLike) {
+      _scheduleServerStateRefresh();
+      return;
+    }
+    _upgradeOutgoingStatus(conversationId, status);
+  }
+
+  /// Edit / delete of [messageId]: rewrite the row preview only when that
+  /// message is the one the row shows. Unknown last message → ask the server.
+  void _updateLastMessagePreview({
+    required int conversationId,
+    required int messageId,
+    required String preview,
+  }) {
+    final thread = _findThreadByConversation(conversationId);
+    if (thread == null) return;
+    final lastId = thread.lastMessageId;
+    if (lastId == null) {
+      _scheduleServerStateRefresh();
+      return;
+    }
+    if (lastId != messageId) return;
+
+    InboxThread rewrite(InboxThread t) => t.copyWith(
+          preview: preview,
+          previewKind: ChatMappers.previewKindFromText(preview),
+          previewCount: ChatMappers.previewCountFromText(preview),
+        );
+
+    final idx = _threads.indexWhere((t) => t.conversationId == conversationId);
+    if (idx >= 0) {
+      _threads = [
+        for (var i = 0; i < _threads.length; i++)
+          if (i == idx) rewrite(_threads[i]) else _threads[i],
+      ];
+      _emitLoaded();
+    }
+    final archIdx =
+        _archivedThreads.indexWhere((t) => t.conversationId == conversationId);
+    if (archIdx >= 0) {
+      final updated = rewrite(_archivedThreads[archIdx]);
+      _archivedThreads = [
+        for (var i = 0; i < _archivedThreads.length; i++)
+          if (i == archIdx) updated else _archivedThreads[i],
+      ];
+      unawaited(ChatArchivePrefs.syncThread(updated));
+      _notifyArchived();
+    }
+  }
+
+  /// `inbox.updated`: move the row to the top with the new preview, bump
+  /// unread, ack delivered. Unknown conversation → GET /inbox.
+  void _applyInboxUpdated(ChatInboxUpdatedEvent event) {
+    final conversationId = event.conversationId;
+    final messageId = event.messageId;
+    if (messageId != null && !_handledIncomingMessageIds.add(messageId)) {
+      return;
+    }
+    // Its channel's message.sent updates the row; this event carries no
+    // message id, so handling both would count the message twice.
+    if (_realtime.isReceivingConversation(conversationId)) return;
+    final isMine = _currentUserId != null && event.senderId == _currentUserId;
+    final isViewing = _realtime.isViewingConversation(conversationId);
+    final becomesUnread = !isMine && !isViewing;
+    final preview = (event.messagePreview ?? '').trim();
+    final timeLabel = ChatMappers.formatInboxTime(
+      event.createdAt ?? DateTime.now().toIso8601String(),
+    );
+
+    InboxThread apply(InboxThread t) => t.copyWith(
+          preview: preview.isEmpty ? t.preview : preview,
+          previewKind: preview.isEmpty
+              ? t.previewKind
+              : ChatMappers.previewKindFromText(preview),
+          previewCount: preview.isEmpty
+              ? t.previewCount
+              : ChatMappers.previewCountFromText(preview),
+          timeLabel: timeLabel,
+          unreadCount: becomesUnread
+              ? t.unreadCount + 1
+              : (isViewing || isMine ? 0 : t.unreadCount),
+          isPriority: becomesUnread
+              ? true
+              : (isViewing || isMine ? false : t.isPriority),
+          lastMessageStatus: !isMine
+              ? null
+              : (messageId != null && t.lastMessageId == messageId
+                  ? _mergedOutgoingStatus(
+                      previous: t.lastMessageStatus,
+                      fromApi: ChatMessageStatus.sent,
+                    )
+                  : ChatMessageStatus.sent),
+          clearLastMessageStatus: !isMine,
+          lastMessageId: messageId,
+          clearLastMessageId: messageId == null,
+          peerActivity: isMine ? t.peerActivity : ChatComposerActivity.none,
+          isTyping: isMine ? t.isTyping : false,
+        );
+
+    InboxThread? updated;
+    final idx = _threads.indexWhere((t) => t.conversationId == conversationId);
+    if (idx >= 0) {
+      updated = apply(_threads[idx]);
+      _threads = [
+        updated,
+        for (var i = 0; i < _threads.length; i++)
+          if (i != idx) _threads[i],
+      ];
+      _sortPinnedFirst();
+      _emitLoaded();
+    } else {
+      final archIdx = _archivedThreads
+          .indexWhere((t) => t.conversationId == conversationId);
+      if (archIdx >= 0) {
+        updated = apply(_archivedThreads[archIdx]);
+        _archivedThreads = [
+          updated,
+          for (var i = 0; i < _archivedThreads.length; i++)
+            if (i != archIdx) _archivedThreads[i],
+        ];
+        _sortArchivedPinnedFirst();
+        unawaited(ChatArchivePrefs.syncThread(updated));
+        _notifyArchived();
+      }
+    }
+
+    if (updated == null) {
+      // New chat or one outside the loaded page — the server has the row.
+      unawaited(silentRefresh(bypassThrottle: true));
+      return;
+    }
+    if (isMine) return;
+
+    _typingClearTimers[conversationId]?.cancel();
+    _suppressMediaActivityUntil[conversationId] =
+        DateTime.now().add(const Duration(seconds: 3));
+    _markThreadDelivered(updated);
+    if (!isViewing) {
+      final muteKey = ChatMutePrefs.keyFor(
+        conversationId: conversationId,
+        chatType: updated.chatType,
+        contextId: updated.contextId,
+      );
+      unawaited(() async {
+        await ChatMutePrefs.ensureLoaded();
+        if (!ChatMutePrefs.isMuted(muteKey)) {
+          await ChatIncomingSound.play();
         }
-        unawaited(silentRefresh(bypassThrottle: true));
+      }());
     }
   }
 
@@ -793,7 +916,7 @@ class InboxCubit extends Cubit<InboxState> {
       if (contextId == null) return false;
       if (t.contextId != contextId) return false;
       if (chatType == null || chatType.isEmpty) return true;
-      return t.chatType == chatType || t.resolvedChatType == chatType;
+      return t.resolvedChatType == (ChatApiType.fromApi(chatType) ?? chatType);
     }
 
     final before = _threads.length;
@@ -815,36 +938,20 @@ class InboxCubit extends Cubit<InboxState> {
     }
   }
 
-  /// Social group joined/created → refresh + notify peers.
+  /// Social group joined/created → refresh.
   void notifySocialGroupJoined({required int groupId}) {
-    final id = groupId;
-    if (id <= 0) return;
+    if (groupId <= 0) return;
     unawaited(silentRefresh(bypassThrottle: true));
-    unawaited(
-      _realtime.publishConversationCreated(
-        conversationId: id,
-        contextId: id,
-        chatType: ChatApiType.socialGroup,
-      ),
-    );
   }
 
-  /// Social group left/deleted → drop local row + notify peers.
+  /// Social group left/deleted → drop local row + refresh.
   void notifySocialGroupRemoved({required int groupId}) {
-    final id = groupId;
-    if (id <= 0) return;
+    if (groupId <= 0) return;
     removeThreadsMatching(
-      contextId: id,
+      contextId: groupId,
       chatType: ChatApiType.socialGroup,
     );
     unawaited(silentRefresh(bypassThrottle: true));
-    unawaited(
-      _realtime.publishInboxRefresh(
-        contextId: id,
-        chatType: ChatApiType.socialGroup,
-        removed: true,
-      ),
-    );
   }
 
   void _upgradeOutgoingStatus(
@@ -855,10 +962,12 @@ class InboxCubit extends Cubit<InboxState> {
     final archIdx =
         _archivedThreads.indexWhere((t) => t.conversationId == conversationId);
 
+    // No status = the row's last message is incoming; receipts for our older
+    // messages must not put ticks on it (they flashed until the refresh).
     var changed = false;
-    if (idx >= 0) {
-      final current = _threads[idx].lastMessageStatus;
-      final currentRank = current == null ? 1 : _statusRank(current);
+    if (idx >= 0 && _threads[idx].lastMessageStatus != null) {
+      final current = _threads[idx].lastMessageStatus!;
+      final currentRank = _statusRank(current);
       if (_statusRank(next) > currentRank) {
         changed = true;
         _threads = [
@@ -872,9 +981,9 @@ class InboxCubit extends Cubit<InboxState> {
     }
 
     var archivedChanged = false;
-    if (archIdx >= 0) {
-      final current = _archivedThreads[archIdx].lastMessageStatus;
-      final currentRank = current == null ? 1 : _statusRank(current);
+    if (archIdx >= 0 && _archivedThreads[archIdx].lastMessageStatus != null) {
+      final current = _archivedThreads[archIdx].lastMessageStatus!;
+      final currentRank = _statusRank(current);
       if (_statusRank(next) > currentRank) {
         archivedChanged = true;
         _archivedThreads = [
@@ -924,55 +1033,43 @@ class InboxCubit extends Cubit<InboxState> {
   }
 
   /// Never let an Ably/API echo downgrade ticks (e.g. delivered → sent).
+  /// Do not keep a local "seen" over an explicit API delivered/sent — false
+  /// read receipts (missing peer user_id) were sticky on the chats list.
   ChatMessageStatus _mergedOutgoingStatus({
     required ChatMessageStatus? previous,
     required ChatMessageStatus fromApi,
   }) {
     if (previous == null) return fromApi;
+    if (previous == ChatMessageStatus.seen &&
+        (fromApi == ChatMessageStatus.delivered ||
+            fromApi == ChatMessageStatus.sent)) {
+      return fromApi;
+    }
     return _statusRank(previous) >= _statusRank(fromApi) ? previous : fromApi;
   }
 
-  /// Backend may emit `seen`/`message.read` when the peer only acked delivered
-  /// (or leftover conversation presence). Cap at delivered unless they are
-  /// actually in that chat room.
-  ChatMessageStatus _capOutgoingStatus(
-    int conversationId,
-    ChatMessageStatus status, {
-    int? peerUserId,
-  }) {
-    if (status != ChatMessageStatus.seen) return status;
-    final thread = _findThreadByConversation(conversationId);
-    if (thread != null && thread.isGroupLike) return status;
-    final peer = peerUserId ?? thread?.counterpartUserId;
-    if (peer != null &&
-        _realtime.isUserPresentInConversation(conversationId, peer)) {
-      return ChatMessageStatus.seen;
-    }
-    return ChatMessageStatus.delivered;
+  /// A live tick only carries over when it belongs to the message the fresh
+  /// row shows (unknown ids on either side are treated as the same).
+  bool _sameLastMessage(InboxThread fresh, InboxThread? live) {
+    if (live == null || live.lastMessageStatus == null) return false;
+    final a = fresh.lastMessageId;
+    final b = live.lastMessageId;
+    return a == null || b == null || a == b;
   }
 
+  /// Merge a live tick into a freshly fetched row. Group rows take the
+  /// server's status as-is. 1:1 may keep live delivered over stale sent, but
+  /// never keep live "seen" over API delivered/sent (false blue ticks).
   InboxThread _mergeLiveOutgoingStatus(
     InboxThread thread,
     ChatMessageStatus live,
   ) {
-    final cappedLive = thread.conversationId == null
-        ? live
-        : _capOutgoingStatus(thread.conversationId!, live,
-            peerUserId: thread.counterpartUserId);
-    final api = thread.lastMessageStatus == null || thread.conversationId == null
-        ? thread.lastMessageStatus
-        : _capOutgoingStatus(
-            thread.conversationId!,
-            thread.lastMessageStatus!,
-            peerUserId: thread.counterpartUserId,
-          );
-    if (api == null) return thread.copyWith(lastMessageStatus: cappedLive);
-    if (_statusRank(cappedLive) <= _statusRank(api)) {
-      return api == thread.lastMessageStatus
-          ? thread
-          : thread.copyWith(lastMessageStatus: api);
-    }
-    return thread.copyWith(lastMessageStatus: cappedLive);
+    if (thread.isGroupLike) return thread;
+    final api = thread.lastMessageStatus;
+    if (api == null) return thread;
+    if (live == ChatMessageStatus.seen) return thread;
+    if (_statusRank(live) <= _statusRank(api)) return thread;
+    return thread.copyWith(lastMessageStatus: live);
   }
 
   int _statusRank(ChatMessageStatus status) {
@@ -1034,24 +1131,17 @@ class InboxCubit extends Cubit<InboxState> {
           ? true
           : (isViewing || isMine ? false : previous.isPriority),
       lastMessageStatus: isMine
-          ? () {
-              final merged = _mergedOutgoingStatus(
-                previous: previous.lastMessageStatus,
-                fromApi: ChatMappers.messageStatusFromApi(
-                  message.status,
-                  isOutgoing: true,
-                ),
-              );
-              final cid = previous.conversationId;
-              if (cid == null) return merged;
-              return _capOutgoingStatus(
-                cid,
-                merged,
-                peerUserId: previous.counterpartUserId,
-              );
-            }()
+          ? _mergedOutgoingStatus(
+              previous: previous.lastMessageStatus,
+              fromApi: ChatMappers.messageStatusFromApi(
+                message.status,
+                isOutgoing: true,
+              ),
+            )
           : null,
       clearLastMessageStatus: !isMine,
+      lastMessageId: message.id,
+      clearLastMessageId: message.id == null,
       peerActivity: isMine ? previous.peerActivity : ChatComposerActivity.none,
       isTyping: isMine ? previous.isTyping : false,
     );
@@ -1350,8 +1440,6 @@ class InboxCubit extends Cubit<InboxState> {
           _sortArchivedPinnedFirst();
           _notifyArchived();
         }
-        final uid = _currentUserId;
-        if (uid != null) unawaited(_syncRealtimeChannels(uid));
         return true;
       },
     );
@@ -1399,11 +1487,7 @@ class InboxCubit extends Cubit<InboxState> {
         }
         return false;
       },
-      (_) {
-        final uid = _currentUserId;
-        if (uid != null) unawaited(_syncRealtimeChannels(uid));
-        return true;
-      },
+      (_) => true,
     );
   }
 
@@ -1427,8 +1511,6 @@ class InboxCubit extends Cubit<InboxState> {
         _archivedThreads = _withLivePresence(local);
         _sortArchivedPinnedFirst();
         _notifyArchived();
-        final uid = _currentUserId;
-        if (uid != null) unawaited(_syncRealtimeChannels(uid));
         _scheduleAckUnreadDelivered();
         return _archivedThreads;
       },
@@ -1441,8 +1523,6 @@ class InboxCubit extends Cubit<InboxState> {
         _sortArchivedPinnedFirst();
         unawaited(ChatArchivePrefs.replaceAll(live));
         _notifyArchived();
-        final uid = _currentUserId;
-        if (uid != null) unawaited(_syncRealtimeChannels(uid));
         _scheduleAckUnreadDelivered();
         return live;
       },
@@ -1869,6 +1949,44 @@ class InboxCubit extends Cubit<InboxState> {
     _notifyArchived();
   }
 
+  /// Leaving a chat: don't flash blue ticks from a sticky local "seen" while
+  /// GET /inbox may still report delivered. API can re-upgrade to seen.
+  void _clearStickySeenForConversation(int conversationId) {
+    var changed = false;
+    final idx = _threads.indexWhere((t) => t.conversationId == conversationId);
+    if (idx >= 0 &&
+        _threads[idx].lastMessageStatus == ChatMessageStatus.seen) {
+      changed = true;
+      _threads = [
+        for (var i = 0; i < _threads.length; i++)
+          if (i == idx)
+            _threads[i].copyWith(
+              lastMessageStatus: ChatMessageStatus.delivered,
+            )
+          else
+            _threads[i],
+      ];
+    }
+    final archIdx =
+        _archivedThreads.indexWhere((t) => t.conversationId == conversationId);
+    if (archIdx >= 0 &&
+        _archivedThreads[archIdx].lastMessageStatus ==
+            ChatMessageStatus.seen) {
+      changed = true;
+      _archivedThreads = [
+        for (var i = 0; i < _archivedThreads.length; i++)
+          if (i == archIdx)
+            _archivedThreads[i].copyWith(
+              lastMessageStatus: ChatMessageStatus.delivered,
+            )
+          else
+            _archivedThreads[i],
+      ];
+      _notifyArchived();
+    }
+    if (changed) _emitLoaded();
+  }
+
   /// Ack delivery for a thread (message reached this device, chat may be closed).
   void _markThreadDelivered(InboxThread thread) {
     if (!_shouldAckDelivered(thread)) return;
@@ -2014,6 +2132,7 @@ class InboxCubit extends Cubit<InboxState> {
         isRefreshing: isRefreshing,
       ),
     );
+    _syncInboxListeners();
   }
 
   /// Prefer API meta; also treat an under-filled / empty page as the last page.
@@ -2043,12 +2162,14 @@ class InboxCubit extends Cubit<InboxState> {
     int? conversationId,
     required String preview,
     int? previewCount,
+    int? messageId,
   }) {
+    final type = ChatApiType.fromApi(chatType) ?? chatType;
     final idx = _threads.indexWhere((t) {
       if (conversationId != null && t.conversationId == conversationId) {
         return true;
       }
-      return t.chatType == chatType && t.contextId == contextId;
+      return t.resolvedChatType == type && t.contextId == contextId;
     });
     if (idx < 0) {
       silentRefresh();
@@ -2067,6 +2188,8 @@ class InboxCubit extends Cubit<InboxState> {
       conversationId: resolvedConversationId,
       unreadCount: 0,
       isPriority: false,
+      lastMessageId: messageId,
+      clearLastMessageId: messageId == null,
     );
     _threads = [
       updated,
@@ -2075,8 +2198,6 @@ class InboxCubit extends Cubit<InboxState> {
     ];
     _sortPinnedFirst();
     _emitLoaded();
-    // Stay on this Ably channel so message.delivered / message.read update ticks.
-    _pinRealtimeConversation(resolvedConversationId);
   }
 
   Future<void> loadInbox({
@@ -2084,10 +2205,16 @@ class InboxCubit extends Cubit<InboxState> {
     bool refresh = false,
     int? currentUserId,
     bool soft = false,
+    bool supersede = false,
   }) async {
     if (filter != null) _filter = filter;
     // Home shell and the chats tab both start this on open.
-    if (refresh && (_inboxPageRequestInFlight || _isRefreshing)) return;
+    // Filter chip taps use [supersede] so a slow prior response is discarded.
+    if (refresh &&
+        !supersede &&
+        (_inboxPageRequestInFlight || _isRefreshing)) {
+      return;
+    }
 
     if (refresh) {
       _currentPage = 1;
@@ -2100,6 +2227,8 @@ class InboxCubit extends Cubit<InboxState> {
       }
     }
     final isPageOne = _currentPage == 1;
+    final requestId = isPageOne ? ++_inboxRequestEpoch : _inboxRequestEpoch;
+    final requestedFilter = _filter;
     if (isPageOne) {
       _inboxPageRequestInFlight = true;
       _lastRefreshTime = DateTime.now();
@@ -2114,10 +2243,13 @@ class InboxCubit extends Cubit<InboxState> {
       await ChatMutePrefs.ensureLoaded();
       final result = await _getInboxUsecase.execute(
         GetInboxParams(
-          filter: ChatMappers.inboxFilterParam(_filter),
+          filter: ChatMappers.inboxFilterParam(requestedFilter),
           page: _currentPage,
         ),
       );
+
+      // Stale: user switched filters (or another page-1 fetch started).
+      if (requestId != _inboxRequestEpoch) return;
 
       result.fold(
         (failure) {
@@ -2129,7 +2261,7 @@ class InboxCubit extends Cubit<InboxState> {
         },
         (response) {
           final data = response.data;
-          _applyInboxMeta(data);
+          _applyInboxMeta(data, filterForTotal: requestedFilter);
           final items = data?.items ?? const [];
           final mapped = _withLivePresence(
             items.map(ChatMappers.toInboxThread).toList(),
@@ -2144,16 +2276,15 @@ class InboxCubit extends Cubit<InboxState> {
 
           _hasLoadedOnce = true;
           _emitLoaded();
-          if (currentUserId != null) {
-            unawaited(_syncRealtimeChannels(currentUserId));
-          }
           // Re-sync live Online after API replace (API has no online flag).
           unawaited(_refreshAndReapplyAppPresence());
           _ackUnreadDelivered();
         },
       );
     } finally {
-      if (isPageOne) _inboxPageRequestInFlight = false;
+      if (isPageOne && requestId == _inboxRequestEpoch) {
+        _inboxPageRequestInFlight = false;
+      }
     }
   }
 
@@ -2170,6 +2301,9 @@ class InboxCubit extends Cubit<InboxState> {
   }) async {
     if (forceReadConversationId != null) {
       markConversationRead(forceReadConversationId);
+      // Drop sticky local "seen" immediately so returning to Chats doesn't
+      // flash blue ticks before GET /inbox confirms (often still delivered).
+      _clearStickySeenForConversation(forceReadConversationId);
     }
     if (_isRefreshing || _inboxPageRequestInFlight) return;
     final now = DateTime.now();
@@ -2178,6 +2312,8 @@ class InboxCubit extends Cubit<InboxState> {
         now.difference(_lastRefreshTime!).inSeconds < 10) {
       return;
     }
+    final requestId = ++_inboxRequestEpoch;
+    final requestedFilter = _filter;
     _isRefreshing = true;
     _inboxPageRequestInFlight = true;
     _lastRefreshTime = now;
@@ -2186,12 +2322,12 @@ class InboxCubit extends Cubit<InboxState> {
     try {
       final result = await _getInboxUsecase.execute(
         GetInboxParams(
-          filter: ChatMappers.inboxFilterParam(_filter),
+          filter: ChatMappers.inboxFilterParam(requestedFilter),
           page: 1,
         ),
       );
-
-      final uid = currentUserId ?? _currentUserId;
+      if (requestId != _inboxRequestEpoch) return;
+      if (currentUserId != null) _currentUserId = currentUserId;
 
       result.fold(
         (_) {
@@ -2202,7 +2338,7 @@ class InboxCubit extends Cubit<InboxState> {
         },
         (response) {
           final data = response.data;
-          _applyInboxMeta(data);
+          _applyInboxMeta(data, filterForTotal: requestedFilter);
           final items = data?.items ?? const [];
           // Preserve live unread bumps that arrived during this refresh, then
           // merge API data. Do NOT force unread to 0 after sync — that made
@@ -2212,28 +2348,16 @@ class InboxCubit extends Cubit<InboxState> {
               if (t.conversationId != null && t.unreadCount > 0)
                 t.conversationId!: t.unreadCount,
           };
-          final liveStatusById = <int, ChatMessageStatus>{
+          final liveById = <int, InboxThread>{
             for (final t in _threads)
-              if (t.conversationId != null && t.lastMessageStatus != null)
-                t.conversationId!: t.lastMessageStatus!,
+              if (t.conversationId != null &&
+                  t.lastMessageStatus != null &&
+                  // Fresh GET /inbox is source of truth for the chat we just left.
+                  t.conversationId != forceReadConversationId)
+                t.conversationId!: t,
           };
           _threads = _withLivePresence(
-            [
-              for (final item in items)
-                () {
-                  final t = ChatMappers.toInboxThread(item);
-                  final status = t.lastMessageStatus;
-                  final cid = t.conversationId;
-                  if (status == null || cid == null) return t;
-                  return t.copyWith(
-                    lastMessageStatus: _capOutgoingStatus(
-                      cid,
-                      status,
-                      peerUserId: t.counterpartUserId,
-                    ),
-                  );
-                }(),
-            ],
+            items.map(ChatMappers.toInboxThread).toList(),
           );
           if (liveUnreadById.isNotEmpty) {
             _threads = [
@@ -2249,14 +2373,13 @@ class InboxCubit extends Cubit<InboxState> {
                   t,
             ];
           }
-          if (liveStatusById.isNotEmpty) {
+          if (liveById.isNotEmpty) {
             _threads = [
               for (final t in _threads)
-                if (t.conversationId != null &&
-                    liveStatusById.containsKey(t.conversationId))
+                if (_sameLastMessage(t, liveById[t.conversationId]))
                   _mergeLiveOutgoingStatus(
                     t,
-                    liveStatusById[t.conversationId!]!,
+                    liveById[t.conversationId]!.lastMessageStatus!,
                   )
                 else
                   t,
@@ -2267,17 +2390,16 @@ class InboxCubit extends Cubit<InboxState> {
               _resolveIsLastPage(data?.meta, fetchedCount: items.length);
           _totalCount = data?.meta?.total ?? _totalCount;
           _emitLoaded();
-          if (uid != null) {
-            unawaited(_syncRealtimeChannels(uid));
-          }
           // API wipe must not leave stale Offline — reapply Ably app presence.
           unawaited(_refreshAndReapplyAppPresence());
           _ackUnreadDelivered();
         },
       );
     } finally {
-      _isRefreshing = false;
-      _inboxPageRequestInFlight = false;
+      if (requestId == _inboxRequestEpoch) {
+        _isRefreshing = false;
+        _inboxPageRequestInFlight = false;
+      }
     }
   }
 
@@ -2285,7 +2407,8 @@ class InboxCubit extends Cubit<InboxState> {
     if (_filter == filter) return Future.value();
     _filter = filter;
     // Soft so filter switches keep the list and use the tabs progress bar.
-    return loadInbox(refresh: true, soft: true);
+    // Supersede so rapid taps discard the previous filter's in-flight response.
+    return loadInbox(refresh: true, soft: true, supersede: true);
   }
 
   Future<void> refresh() => loadInbox(refresh: true, soft: true);
@@ -2301,15 +2424,23 @@ class InboxCubit extends Cubit<InboxState> {
     _isLoadingMore = true;
     _emitLoaded(isLoadingMore: true);
     _currentPage += 1;
+    final requestId = _inboxRequestEpoch;
+    final requestedFilter = _filter;
+    final page = _currentPage;
 
     final result = await _getInboxUsecase.execute(
       GetInboxParams(
-        filter: ChatMappers.inboxFilterParam(_filter),
-        page: _currentPage,
+        filter: ChatMappers.inboxFilterParam(requestedFilter),
+        page: page,
       ),
     );
 
     _isLoadingMore = false;
+
+    // Filter changed (or page-1 refresh) while this page was loading.
+    if (requestId != _inboxRequestEpoch || _filter != requestedFilter) {
+      return;
+    }
 
     result.fold(
       (failure) {
@@ -2319,7 +2450,7 @@ class InboxCubit extends Cubit<InboxState> {
       },
       (response) {
         final data = response.data;
-        _applyInboxMeta(data);
+        _applyInboxMeta(data, filterForTotal: requestedFilter);
         final items = data?.items ?? const [];
         _threads = [
           ..._threads,
@@ -2332,10 +2463,6 @@ class InboxCubit extends Cubit<InboxState> {
         _totalCount = data?.meta?.total ?? _totalCount;
 
         _emitLoaded();
-        final uid = _currentUserId;
-        if (uid != null) {
-          _syncRealtimeChannels(uid);
-        }
       },
     );
   }
@@ -2343,6 +2470,8 @@ class InboxCubit extends Cubit<InboxState> {
   @override
   Future<void> close() {
     stopLiveUpdates();
+    _inboxListenLinger?.cancel();
+    _serverStateRefreshDebounce?.cancel();
     _realtimeSub?.cancel();
     for (final timer in _typingClearTimers.values) {
       timer.cancel();

@@ -816,6 +816,16 @@ abstract class ApiServices {
     @Path('messageId') int messageId,
   );
 
+  /// Delete own messages for everyone in one request.
+  /// Path `{id}` = **conversation_id** (not context_id).
+  /// Body: `{ "message_ids": [101, 102] }` (1–100 ids).
+  /// Data: `{ "deleted": [101], "skipped": [{ "id": 102, "reason": "…" }] }`.
+  @DELETE('${ApiEndPoint.chatConversations}/{id}/messages')
+  Future<ChatEnvelopeModel> deleteChatMessagesForEveryone(
+    @Path('id') int conversationId,
+    @Body() Map<String, dynamic> body,
+  );
+
   /// Delete message for me only (others' messages).
   /// Path `{id}` = **conversation_id** (not context_id).
   /// Body: `{ "conversation_id": 1, "message_id": 2 }`.

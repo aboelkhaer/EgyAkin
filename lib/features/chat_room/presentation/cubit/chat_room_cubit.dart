@@ -175,10 +175,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   /// GET messages marks the thread read on the server; debounce while viewing.
   Timer? _markReadDebounce;
 
-  /// Read receipt arrived before peer presence — confirm shortly.
-  Timer? _pendingSeenConfirmTimer;
-  bool _pendingSeenFromRead = false;
-
   /// Reply-to state: set when user taps reply, cleared after send.
   ChatMessageItem? _replyToMessage;
   ChatMessageItem? get replyToMessage => _replyToMessage;
@@ -213,6 +209,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     List<ChatUserModel>? initialParticipants,
   }) {
     _contextId = contextId;
+    chatType = ChatApiType.fromApi(chatType) ?? chatType;
     _chatType = chatType;
     _currentUserId = currentUserId;
     _conversationId = conversationId;
@@ -363,12 +360,13 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       isGroupChat: _isGroupLikeChat,
       otherMembersCount: _otherMembersCount,
     );
+    // Keep failed/cancelled uploads in chronological place — never force them
+    // to the end (that made cancelled media jump back to "last message").
     _messages = [
-      for (final item in mapped)
+      for (final item in _mergeLocalPendingByCreatedAt(mapped, localPending))
         _enrichReplyMediaPreview(
           _preserveLocalMessageState(previousById[item.id], item),
         ),
-      ...localPending,
     ];
     for (final sys in localSystem) {
       var matchIdx = _messages.indexWhere(
@@ -392,6 +390,42 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       }
     }
     _maybeFillPeerImageFromMessages();
+  }
+
+  /// Insert local pending/failed optimistic bubbles by [createdAt] among server
+  /// rows (list is oldest → newest).
+  List<ChatMessageItem> _mergeLocalPendingByCreatedAt(
+    List<ChatMessageItem> server,
+    List<ChatMessageItem> pending,
+  ) {
+    if (pending.isEmpty) return server;
+    if (server.isEmpty) return List<ChatMessageItem>.of(pending);
+
+    final pendingSorted = List<ChatMessageItem>.of(pending)
+      ..sort((a, b) {
+        final at = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return at.compareTo(bt);
+      });
+
+    final result = <ChatMessageItem>[];
+    var pi = 0;
+    for (final s in server) {
+      final sTime = s.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+      while (pi < pendingSorted.length) {
+        final p = pendingSorted[pi];
+        final pTime = p.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        if (pTime.isAfter(sTime)) break;
+        result.add(p);
+        pi++;
+      }
+      result.add(s);
+    }
+    while (pi < pendingSorted.length) {
+      result.add(pendingSorted[pi]);
+      pi++;
+    }
+    return result;
   }
 
   void _maybeFillPeerImageFromMessages() {
@@ -539,6 +573,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     );
     if (entries.isEmpty) return;
 
+    final toInsert = <ChatMessageItem>[];
     for (final entry in entries) {
       // Still uploading in a previous cubit instance — keep "sending" UI.
       final status = ChatPendingSendStore.instance.isInFlight(entry.tempId)
@@ -562,14 +597,25 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         );
       }
       if (!_messages.any((m) => m.clientTempId == entry.tempId)) {
-        _messages = [
-          ..._messages,
-          entry.copyWithStatus(status).toMessageItem(),
-        ];
+        toInsert.add(entry.copyWithStatus(status).toMessageItem());
       }
       if (ChatPendingSendStore.instance.isInFlight(entry.tempId)) {
         unawaited(_watchInFlightSend(entry.tempId));
       }
+    }
+    if (toInsert.isNotEmpty) {
+      final serverOnly = [
+        for (final m in _messages)
+          if (m.clientTempId == null || !_pendingSends.containsKey(m.clientTempId))
+            m,
+      ];
+      final pending = [
+        for (final m in _messages)
+          if (m.clientTempId != null && _pendingSends.containsKey(m.clientTempId))
+            m,
+        ...toInsert,
+      ];
+      _messages = _mergeLocalPendingByCreatedAt(serverOnly, pending);
     }
   }
 
@@ -673,7 +719,17 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     );
   }
 
+  /// Visible again after a chat pushed on top of it closed: that chat took
+  /// over the realtime channel, so re-attach and catch up (also marks read).
+  void onVisibleAgain() {
+    if (_isDisposing || isClosed || _conversationId == null) return;
+    unawaited(_connectRealtimeIfPossible());
+    unawaited(loadMessages(refresh: false));
+  }
+
   Future<void> _connectRealtimeIfPossible() async {
+    // A closing room must never re-enter the chat's presence.
+    if (_isDisposing || isClosed) return;
     final conversationId = _conversationId;
     final userId = _currentUserId;
     if (conversationId == null || userId == null) return;
@@ -719,11 +775,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   bool _isEventForThisChat(int? conversationId) {
-    // Prefer matching the known conversation id. Before the first messages
-    // response resolves it, still accept events — this cubit only binds the
-    // active room channel (plus shared presence), and receipt handlers already
-    // ignore self-user ids.
-    if (_conversationId == null) return true;
+    // A room without a conversation yet has no channel of its own — anything
+    // arriving now belongs to another chat (e.g. a Chats-list listener).
+    if (_conversationId == null) return false;
     if (conversationId == null) return true;
     return conversationId == _conversationId;
   }
@@ -734,14 +788,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     return _onlinePeerIds.isNotEmpty;
   }
 
-  /// Map send/API status for our own message. Never accept `seen` unless the
-  /// peer is actually in this chat room (backend may set seen on delivered).
   ChatMessageStatus _statusFromSendResponse(String? status) {
     final normalized = status?.trim().toLowerCase();
     if (normalized == 'seen' || normalized == 'read') {
-      return _peerIsInThisConversation()
-          ? ChatMessageStatus.seen
-          : ChatMessageStatus.delivered;
+      return ChatMessageStatus.seen;
     }
     if (normalized == 'delivered') return ChatMessageStatus.delivered;
     return ChatMessageStatus.sent;
@@ -817,47 +867,18 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     }
   }
 
-  /// 1:1 read ticks only when the peer is actually in this chat room.
-  /// Backend may emit `message.read` on delivered while they are still on
-  /// Chats / another screen — that must stay double-gray, not blue.
-  void _applyPrivateReadReceipt({required int? readerUserId}) {
-    final inChat = readerUserId != null
-        ? (_onlinePeerIds.contains(readerUserId) ||
-            (_conversationId != null &&
-                _realtime.isUserPresentInConversation(
-                  _conversationId!,
-                  readerUserId,
-                )))
-        : _peerIsInThisConversation();
-
-    if (inChat) {
-      _pendingSeenFromRead = false;
-      _pendingSeenConfirmTimer?.cancel();
-      _upgradeOutgoingToAtLeast(ChatMessageStatus.seen);
-      return;
-    }
-
-    _upgradeOutgoingToAtLeast(ChatMessageStatus.delivered);
-    _pendingSeenFromRead = true;
-    _pendingSeenConfirmTimer?.cancel();
-    _pendingSeenConfirmTimer = Timer(const Duration(seconds: 2), () {
-      if (_isDisposing || isClosed) return;
-      if (!_pendingSeenFromRead) return;
-      _pendingSeenFromRead = false;
-      if (_peerIsInThisConversation()) {
-        _upgradeOutgoingToAtLeast(ChatMessageStatus.seen);
-      }
-    });
-  }
-
   /// Merge a peer into `reads` / `delivery` on outgoing messages they caught up to.
   /// Group ticks advance to seen only when every other member has read.
+  /// 1:1: the server emits `message.read` only once the peer opened the
+  /// messages, so it always means blue ticks — but only with a peer user id.
   void _applyGroupReadReceipt({
     required int? readerUserId,
     required int? lastReadMessageId,
+    String? readAt,
   }) {
     if (!_isGroupLikeChat) {
-      _applyPrivateReadReceipt(readerUserId: readerUserId);
+      if (readerUserId == null) return;
+      _upgradeOutgoingToAtLeast(ChatMessageStatus.seen);
       return;
     }
     if (readerUserId == null) return;
@@ -871,7 +892,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     }
     reader ??= ChatUserModel(id: readerUserId);
 
-    final nowIso = DateTime.now().toUtc().toIso8601String();
+    final nowIso = _serverTimeOrNow(readAt);
     var rawChanged = false;
     final nextRaw = <ChatMessageModel>[];
     for (final m in _rawMessages) {
@@ -957,8 +978,16 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     _emitLoaded();
   }
 
+  /// Server event time; the phone's clock only when the event carried none.
+  static String _serverTimeOrNow(String? serverTime) {
+    final t = serverTime?.trim();
+    if (t != null && t.isNotEmpty) return t;
+    return DateTime.now().toUtc().toIso8601String();
+  }
+
   /// Mark one member as delivered; group ticks go to delivered only when all have.
-  void _applyGroupDeliveredReceipt({required int? userId}) {
+  void _applyGroupDeliveredReceipt(
+      {required int? userId, String? deliveredAt}) {
     if (!_isGroupLikeChat) {
       _upgradeOutgoingToAtLeast(ChatMessageStatus.delivered);
       return;
@@ -974,7 +1003,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     }
     member ??= ChatUserModel(id: userId);
 
-    final nowIso = DateTime.now().toUtc().toIso8601String();
+    final nowIso = _serverTimeOrNow(deliveredAt);
     var rawChanged = false;
     final nextRaw = <ChatMessageModel>[];
     for (final m in _rawMessages) {
@@ -1189,22 +1218,26 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           :final conversationId,
           :final userId,
           :final lastReadMessageId,
+          :final readAt,
         ):
         if (!_isEventForThisChat(conversationId)) return;
-        if (userId != null && userId == _currentUserId) return;
-        if (!_isGroupLikeChat) {
-          _applyPrivateReadReceipt(readerUserId: userId);
-          return;
-        }
+        // Opening this chat emits message.read for us — ignore self / missing id
+        // or 1:1 ticks jump to blue while the peer never opened the thread.
+        if (userId == null || userId == _currentUserId) return;
         _applyGroupReadReceipt(
           readerUserId: userId,
           lastReadMessageId: lastReadMessageId,
+          readAt: readAt,
         );
-      case ChatMessageDeliveredEvent(:final conversationId, :final userId):
+      case ChatMessageDeliveredEvent(
+          :final conversationId,
+          :final userId,
+          :final deliveredAt,
+        ):
         // Ably `message.delivered` → 1:1 two ticks; groups need all members.
         if (!_isEventForThisChat(conversationId)) return;
-        if (userId != null && userId == _currentUserId) return;
-        _applyGroupDeliveredReceipt(userId: userId);
+        if (userId == null || userId == _currentUserId) return;
+        _applyGroupDeliveredReceipt(userId: userId, deliveredAt: deliveredAt);
       case ChatUserTypingEvent(
           :final conversationId,
           :final userId,
@@ -1278,19 +1311,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         // Same activity again (heartbeats / duplicate REST) — only refresh the
         // idle timer. Emitting again rebuilds the typing row and looks like panic.
         if (activityUnchanged && nextActivity.isActive) {
-          if (_isUploadComposerActivity(nextActivity)) {
-            // Safety net — don't leave "sending images" stuck for minutes.
-            _peerTypingClearTimer = Timer(const Duration(seconds: 20), () {
-              _clearPeerComposerActivity();
-            });
-          } else {
-            final clearAfter = nextActivity == ChatComposerActivity.recording
-                ? const Duration(seconds: 4)
-                : const Duration(seconds: 8);
-            _peerTypingClearTimer = Timer(clearAfter, () {
-              _clearPeerComposerActivity();
-            });
-          }
+          _armPeerActivityClear(nextActivity);
           _markPeerRecentlyActive(userId: userId);
           return;
         }
@@ -1320,22 +1341,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           _recomputePeerOnline();
         }
         _emitLoaded();
-        if (nextActivity.isActive) {
-          // Typing / recording idle-out. Image/file uploads stay until the
-          // message lands or presence clears — with a short safety timeout.
-          if (_isUploadComposerActivity(nextActivity)) {
-            _peerTypingClearTimer = Timer(const Duration(seconds: 20), () {
-              _clearPeerComposerActivity();
-            });
-          } else {
-            final clearAfter = nextActivity == ChatComposerActivity.recording
-                ? const Duration(seconds: 4)
-                : const Duration(seconds: 8);
-            _peerTypingClearTimer = Timer(clearAfter, () {
-              _clearPeerComposerActivity();
-            });
-          }
-        }
+        if (nextActivity.isActive) _armPeerActivityClear(nextActivity);
       case ChatPresenceChangedEvent(
           :final conversationId,
           :final userId,
@@ -1356,27 +1362,37 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         // App-offline must not instantly drop online while they're still
         // present in this conversation channel.
         _recomputePeerOnline();
-      case ChatInboxInvalidateEvent(
+      case ChatInboxUpdatedEvent(
           :final conversationId,
           :final contextId,
           :final chatType,
+          :final senderId,
         ):
-        final matchesContext = contextId != null &&
-            chatType != null &&
-            contextId == _contextId &&
-            chatType == _chatType;
-        if (_conversationId == null &&
-            (matchesContext || conversationId != null)) {
-          if (conversationId != null) {
-            _conversationId = conversationId;
-          }
-          unawaited(loadMessages(refresh: true));
-          unawaited(_connectRealtimeIfPossible());
-        } else if (conversationId != null &&
-            conversationId == _conversationId) {
-          unawaited(loadMessages(refresh: false));
-        }
+        // A peer's first message created the chat we have open without a
+        // conversation yet — adopt it and go live.
+        if (_conversationId != null || chatType != _chatType) return;
+        final matches = contextId == _contextId ||
+            (_chatType == ChatApiType.private && senderId == _contextId);
+        if (!matches) return;
+        _conversationId = conversationId;
+        unawaited(loadMessages(refresh: true));
+        unawaited(_connectRealtimeIfPossible());
     }
+  }
+
+  /// Peers refresh typing / recording about every 2.5 s while it lasts, so
+  /// these only expire a missed "stopped". Uploads stay until the message
+  /// lands or presence clears; the cap only guards a lost clear.
+  void _armPeerActivityClear(ChatComposerActivity activity) {
+    _peerTypingClearTimer?.cancel();
+    final clearAfter = _isUploadComposerActivity(activity)
+        ? const Duration(seconds: 60)
+        : activity == ChatComposerActivity.recording
+            ? const Duration(seconds: 6)
+            : const Duration(seconds: 8);
+    _peerTypingClearTimer = Timer(clearAfter, () {
+      _clearPeerComposerActivity();
+    });
   }
 
   void _markPeerRecentlyActive({int? userId}) {
@@ -1425,12 +1441,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       _onlinePeerIds.add(id);
       // Device is in this chat channel — our sent messages are delivered.
       _upgradeOutgoingToAtLeast(ChatMessageStatus.delivered);
-      // Confirm a read receipt that raced ahead of presence enter.
-      if (_pendingSeenFromRead) {
-        _pendingSeenFromRead = false;
-        _pendingSeenConfirmTimer?.cancel();
-        _upgradeOutgoingToAtLeast(ChatMessageStatus.seen);
-      }
     } else {
       // Peer left the chat room — clear activity; app-online may still be true.
       _clearPeerComposerActivity();
@@ -1754,7 +1764,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   /// Fetch older pages without rebuilding the list each page, then emit once.
   /// Used when jumping to a search / reply target that isn't loaded yet.
   Future<bool> ensureMessageLoaded(String messageId) async {
-    if (_messages.any((m) => m.id == messageId)) return true;
+    if (_resolveLoadedMessageId(messageId) != null) return true;
 
     final contextId = _contextId;
     final chatType = _chatType;
@@ -1762,11 +1772,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
     if (_loadOlderFuture != null) {
       await _loadOlderFuture;
-      if (_messages.any((m) => m.id == messageId)) return true;
+      if (_resolveLoadedMessageId(messageId) != null) return true;
     }
 
     if (!_hasMore || _rawMessages.isEmpty) {
-      return _messages.any((m) => m.id == messageId);
+      return _resolveLoadedMessageId(messageId) != null;
     }
 
     _emitLoaded(isLoadingMore: true);
@@ -1804,7 +1814,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
       if (!grew) break;
       _rebuildMessageItems();
-      if (_messages.any((m) => m.id == messageId)) {
+      if (_resolveLoadedMessageId(messageId) != null) {
         _emitLoaded();
         return true;
       }
@@ -1812,8 +1822,30 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
     _rebuildMessageItems();
     _emitLoaded();
-    return _messages.any((m) => m.id == messageId);
+    return _resolveLoadedMessageId(messageId) != null;
   }
+
+  /// Resolves a chat message id from a message id, temp id, or attachment id.
+  String? _resolveLoadedMessageId(String target) {
+    final t = target.trim();
+    if (t.isEmpty || t == '0') return null;
+    for (final m in _messages) {
+      if (m.id == t || m.clientTempId == t) return m.id;
+      for (final a in m.attachments) {
+        if (a.id != null && '${a.id}' == t) return m.id;
+      }
+    }
+    for (final m in _rawMessages) {
+      if (m.id != null && '${m.id}' == t) return '${m.id}';
+      for (final a in m.attachments ?? const []) {
+        if (a.id != null && '${a.id}' == t && m.id != null) return '${m.id}';
+      }
+    }
+    return null;
+  }
+
+  /// Public helper for jump-to-message (media gallery may pass attachment ids).
+  String? resolveMessageId(String target) => _resolveLoadedMessageId(target);
 
   void setReplyTo(ChatMessageItem message) {
     _editingMessage = null;
@@ -2169,8 +2201,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     await _dispatchSend(clientTempId);
   }
 
-  /// WhatsApp-style cancel while images/files are still uploading.
-  /// Keeps the bubble and payload so the user can tap retry.
+  /// Cancel an in-flight upload — keep the bubble + files so the user can
+  /// tap retry later. Does not delete the message.
   void cancelSend(String clientTempId) {
     if (clientTempId.isEmpty) return;
     _cancelledTempIds.add(clientTempId);
@@ -2193,6 +2225,43 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       _setLocalActivity(ChatComposerActivity.none);
     }
     _emitLoaded();
+  }
+
+  /// Drop a local-only optimistic send (delete before a server id exists).
+  void discardOptimisticSend(String clientTempId) {
+    if (clientTempId.isEmpty) return;
+    _cancelledTempIds.add(clientTempId);
+    _sendCancelTokens.remove(clientTempId)?.cancel('upload_cancelled');
+    _inFlightTempIds.remove(clientTempId);
+    ChatPendingSendStore.instance.clearInFlight(clientTempId);
+    _discardOptimisticSend(clientTempId);
+    if (_isNonTypingComposerActivity(_localActivity)) {
+      _setLocalActivity(ChatComposerActivity.none);
+    }
+    _emitLoaded();
+  }
+
+  void _discardOptimisticSend(String tempId) {
+    _pendingSends.remove(tempId);
+    _removePersisted(tempId);
+    _messages = [
+      for (final m in _messages)
+        if (m.clientTempId != tempId) m,
+    ];
+  }
+
+  void _markFailedForResume(String tempId) {
+    _messages = [
+      for (final m in _messages)
+        if (m.clientTempId == tempId)
+          m.copyWith(
+            status: ChatMessageStatus.failed,
+            clearUploadProgress: true,
+          )
+        else
+          m,
+    ];
+    _updatePersistedStatus(tempId, ChatMessageStatus.failed);
   }
 
   Future<void> _flushPendingSends() async {
@@ -2295,9 +2364,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         cancelToken: cancelToken,
       );
 
-      if (_cancelledTempIds.remove(tempId) || cancelToken.isCancelled) {
-        return;
-      }
+      final wasCancelled =
+          _cancelledTempIds.remove(tempId) || cancelToken.isCancelled;
 
       // Clear media activity as soon as the upload finishes (success or fail),
       // before UI reconciliation — stops sticky "sending/recording" on peers.
@@ -2307,13 +2375,33 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         _setLocalActivity(ChatComposerActivity.none);
       }
 
-      if (hasAttachments) {
+      if (wasCancelled) {
+        // Keep bubble for later retry unless the server already accepted it.
+        var serverAccepted = false;
+        result.fold((_) {}, (response) {
+          if (response.value != false && response.data != null) {
+            serverAccepted = true;
+          }
+        });
+        if (!serverAccepted) {
+          _markFailedForResume(tempId);
+          _emitLoaded();
+          return;
+        }
+        // Fall through to success handling below.
+      }
+
+      if (hasAttachments && !wasCancelled) {
         _updateUploadProgress(tempId, 1.0);
       }
 
       result.fold(
         (failure) {
-          if (_cancelledTempIds.contains(tempId) || cancelToken.isCancelled) {
+          if (wasCancelled ||
+              _cancelledTempIds.contains(tempId) ||
+              cancelToken.isCancelled) {
+            _markFailedForResume(tempId);
+            _emitLoaded();
             return;
           }
           _messages = [
@@ -2330,7 +2418,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           _emitLoaded();
         },
         (response) {
-          if (_cancelledTempIds.contains(tempId) || cancelToken.isCancelled) {
+          if (!wasCancelled &&
+              (_cancelledTempIds.contains(tempId) || cancelToken.isCancelled)) {
+            _markFailedForResume(tempId);
+            _emitLoaded();
             return;
           }
           if (response.value == false) {
@@ -2474,7 +2565,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
               _rawMessages = [..._rawMessages, message];
             }
 
-            _notifyInboxPreview(previewText, previewCount: previewCount);
+            _notifyInboxPreview(
+              previewText,
+              previewCount: previewCount,
+              messageId: message.id,
+            );
             // Peer already has this conversation channel open → delivered.
             if (_peerIsInThisConversation() &&
                 mapped.status == ChatMessageStatus.sent) {
@@ -2509,13 +2604,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             unawaited(_connectRealtimeIfPossible());
           }
           if (wasNewConversation && _conversationId != null) {
-            unawaited(
-              _realtime.publishConversationCreated(
-                conversationId: _conversationId!,
-                contextId: _contextId,
-                chatType: _chatType,
-              ),
-            );
             try {
               if (GetIt.I.isRegistered<InboxCubit>()) {
                 unawaited(
@@ -2535,7 +2623,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     }
   }
 
-  void _notifyInboxPreview(String preview, {int? previewCount}) {
+  void _notifyInboxPreview(
+    String preview, {
+    int? previewCount,
+    int? messageId,
+  }) {
     try {
       if (!GetIt.I.isRegistered<InboxCubit>()) return;
       final inbox = GetIt.I<InboxCubit>();
@@ -2548,6 +2640,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         conversationId: _conversationId,
         preview: preview,
         previewCount: previewCount,
+        messageId: messageId,
       );
     } catch (_) {}
   }
@@ -2580,14 +2673,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
     final hasContent = text.trim().isNotEmpty;
     _typingStartDebounce?.cancel();
-    _typingStopTimer?.cancel();
 
     if (!hasContent) {
+      _typingStopTimer?.cancel();
       _setLocalActivity(ChatComposerActivity.none);
       return;
     }
 
     if (_localActivity != ChatComposerActivity.typing) {
+      _typingStopTimer?.cancel();
       _typingStartDebounce = Timer(const Duration(milliseconds: 350), () {
         _setLocalActivity(ChatComposerActivity.typing);
         _scheduleTypingHeartbeat();
@@ -2595,8 +2689,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       return;
     }
 
-    // Still has content — keep peer typing indicator alive.
-    _scheduleTypingHeartbeat();
+    // Still has content — keep the keep-alive running. Restarting it on
+    // every keystroke meant it never fired while typing fast, so the peer's
+    // "typing" expired mid-sentence.
+    if (!(_typingStopTimer?.isActive ?? false)) _scheduleTypingHeartbeat();
   }
 
   void onRecordingChanged(bool isRecording) {
@@ -2919,21 +3015,13 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     _emitLoaded();
   }
 
+  /// Delete for everyone (ours or a peer's): keep the bubble as the same
+  /// tombstone a reload shows. The server keeps `content` set on these, and
+  /// only delete-for-me rows come back with `content: null`.
   void _markMessageDeletedLocally(int messageId) {
     final idStr = '$messageId';
     final uiIdx = _messages.indexWhere((m) => m.id == idStr);
     final rawIdx = _rawMessages.indexWhere((m) => m.id == messageId);
-
-    // Others' deleted messages: hide entirely (no "This message was deleted").
-    final isMine = uiIdx >= 0
-        ? _messages[uiIdx].isOutgoing
-        : (rawIdx >= 0 &&
-            _rawMessages[rawIdx].sender?.id != null &&
-            _rawMessages[rawIdx].sender!.id == _currentUserId);
-    if (!isMine) {
-      _removeMessageLocally(messageId);
-      return;
-    }
 
     if (rawIdx >= 0) {
       final raw = _rawMessages[rawIdx];
@@ -2943,7 +3031,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             if (i == rawIdx)
               raw.copyWith(
                 isDeleted: true,
-                content: null,
+                content: ChatMappers.deletedForEveryoneContent,
                 attachments: const [],
                 reactions: const [],
                 replyTo: null,
@@ -3134,15 +3222,35 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     ];
     _emitLoaded();
 
+    final own = [
+      for (final id in unique)
+        if (snapshots[id]?.isOutgoing ?? false) id,
+    ];
+    final others = [
+      for (final id in unique)
+        if (!(snapshots[id]?.isOutgoing ?? false)) id,
+    ];
+
     final conversationId = _conversationId;
-    final apiFutures = <int, Future<Either<Failure, ChatEnvelopeModel>>>{};
+    // Own messages: one bulk request per 100 ids. Others': delete for me.
+    final bulkFutures =
+        <List<int>, Future<Either<Failure, ChatEnvelopeModel>>>{};
+    final mineFutures = <int, Future<Either<Failure, ChatEnvelopeModel>>>{};
     if (conversationId != null) {
-      for (final id in unique) {
-        final forEveryone = snapshots[id]?.isOutgoing ?? false;
-        apiFutures[id] = _repository.deleteMessage(
+      for (var i = 0; i < own.length; i += _bulkDeleteMax) {
+        final chunk = own.sublist(
+          i,
+          i + _bulkDeleteMax > own.length ? own.length : i + _bulkDeleteMax,
+        );
+        bulkFutures[chunk] = _repository.deleteMessagesForEveryone(
+          conversationId: conversationId,
+          messageIds: chunk,
+        );
+      }
+      for (final id in others) {
+        mineFutures[id] = _repository.deleteMessage(
           conversationId: conversationId,
           messageId: id,
-          forEveryone: forEveryone,
         );
       }
     }
@@ -3150,56 +3258,93 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     await Future<void>.delayed(const Duration(milliseconds: 400));
     if (_isDisposing || isClosed) return false;
 
+    if (conversationId == null) {
+      own.forEach(_markMessageDeletedLocally);
+      others.forEach(_removeMessageLocally);
+      return true;
+    }
+
     var anyFailed = false;
-    for (final id in unique) {
-      final forEveryone = snapshots[id]?.isOutgoing ?? false;
-      final future = apiFutures[id];
-      if (future == null) {
-        if (forEveryone) {
+    void restore(int id) {
+      anyFailed = true;
+      final previousUi = snapshots[id];
+      if (previousUi == null) return;
+      _restoreMessageAfterFailedDelete(
+        messageId: id,
+        previousUi: previousUi,
+        previousRaw: rawSnapshots[id],
+        rawIdx: rawIndexes[id],
+      );
+    }
+
+    for (final entry in bulkFutures.entries) {
+      final result = await entry.value;
+      if (_isDisposing || isClosed) return false;
+      final deleted = result.fold(
+        (failure) {
+          debugPrint('Bulk delete failed: $failure');
+          return const <int>{};
+        },
+        (response) => _bulkDeletedIds(response, requested: entry.key),
+      );
+      for (final id in entry.key) {
+        if (deleted.contains(id)) {
           _markMessageDeletedLocally(id);
         } else {
-          _removeMessageLocally(id);
+          restore(id);
         }
-        continue;
       }
+    }
 
-      final result = await future;
+    for (final entry in mineFutures.entries) {
+      final result = await entry.value;
       if (_isDisposing || isClosed) return false;
-
       final ok = result.fold(
         (failure) {
           debugPrint('Delete message failed: $failure');
           return false;
         },
         (response) {
-          if (!_isDeleteEnvelopeOk(response)) {
-            debugPrint('Delete message rejected: ${response.message}');
-            return false;
-          }
-          return true;
+          if (_isDeleteEnvelopeOk(response)) return true;
+          debugPrint('Delete message rejected: ${response.message}');
+          return false;
         },
       );
-
       if (ok) {
-        if (forEveryone) {
-          _markMessageDeletedLocally(id);
-        } else {
-          _removeMessageLocally(id);
-        }
+        _removeMessageLocally(entry.key);
       } else {
-        anyFailed = true;
-        final previousUi = snapshots[id];
-        if (previousUi != null) {
-          _restoreMessageAfterFailedDelete(
-            messageId: id,
-            previousUi: previousUi,
-            previousRaw: rawSnapshots[id],
-            rawIdx: rawIndexes[id],
-          );
-        }
+        restore(entry.key);
       }
     }
     return !anyFailed;
+  }
+
+  static const _bulkDeleteMax = 100;
+
+  /// Ids the server confirmed from `{ "deleted": [...], "skipped": [...] }`.
+  /// Skipped ids come back to the chat and the caller shows an error.
+  static Set<int> _bulkDeletedIds(
+    ChatEnvelopeModel response, {
+    required List<int> requested,
+  }) {
+    if (!_isDeleteEnvelopeOk(response)) {
+      debugPrint('Bulk delete rejected: ${response.message}');
+      return const <int>{};
+    }
+    final data = response.data;
+    if (data is! Map) return requested.toSet();
+    final deleted = data['deleted'];
+    if (deleted is List) {
+      final skipped = data['skipped'];
+      if (skipped is List && skipped.isNotEmpty) {
+        debugPrint('Bulk delete skipped: $skipped');
+      }
+      return {
+        for (final raw in deleted)
+          if (int.tryParse('$raw') != null) int.parse('$raw'),
+      };
+    }
+    return requested.toSet();
   }
 
   int? messageIdAt(int index) {
@@ -3352,18 +3497,19 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     // Stop treating this chat as open immediately — otherwise messages that
     // arrive while we're back on Chats get marked read via realtime handlers.
     _isDisposing = true;
-    final activeConversationId = _realtime.subscribedConversationId;
+    final ownConversationId = _conversationId;
     // Clear viewing flag BEFORE async teardown so new sends aren't treated
-    // as seen while we leave an archived (or normal) chat room.
-    _realtime.clearActiveChat();
+    // as seen while we leave an archived (or normal) chat room. Only our own
+    // chat — another room may be open on top of this one.
+    if (ownConversationId != null) {
+      _realtime.clearActiveChat(conversationId: ownConversationId);
+    }
     _typingStartDebounce?.cancel();
     _typingStopTimer?.cancel();
     _peerTypingClearTimer?.cancel();
     _peerOfflineDebounce?.cancel();
     _softOnlineExpiry?.cancel();
     _markReadDebounce?.cancel();
-    _pendingSeenConfirmTimer?.cancel();
-    _pendingSeenFromRead = false;
     ChatTypingSound.stopPeerTypingClicks();
     if (_localActivity.isActive) {
       _setLocalActivity(ChatComposerActivity.none);
@@ -3375,7 +3521,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     peerIsOnlineLive.dispose();
     // Do NOT call getMessages here: that would mark messages that arrived
     // after leaving as seen on the server.
-    await _realtime.unsubscribe(conversationId: activeConversationId);
+    if (ownConversationId != null) {
+      await _realtime.unsubscribe(conversationId: ownConversationId);
+    }
     return super.close();
   }
 }

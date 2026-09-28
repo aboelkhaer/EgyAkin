@@ -50,19 +50,28 @@ class ChatMessageReadEvent extends ChatRealtimeEvent {
   final int conversationId;
   final int? userId;
   final int? lastReadMessageId;
+
+  /// Server time of the read (`read_at`).
+  final String? readAt;
   const ChatMessageReadEvent({
     required this.conversationId,
     this.userId,
     this.lastReadMessageId,
+    this.readAt,
   });
 }
 
 class ChatMessageDeliveredEvent extends ChatRealtimeEvent {
   final int conversationId;
   final int? userId;
+
+  /// Server time of the delivery (`delivered_at`). Events can arrive late, so
+  /// the phone's clock is not a substitute.
+  final String? deliveredAt;
   const ChatMessageDeliveredEvent({
     required this.conversationId,
     this.userId,
+    this.deliveredAt,
   });
 }
 
@@ -99,22 +108,38 @@ class ChatPresenceChangedEvent extends ChatRealtimeEvent {
   });
 }
 
-/// Peer entered/left the app-wide online channel (any screen in the app).
-class ChatInboxInvalidateEvent extends ChatRealtimeEvent {
-  final int? conversationId;
-  final int? contextId;
+/// `inbox.updated` on the user's private channel: a new message in one of the
+/// user's chats. The server does not send it for muted chats.
+class ChatInboxUpdatedEvent extends ChatRealtimeEvent {
+  final int conversationId;
+
+  /// Normalized [ChatApiType] value.
   final String? chatType;
 
-  /// True when a conversation was deleted / left and should drop from inbox.
-  final bool removed;
-  const ChatInboxInvalidateEvent({
-    this.conversationId,
-    this.contextId,
+  /// Id to open the chat with.
+  final int? contextId;
+  final String? conversationName;
+
+  /// Already translated by the server, no brackets (e.g. "Photo" / "صورة").
+  final String? messagePreview;
+  final int? messageId;
+  final int? senderId;
+  final String? senderName;
+  final String? createdAt;
+  const ChatInboxUpdatedEvent({
+    required this.conversationId,
     this.chatType,
-    this.removed = false,
+    this.contextId,
+    this.conversationName,
+    this.messagePreview,
+    this.messageId,
+    this.senderId,
+    this.senderName,
+    this.createdAt,
   });
 }
 
+/// Peer entered/left the app-wide online channel (any screen in the app).
 class ChatAppPresenceChangedEvent extends ChatRealtimeEvent {
   final int userId;
   final bool isOnline;
@@ -139,160 +164,127 @@ class _ChannelBinding {
   });
 }
 
-/// Ably realtime for chat — conversation channels + app-wide online presence.
+/// Ably realtime for chat:
+/// - `presence:app` — Online = member of this channel (enter on open/resume,
+///   leave on background; no periodic updates),
+/// - `private:App.Models.User.{id}` — `inbox.updated` for any chat,
+/// - `presence:conversation.{id}` — the open chat room (presence entered), or
+///   listen-only for the top rows while the Chats list is on screen, so they
+///   update live and show typing / recording / sending.
 class ChatRealtimeService with WidgetsBindingObserver {
   ChatRealtimeService(this._apiServices) {
-    // Observe lifecycle so presence leave starts before the OS suspends the
-    // network (inactive), and kill/crash still times out quickly via Ably params.
     WidgetsBinding.instance.addObserver(this);
   }
 
   final ApiServices _apiServices;
 
-  /// App-wide online channel. Backend now grants `presence:app`
-  /// (`subscribe` + `presence`) — prefer that so all clients meet.
-  /// Keep `presence:conversation.app` as fallback / dual-enter during
-  /// rollout so peers still on the old name stay mutual.
-  static const primaryAppPresenceChannel = 'presence:app';
+  /// App-wide online channel (token grants `subscribe` + `presence`).
+  static const appPresenceChannel = 'presence:app';
 
-  /// Previous preferred name — fallback + dual-subscribe during migration.
-  static const legacyAppPresenceChannel = 'presence:conversation.app';
+  static String userChannelName(int userId) => 'private:App.Models.User.$userId';
 
-  /// Active app-online channel (heartbeats).
-  String _appPresenceChannelName = primaryAppPresenceChannel;
+  static String conversationChannelName(int conversationId) =>
+      'presence:conversation.$conversationId';
 
-  /// Public name of the channel currently used for app-wide online.
-  String get appPresenceChannelName => _appPresenceChannelName;
-
-  /// After abrupt disconnect, Ably default keeps members ~15s. Min is 1000ms.
+  /// Ably removes a connection that dropped without a leave after this long.
   static const _remainPresentForMs = '15000';
 
-  /// Ably minimum is 5000ms. With the ~10s server margin, Abrupt disconnect
-  /// detection is still ~15s — we layer an app heartbeat below for ~5s offline.
+  /// Ably minimum. Protocol heartbeats are not billed as messages.
   static const _heartbeatIntervalMs = '5000';
 
-  /// How often we `presence.update` while foregrounded.
-  static const _appHeartbeatEvery = Duration(seconds: 2);
-
-  ably.Realtime? _realtime;
-  final Map<int, _ChannelBinding> _bindings = {};
-  int? _activeChatConversationId;
-  final _eventsController = StreamController<ChatRealtimeEvent>.broadcast();
-
-  ably.RealtimeChannel? _appPresenceChannel;
-  StreamSubscription<ably.PresenceMessage>? _appPresenceSubscription;
-  StreamSubscription<ably.Message>? _appMessageSubscription;
-  /// Second app-online channel so peers on the other name still see us.
-  ably.RealtimeChannel? _secondaryAppPresenceChannel;
-  StreamSubscription<ably.PresenceMessage>? _secondaryAppPresenceSubscription;
-  bool _hasEnteredAppPresence = false;
-  /// Channels we successfully entered — avoid cancel/re-enter storms that
-  /// made Online one-way (I see peers, they still see me Offline).
-  final Set<String> _enteredAppChannelNames = {};
-
-  /// Realtime client the app-online channels were created on. Channels of a
-  /// closed / failed client can still read "attached" in Dart while every
-  /// heartbeat silently goes nowhere — peers then see us Offline in-app.
-  ably.Realtime? _appPresenceRealtime;
-  ably.RealtimeChannel? _appPresenceSubscribedChannel;
-  ably.RealtimeChannel? _secondaryAppPresenceSubscribedChannel;
-  StreamSubscription<ably.ConnectionStateChange>? _connectionStateSubscription;
-
-  /// True after a successful attach/enter on whichever app-online channel works.
-  bool _tokenAllowsAppPresence = false;
-
-  /// App-online channel names Ably refused (40160) under the current token
-  /// capability. Skipped until the capability changes, so a refused name is
-  /// not re-attached on every call and can never block the other one.
-  final Set<String> _deniedAppPresenceChannels = {};
-
-  /// Every app-online channel is currently refused by the token.
-  bool _appPresenceCapabilityDenied = false;
-
-  /// Raw capability from the last token (for conversation channel checks).
-  String? _lastCapability;
-
-  /// Deduplicate concurrent [ensureAppPresence] calls (Home + Inbox + resume).
-  Future<void>? _ensureAppPresenceFuture;
-
-  /// Conversations the current token cannot access (Ably 40160). Skip retries
-  /// until the next token refresh so we don't spam Failed re-attach loops.
-  final Set<int> _capabilityDeniedConversationIds = {};
-  final Set<int> _appOnlineUserIds = {};
-  /// Live app-online memberships per user (`channel|connectionId|clientId`).
-  /// Ably sends one leave per connection, so a stale connection (reconnect,
-  /// second device, the other app channel) must not grey a present peer.
-  final Map<int, Set<String>> _appOnlineMembersByUser = {};
-  final Map<String, int> _appPresenceClientToUserId = {};
-
-  /// Offline is only published after this grace + a roster re-check. Peers
-  /// heartbeat every [_appHeartbeatEvery], so anyone still in the app
-  /// cancels the pending Offline before it shows.
-  final Map<int, Timer> _pendingAppOfflineChecks = {};
-  static const _appOfflineGrace = Duration(seconds: 3);
+  /// Offline only after a leave plus this grace, so a quick reconnect or
+  /// app switch never flashes Offline.
+  static const _appOfflineGrace = Duration(seconds: 2);
   static const _presenceGetTimeout = Duration(seconds: 4);
 
-  /// Roster reconciliation only expires peers silent at least this long.
-  static const _appPresenceSilentAfter = Duration(seconds: 8);
+  /// Brief app switches must not leave presence (and reconnect afterwards).
+  static const _backgroundLeaveDelay = Duration(seconds: 1);
+
+  static const _presenceWatchdogEvery = Duration(seconds: 5);
+  static const _minPresenceRepairBackoff = Duration(seconds: 3);
+  static const _maxPresenceRepairBackoff = Duration(seconds: 30);
+
+  ably.Realtime? _realtime;
+  StreamSubscription<ably.ConnectionStateChange>? _connectionStateSubscription;
+  final _eventsController = StreamController<ChatRealtimeEvent>.broadcast();
+
+  /// Client the app-wide channels were created on. Channel objects of a
+  /// closed / failed client can still read "attached" in Dart.
+  ably.Realtime? _appChannelsRealtime;
+
+  ably.RealtimeChannel? _appPresenceChannel;
+  ably.RealtimeChannel? _appPresenceSubscribedChannel;
+  StreamSubscription<ably.PresenceMessage>? _appPresenceSubscription;
+  bool _hasEnteredAppPresence = false;
+  Future<void>? _ensureAppPresenceFuture;
+
+  ably.RealtimeChannel? _userChannel;
+  ably.RealtimeChannel? _userChannelSubscribedChannel;
+  StreamSubscription<ably.Message>? _userChannelSubscription;
+
+  /// Capability string in use when Ably refused the user channel (40160).
+  /// Not retried until the token capability changes.
+  String? _userChannelDeniedForCapability;
+
+  final Map<int, _ChannelBinding> _bindings = {};
+  int? _activeChatConversationId;
+  Future<void>? _subscribeFuture;
+  int? _subscribeFutureConversationId;
+
+  /// Conversations the Chats list wants to hear from while it is on screen
+  /// (listen-only: messages, receipts, typing / recording / upload activity —
+  /// never a presence enter). Suspended while a chat room is open.
+  Set<int> _inboxListenIds = const {};
+  Future<void>? _inboxSyncFuture;
+  bool _inboxSyncQueued = false;
+
+  /// Raw capability from the last token.
+  String? _lastCapability;
+
+  /// Conversations the current token cannot access (Ably 40160).
+  final Set<int> _capabilityDeniedConversationIds = {};
+
+  final Set<int> _appOnlineUserIds = {};
+
+  /// Live `presence:app` memberships per user (`connectionId|clientId`). Ably
+  /// sends one leave per connection, so a second device or a stale
+  /// connection must not grey out a present peer.
+  final Map<int, Set<String>> _appOnlineMembersByUser = {};
+  final Map<String, int> _appPresenceClientToUserId = {};
+  final Map<int, Timer> _pendingAppOfflineChecks = {};
 
   /// Leave events often omit presence data — map clientId → userId from enters.
   final Map<String, int> _presenceClientToUserId = {};
 
-  /// Last known online user ids per conversation (to emit offline on sync).
+  /// Online user ids per open conversation channel (in-chat presence).
   final Map<int, Set<int>> _lastOnlineByConversation = {};
 
-  /// Last time we saw each user on any presence channel (app or conversation).
-  final Map<int, DateTime> _lastPresenceSeenAt = {};
-
-  /// Users who publish `ts` heartbeats — only these are stale-swept (~5s).
-  /// Clients without heartbeats still rely on Ably leave (~15s).
-  final Set<int> _heartbeatCapableUserIds = {};
-
-  /// Conversation ids to re-attach after background `connection.close()`.
-  final Set<int> _pendingResubscribeIds = {};
-
-  /// Presence profile used when restoring after app resume.
   int? _presenceUserId;
   String? _presenceDisplayName;
   String? _presenceImageUrl;
 
-  /// Last composer activity we published on the active conversation channel.
-  /// Heartbeats must preserve this or peers see typing flicker (none → typing).
+  /// Composer activity last published on the open chat's presence.
   ChatComposerActivity _localComposerActivity = ChatComposerActivity.none;
 
-  /// Guards to prevent redundant connect/authorize calls.
   Future<void>? _connectFuture;
   Future<void>? _authorizeFuture;
   DateTime? _lastAuthorizeTime;
-  Timer? _activePresenceSyncTimer;
-  Timer? _lifecycleLeaveTimer;
-  /// Debounced Offline — WhatsApp-style: brief app-switcher / permission
-  /// sheets must NOT leave presence while the user is still "in" the app.
+
   Timer? _backgroundLeaveTimer;
-  static const _backgroundLeaveDelay = Duration(seconds: 3);
-  Timer? _appHeartbeatTimer;
   bool _isLeavingForBackground = false;
 
-  /// False from hidden/paused until resumed — the watchdog never re-enters
-  /// presence for a backgrounded app.
+  /// False from hidden/paused until resumed — nothing re-enters presence for
+  /// a backgrounded app.
   bool _appInForeground = true;
   Timer? _presenceWatchdogTimer;
-  static const _presenceWatchdogEvery = Duration(seconds: 4);
-  static const _minPresenceRepairBackoff = Duration(seconds: 3);
-  static const _maxPresenceRepairBackoff = Duration(seconds: 30);
   Duration _presenceRepairBackoff = _minPresenceRepairBackoff;
   Future<void>? _presenceRepairFuture;
   DateTime? _lastPresenceRepairAt;
   int _resumeInFlight = 0;
-
-  /// Soft leave on brief `inactive` (notification shade / tap) — keep Ably
-  /// bindings so resume does not re-attach every conversation (jetsam risk).
-  bool _softLeftPresence = false;
   bool _lifecycleAttached = true;
 
   /// Bumped on every lifecycle transition so an in-flight [onAppPaused] cannot
-  /// close a connection that [onAppResumed] already rebuilt (left users stuck
-  /// Offline after returning from background).
+  /// close a connection that [onAppResumed] already rebuilt.
   int _lifecycleEpoch = 0;
 
   Stream<ChatRealtimeEvent> get events => _eventsController.stream;
@@ -303,8 +295,12 @@ class ChatRealtimeService with WidgetsBindingObserver {
   bool isViewingConversation(int conversationId) =>
       _activeChatConversationId == conversationId;
 
-  /// Whether [userId] is currently in the conversation channel presence
-  /// (opened that chat — not merely online in the app / on Chats list).
+  /// This conversation's own channel is attached (open chat or a Chats-list
+  /// listener), so its `message.sent` already reaches the inbox.
+  bool isReceivingConversation(int conversationId) =>
+      _bindings[conversationId]?.channel.state == ably.ChannelState.attached;
+
+  /// Whether [userId] is in the open chat's presence (inside that chat room).
   bool isUserPresentInConversation(int conversationId, int userId) {
     final members = _lastOnlineByConversation[conversationId];
     return members != null && members.contains(userId);
@@ -318,10 +314,8 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
   Set<int> get appOnlineUserIds => Set.unmodifiable(_appOnlineUserIds);
 
-  /// Enter [presence:app] from local session (any screen — Splash / Home /
-  /// deep link / post-login). Does not require Home or a chat room.
-  ///
-  /// Safe to call repeatedly; coalesces with [ensureAppPresence].
+  /// Enter `presence:app` from the local session (Splash / Home / deep link /
+  /// post-login). Safe to call repeatedly.
   Future<void> bootstrapFromLocalSession({bool forceReenter = true}) async {
     final lifecycle = WidgetsBinding.instance.lifecycleState;
     if (lifecycle == AppLifecycleState.paused ||
@@ -352,52 +346,167 @@ class ChatRealtimeService with WidgetsBindingObserver {
     }
   }
 
-  /// Clear active chat synchronously (call from chat room dispose / pop).
-  /// Also leaves conversation presence immediately so the backend stops
-  /// treating us as reading while we are only on the Chats list.
-  void clearActiveChat() {
+  /// Chat room closed (dispose / pop). Leaves the chat's presence and drops
+  /// its channel right away so we are never "in the chat" from the Chats list.
+  /// With [conversationId], only clears when that chat is the open one (a
+  /// room closing underneath another room must not clear the top one).
+  void clearActiveChat({int? conversationId}) {
     final id = _activeChatConversationId;
+    if (conversationId != null && id != conversationId) return;
     _activeChatConversationId = null;
     _localComposerActivity = ChatComposerActivity.none;
-    _stopActivePresenceSync();
-    if (id != null) {
-      final binding = _bindings[id];
-      if (binding != null) {
-        unawaited(_leaveConversationPresence(binding, reason: 'clearActiveChat'));
-      }
-    }
+    if (id != null) unawaited(_releaseChat(id));
   }
 
-  /// Leave conversation presence. Safe when already absent. Always clear the
-  /// local flag — Ably may auto-re-enter after reconnect even if we think we
-  /// already left, which falsely marks messages as seen from Chats.
-  Future<void> _leaveConversationPresence(
-    _ChannelBinding binding, {
-    required String reason,
-  }) async {
+  /// Leave a closed chat's presence. Its channel stays attached (listen-only)
+  /// when the Chats list wants it, otherwise it is detached. Then the list's
+  /// other listeners come back.
+  Future<void> _releaseChat(int conversationId) async {
+    if (!_isOpen(conversationId)) {
+      if (_inboxListenIds.contains(conversationId)) {
+        await _downgradeToListener(conversationId);
+      } else {
+        await _detachChannel(conversationId);
+      }
+    }
+    unawaited(_syncInboxListeners());
+  }
+
+  Future<void> _downgradeToListener(int conversationId) async {
+    final binding = _bindings[conversationId];
+    if (binding == null || _isOpen(conversationId)) return;
+    binding.isActiveChat = false;
+    if (!binding.hasEnteredPresence) return;
+    binding.hasEnteredPresence = false;
     try {
       await binding.channel.presence.leave();
     } catch (e) {
-      debugPrint('Ably presence leave ($reason) failed: $e');
+      debugPrint('Ably presence leave (chat closed) failed: $e');
     }
-    binding.hasEnteredPresence = false;
   }
 
-  /// Only skip when Ably itself refused every app-online channel we tried.
-  /// Never skip presence:app based on parsing the capability JSON alone —
-  /// that historically blocked Online entirely while chat-room presence still
-  /// worked.
-  bool get _appPresenceKnownDenied => _appPresenceCapabilityDenied;
+  /// Chats list on screen: listen to these conversations so rows update live
+  /// and show typing / recording / sending. Only the open chat's channel is
+  /// kept while a chat room is open; the listeners return when it closes.
+  Future<void> listenToInboxConversations(Iterable<int> conversationIds) {
+    _inboxListenIds = conversationIds.toSet();
+    return _syncInboxListeners();
+  }
 
-  /// Enter the app-wide online channel. Call while the app is foregrounded
-  /// (Home / Chats / any tab) — does not affect conversation read receipts.
+  Future<void> stopListeningToInbox() {
+    _inboxListenIds = const {};
+    return _syncInboxListeners();
+  }
+
+  Future<void> _syncInboxListeners() {
+    final running = _inboxSyncFuture;
+    if (running != null) {
+      _inboxSyncQueued = true;
+      return running;
+    }
+    final future = () async {
+      try {
+        do {
+          _inboxSyncQueued = false;
+          await _doSyncInboxListeners();
+        } while (_inboxSyncQueued);
+      } finally {
+        _inboxSyncFuture = null;
+      }
+    }();
+    _inboxSyncFuture = future;
+    return future;
+  }
+
+  Future<void> _doSyncInboxListeners() async {
+    final userId = _presenceUserId;
+    final wanted = (_activeChatConversationId == null &&
+            _appInForeground &&
+            userId != null)
+        ? _inboxListenIds
+        : const <int>{};
+
+    for (final id in _bindings.keys.toList()) {
+      final binding = _bindings[id];
+      if (binding == null || binding.isActiveChat) continue;
+      if (id == _activeChatConversationId) continue;
+      final healthy = binding.channel.state == ably.ChannelState.attached ||
+          binding.channel.state == ably.ChannelState.attaching;
+      if (!wanted.contains(id) || !healthy) await _detachChannel(id);
+    }
+    if (wanted.isEmpty || userId == null) return;
+
+    await _ensureConnected(clientId: '$userId');
+    if (_realtime?.connection.state != ably.ConnectionState.connected) return;
+    for (final id in wanted.toList()) {
+      if (_activeChatConversationId != null) return;
+      if (!_inboxListenIds.contains(id) || _bindings.containsKey(id)) continue;
+      await _attachListener(id);
+    }
+  }
+
+  Future<void> _attachListener(int conversationId) async {
+    if (!_tokenAllowsConversation(conversationId)) return;
+    final name = conversationChannelName(conversationId);
+    final ably.RealtimeChannel channel;
+    try {
+      channel = await _freshChannel(name);
+    } catch (_) {
+      return;
+    }
+    // Subscribe before attaching so the presence sync's members (and any
+    // activity they already have) reach the list.
+    final sub = channel.subscribe().listen(
+          (msg) => _onMessage(msg, conversationId: conversationId),
+          onError: (Object e) => debugPrint('Ably subscribe error: $e'),
+        );
+    final presenceSub = channel.presence.subscribe().listen(
+          (msg) => _emitPresence(conversationId, msg),
+          onError: (Object e) => debugPrint('Ably presence error: $e'),
+        );
+    try {
+      await _attachOrRecoverChannel(channel);
+    } catch (e) {
+      unawaited(sub.cancel());
+      unawaited(presenceSub.cancel());
+      if (_isCapabilityDeniedError(e)) {
+        _capabilityDeniedConversationIds.add(conversationId);
+      } else {
+        debugPrint('Ably inbox listen failed ($conversationId): $e');
+      }
+      if (channel.state == ably.ChannelState.failed) {
+        try {
+          _realtime?.channels.release(name);
+        } catch (_) {}
+      }
+      return;
+    }
+
+    final stillWanted = _activeChatConversationId == null &&
+        _inboxListenIds.contains(conversationId) &&
+        !_bindings.containsKey(conversationId);
+    if (!stillWanted) {
+      unawaited(sub.cancel());
+      unawaited(presenceSub.cancel());
+      // The open chat may own this same channel object now.
+      if (_activeChatConversationId != conversationId &&
+          !_bindings.containsKey(conversationId)) {
+        await _detach(channel);
+      }
+      return;
+    }
+    _bindings[conversationId] = _ChannelBinding(
+      channel: channel,
+      subscription: sub,
+      isActiveChat: false,
+      hasEnteredPresence: false,
+    )..presenceSubscription = presenceSub;
+  }
+
+  /// Join the app-wide online channel and the user's inbox channel.
   ///
-  /// Uses [primaryAppPresenceChannel] (`presence:app`) so Online is mutual
-  /// with the backend grant. Also enters [legacyAppPresenceChannel] while the
-  /// token grants it, and falls back to it if presence:app is refused.
-  ///
-  /// [forceReenter] — always publish enter/update (app resume / soft return)
-  /// so peers see online immediately instead of waiting on a later heartbeat.
+  /// [forceReenter] verifies our own membership in the local presence set and
+  /// re-enters only if Ably dropped it — never a blind re-publish.
   Future<void> ensureAppPresence({
     required int currentUserId,
     String? displayName,
@@ -409,21 +518,15 @@ class ChatRealtimeService with WidgetsBindingObserver {
     if (imageUrl != null) _presenceImageUrl = imageUrl;
     _startPresenceWatchdog();
 
-    // Coalesce overlapping Home / Inbox / resume callers onto one enter.
     final existing = _ensureAppPresenceFuture;
     if (existing != null) {
       await existing;
       if (_hasEnteredAppPresence && !forceReenter) return;
-      if (_hasEnteredAppPresence && forceReenter) {
-        // Prior enter finished — still bump so peers see us ASAP.
-      } else if (_appPresenceKnownDenied) {
-        return;
-      }
     }
 
     final future = _doEnsureAppPresence(
       currentUserId: currentUserId,
-      forceReenter: forceReenter,
+      verifySelf: forceReenter,
     );
     _ensureAppPresenceFuture = future;
     try {
@@ -437,9 +540,8 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
   Future<void> _doEnsureAppPresence({
     required int currentUserId,
-    required bool forceReenter,
+    required bool verifySelf,
   }) async {
-    _softLeftPresence = false;
     // Online means the app is open — never (re)enter from the background.
     if (!_appInForeground) return;
 
@@ -447,240 +549,96 @@ class ChatRealtimeService with WidgetsBindingObserver {
     await _authorizeIfNeeded();
     final realtime = _realtime;
     if (realtime == null || !_appInForeground) return;
-    if (!identical(_appPresenceRealtime, realtime)) {
-      _discardAppPresenceChannels();
-      _appPresenceRealtime = realtime;
+    if (realtime.connection.state != ably.ConnectionState.connected) return;
+    if (!identical(_appChannelsRealtime, realtime)) {
+      _discardAppChannels();
+      _appChannelsRealtime = realtime;
     }
 
-    // presence:app always first; the legacy name only while the token still
-    // grants it. Only a real 40160 from Ably removes a name from this list.
-    var candidates = _appPresenceCandidates();
-    if (candidates.isEmpty) {
-      await _refreshAppPresenceCapability();
-      candidates = _appPresenceCandidates();
-      if (candidates.isEmpty) {
-        _appPresenceCapabilityDenied = true;
-        debugPrint(
-          'Ably app-online skipped — token denies both '
-          '$primaryAppPresenceChannel and $legacyAppPresenceChannel',
-        );
-        return;
-      }
-    }
-
-    // First name that attaches owns heartbeats + roster; the next is extra.
-    final remaining = [...candidates];
-    String? primaryName;
-    while (primaryName == null && remaining.isNotEmpty) {
-      final name = remaining.removeAt(0);
-      final ok = await _attachAndEnterAppPresence(
-        currentUserId: currentUserId,
-        forceReenter: forceReenter,
-        channelName: name,
-        asPrimary: true,
-      );
-      if (ok) {
-        primaryName = name;
-      } else if (_realtime?.connection.state !=
-          ably.ConnectionState.connected) {
-        // Connection dropped mid-attach — not a denial; the watchdog retries.
-        return;
-      }
-    }
-    _appPresenceCapabilityDenied = primaryName == null &&
-        candidates.every(_deniedAppPresenceChannels.contains);
-    if (primaryName == null) return;
-
-    if (remaining.isEmpty) {
-      _dropSecondaryAppPresence();
-      return;
-    }
-    await _attachAndEnterAppPresence(
-      currentUserId: currentUserId,
-      forceReenter: forceReenter,
-      channelName: remaining.first,
-      asPrimary: false,
-    );
+    await _ensureUserChannel(currentUserId);
+    await _attachAndEnterAppPresence(verifySelf: verifySelf);
+    // The Chats list may have asked before we knew the user / had a client.
+    unawaited(_syncInboxListeners());
   }
 
-  List<String> _appPresenceCandidates() => [
-        if (!_deniedAppPresenceChannels.contains(primaryAppPresenceChannel))
-          primaryAppPresenceChannel,
-        if (!_deniedAppPresenceChannels.contains(legacyAppPresenceChannel) &&
-            !_knownCapabilityOmits(legacyAppPresenceChannel))
-          legacyAppPresenceChannel,
-      ];
-
-  /// Used for the legacy name only. The token is signed with this exact
-  /// capability string, so a channel it omits is certain to be refused.
-  /// presence:app is always attempted and left to Ably to decide.
-  bool _knownCapabilityOmits(String channelName) {
-    final cap = _lastCapability;
-    if (cap == null || cap.trim().isEmpty) return false;
-    return !_capabilityAllowsChannel(cap, channelName);
-  }
-
-  /// Only Ably's capability refusal — a generic 401 (e.g. expired token) must
-  /// not park presence:app.
-  static bool _isAppChannelCapabilityError(Object e) {
-    final s = e.toString();
-    return s.contains('40160') ||
-        s.contains('denied access based on given capability');
-  }
-
-  void _dropSecondaryAppPresence() {
-    final channel = _secondaryAppPresenceChannel;
-    if (channel == null) return;
-    // After a primary/secondary swap both refs can be the same channel.
-    if (!identical(channel, _appPresenceChannel)) {
-      _enteredAppChannelNames.remove(channel.name);
-    }
-    unawaited(_secondaryAppPresenceSubscription?.cancel());
-    _secondaryAppPresenceSubscription = null;
-    _secondaryAppPresenceSubscribedChannel = null;
-    _secondaryAppPresenceChannel = null;
-  }
-
-  /// Attach + enter one app-online channel. Returns true on success.
-  /// [asPrimary] owns heartbeats; secondary only publishes + listens.
-  Future<bool> _attachAndEnterAppPresence({
-    required int currentUserId,
-    required bool forceReenter,
-    required String channelName,
-    required bool asPrimary,
-  }) async {
+  Future<bool> _attachAndEnterAppPresence({required bool verifySelf}) async {
     try {
-      final existing = asPrimary
-          ? _appPresenceChannel
-          : _secondaryAppPresenceChannel;
-      final alreadyHealthy = existing != null &&
-          existing.name == channelName &&
-          identical(_appPresenceRealtime, _realtime) &&
-          existing.state == ably.ChannelState.attached &&
-          _enteredAppChannelNames.contains(channelName);
+      var channel = _appPresenceChannel;
+      final healthy = channel != null &&
+          identical(_appChannelsRealtime, _realtime) &&
+          channel.state == ably.ChannelState.attached &&
+          _hasEnteredAppPresence;
+      if (healthy && !verifySelf) return true;
 
-      // Fast path: stay present, just refresh roster (no cancel/re-enter).
-      if (alreadyHealthy && !forceReenter) {
-        if (asPrimary) {
-          _appPresenceChannel = existing;
-          _appPresenceChannelName = channelName;
-        } else {
-          _secondaryAppPresenceChannel = existing;
-        }
-        _hasEnteredAppPresence = true;
-        await _emitAppPresenceSnapshot(channelOverride: existing);
-        return true;
-      }
-
-      final channel =
-          alreadyHealthy ? existing : await _freshChannel(channelName);
-      if (asPrimary) {
+      if (channel == null ||
+          channel.state == ably.ChannelState.failed ||
+          channel.state == ably.ChannelState.detached) {
+        channel = await _freshChannel(appPresenceChannel);
         _appPresenceChannel = channel;
-        _appPresenceChannelName = channelName;
-      } else {
-        _secondaryAppPresenceChannel = channel;
       }
       await _attachOrRecoverChannel(channel);
       if (channel.state != ably.ChannelState.attached) {
         throw StateError(
-          'Ably $channelName not attached (state=${channel.state.name})',
+          'Ably $appPresenceChannel not attached (state=${channel.state.name})',
         );
       }
 
-      // Subscribe once per channel instance — cancel/resubscribe on the same
-      // channel dropped present-sync. A released / recreated channel is a new
-      // object, and its old subscription never fires again.
-      if (asPrimary) {
-        if (!identical(_appPresenceSubscribedChannel, channel)) {
-          unawaited(_appPresenceSubscription?.cancel());
-          unawaited(_appMessageSubscription?.cancel());
-          _appPresenceSubscription = channel.presence.subscribe().listen(
-                (msg) => _onAppPresenceMessage(msg, channelName),
-                onError: (_) {},
-              );
-          _appMessageSubscription = channel.subscribe().listen(
-                _onAppChannelMessage,
-                onError: (_) {},
-              );
-          _appPresenceSubscribedChannel = channel;
-        }
-      } else if (!identical(_secondaryAppPresenceSubscribedChannel, channel)) {
-        unawaited(_secondaryAppPresenceSubscription?.cancel());
-        _secondaryAppPresenceSubscription =
-            channel.presence.subscribe().listen(
-                  (msg) => _onAppPresenceMessage(msg, channelName),
-                  onError: (_) {},
-                );
-        _secondaryAppPresenceSubscribedChannel = channel;
+      // A released / recreated channel is a new object; the old subscription
+      // never fires again.
+      if (!identical(_appPresenceSubscribedChannel, channel)) {
+        unawaited(_appPresenceSubscription?.cancel());
+        _appPresenceSubscription = channel.presence.subscribe().listen(
+              _onAppPresenceMessage,
+              onError: (_) {},
+            );
+        _appPresenceSubscribedChannel = channel;
       }
 
-      final needEnter =
-          !_enteredAppChannelNames.contains(channelName) || forceReenter;
-      try {
-        if (needEnter) {
-          await _enterPresence(
-            channel,
-            currentUserId: currentUserId,
-            displayName: _presenceDisplayName,
-            imageUrl: _presenceImageUrl,
-          );
-        } else {
-          await channel.presence.update(
-            _presencePayload(activity: ChatComposerActivity.none),
-          );
-        }
-      } catch (_) {
-        await _enterPresence(
-          channel,
-          currentUserId: currentUserId,
-          displayName: _presenceDisplayName,
-          imageUrl: _presenceImageUrl,
+      var needEnter = !_hasEnteredAppPresence;
+      if (!needEnter && verifySelf) {
+        needEnter = !await _isSelfListed(channel);
+      }
+      if (needEnter) {
+        if (!_appInForeground) return false;
+        await channel.presence.enter(
+          _presencePayload(activity: ChatComposerActivity.none),
         );
+        _hasEnteredAppPresence = true;
+        // Our own enter echo can land after this get(); the roster is only
+        // trusted for removals once it lists us, so read it again shortly.
+        Timer(const Duration(milliseconds: 1500), () {
+          unawaited(refreshAppPresenceSnapshot());
+        });
       }
-      _enteredAppChannelNames.add(channelName);
-      _hasEnteredAppPresence = true;
-
-      _tokenAllowsAppPresence = true;
-      _appPresenceCapabilityDenied = false;
-      _deniedAppPresenceChannels.remove(channelName);
-
-      if (asPrimary) {
-        _startAppHeartbeat();
-        _startAppPresenceSync();
-      }
-      await _emitAppPresenceSnapshot(channelOverride: channel);
+      await _syncAppRoster(channel);
       return true;
     } catch (e) {
-      final denied = _isAppChannelCapabilityError(e);
-      if (denied) {
-        _deniedAppPresenceChannels.add(channelName);
-        debugPrint(
-          'Ably $channelName not granted by token — skipping it until the '
-          'capability changes',
-        );
-      } else {
-        debugPrint('Ably $channelName attach/enter failed: $e');
-      }
-      if (denied && asPrimary && !_hasEnteredAppPresence) {
-        _tokenAllowsAppPresence = false;
-      }
-      if (asPrimary && !_hasEnteredAppPresence) {
-        _appPresenceChannel = null;
-        _stopAppPresenceSync();
-        _stopAppHeartbeat();
-      }
-      if (!asPrimary) {
-        // A dead secondary would block roster reconciliation; the next
-        // ensureAppPresence retries it on a fresh channel.
-        _dropSecondaryAppPresence();
-      }
+      debugPrint('Ably $appPresenceChannel attach/enter failed: $e');
       return false;
     }
   }
 
-  /// Release Failed/Detached channel instances so resume can attach again.
-  /// Without this, background→foreground keeps a Failed channel and Online
-  /// only recovers after a manual pull-to-refresh.
+  /// Local presence set only — no Ably messages.
+  Future<bool> _isSelfListed(ably.RealtimeChannel channel) async {
+    final self = _presenceUserId;
+    if (self == null) return false;
+    try {
+      final members = await channel.presence
+          .get(const ably.RealtimePresenceParams(waitForSync: true))
+          .timeout(_presenceGetTimeout);
+      final connectionId = _realtime?.connection.id;
+      return members.any(
+        (m) =>
+            _userIdFromPresence(m) == self &&
+            (connectionId == null || m.connectionId == connectionId),
+      );
+    } catch (_) {
+      // Can't tell — assume present rather than re-publish.
+      return true;
+    }
+  }
+
+  /// Release Failed/Detached channel instances so the next attach works.
   Future<ably.RealtimeChannel> _freshChannel(String channelName) async {
     final realtime = _realtime!;
     try {
@@ -697,221 +655,243 @@ class ChatRealtimeService with WidgetsBindingObserver {
     return realtime.channels.get(channelName);
   }
 
-  /// Pull capability from a fresh Ably token so we pick up backend grants
-  /// without waiting on a race. Also clears hard-deny so fallback can retry.
-  Future<void> _refreshAppPresenceCapability() async {
-    try {
-      final model = await _apiServices.getAblyToken();
-      _rememberCapability(model.capability);
-      if (_capabilityAllowsAppPresence(model.capability)) {
-        _appPresenceCapabilityDenied = false;
-      }
-      if (_tokenAllowsAppPresence && _realtime != null) {
-        try {
-          await _realtime!.auth.authorize();
-        } catch (_) {}
-      }
-    } catch (e) {
-      debugPrint('Ably capability refresh failed: $e');
-    }
-  }
-
-  Future<void> _leaveAppPresence() async {
-    if (_hasEnteredAppPresence) {
-      for (final channel in [_appPresenceChannel, _secondaryAppPresenceChannel]) {
-        if (channel == null) continue;
-        try {
-          await channel.presence.leave();
-        } catch (_) {}
-      }
-    }
-    _hasEnteredAppPresence = false;
-    _enteredAppChannelNames.clear();
-  }
-
-  /// Re-query app-online members (e.g. when opening member search / chat room).
+  /// Re-read the `presence:app` member list (local; no Ably messages).
   Future<void> refreshAppPresenceSnapshot() async {
-    final primaryChannel = _appPresenceChannel;
-    final secondaryChannel = _secondaryAppPresenceChannel;
-    final primary = await _emitAppPresenceSnapshot();
-    final secondary = secondaryChannel == null
-        ? null
-        : await _emitAppPresenceSnapshot(channelOverride: secondaryChannel);
-    if (primaryChannel == null || primary == null) return;
-    if (secondaryChannel != null && secondary == null) return;
-    _reconcileAppPresence({
-      primaryChannel.name: primary,
-      if (secondaryChannel != null && secondary != null)
-        secondaryChannel.name: secondary,
-    });
+    final channel = _appPresenceChannel;
+    if (channel == null || !_hasEnteredAppPresence) return;
+    if (channel.state != ably.ChannelState.attached) return;
+    await _syncAppRoster(channel);
   }
 
-  /// Drop memberships Ably no longer lists (their leave was missed while we
-  /// were detached / reconnecting) and start the Offline check for peers that
-  /// are gone from every app channel. Only called with trusted rosters.
-  void _reconcileAppPresence(Map<String, Map<int, Set<String>>> rosters) {
-    final now = DateTime.now();
-    for (final userId in _appOnlineUserIds.toList()) {
-      final keys = _appOnlineMembersByUser[userId];
-      keys?.removeWhere((key) {
-        final channelName = key.substring(0, key.indexOf('|'));
-        return !(rosters[channelName]?[userId]?.contains(key) ?? false);
-      });
-      if (keys != null && keys.isNotEmpty) continue;
-      final lastSeen = _lastPresenceSeenAt[userId];
-      if (lastSeen != null &&
-          now.difference(lastSeen) < _appPresenceSilentAfter) {
+  /// Marks everyone in the roster Online. When the roster is complete (it
+  /// lists our own membership), also starts the Offline check for peers it no
+  /// longer lists — their leave was missed while we were disconnected.
+  Future<void> _syncAppRoster(ably.RealtimeChannel channel) async {
+    final List<ably.PresenceMessage> members;
+    try {
+      members = await channel.presence
+          .get(const ably.RealtimePresenceParams(waitForSync: true))
+          .timeout(_presenceGetTimeout);
+    } catch (_) {
+      return;
+    }
+    final self = _presenceUserId;
+    final roster = <int, Set<String>>{};
+    var includesSelf = false;
+    for (final msg in members) {
+      final userId = _userIdFromPresence(msg);
+      if (userId == null) continue;
+      if (userId == self) {
+        includesSelf = true;
         continue;
       }
-      _scheduleAppOfflineCheck(userId);
+      final clientId = msg.clientId;
+      if (clientId != null) _appPresenceClientToUserId[clientId] = userId;
+      roster.putIfAbsent(userId, () => <String>{}).add(_appMemberKey(msg));
+    }
+
+    roster.forEach((userId, keys) {
+      for (final key in keys) {
+        _markAppMemberPresent(userId, key);
+      }
+    });
+    if (!includesSelf) return;
+
+    for (final userId in _appOnlineUserIds.toList()) {
+      final keys = _appOnlineMembersByUser[userId];
+      keys?.removeWhere((key) => !(roster[userId]?.contains(key) ?? false));
+      if (keys == null || keys.isEmpty) _scheduleAppOfflineCheck(userId);
     }
   }
 
-  void _onAppChannelMessage(ably.Message message) {
-    final name = message.name;
-    final isCreate = name == 'conversation.created' || name == 'inbox.refresh';
-    final isDelete =
-        name == 'conversation.deleted' || name == 'conversation.removed';
-    if (!isCreate && !isDelete) return;
-    final data = _asMap(message.data) ?? const <String, dynamic>{};
-    final removedFlag = data['removed'] == true ||
-        data['removed'] == 1 ||
-        data['removed']?.toString() == 'true';
+  void _onAppPresenceMessage(ably.PresenceMessage msg) {
+    final action = msg.action;
+    final isOnline = action == ably.PresenceAction.enter ||
+        action == ably.PresenceAction.present ||
+        action == ably.PresenceAction.update;
+    final isOffline = action == ably.PresenceAction.leave ||
+        action == ably.PresenceAction.absent;
+    if (!isOnline && !isOffline) return;
+
+    final clientId = msg.clientId;
+    var userId = _userIdFromPresence(msg);
+    if (userId != null && clientId != null) {
+      _appPresenceClientToUserId[clientId] = userId;
+    } else if (userId == null && clientId != null) {
+      userId = _appPresenceClientToUserId[clientId];
+    }
+    if (userId == null || userId == _presenceUserId) return;
+
+    final memberKey = _appMemberKey(msg);
+    if (isOnline) {
+      _markAppMemberPresent(userId, memberKey);
+      return;
+    }
+
+    final members = _appOnlineMembersByUser[userId];
+    members?.remove(memberKey);
+    if (members != null && members.isNotEmpty) return;
+    _scheduleAppOfflineCheck(userId);
+  }
+
+  static String _appMemberKey(ably.PresenceMessage msg) =>
+      '${msg.connectionId ?? ''}|${msg.clientId ?? ''}';
+
+  void _markAppMemberPresent(int userId, String memberKey) {
+    _pendingAppOfflineChecks.remove(userId)?.cancel();
+    _appOnlineMembersByUser
+        .putIfAbsent(userId, () => <String>{})
+        .add(memberKey);
+    if (!_appOnlineUserIds.add(userId)) return;
     _eventsController.add(
-      ChatInboxInvalidateEvent(
-        conversationId: _asInt(
-          data['conversation_id'] ?? data['conversationId'],
-        ),
-        contextId: _asInt(data['context_id'] ?? data['contextId']),
-        chatType: data['chat_type']?.toString() ?? data['chatType']?.toString(),
-        removed: isDelete || removedFlag,
-      ),
+      ChatAppPresenceChangedEvent(userId: userId, isOnline: true),
     );
   }
 
-  /// Notify peers that a brand-new conversation exists so their inbox can
-  /// refresh even before they subscribe to the conversation channel.
-  Future<void> publishConversationCreated({
-    required int conversationId,
-    int? contextId,
-    String? chatType,
-  }) async {
-    final channel = _appPresenceChannel;
-    if (channel == null || !_tokenAllowsAppPresence) return;
-    try {
-      await channel.publish(
-        name: 'conversation.created',
-        data: {
-          'conversation_id': conversationId,
-          if (contextId != null) 'context_id': contextId,
-          if (chatType != null) 'chat_type': chatType,
-        },
-      );
-    } catch (e) {
-      debugPrint('Ably conversation.created publish failed: $e');
-    }
+  void _scheduleAppOfflineCheck(int userId) {
+    if (!_appOnlineUserIds.contains(userId)) return;
+    _pendingAppOfflineChecks[userId] ??= Timer(_appOfflineGrace, () {
+      _pendingAppOfflineChecks.remove(userId);
+      unawaited(_confirmAppOffline(userId));
+    });
   }
 
-  /// Ask peers to refresh inbox (or drop a removed social/case chat).
-  Future<void> publishInboxRefresh({
-    int? conversationId,
-    int? contextId,
-    String? chatType,
-    bool removed = false,
-  }) async {
-    final channel = _appPresenceChannel;
-    if (channel == null || !_tokenAllowsAppPresence) return;
-    try {
-      await channel.publish(
-        name: removed ? 'conversation.deleted' : 'inbox.refresh',
-        data: {
-          if (conversationId != null) 'conversation_id': conversationId,
-          if (contextId != null) 'context_id': contextId,
-          if (chatType != null) 'chat_type': chatType,
-          if (removed) 'removed': true,
-        },
-      );
-    } catch (e) {
-      debugPrint('Ably inbox.refresh publish failed: $e');
-    }
-  }
+  Future<void> _confirmAppOffline(int userId) async {
+    bool stillListed() =>
+        _appOnlineMembersByUser[userId]?.isNotEmpty ?? false;
+    if (stillListed() || !_appOnlineUserIds.contains(userId)) return;
 
-  /// Marks everyone in [channel]'s roster Online. Returns each peer's member
-  /// keys when the roster can be trusted for removals (synced and includes
-  /// our own membership), otherwise null.
-  Future<Map<int, Set<String>>?> _emitAppPresenceSnapshot({
-    ably.RealtimeChannel? channelOverride,
-  }) async {
-    final channel = channelOverride ?? _appPresenceChannel;
-    if (channel == null || !_hasEnteredAppPresence) return null;
+    // A newer connection may be present without us having seen its enter.
+    final channel = _appPresenceChannel;
+    final live = channel != null &&
+        identical(_appChannelsRealtime, _realtime) &&
+        channel.state == ably.ChannelState.attached;
+    if (!live) {
+      // Our own connection is down — keep the last known state; the roster
+      // sync after reconnect settles it.
+      if (_appInForeground) _scheduleAppOfflineCheck(userId);
+      return;
+    }
     try {
-      // waitForSync is critical — get() without params can return [] before
-      // Ably finishes sync, so Chats stayed Offline until a peer re-entered
-      // (Home refresh). Retry briefly if the first sync still looks empty.
-      List<ably.PresenceMessage> members = const [];
-      for (var attempt = 0; attempt < 4; attempt++) {
-        await _waitForPresenceSync(channel);
-        members = await channel.presence
-            .get(const ably.RealtimePresenceParams(waitForSync: true))
-            .timeout(_presenceGetTimeout);
-        if (members.isNotEmpty || attempt == 3) break;
-        await Future<void>.delayed(
-          Duration(milliseconds: 120 * (attempt + 1)),
-        );
-      }
-      final self = _presenceUserId;
-      final channelName = channel.name;
-      final roster = <int, Set<String>>{};
-      var includesSelf = false;
+      final members = await channel.presence
+          .get(const ably.RealtimePresenceParams(waitForSync: true))
+          .timeout(_presenceGetTimeout);
       for (final msg in members) {
-        final userId = _userIdFromPresence(msg);
-        if (userId == null) continue;
-        if (userId == self) {
-          includesSelf = true;
-          continue;
-        }
-        final clientId = msg.clientId;
-        if (clientId != null) _appPresenceClientToUserId[clientId] = userId;
-        roster
-            .putIfAbsent(userId, () => <String>{})
-            .add(_appMemberKey(channelName, msg));
+        if (_userIdFromPresence(msg) != userId) continue;
+        _markAppMemberPresent(userId, _appMemberKey(msg));
       }
-
-      // Adding is always safe. An empty / partial get() must never mark
-      // peers Offline.
-      roster.forEach((userId, keys) {
-        _touchPresenceSeen(userId);
-        for (final key in keys) {
-          _markAppMemberPresent(userId, key);
-        }
-      });
-      return includesSelf ? roster : null;
     } catch (_) {
-      // Channel not attached / failed — ignore (no console spam).
-      return null;
+      if (_appInForeground) _scheduleAppOfflineCheck(userId);
+      return;
+    }
+    if (stillListed() || _pendingAppOfflineChecks.containsKey(userId)) return;
+    _setAppUserOffline(userId);
+  }
+
+  void _setAppUserOffline(int userId) {
+    _pendingAppOfflineChecks.remove(userId)?.cancel();
+    _appOnlineMembersByUser.remove(userId);
+    if (!_appOnlineUserIds.remove(userId)) return;
+    _eventsController.add(
+      ChatAppPresenceChangedEvent(userId: userId, isOnline: false),
+    );
+  }
+
+  void _cancelPendingAppOfflineChecks() {
+    for (final timer in _pendingAppOfflineChecks.values) {
+      timer.cancel();
+    }
+    _pendingAppOfflineChecks.clear();
+  }
+
+  Future<void> _ensureUserChannel(int userId) async {
+    final realtime = _realtime;
+    if (realtime == null ||
+        realtime.connection.state != ably.ConnectionState.connected) {
+      return;
+    }
+    final denied = _userChannelDeniedForCapability;
+    if (denied != null && denied == (_lastCapability ?? '')) return;
+
+    final name = userChannelName(userId);
+    var channel = _userChannel;
+    if (channel != null &&
+        channel.name == name &&
+        identical(_userChannelSubscribedChannel, channel) &&
+        channel.state == ably.ChannelState.attached) {
+      return;
+    }
+    try {
+      if (channel != null && channel.name != name) {
+        // Different account on this client.
+        unawaited(_userChannelSubscription?.cancel());
+        _userChannelSubscription = null;
+        _userChannelSubscribedChannel = null;
+        final old = channel;
+        unawaited(_detach(old));
+        channel = null;
+      }
+      if (channel == null ||
+          channel.state == ably.ChannelState.failed ||
+          channel.state == ably.ChannelState.detached) {
+        channel = await _freshChannel(name);
+      }
+      _userChannel = channel;
+      if (!identical(_userChannelSubscribedChannel, channel)) {
+        unawaited(_userChannelSubscription?.cancel());
+        _userChannelSubscription = channel.subscribe().listen(
+              _onUserChannelMessage,
+              onError: (Object e) => debugPrint('Ably user channel error: $e'),
+            );
+        _userChannelSubscribedChannel = channel;
+      }
+      await _attachOrRecoverChannel(channel);
+      _userChannelDeniedForCapability = null;
+      debugPrint('Ably $name attached — listening for inbox.updated');
+    } catch (e) {
+      if (_isCapabilityDeniedError(e)) {
+        _userChannelDeniedForCapability = _lastCapability ?? '';
+        debugPrint('Ably $name not granted by token — inbox stays on GET /inbox');
+        return;
+      }
+      debugPrint('Ably user channel attach failed: $e');
     }
   }
 
-  /// Wait until Ably finishes presence sync (or a short timeout).
-  Future<void> _waitForPresenceSync(ably.RealtimeChannel channel) async {
-    final presence = channel.presence;
-    if (presence.syncComplete == true) return;
-    final deadline = DateTime.now().add(const Duration(milliseconds: 2000));
-    while (DateTime.now().isBefore(deadline)) {
-      if (presence.syncComplete == true) return;
-      await Future<void>.delayed(const Duration(milliseconds: 40));
+  void _onUserChannelMessage(ably.Message message) {
+    final name = message.name;
+    final data = _asMap(message.data);
+    if (name == null || data == null) return;
+    switch (name) {
+      case 'inbox.updated':
+        final conversationId = _asInt(data['conversation_id']);
+        debugPrint('Ably inbox.updated conversation=$conversationId');
+        if (conversationId == null) return;
+        _eventsController.add(
+          ChatInboxUpdatedEvent(
+            conversationId: conversationId,
+            chatType: ChatApiType.fromApi(
+              (data['conversation_type'] ?? data['chat_type'])?.toString(),
+            ),
+            contextId: _asInt(data['context_id']),
+            conversationName: data['conversation_name']?.toString(),
+            messagePreview: data['message_preview']?.toString(),
+            messageId: _asInt(data['message_id']),
+            senderId: _asInt(data['sender_id']),
+            senderName: data['sender_name']?.toString(),
+            createdAt: data['created_at']?.toString(),
+          ),
+        );
+      case 'message.read':
+      case 'message.delivered':
+        final conversationId = _asInt(data['conversation_id']);
+        if (conversationId == null) return;
+        _onMessage(message, conversationId: conversationId);
+      default:
+        debugPrint('Ably user channel event ignored: $name');
     }
   }
 
-  /// True when the Ably token capability map includes either app-online channel
-  /// (preferred `presence:app` or fallback `presence:conversation.app`).
-  static bool _capabilityAllowsAppPresence(String? capability) {
-    return _capabilityAllowsChannel(capability, primaryAppPresenceChannel) ||
-        _capabilityAllowsChannel(capability, legacyAppPresenceChannel);
-  }
-
-  /// Whether [capability] grants access to [channelName].
-  /// Supports Ably wildcards like `presence:conversation.*` / `presence:*` / `*`.
   static bool _capabilityAllowsChannel(String? capability, String channelName) {
     if (capability == null || capability.trim().isEmpty) return false;
 
@@ -954,15 +934,12 @@ class ChatRealtimeService with WidgetsBindingObserver {
     return false;
   }
 
-  static String conversationChannelName(int conversationId) =>
-      'presence:conversation.$conversationId';
-
   bool _tokenAllowsConversation(int conversationId) {
     if (_capabilityDeniedConversationIds.contains(conversationId)) {
       return false;
     }
-    // If we have never seen a capability string, allow the attach attempt —
-    // authCallback may still be racing. Denial is handled on 40160.
+    // Never seen a capability string — allow the attempt; denial is
+    // handled on 40160.
     final cap = _lastCapability;
     if (cap == null || cap.trim().isEmpty) return true;
     return _capabilityAllowsChannel(
@@ -972,154 +949,22 @@ class ChatRealtimeService with WidgetsBindingObserver {
   void _rememberCapability(String? capability) {
     final previous = _lastCapability;
     _lastCapability = capability;
-    // Null/empty capability string is common even when the signed token
-    // grants channels — do NOT flip _tokenAllowsAppPresence to false here.
-    if (capability != null && capability.trim().isNotEmpty) {
-      final allowsPreferred =
-          _capabilityAllowsChannel(capability, primaryAppPresenceChannel);
-      final allowsFallback =
-          _capabilityAllowsChannel(capability, legacyAppPresenceChannel);
-      final allows = allowsPreferred || allowsFallback;
-      _tokenAllowsAppPresence = allows;
-      if (allows) _appPresenceCapabilityDenied = false;
+    if (capability == null || capability.isEmpty || capability == previous) {
+      return;
     }
-    // New token may grant channels that were previously denied.
-    if (capability != null && capability.isNotEmpty && capability != previous) {
-      _deniedAppPresenceChannels.clear();
-      _capabilityDeniedConversationIds.removeWhere(
-        (id) => _capabilityAllowsChannel(
-          capability,
-          conversationChannelName(id),
-        ),
-      );
-    }
+    // A new token may grant channels that were refused before.
+    _userChannelDeniedForCapability = null;
+    _capabilityDeniedConversationIds.removeWhere(
+      (id) => _capabilityAllowsChannel(capability, conversationChannelName(id)),
+    );
   }
 
+  /// Only Ably's capability refusal. A generic 401 (e.g. expired token) must
+  /// not mark a channel as denied.
   static bool _isCapabilityDeniedError(Object e) {
     final s = e.toString();
     return s.contains('40160') ||
-        s.contains('denied access based on given capability') ||
-        s.contains('statusCode=401') ||
-        s.contains('Channel denied access');
-  }
-
-  void _markConversationCapabilityDenied(int conversationId) {
-    _capabilityDeniedConversationIds.add(conversationId);
-  }
-
-  void _onAppPresenceMessage(ably.PresenceMessage msg, String channelName) {
-    final action = msg.action;
-    final isOnline = action == ably.PresenceAction.enter ||
-        action == ably.PresenceAction.present ||
-        action == ably.PresenceAction.update;
-    final isOffline = action == ably.PresenceAction.leave ||
-        action == ably.PresenceAction.absent;
-    if (!isOnline && !isOffline) return;
-
-    final clientId = msg.clientId;
-    var userId = _userIdFromPresence(msg);
-    if (userId != null && clientId != null) {
-      _appPresenceClientToUserId[clientId] = userId;
-    } else if (userId == null && clientId != null) {
-      userId = _appPresenceClientToUserId[clientId];
-    }
-    if (userId == null) return;
-    if (userId == _presenceUserId) return;
-
-    final memberKey = _appMemberKey(channelName, msg);
-    if (isOnline) {
-      _touchPresenceSeen(userId, data: _presenceDataMap(msg));
-      _markAppMemberPresent(userId, memberKey);
-      return;
-    }
-
-    // One leave per connection — another connection or the other app
-    // channel may still carry this user.
-    final members = _appOnlineMembersByUser[userId];
-    members?.remove(memberKey);
-    if (members != null && members.isNotEmpty) return;
-    _scheduleAppOfflineCheck(userId);
-  }
-
-  static String _appMemberKey(String channelName, ably.PresenceMessage msg) =>
-      '$channelName|${msg.connectionId ?? ''}|${msg.clientId ?? ''}';
-
-  void _markAppMemberPresent(int userId, String memberKey) {
-    _pendingAppOfflineChecks.remove(userId)?.cancel();
-    _appOnlineMembersByUser
-        .putIfAbsent(userId, () => <String>{})
-        .add(memberKey);
-    if (!_appOnlineUserIds.add(userId)) return;
-    _eventsController.add(
-      ChatAppPresenceChangedEvent(userId: userId, isOnline: true),
-    );
-  }
-
-  void _scheduleAppOfflineCheck(int userId) {
-    if (!_appOnlineUserIds.contains(userId)) return;
-    _pendingAppOfflineChecks[userId] ??= Timer(_appOfflineGrace, () {
-      _pendingAppOfflineChecks.remove(userId);
-      unawaited(_confirmAppOffline(userId));
-    });
-  }
-
-  Future<void> _confirmAppOffline(int userId) async {
-    bool stillListed() =>
-        _appOnlineMembersByUser[userId]?.isNotEmpty ?? false;
-    if (stillListed() || !_appOnlineUserIds.contains(userId)) return;
-
-    // A newer connection may be present without us having seen its enter.
-    var verified = false;
-    for (final channel in _liveAppPresenceChannels()) {
-      try {
-        final members = await channel.presence
-            .get(const ably.RealtimePresenceParams(waitForSync: true))
-            .timeout(_presenceGetTimeout);
-        verified = true;
-        for (final msg in members) {
-          if (_userIdFromPresence(msg) != userId) continue;
-          _touchPresenceSeen(userId);
-          _markAppMemberPresent(userId, _appMemberKey(channel.name, msg));
-        }
-      } catch (_) {}
-    }
-    if (stillListed() || _pendingAppOfflineChecks.containsKey(userId)) return;
-    if (!verified) {
-      // Our own connection / channels are down — keep the last known state
-      // and retry; the roster sync after reconnect / resume settles it.
-      if (_appInForeground) _scheduleAppOfflineCheck(userId);
-      return;
-    }
-    _setAppUserOffline(userId);
-  }
-
-  void _setAppUserOffline(int userId) {
-    _pendingAppOfflineChecks.remove(userId)?.cancel();
-    _appOnlineMembersByUser.remove(userId);
-    _clearPresenceSeen(userId);
-    if (!_appOnlineUserIds.remove(userId)) return;
-    _eventsController.add(
-      ChatAppPresenceChangedEvent(userId: userId, isOnline: false),
-    );
-  }
-
-  List<ably.RealtimeChannel> _liveAppPresenceChannels() {
-    final realtime = _realtime;
-    if (realtime == null || !identical(_appPresenceRealtime, realtime)) {
-      return const [];
-    }
-    return [
-      for (final channel in [_appPresenceChannel, _secondaryAppPresenceChannel])
-        if (channel != null && channel.state == ably.ChannelState.attached)
-          channel,
-    ];
-  }
-
-  void _cancelPendingAppOfflineChecks() {
-    for (final timer in _pendingAppOfflineChecks.values) {
-      timer.cancel();
-    }
-    _pendingAppOfflineChecks.clear();
+        s.contains('denied access based on given capability');
   }
 
   Future<ably.TokenRequest> _fetchTokenRequest(
@@ -1140,7 +985,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
   Future<void> _ensureConnected({String? clientId}) async {
     if (_realtime != null) {
       final state = _realtime!.connection.state;
-      // Attach/presence require Connected — never return while still Connecting.
+      // Attach/presence require Connected — never return while Connecting.
       if (state == ably.ConnectionState.connected) {
         return;
       }
@@ -1148,7 +993,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
         await _waitForConnectionConnected();
         return;
       }
-      // After background leave / brief disconnect, reconnect the same client.
       if (state == ably.ConnectionState.disconnected ||
           state == ably.ConnectionState.suspended) {
         try {
@@ -1171,10 +1015,8 @@ class ChatRealtimeService with WidgetsBindingObserver {
       }
     }
 
-    // Deduplicate concurrent connect calls.
     if (_connectFuture != null) {
       await _connectFuture;
-      // Prior connect may still be mid-flight — wait until Connected.
       if (_realtime?.connection.state == ably.ConnectionState.connected) {
         return;
       }
@@ -1190,11 +1032,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
     }
   }
 
-  /// Channel.attach() throws "Can't attach when not in an active state" unless
-  /// the Realtime connection is Connected.
-  ///
-  /// Keep the timeout tight so [presence:app] enter stays ~1s instead of
-  /// hanging peers on "Offline" while the sender can already chat.
   Future<void> _waitForConnectionConnected({
     Duration timeout = const Duration(seconds: 5),
   }) async {
@@ -1216,7 +1053,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
       autoConnect: true,
       clientId: clientId,
       authCallback: _fetchTokenRequest,
-      // Faster offline when peer force-quits / loses network without leave().
       transportParams: const {
         'remainPresentFor': _remainPresentForMs,
         'heartbeatInterval': _heartbeatIntervalMs,
@@ -1226,21 +1062,16 @@ class ChatRealtimeService with WidgetsBindingObserver {
     _realtime = realtime;
     _watchConnection(realtime);
 
-    try {
-      await _waitForConnectionConnected();
-      // The connection itself already fetched a token via authCallback,
-      // so mark authorize as fresh to avoid a redundant second token call.
-      if (_realtime?.connection.state == ably.ConnectionState.connected) {
-        _lastAuthorizeTime = DateTime.now();
-      }
-    } catch (e) {
-      debugPrint('Ably wait-for-connected: $e');
+    await _waitForConnectionConnected();
+    // The connection already fetched a token via authCallback.
+    if (_realtime?.connection.state == ably.ConnectionState.connected) {
+      _lastAuthorizeTime = DateTime.now();
     }
   }
 
-  /// Ably re-attaches and re-enters by itself after a drop; bump presence as
-  /// soon as it's back, and rebuild the client if the connection failed while
-  /// the app is still open (it never recovers on its own from Failed).
+  /// Ably re-attaches channels and re-enters presence by itself after a
+  /// drop; re-read the roster once it's back, and rebuild the client if the
+  /// connection failed (it never recovers from Failed on its own).
   void _watchConnection(ably.Realtime realtime) {
     unawaited(_connectionStateSubscription?.cancel());
     var connectedBefore = false;
@@ -1249,16 +1080,11 @@ class ChatRealtimeService with WidgetsBindingObserver {
         if (!identical(realtime, _realtime)) return;
         switch (change.current) {
           case ably.ConnectionState.connected:
-            if (connectedBefore) {
-              unawaited(_sendAppPresenceHeartbeat());
-              unawaited(refreshAppPresenceSnapshot());
-            }
+            if (connectedBefore) unawaited(refreshAppPresenceSnapshot());
             connectedBefore = true;
           case ably.ConnectionState.failed:
             unawaited(
-              _repairAppPresence(
-                'connection failed: ${change.reason?.message}',
-              ),
+              _repairPresence('connection failed: ${change.reason?.message}'),
             );
           default:
             break;
@@ -1268,38 +1094,33 @@ class ChatRealtimeService with WidgetsBindingObserver {
     );
   }
 
-  /// App-online channels and subscriptions die with their Realtime client.
-  void _discardAppPresenceChannels() {
+  /// App-wide channels and their subscriptions die with their client.
+  void _discardAppChannels() {
     unawaited(_appPresenceSubscription?.cancel());
-    unawaited(_appMessageSubscription?.cancel());
-    unawaited(_secondaryAppPresenceSubscription?.cancel());
+    unawaited(_userChannelSubscription?.cancel());
     _appPresenceSubscription = null;
-    _appMessageSubscription = null;
-    _secondaryAppPresenceSubscription = null;
+    _userChannelSubscription = null;
     _appPresenceSubscribedChannel = null;
-    _secondaryAppPresenceSubscribedChannel = null;
+    _userChannelSubscribedChannel = null;
     _appPresenceChannel = null;
-    _secondaryAppPresenceChannel = null;
-    _appPresenceRealtime = null;
+    _userChannel = null;
+    _appChannelsRealtime = null;
     _hasEnteredAppPresence = false;
-    _enteredAppChannelNames.clear();
   }
 
   /// Before replacing a closed / failed client: drop everything bound to it
-  /// so the next attach/enter runs on the new connection. Conversation
-  /// channels are queued for re-attach (see [onAppResumed]).
+  /// so the next attach runs on the new connection. The open chat id is kept
+  /// and re-attached by [onAppResumed].
   void _discardRealtimeBoundState() {
     unawaited(_connectionStateSubscription?.cancel());
     _connectionStateSubscription = null;
-    _discardAppPresenceChannels();
-    _pendingResubscribeIds.addAll(_bindings.keys);
-    final activeId = _activeChatConversationId;
-    if (activeId != null) _pendingResubscribeIds.add(activeId);
+    _discardAppChannels();
     for (final binding in _bindings.values) {
       unawaited(binding.presenceSubscription?.cancel());
       unawaited(binding.subscription.cancel());
     }
     _bindings.clear();
+    _lastOnlineByConversation.clear();
   }
 
   /// Rate-limited authorize — at most once per 30 seconds.
@@ -1322,8 +1143,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
   }
 
   Future<void> _doAuthorize() async {
+    final realtime = _realtime;
+    if (realtime == null) return;
     try {
-      await _realtime!.auth.authorize();
+      await realtime.auth.authorize();
       _lastAuthorizeTime = DateTime.now();
     } catch (e) {
       debugPrint('Ably authorize failed: $e');
@@ -1349,12 +1172,12 @@ class ChatRealtimeService with WidgetsBindingObserver {
       currentUserId: currentUserId,
       displayName: displayName,
       imageUrl: imageUrl,
-      activity: ChatComposerActivity.none,
+      activity: _localComposerActivity,
     ));
   }
 
-  /// Attach when possible. Failed channels must be released + recreated by
-  /// [_ensureConversationChannelAttached] — attach alone cannot leave Failed.
+  /// Attach when possible. Failed channels must be released + recreated —
+  /// attach alone cannot leave Failed.
   Future<void> _attachOrRecoverChannel(ably.RealtimeChannel channel) async {
     await _ensureConnected(
       clientId: _presenceUserId != null ? '$_presenceUserId' : null,
@@ -1368,31 +1191,37 @@ class ChatRealtimeService with WidgetsBindingObserver {
       );
     }
 
-    var state = channel.state;
-    if (state == ably.ChannelState.attached) return;
-    if (state == ably.ChannelState.failed) {
+    if (channel.state == ably.ChannelState.attached) return;
+    if (channel.state == ably.ChannelState.failed) {
       throw StateError(
         'Ably channel ${channel.name} is Failed — needs release/recreate',
       );
     }
-    // Detaching → wait for Detached, then attach. Attaching/suspended → wait.
-    if (state == ably.ChannelState.detaching ||
-        state == ably.ChannelState.attaching ||
-        state == ably.ChannelState.suspended) {
+    if (channel.state == ably.ChannelState.detaching) {
       await _waitForChannelTerminalAttach(channel);
-      state = channel.state;
-      if (state == ably.ChannelState.attached) return;
-      if (state == ably.ChannelState.failed) {
+      if (channel.state == ably.ChannelState.failed) {
         throw StateError(
           'Ably channel ${channel.name} is Failed — needs release/recreate',
         );
       }
-      if (state != ably.ChannelState.detached &&
-          state != ably.ChannelState.initialized) {
-        return;
-      }
     }
+    // attach() succeeds at once on an attached channel and waits on an
+    // attaching one, so its success is the truth. ably_flutter only updates
+    // `state` from a state-change stream that can lag the call — or miss it
+    // entirely on a channel object created just before — which left channels
+    // reading "initialized" while attached (presence enter / activity
+    // updates then refused to run).
     await channel.attach();
+    channel.state = ably.ChannelState.attached;
+  }
+
+  /// Same reason as the attach: record the detach ourselves rather than wait
+  /// on ably_flutter's state stream.
+  Future<void> _detach(ably.RealtimeChannel channel) async {
+    try {
+      await channel.detach();
+      channel.state = ably.ChannelState.detached;
+    } catch (_) {}
   }
 
   Future<void> _waitForChannelTerminalAttach(
@@ -1419,27 +1248,18 @@ class ChatRealtimeService with WidgetsBindingObserver {
   }
 
   /// Presence enter/get require Attached. If the channel is Failed/Detached,
-  /// release it and recreate subscriptions so presence can work again.
+  /// release it and recreate the binding.
   Future<_ChannelBinding?> _ensureConversationChannelAttached({
     required int conversationId,
     required _ChannelBinding binding,
   }) async {
-    final realtime = _realtime;
-    if (realtime == null) return null;
+    if (_realtime == null) return null;
+    if (!_tokenAllowsConversation(conversationId)) return null;
 
-    if (!_tokenAllowsConversation(conversationId)) {
-      return null;
-    }
-
-    // Never call channel.attach while the connection is connecting/closed.
     await _ensureConnected(
       clientId: _presenceUserId != null ? '$_presenceUserId' : null,
     );
     if (_realtime?.connection.state != ably.ConnectionState.connected) {
-      debugPrint(
-        'Ably ensure attach skipped ($conversationId): connection not connected '
-        '(state=${_realtime?.connection.state.name})',
-      );
       return null;
     }
 
@@ -1463,13 +1283,11 @@ class ChatRealtimeService with WidgetsBindingObserver {
       await _attachOrRecoverChannel(current.channel);
     } catch (e) {
       if (_isCapabilityDeniedError(e)) {
-        _markConversationCapabilityDenied(conversationId);
+        _capabilityDeniedConversationIds.add(conversationId);
         await _detachChannel(conversationId);
         return null;
       }
-      debugPrint(
-        'Ably ensure attach failed ($conversationId): $e',
-      );
+      debugPrint('Ably ensure attach failed ($conversationId): $e');
       if (current.channel.state == ably.ChannelState.failed ||
           current.channel.state == ably.ChannelState.detached) {
         current = await _recoverFailedConversationChannel(
@@ -1489,26 +1307,18 @@ class ChatRealtimeService with WidgetsBindingObserver {
   }) async {
     final realtime = _realtime;
     if (realtime == null) return null;
-
-    if (!_tokenAllowsConversation(conversationId)) {
-      return null;
-    }
+    if (!_tokenAllowsConversation(conversationId)) return null;
 
     final channelName = previous.channel.name;
-    final wasActive = previous.isActiveChat;
-
     try {
       await previous.presenceSubscription?.cancel();
     } catch (_) {}
     try {
       await previous.subscription.cancel();
     } catch (_) {}
-
     try {
-      // Failed / Detached can be released without a successful detach.
       realtime.channels.release(channelName);
     } catch (e) {
-      debugPrint('Ably channel release failed ($conversationId): $e');
       try {
         await previous.channel.detach();
       } catch (_) {}
@@ -1524,21 +1334,11 @@ class ChatRealtimeService with WidgetsBindingObserver {
       final live = _realtime;
       if (live == null ||
           live.connection.state != ably.ConnectionState.connected) {
-        debugPrint(
-          'Ably channel re-attach skipped ($conversationId): '
-          'connection not connected',
-        );
         return null;
       }
       final channel = live.channels.get(channelName);
       await channel.attach();
-      if (channel.state != ably.ChannelState.attached) {
-        debugPrint(
-          'Ably channel re-attach incomplete ($conversationId): '
-          '${channel.state.name}',
-        );
-        return null;
-      }
+      if (channel.state != ably.ChannelState.attached) return null;
 
       final sub = channel.subscribe().listen(
             (msg) => _onMessage(msg, conversationId: conversationId),
@@ -1547,26 +1347,19 @@ class ChatRealtimeService with WidgetsBindingObserver {
       final next = _ChannelBinding(
         channel: channel,
         subscription: sub,
-        isActiveChat: wasActive,
-        // Must re-enter after recreate — Failed wiped presence membership.
+        isActiveChat: previous.isActiveChat,
+        // Failed wiped presence membership — must re-enter.
         hasEnteredPresence: false,
       );
       _bindings[conversationId] = next;
-      debugPrint(
-        'Ably recovered failed channel ${conversationChannelName(conversationId)}',
-      );
       return next;
     } catch (e) {
       if (_isCapabilityDeniedError(e)) {
-        _markConversationCapabilityDenied(conversationId);
+        _capabilityDeniedConversationIds.add(conversationId);
         try {
           _realtime?.channels.release(channelName);
         } catch (_) {}
         _bindings.remove(conversationId);
-        debugPrint(
-          'Ably skip ${conversationChannelName(conversationId)} — '
-          'token capability denied',
-        );
         return null;
       }
       debugPrint('Ably channel re-attach failed ($conversationId): $e');
@@ -1585,7 +1378,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
       'image': imageUrl ?? '',
       'user_id': currentUserId,
       'activity': activity.apiValue,
-      'ts': DateTime.now().millisecondsSinceEpoch,
     };
   }
 
@@ -1600,42 +1392,18 @@ class ChatRealtimeService with WidgetsBindingObserver {
     );
   }
 
-  /// Broadcast WhatsApp-style composer activity to peers via Ably presence.
+  /// Typing / recording / upload status on the open chat's presence. Called
+  /// on changes, plus the chat room's keep-alive while the user is still
+  /// typing or recording (peers' indicators expire without it).
   Future<void> updateComposerActivity({
     required int conversationId,
     required ChatComposerActivity activity,
   }) async {
-    if (_activeChatConversationId == conversationId) {
-      _localComposerActivity = activity;
-    }
+    if (_activeChatConversationId != conversationId) return;
+    _localComposerActivity = activity;
     var binding = _bindings[conversationId];
-    if (binding == null) return;
     final userId = _presenceUserId;
-    if (userId == null) return;
-
-    // Soft leave / resume races clear membership while the chat is still open.
-    // Re-enter so recording/upload status reaches peers.
-    if (!binding.hasEnteredPresence) {
-      if (_activeChatConversationId != conversationId) return;
-      try {
-        final ready = await _ensureConversationChannelAttached(
-          conversationId: conversationId,
-          binding: binding,
-        );
-        if (ready == null) return;
-        binding = ready;
-        await _enterPresence(
-          binding.channel,
-          currentUserId: userId,
-          displayName: _presenceDisplayName,
-          imageUrl: _presenceImageUrl,
-        );
-        binding.hasEnteredPresence = true;
-      } catch (e) {
-        debugPrint('Ably presence re-enter for activity failed: $e');
-        return;
-      }
-    }
+    if (binding == null || userId == null) return;
 
     try {
       if (binding.channel.state != ably.ChannelState.attached) {
@@ -1646,8 +1414,11 @@ class ChatRealtimeService with WidgetsBindingObserver {
         if (ready == null) return;
         binding = ready;
       }
+      if (_activeChatConversationId != conversationId) return;
+      // update() also enters when Ably dropped our membership.
       await binding.channel.presence
           .update(_presencePayload(activity: activity));
+      binding.hasEnteredPresence = true;
     } catch (e) {
       debugPrint('Ably presence activity update failed: $e');
     }
@@ -1675,14 +1446,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
     }
 
     if (isOnline && userId != null) {
-      _touchPresenceSeen(userId, data: _presenceDataMap(msg));
       _lastOnlineByConversation
           .putIfAbsent(conversationId, () => <int>{})
           .add(userId);
     } else if (isOffline && userId != null) {
-      // Conversation leave ≠ app offline. Do NOT clear global last-seen —
-      // that made the stale sweeper treat them as epoch-stale and flash
-      // Offline→Online for peers still on presence:app.
       _lastOnlineByConversation[conversationId]?.remove(userId);
       if (clientId != null) _presenceClientToUserId.remove(clientId);
     }
@@ -1696,9 +1463,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
       ),
     );
 
-    // Composer activity (recording / uploading) rides on presence updates so
-    // peers see it even when the typing REST API only supports is_typing.
-    // Never echo our own updates as peer typing.
+    // Composer activity rides on presence updates. Never echo our own.
     if (userId != null && userId == _presenceUserId) return;
 
     final data = _presenceDataMap(msg);
@@ -1744,17 +1509,8 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
   int? _userIdFromPresence(ably.PresenceMessage msg) {
     // Prefer explicit user_id in presence data — Ably clientId may differ
-    // from the app user id (or be a non-user token id).
-    final data = msg.data;
-    Map<dynamic, dynamic>? map;
-    if (data is Map) {
-      map = data;
-    } else if (data is String && data.isNotEmpty) {
-      try {
-        final decoded = jsonDecode(data);
-        if (decoded is Map) map = decoded;
-      } catch (_) {}
-    }
+    // from the app user id.
+    final map = _presenceDataMap(msg);
     if (map != null) {
       final raw = map['user_id'] ?? map['userId'];
       if (raw is int) return raw;
@@ -1770,13 +1526,11 @@ class ChatRealtimeService with WidgetsBindingObserver {
     required _ChannelBinding binding,
     int? currentUserId,
   }) async {
-    if (binding.presenceSubscription == null) {
-      binding.presenceSubscription =
-          binding.channel.presence.subscribe().listen(
-                (msg) => _emitPresence(conversationId, msg),
-                onError: (Object e) => debugPrint('Ably presence error: $e'),
-              );
-    }
+    binding.presenceSubscription ??=
+        binding.channel.presence.subscribe().listen(
+              (msg) => _emitPresence(conversationId, msg),
+              onError: (Object e) => debugPrint('Ably presence error: $e'),
+            );
     await _emitCurrentPresenceMembers(
       conversationId: conversationId,
       binding: binding,
@@ -1784,9 +1538,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
     );
   }
 
-  /// Re-broadcast who is currently present (needed when opening a chat room
-  /// on a channel that was already subscribed by the inbox).
-  /// Also emits offline for peers who were online but are gone now.
+  /// Broadcast who is in the chat right now (local presence set).
   Future<void> _emitCurrentPresenceMembers({
     required int conversationId,
     required _ChannelBinding binding,
@@ -1796,41 +1548,24 @@ class ChatRealtimeService with WidgetsBindingObserver {
       conversationId: conversationId,
       binding: binding,
     );
-    if (ready == null) {
-      if (!_capabilityDeniedConversationIds.contains(conversationId)) {
-        debugPrint(
-          'Ably presence get skipped ($conversationId): channel not attached',
-        );
-      }
-      return;
-    }
+    if (ready == null) return;
     try {
-      final members = await ready.channel.presence.get(
-        const ably.RealtimePresenceParams(waitForSync: true),
-      );
+      final members = await ready.channel.presence
+          .get(const ably.RealtimePresenceParams(waitForSync: true))
+          .timeout(_presenceGetTimeout);
       final currentlyOnline = <int>{};
-      var selfStillPresent = false;
       for (final member in members) {
         final clientId = member.clientId;
         final userId = _userIdFromPresence(member);
         if (userId != null && clientId != null && clientId.isNotEmpty) {
           _presenceClientToUserId[clientId] = userId;
         }
-        if (currentUserId != null) {
-          if (clientId == '$currentUserId' || userId == currentUserId) {
-            // Still listed on a chat we are not viewing — leave so the peer
-            // stops getting blue ticks while we browse Chats.
-            if (conversationId != _activeChatConversationId) {
-              selfStillPresent = true;
-            }
-            continue;
-          }
+        if (currentUserId != null &&
+            (clientId == '$currentUserId' || userId == currentUserId)) {
+          continue;
         }
         if (clientId == null && userId == null) continue;
-        if (userId != null) {
-          currentlyOnline.add(userId);
-          _touchPresenceSeen(userId, data: _presenceDataMap(member));
-        }
+        if (userId != null) currentlyOnline.add(userId);
         _eventsController.add(
           ChatPresenceChangedEvent(
             conversationId: conversationId,
@@ -1840,155 +1575,21 @@ class ChatRealtimeService with WidgetsBindingObserver {
           ),
         );
       }
-
-      if (selfStillPresent) {
-        unawaited(
-          _leaveConversationPresence(
-            ready,
-            reason: 'stale self on $conversationId',
-          ),
-        );
-      }
-
-      final previous =
-          _lastOnlineByConversation[conversationId] ?? const <int>{};
-      final isActiveChat = conversationId == _activeChatConversationId;
-      if (isActiveChat) {
-        // Additive only in the open room. A presence.get() right after we
-        // send (typing stop / presence.update) often omits peers who are
-        // still present and used to flip the header offline.
-        _lastOnlineByConversation[conversationId] = {
-          ...previous,
-          ...currentlyOnline,
-        };
-      } else {
-        // Inbox listeners: drop peers no longer in the roster so a missed
-        // leave cannot keep message.read → blue ticks forever.
-        for (final leftId in previous.difference(currentlyOnline)) {
-          _eventsController.add(
-            ChatPresenceChangedEvent(
-              conversationId: conversationId,
-              clientId: null,
-              userId: leftId,
-              isOnline: false,
-            ),
-          );
-        }
-        _lastOnlineByConversation[conversationId] = currentlyOnline;
-      }
+      // Additive: a get() right after a presence update can omit peers who
+      // are still there. Real leaves come through [_emitPresence].
+      _lastOnlineByConversation[conversationId] = {
+        ...?_lastOnlineByConversation[conversationId],
+        ...currentlyOnline,
+      };
     } catch (e) {
       debugPrint('Ably presence get failed: $e');
-    }
-  }
-
-  /// Refresh presence for one conversation (active chat safety net).
-  Future<void> refreshPresenceSnapshot(int conversationId) async {
-    final binding = _bindings[conversationId];
-    if (binding == null) return;
-    await _emitCurrentPresenceMembers(
-      conversationId: conversationId,
-      binding: binding,
-      currentUserId: _presenceUserId,
-    );
-  }
-
-  void _startActivePresenceSync() {
-    _activePresenceSyncTimer?.cancel();
-    _activePresenceSyncTimer = Timer.periodic(const Duration(seconds: 12), (_) {
-      final id = _activeChatConversationId;
-      if (id == null) return;
-      unawaited(refreshPresenceSnapshot(id));
-    });
-  }
-
-  void _stopActivePresenceSync() {
-    _activePresenceSyncTimer?.cancel();
-    _activePresenceSyncTimer = null;
-  }
-
-  void _touchPresenceSeen(int userId, {Map<dynamic, dynamic>? data}) {
-    _lastPresenceSeenAt[userId] = DateTime.now();
-    // Only treat peers as heartbeat-capable when their payload includes `ts`.
-    // Snapshot membership alone must NOT enroll heartbeat tracking.
-    if (data != null && data['ts'] != null) {
-      _heartbeatCapableUserIds.add(userId);
-    }
-  }
-
-  void _clearPresenceSeen(int userId) {
-    _lastPresenceSeenAt.remove(userId);
-    _heartbeatCapableUserIds.remove(userId);
-  }
-
-  void _startAppHeartbeat() {
-    _appHeartbeatTimer?.cancel();
-    _appHeartbeatTimer = Timer.periodic(_appHeartbeatEvery, (_) {
-      unawaited(_sendAppPresenceHeartbeat());
-    });
-    // Immediate bump so peers don't wait a full interval after we enter.
-    unawaited(_sendAppPresenceHeartbeat());
-  }
-
-  void _stopAppHeartbeat() {
-    _appHeartbeatTimer?.cancel();
-    _appHeartbeatTimer = null;
-  }
-
-  Future<void> _sendAppPresenceHeartbeat() async {
-    if (_presenceUserId == null) return;
-    if (!_appInForeground || _isLeavingForBackground) return;
-    // App-wide presence never carries chat composer activity.
-    final appPayload = _presencePayload(activity: ChatComposerActivity.none);
-
-    // Membership is the source of truth — don't gate on capability flags
-    // (those can lag behind a successful enter when the API omits capability).
-    if (_hasEnteredAppPresence) {
-      final realtime = _realtime;
-      if (realtime == null || !identical(_appPresenceRealtime, realtime)) {
-        unawaited(_repairAppPresence('app-online channels from a closed client'));
-      } else {
-        for (final appChannel in [
-          _appPresenceChannel,
-          _secondaryAppPresenceChannel,
-        ]) {
-          if (appChannel == null) continue;
-          try {
-            // update() also re-enters if Ably dropped our membership.
-            await appChannel.presence.update(appPayload);
-          } catch (e) {
-            if (identical(appChannel, _appPresenceChannel)) {
-              unawaited(_repairAppPresence('heartbeat failed: $e'));
-            }
-          }
-        }
-      }
-    }
-
-    final activeId = _activeChatConversationId;
-    if (activeId == null) return;
-    final binding = _bindings[activeId];
-    if (binding == null ||
-        binding.channel.state != ably.ChannelState.attached) {
-      return;
-    }
-    try {
-      // Keep typing/recording/upload status across heartbeats; also re-enters
-      // the open chat if something dropped us from it.
-      await binding.channel.presence.update(
-        _presencePayload(activity: _localComposerActivity),
-      );
-      if (_activeChatConversationId == activeId) {
-        binding.hasEnteredPresence = true;
-      }
-    } catch (e) {
-      debugPrint('Ably conversation presence heartbeat failed: $e');
     }
   }
 
   void _startPresenceWatchdog() {
     _presenceWatchdogTimer ??= Timer.periodic(
       _presenceWatchdogEvery,
-      (_) => _checkOwnAppPresence(),
+      (_) => _checkOwnPresence(),
     );
   }
 
@@ -1997,10 +1598,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
     _presenceWatchdogTimer = null;
   }
 
-  /// WhatsApp rule: Online for as long as the app is open. Re-establish our
-  /// membership whenever the connection, a channel, or the open chat binding
-  /// died while we stayed in the foreground.
-  void _checkOwnAppPresence() {
+  /// Online for as long as the app is open: re-establish our channels when
+  /// the connection or a channel died while we stayed in the foreground.
+  /// Reads local state only — no Ably traffic while healthy.
+  void _checkOwnPresence() {
     if (_presenceUserId == null ||
         !_appInForeground ||
         _isLeavingForBackground) {
@@ -2010,46 +1611,48 @@ class ChatRealtimeService with WidgetsBindingObserver {
     final conn = realtime?.connection.state;
     if (conn == ably.ConnectionState.connecting) return;
     if (realtime == null || conn != ably.ConnectionState.connected) {
-      unawaited(_repairAppPresence('connection ${conn?.name ?? 'missing'}'));
+      unawaited(_repairPresence('connection ${conn?.name ?? 'missing'}'));
       return;
     }
 
-    final primary = _appPresenceChannel;
-    final primaryHealthy = _hasEnteredAppPresence &&
-        primary != null &&
-        identical(_appPresenceRealtime, realtime) &&
-        primary.state == ably.ChannelState.attached;
+    final app = _appPresenceChannel;
+    final appHealthy = _hasEnteredAppPresence &&
+        app != null &&
+        identical(_appChannelsRealtime, realtime) &&
+        app.state == ably.ChannelState.attached;
     final activeId = _activeChatConversationId;
+    final activeBinding = activeId == null ? null : _bindings[activeId];
     final activeUnbound = activeId != null &&
-        !_bindings.containsKey(activeId) &&
-        !_capabilityDeniedConversationIds.contains(activeId);
-    if (activeUnbound) _pendingResubscribeIds.add(activeId);
-    if (!primaryHealthy || activeUnbound || _pendingResubscribeIds.isNotEmpty) {
+        !_capabilityDeniedConversationIds.contains(activeId) &&
+        (activeBinding == null ||
+            activeBinding.channel.state != ably.ChannelState.attached);
+    if (!appHealthy || activeUnbound) {
       unawaited(
-        _repairAppPresence(
-          'app-online ${primary?.state.name ?? 'missing'}, '
-          'open chat bound=${!activeUnbound}, '
-          'pending=${_pendingResubscribeIds.length}',
+        _repairPresence(
+          'app-online ${app?.state.name ?? 'missing'}, '
+          'open chat bound=${!activeUnbound}',
         ),
       );
       return;
     }
 
-    final secondary = _secondaryAppPresenceChannel;
-    if (secondary != null &&
-        (secondary.state == ably.ChannelState.failed ||
-            secondary.state == ably.ChannelState.detached)) {
-      unawaited(
-        _repairAppPresence('secondary ${secondary.state.name}', light: true),
-      );
+    final userChannel = _userChannel;
+    final denied = _userChannelDeniedForCapability != null &&
+        _userChannelDeniedForCapability == (_lastCapability ?? '');
+    if (!denied &&
+        (userChannel == null ||
+            userChannel.state != ably.ChannelState.attached)) {
+      unawaited(_repairPresence('user channel', light: true));
     }
-    if (_appHeartbeatTimer == null) _startAppHeartbeat();
-    if (_appPresenceSyncTimer == null) _startAppPresenceSync();
+    // Re-attach Chats-list listeners that dropped (diff only when healthy).
+    if (_inboxListenIds.isNotEmpty && activeId == null) {
+      unawaited(_syncInboxListeners());
+    }
   }
 
-  /// [light] only re-runs the app-online attach; otherwise do the full resume
-  /// path (reconnect, re-enter, re-attach queued conversation channels).
-  Future<void> _repairAppPresence(String reason, {bool light = false}) async {
+  /// [light] only re-runs the app-wide attach; otherwise the full resume path
+  /// (reconnect, re-enter, re-attach the open chat).
+  Future<void> _repairPresence(String reason, {bool light = false}) async {
     final userId = _presenceUserId;
     if (userId == null || !_appInForeground || _isLeavingForBackground) {
       return;
@@ -2059,7 +1662,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
     final last = _lastPresenceRepairAt;
     if (last != null && now.difference(last) < _presenceRepairBackoff) return;
     _lastPresenceRepairAt = now;
-    debugPrint('Ably app-online repair: $reason');
+    debugPrint('Ably presence repair: $reason');
 
     final future = light
         ? ensureAppPresence(currentUserId: userId)
@@ -2072,7 +1675,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
     try {
       await future;
     } catch (e) {
-      debugPrint('Ably app-online repair failed: $e');
+      debugPrint('Ably presence repair failed: $e');
     } finally {
       _presenceRepairFuture = null;
     }
@@ -2088,81 +1691,28 @@ class ChatRealtimeService with WidgetsBindingObserver {
     }
   }
 
-  Timer? _appPresenceSyncTimer;
-
-  void _startAppPresenceSync() {
-    _appPresenceSyncTimer?.cancel();
-    // Burst snapshots after attach so opening Chats picks up peers who were
-    // already Online (get() can race sync on some devices).
-    unawaited(() async {
-      for (final delayMs in [300, 900, 2000]) {
-        await Future<void>.delayed(Duration(milliseconds: delayMs));
-        if (!_hasEnteredAppPresence) return;
-        await refreshAppPresenceSnapshot();
-      }
-    }());
-    _appPresenceSyncTimer = Timer.periodic(const Duration(seconds: 8), (_) {
-      unawaited(refreshAppPresenceSnapshot());
-    });
-  }
-
-  void _stopAppPresenceSync() {
-    _appPresenceSyncTimer?.cancel();
-    _appPresenceSyncTimer = null;
-  }
-
-
-
-
-  /// Brief inactive (control center / notification shade): do NOT stop app
-  /// heartbeats or presence:app. Stopping them made Chats-tab users look
-  /// Offline after ~5s even while still in the app. Real background still
-  /// leaves via [onAppPaused].
-  Future<void> onAppInactiveSoftLeave() async {
-    if (_isLeavingForBackground || _softLeftPresence) return;
-    _softLeftPresence = true;
-    // Pause only the open-chat presence sync — keep app Online heartbeat.
-    _stopActivePresenceSync();
-  }
-
-  /// App backgrounded / killed path — leave presence so peers go offline.
-  /// Leaves run in parallel, then we close the connection so Ably drops
-  /// presence immediately when the leave packet makes it out.
+  /// App backgrounded: leave presence so peers see Offline right away, then
+  /// close the connection. From here on, delivery receipts come from pushes.
   ///
-  /// Uses [_lifecycleEpoch] so a quick resume cannot be undone by a late
-  /// `close()` from this pause (that left peers seeing Offline forever).
+  /// [_lifecycleEpoch] stops a late `close()` from undoing a quick resume.
   Future<void> onAppPaused() async {
     if (_isLeavingForBackground) return;
     final epoch = ++_lifecycleEpoch;
     _isLeavingForBackground = true;
-    _lifecycleLeaveTimer?.cancel();
-    _lifecycleLeaveTimer = null;
-    _softLeftPresence = false;
     try {
       _stopPresenceWatchdog();
       _cancelPendingAppOfflineChecks();
-      _stopActivePresenceSync();
-      _stopAppHeartbeat();
-      _stopAppPresenceSync();
 
       final tasks = <Future<void>>[];
-
       final appChannel = _appPresenceChannel;
-      final secondary = _secondaryAppPresenceChannel;
-      if ((appChannel != null || secondary != null) &&
-          _hasEnteredAppPresence) {
+      if (appChannel != null && _hasEnteredAppPresence) {
         _hasEnteredAppPresence = false;
-        _enteredAppChannelNames.clear();
-        for (final ch in [appChannel, secondary]) {
-          if (ch == null) continue;
-          tasks.add(() async {
-            try {
-              await ch.presence.leave();
-            } catch (_) {}
-          }());
-        }
+        tasks.add(() async {
+          try {
+            await appChannel.presence.leave();
+          } catch (_) {}
+        }());
       }
-
       for (final binding in _bindings.values) {
         if (!binding.hasEnteredPresence) continue;
         binding.hasEnteredPresence = false;
@@ -2170,12 +1720,9 @@ class ChatRealtimeService with WidgetsBindingObserver {
         tasks.add(() async {
           try {
             await channel.presence.leave();
-          } catch (e) {
-            debugPrint('Ably presence leave (pause) failed: $e');
-          }
+          } catch (_) {}
         }());
       }
-
       if (tasks.isNotEmpty) {
         try {
           await Future.wait(tasks).timeout(const Duration(milliseconds: 450));
@@ -2184,56 +1731,17 @@ class ChatRealtimeService with WidgetsBindingObserver {
         }
       }
 
-      // Aborted — user already came back; do not tear down the new session.
       if (epoch != _lifecycleEpoch) return;
-
-      // Closing forces an immediate presence leave on Ably's side when possible.
-      _pendingResubscribeIds.addAll(_bindings.keys);
-      final activeId = _activeChatConversationId;
-      if (activeId != null) _pendingResubscribeIds.add(activeId);
-
-      for (final binding in _bindings.values) {
-        try {
-          await binding.presenceSubscription?.cancel();
-        } catch (_) {}
-        try {
-          await binding.subscription.cancel();
-        } catch (_) {}
-      }
-      _bindings.clear();
+      final realtime = _realtime;
+      _discardRealtimeBoundState();
       try {
-        await _appPresenceSubscription?.cancel();
-      } catch (_) {}
-      _appPresenceSubscription = null;
-      try {
-        await _appMessageSubscription?.cancel();
-      } catch (_) {}
-      _appMessageSubscription = null;
-      try {
-        await _secondaryAppPresenceSubscription?.cancel();
-      } catch (_) {}
-      _secondaryAppPresenceSubscription = null;
-      _appPresenceSubscribedChannel = null;
-      _secondaryAppPresenceSubscribedChannel = null;
-      _appPresenceChannel = null;
-      _secondaryAppPresenceChannel = null;
-      _hasEnteredAppPresence = false;
-      _enteredAppChannelNames.clear();
-
-      if (epoch != _lifecycleEpoch) return;
-
-      try {
-        await _realtime?.close().timeout(const Duration(milliseconds: 400));
+        await realtime?.close().timeout(const Duration(milliseconds: 400));
       } catch (e) {
         debugPrint('Ably close (pause) failed: $e');
       }
-
       if (epoch != _lifecycleEpoch) return;
 
-      unawaited(_connectionStateSubscription?.cancel());
-      _connectionStateSubscription = null;
-      _realtime = null;
-      _appPresenceRealtime = null;
+      if (identical(_realtime, realtime)) _realtime = null;
       _connectFuture = null;
       _ensureAppPresenceFuture = null;
       _authorizeFuture = null;
@@ -2249,25 +1757,17 @@ class ChatRealtimeService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.inactive:
-        // Keep Online — notification shade / permission sheets fire inactive
-        // without the user leaving the app (WhatsApp stays green here).
-        _lifecycleLeaveTimer?.cancel();
-        _lifecycleLeaveTimer = null;
+        // Notification shade / permission sheets fire inactive without the
+        // user leaving the app — stay Online.
         break;
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
         _appInForeground = false;
-        _lifecycleLeaveTimer?.cancel();
-        _lifecycleLeaveTimer = null;
         _scheduleBackgroundLeave();
-        break;
       case AppLifecycleState.resumed:
         _appInForeground = true;
-        _lifecycleLeaveTimer?.cancel();
-        _lifecycleLeaveTimer = null;
         _cancelBackgroundLeave();
-        // Invalidate any in-flight pause teardown immediately.
         _lifecycleEpoch++;
         _isLeavingForBackground = false;
         final userId = _presenceUserId;
@@ -2282,7 +1782,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
         } else {
           unawaited(bootstrapFromLocalSession(forceReenter: true));
         }
-        break;
     }
   }
 
@@ -2298,7 +1797,8 @@ class ChatRealtimeService with WidgetsBindingObserver {
     _backgroundLeaveTimer = null;
   }
 
-  /// App resumed — restore app-wide online + open-chat conversation presence.
+  /// App resumed — restore app-wide online, the inbox channel and the open
+  /// chat's presence.
   Future<void> onAppResumed({
     required int currentUserId,
     String? displayName,
@@ -2321,34 +1821,22 @@ class ChatRealtimeService with WidgetsBindingObserver {
     String? displayName,
     String? imageUrl,
   }) async {
-    // Cancel in-flight pause so it cannot close the connection we rebuild.
+    // Cancel an in-flight pause so it cannot close the connection we rebuild.
     _cancelBackgroundLeave();
     _lifecycleEpoch++;
     _isLeavingForBackground = false;
-    _softLeftPresence = false;
 
     _presenceUserId = currentUserId;
     if (displayName != null) _presenceDisplayName = displayName;
     if (imageUrl != null) _presenceImageUrl = imageUrl;
     _startPresenceWatchdog();
 
-    // Let an in-flight pause abort before we reconnect (avoids close-after-enter).
+    // Let an in-flight pause abort before we reconnect.
     await Future<void>.delayed(const Duration(milliseconds: 80));
     if (!_appInForeground) return;
 
-    // Allow one more presence:app attempt after background — a stale deny
-    // must never keep the user invisible.
-    _appPresenceCapabilityDenied = false;
-    _deniedAppPresenceChannels.remove(primaryAppPresenceChannel);
-
-    final conn = _realtime?.connection.state;
-    final softOnly = _realtime != null &&
-        _pendingResubscribeIds.isEmpty &&
-        _hasEnteredAppPresence &&
-        conn == ably.ConnectionState.connected;
-
-    // Dead connection after background — drop it so _ensureConnected rebuilds.
     final current = _realtime;
+    final conn = current?.connection.state;
     if (current != null &&
         (conn == ably.ConnectionState.closed ||
             conn == ably.ConnectionState.failed ||
@@ -2366,8 +1854,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
     await _authorizeIfNeeded();
     if (!_appInForeground) return;
 
-    // Always force enter/update FIRST so peers flip Online within ~1s.
-    var entered = false;
     try {
       await ensureAppPresence(
         currentUserId: currentUserId,
@@ -2375,11 +1861,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
         imageUrl: imageUrl ?? _presenceImageUrl,
         forceReenter: true,
       );
-      entered = _hasEnteredAppPresence;
     } catch (e) {
       debugPrint('Ably ensureAppPresence on resume failed: $e');
     }
-    if (!entered) {
+    if (!_hasEnteredAppPresence && _appInForeground) {
       // One retry after a short delay (common right after OS wake).
       await Future<void>.delayed(const Duration(milliseconds: 350));
       try {
@@ -2394,279 +1879,21 @@ class ChatRealtimeService with WidgetsBindingObserver {
       }
     }
 
-    // Soft inactive / connection survived — bump online and only re-sync the
-    // open chat (skip O(n) channel re-attach storm).
-    if (softOnly && _realtime != null && _hasEnteredAppPresence) {
-      final activeId = _activeChatConversationId;
-      if (activeId != null) {
-        await subscribeToConversation(
-          conversationId: activeId,
-          currentUserId: currentUserId,
-          displayName: displayName ?? _presenceDisplayName,
-          imageUrl: imageUrl ?? _presenceImageUrl,
-        );
-      }
-      _startAppHeartbeat();
-      _startAppPresenceSync();
-      return;
-    }
-
-    // Re-attach channels torn down when we closed the connection on pause.
-    // Cap fan-out — reattaching dozens of channels after a notification tap
-    // is a common Simulator jetsam path.
-    final pending = _pendingResubscribeIds.toList(growable: false);
-    _pendingResubscribeIds.clear();
     final activeId = _activeChatConversationId;
-    final capped = <int>[];
-    if (activeId != null && pending.contains(activeId)) {
-      capped.add(activeId);
-    }
-    for (final id in pending) {
-      if (capped.length >= 20) break;
-      if (!capped.contains(id)) capped.add(id);
-    }
-    for (final conversationId in capped) {
-      if (_bindings.containsKey(conversationId)) continue;
-      final isActive = conversationId == activeId;
-      if (isActive) {
-        await subscribeToConversation(
-          conversationId: conversationId,
-          currentUserId: currentUserId,
-          displayName: displayName ?? _presenceDisplayName,
-          imageUrl: imageUrl ?? _presenceImageUrl,
-        );
-      } else {
-        await _attachChannel(
-          conversationId: conversationId,
-          enterPresence: false,
-          displayName: displayName ?? _presenceDisplayName,
-          imageUrl: imageUrl ?? _presenceImageUrl,
-          currentUserId: currentUserId,
-          isActiveChat: false,
-          refreshPresenceSnapshot: false,
-        );
-      }
-    }
-
-    for (final entry in _bindings.entries.toList()) {
-      final conversationId = entry.key;
-      var binding = entry.value;
-      final healed = await _ensureConversationChannelAttached(
-        conversationId: conversationId,
-        binding: binding,
-      );
-      if (healed != null) binding = healed;
-
-      final isActive = conversationId == _activeChatConversationId;
-      if (!isActive) {
-        // Always leave — Ably auto-re-entry can put us back after reconnect
-        // even when hasEnteredPresence is already false.
-        await _leaveConversationPresence(binding, reason: 'resume inbox');
-        await _startPresenceListening(
-          conversationId: conversationId,
-          binding: binding,
-          currentUserId: currentUserId,
-        );
-        continue;
-      }
-      if (binding.hasEnteredPresence) {
-        await _startPresenceListening(
-          conversationId: conversationId,
-          binding: binding,
-          currentUserId: currentUserId,
-        );
-        continue;
-      }
-      try {
-        await _enterPresence(
-          binding.channel,
-          currentUserId: currentUserId,
-          displayName: _presenceDisplayName,
-          imageUrl: _presenceImageUrl,
-        );
-        binding.hasEnteredPresence = true;
-      } catch (e) {
-        debugPrint('Ably presence enter (resume) failed: $e');
-      }
-      await _startPresenceListening(
-        conversationId: conversationId,
-        binding: binding,
+    if (activeId != null && _appInForeground) {
+      await subscribeToConversation(
+        conversationId: activeId,
         currentUserId: currentUserId,
+        displayName: displayName ?? _presenceDisplayName,
+        imageUrl: imageUrl ?? _presenceImageUrl,
       );
     }
-
-    if (_activeChatConversationId != null) {
-      _startActivePresenceSync();
-    }
-    _startAppHeartbeat();
-    _startAppPresenceSync();
+    unawaited(_syncInboxListeners());
   }
 
-  Future<void> _attachChannel({
-    required int conversationId,
-    required bool enterPresence,
-    String? displayName,
-    String? imageUrl,
-    int? currentUserId,
-    bool isActiveChat = false,
-    bool refreshPresenceSnapshot = true,
-  }) async {
-    if (!_tokenAllowsConversation(conversationId)) {
-      return;
-    }
-
-    final existing = _bindings[conversationId];
-    if (existing != null) {
-      // Heal Failed/Detached channels before presence enter/get.
-      final binding = await _ensureConversationChannelAttached(
-            conversationId: conversationId,
-            binding: existing,
-          ) ??
-          _bindings[conversationId];
-      if (binding == null) return;
-
-      // Already subscribed — upgrade when opening a chat room; inbox stays
-      // listen-only (no presence enter) so read receipts stay correct.
-      if (!isActiveChat) {
-        // Never drop the open chat's presence from an inbox sync — inbox syncs
-        // run on every incoming message, and the peer would see us leave the
-        // room (Offline, no blue ticks) each time.
-        final isOpenChat = conversationId == _activeChatConversationId;
-        if (!enterPresence && !isOpenChat && binding.hasEnteredPresence) {
-          // Leave even if the flag says we already left — SDK may have
-          // re-entered presence after a reconnect (false blue ticks on Chats).
-          await _leaveConversationPresence(binding, reason: 'inbox listen-only');
-        } else if (enterPresence &&
-            currentUserId != null &&
-            !binding.hasEnteredPresence) {
-          try {
-            await _enterPresence(
-              binding.channel,
-              currentUserId: currentUserId,
-              displayName: displayName,
-              imageUrl: imageUrl,
-            );
-            binding.hasEnteredPresence = true;
-          } catch (e) {
-            if (_isCapabilityDeniedError(e)) {
-              _markConversationCapabilityDenied(conversationId);
-              await _detachChannel(conversationId);
-              return;
-            }
-            debugPrint('Ably presence enter (inbox) failed: $e');
-          }
-        }
-        // Skip re-snapshot on routine inbox sync — presence.get() per thread
-        // on every refresh is a major Simulator memory spike.
-        if (refreshPresenceSnapshot) {
-          await _startPresenceListening(
-            conversationId: conversationId,
-            binding: binding,
-            currentUserId: currentUserId,
-          );
-        } else if (binding.presenceSubscription == null) {
-          await _startPresenceListening(
-            conversationId: conversationId,
-            binding: binding,
-            currentUserId: currentUserId,
-          );
-        }
-        return;
-      }
-      // Upgrade inbox listener → active chat (enter presence if needed).
-      if (isActiveChat) {
-        _activeChatConversationId = conversationId;
-        binding.isActiveChat = true;
-        if (enterPresence &&
-            currentUserId != null &&
-            !binding.hasEnteredPresence) {
-          try {
-            await _enterPresence(
-              binding.channel,
-              currentUserId: currentUserId,
-              displayName: displayName,
-              imageUrl: imageUrl,
-            );
-            binding.hasEnteredPresence = true;
-          } catch (e) {
-            if (_isCapabilityDeniedError(e)) {
-              _markConversationCapabilityDenied(conversationId);
-              await _detachChannel(conversationId);
-              return;
-            }
-            debugPrint('Ably presence enter (upgrade) failed: $e');
-          }
-        }
-        // Always (re)listen + snapshot members so chat room gets current
-        // online state even if inbox already subscribed earlier.
-        await _startPresenceListening(
-          conversationId: conversationId,
-          binding: binding,
-          currentUserId: currentUserId,
-        );
-      }
-      return;
-    }
-
-    final channelName = conversationChannelName(conversationId);
-    final channel = _realtime!.channels.get(channelName);
-
-    var hasPresence = false;
-    try {
-      await channel.attach();
-      if (enterPresence && currentUserId != null) {
-        await _enterPresence(
-          channel,
-          currentUserId: currentUserId,
-          displayName: displayName,
-          imageUrl: imageUrl,
-        );
-        hasPresence = true;
-      }
-    } catch (e) {
-      if (_isCapabilityDeniedError(e)) {
-        _markConversationCapabilityDenied(conversationId);
-        try {
-          _realtime!.channels.release(channelName);
-        } catch (_) {}
-        debugPrint(
-          'Ably skip $channelName — token capability denied',
-        );
-        return;
-      }
-      debugPrint('Ably channel attach failed ($conversationId): $e');
-      // Don't keep a Failed channel binding — it only feeds recover spam.
-      if (channel.state == ably.ChannelState.failed) {
-        try {
-          _realtime!.channels.release(channelName);
-        } catch (_) {}
-        return;
-      }
-    }
-
-    final sub = channel.subscribe().listen(
-          (msg) => _onMessage(msg, conversationId: conversationId),
-          onError: (Object e) => debugPrint('Ably subscribe error: $e'),
-        );
-    final binding = _ChannelBinding(
-      channel: channel,
-      subscription: sub,
-      isActiveChat: isActiveChat,
-      hasEnteredPresence: hasPresence,
-    );
-    _bindings[conversationId] = binding;
-    if (isActiveChat) {
-      _activeChatConversationId = conversationId;
-    }
-    // Inbox + chat room both need presence so online/offline stays live.
-    await _startPresenceListening(
-      conversationId: conversationId,
-      binding: binding,
-      currentUserId: currentUserId,
-    );
-  }
-
-  /// Active chat room — enter presence so others see you online in-thread.
+  /// Chat room open: attach this conversation's channel and enter its
+  /// presence. Any other conversation channel is dropped — only the open
+  /// chat is attached.
   Future<void> subscribeToConversation({
     required int conversationId,
     required int currentUserId,
@@ -2676,20 +1903,53 @@ class ChatRealtimeService with WidgetsBindingObserver {
     _presenceUserId = currentUserId;
     if (displayName != null) _presenceDisplayName = displayName;
     if (imageUrl != null) _presenceImageUrl = imageUrl;
+    if (_activeChatConversationId != conversationId) {
+      _localComposerActivity = ChatComposerActivity.none;
+    }
+    _activeChatConversationId = conversationId;
 
-    // Keep app-wide online even if Home's ensureAppPresence raced/failed.
-    // Await so subscribe attaches after we are on presence:app (viewers get
-    // enter/update + can refresh the member snapshot).
-    await ensureAppPresence(
+    final inFlight = _subscribeFuture;
+    if (inFlight != null && _subscribeFutureConversationId == conversationId) {
+      await inFlight;
+      if (_isOpenChatHealthy(conversationId)) return;
+    }
+
+    final future = _doSubscribeToConversation(
+      conversationId: conversationId,
       currentUserId: currentUserId,
-      displayName: displayName,
-      imageUrl: imageUrl,
     );
+    _subscribeFuture = future;
+    _subscribeFutureConversationId = conversationId;
+    try {
+      await future;
+    } finally {
+      if (identical(_subscribeFuture, future)) {
+        _subscribeFuture = null;
+        _subscribeFutureConversationId = null;
+      }
+    }
+  }
+
+  bool _isOpenChatHealthy(int conversationId) {
+    final binding = _bindings[conversationId];
+    return _activeChatConversationId == conversationId &&
+        binding != null &&
+        binding.channel.state == ably.ChannelState.attached &&
+        binding.hasEnteredPresence;
+  }
+
+  bool _isOpen(int conversationId) =>
+      _activeChatConversationId == conversationId && _appInForeground;
+
+  Future<void> _doSubscribeToConversation({
+    required int conversationId,
+    required int currentUserId,
+  }) async {
+    await ensureAppPresence(currentUserId: currentUserId);
+    if (!_isOpen(conversationId)) return;
 
     await _ensureConnected(clientId: '$currentUserId');
-    // Force a fresh token only when the chat isn't attached and the current
-    // token doesn't grant it (created/joined after the token was issued).
-    // This runs after every send / message load.
+    // A chat created or joined after the token was issued needs a new token.
     final bound = _bindings[conversationId];
     final attached =
         bound != null && bound.channel.state == ably.ChannelState.attached;
@@ -2701,77 +1961,93 @@ class ChatRealtimeService with WidgetsBindingObserver {
       _lastAuthorizeTime = null;
     }
     await _authorizeIfNeeded();
-    // Clear a stale deny if the new token now grants this conversation.
-    if (_lastCapability != null &&
-        _capabilityAllowsChannel(
-          _lastCapability,
-          conversationChannelName(conversationId),
-        )) {
+    if (_capabilityAllowsChannel(
+      _lastCapability,
+      conversationChannelName(conversationId),
+    )) {
       _capabilityDeniedConversationIds.remove(conversationId);
     }
+    if (!_isOpen(conversationId)) return;
 
-    // Downgrade previous active chat (keep inbox listener).
-    if (_activeChatConversationId != null &&
-        _activeChatConversationId != conversationId) {
-      await _downgradeActiveChat(_activeChatConversationId!);
+    for (final id in _bindings.keys.toList()) {
+      if (id != conversationId) await _detachChannel(id);
     }
+    if (!_tokenAllowsConversation(conversationId)) return;
+    if (_realtime == null) return;
 
-    await _attachChannel(
-      conversationId: conversationId,
-      enterPresence: true,
-      displayName: displayName,
-      imageUrl: imageUrl,
-      currentUserId: currentUserId,
-      isActiveChat: true,
-    );
-    _startActivePresenceSync();
-  }
-
-  /// Inbox listens to many conversations without entering presence on each.
-  /// Returns the set of conversation IDs currently subscribed (inbox + active).
-  Set<int> get subscribedConversationIds => _bindings.keys.toSet();
-
-  Future<void> subscribeInboxConversations({
-    required List<int> conversationIds,
-    required int currentUserId,
-    String? displayName,
-    String? imageUrl,
-  }) async {
-    if (conversationIds.isEmpty) return;
-    _presenceUserId = currentUserId;
-    if (displayName != null) _presenceDisplayName = displayName;
-    if (imageUrl != null) _presenceImageUrl = imageUrl;
-
-    await _ensureConnected(clientId: '$currentUserId');
-    await _authorizeIfNeeded();
-
-    final wanted = conversationIds.toSet();
-    final toRemove = _bindings.keys
-        .where((id) => !wanted.contains(id) && id != _activeChatConversationId)
-        .toList();
-    for (final id in toRemove) {
-      await _detachChannel(id);
-    }
-
-    for (final id in wanted) {
-      // The open chat is owned by subscribeToConversation; the heartbeat
-      // keeps its presence alive.
-      if (id == _activeChatConversationId && _bindings.containsKey(id)) {
-        continue;
+    var binding = _bindings[conversationId];
+    if (binding != null) {
+      binding = await _ensureConversationChannelAttached(
+            conversationId: conversationId,
+            binding: binding,
+          ) ??
+          _bindings[conversationId];
+      if (binding == null) return;
+    } else {
+      final channelName = conversationChannelName(conversationId);
+      final channel = await _freshChannel(channelName);
+      try {
+        await _attachOrRecoverChannel(channel);
+      } catch (e) {
+        if (_isCapabilityDeniedError(e)) {
+          _capabilityDeniedConversationIds.add(conversationId);
+          debugPrint('Ably skip $channelName — token capability denied');
+        } else {
+          debugPrint('Ably channel attach failed ($conversationId): $e');
+        }
+        if (channel.state == ably.ChannelState.failed) {
+          try {
+            _realtime?.channels.release(channelName);
+          } catch (_) {}
+        }
+        return;
       }
-      // Listen only on inbox — do NOT enter presence. Presence means "in this
-      // chat" and the backend treats it as read; entering here falsely shows
-      // blue ticks while the peer is still on the Chats list.
-      await _attachChannel(
-        conversationId: id,
-        enterPresence: false,
-        isActiveChat: false,
-        currentUserId: currentUserId,
-        displayName: displayName,
-        imageUrl: imageUrl,
-        refreshPresenceSnapshot: false,
+      if (!_isOpen(conversationId)) {
+        await _detach(channel);
+        return;
+      }
+      final sub = channel.subscribe().listen(
+            (msg) => _onMessage(msg, conversationId: conversationId),
+            onError: (Object e) => debugPrint('Ably subscribe error: $e'),
+          );
+      binding = _ChannelBinding(
+        channel: channel,
+        subscription: sub,
+        isActiveChat: true,
+        hasEnteredPresence: false,
       );
+      _bindings[conversationId] = binding;
     }
+    binding.isActiveChat = true;
+
+    if (!binding.hasEnteredPresence) {
+      try {
+        await _enterPresence(
+          binding.channel,
+          currentUserId: currentUserId,
+          displayName: _presenceDisplayName,
+          imageUrl: _presenceImageUrl,
+        );
+        binding.hasEnteredPresence = true;
+      } catch (e) {
+        if (_isCapabilityDeniedError(e)) {
+          _capabilityDeniedConversationIds.add(conversationId);
+          await _detachChannel(conversationId);
+          return;
+        }
+        debugPrint('Ably presence enter (chat) failed: $e');
+      }
+    }
+    // Closed while entering — do not stay "in the chat" from the Chats list.
+    if (!_isOpen(conversationId)) {
+      await _detachChannel(conversationId);
+      return;
+    }
+    await _startPresenceListening(
+      conversationId: conversationId,
+      binding: binding,
+      currentUserId: currentUserId,
+    );
   }
 
   void _onMessage(
@@ -2854,28 +2130,29 @@ class ChatRealtimeService with WidgetsBindingObserver {
         case 'message.read':
           // Prefer the channel id — payload conversation_id is often wrong
           // or missing and would drop the receipt in the open chat room.
-          debugPrint(
-            'Ably message.read conversation=$conversationId '
-            'user=${data['user_id']} last=${data['last_read_message_id']}',
-          );
           _eventsController.add(
             ChatMessageReadEvent(
               conversationId: conversationId,
-              userId: _asInt(data['user_id']),
-              lastReadMessageId: _asInt(data['last_read_message_id']),
+              userId: _asInt(
+                data['user_id'] ??
+                    data['userId'] ??
+                    data['reader_id'] ??
+                    data['readerId'],
+              ),
+              lastReadMessageId: _asInt(
+                data['last_read_message_id'] ?? data['lastReadMessageId'],
+              ),
+              readAt: (data['read_at'] ?? data['readAt'])?.toString(),
             ),
           );
         case 'message.delivered':
-          debugPrint(
-            'Ably message.delivered conversation=$conversationId '
-            'user=${data['user_id'] ?? data['userId']}',
-          );
           _eventsController.add(
             ChatMessageDeliveredEvent(
               conversationId: conversationId,
               userId: _asInt(
                 data['user_id'] ?? data['userId'] ?? data['reader_id'],
               ),
+              deliveredAt: data['delivered_at']?.toString(),
             ),
           );
         case 'user.typing':
@@ -2911,6 +2188,9 @@ class ChatRealtimeService with WidgetsBindingObserver {
               ),
             );
           }
+        case 'message.pinned':
+          // Pinned-message banner is not built yet.
+          break;
         default:
           debugPrint('Ably unknown event: $name');
       }
@@ -2960,107 +2240,86 @@ class ChatRealtimeService with WidgetsBindingObserver {
     return int.tryParse(value.toString());
   }
 
-  Future<void> _downgradeActiveChat(int conversationId) async {
-    final binding = _bindings[conversationId];
-    if (binding == null) {
-      if (_activeChatConversationId == conversationId) {
-        _activeChatConversationId = null;
-      }
-      _stopActivePresenceSync();
-      return;
-    }
-    // Leaving the chat room must leave presence so new messages stay
-    // delivered (not seen) until the peer opens the thread again.
-    binding.isActiveChat = false;
-    if (_activeChatConversationId == conversationId) {
-      _activeChatConversationId = null;
-    }
-    _stopActivePresenceSync();
-    await _leaveConversationPresence(binding, reason: 'downgrade');
-    if (binding.presenceSubscription == null) {
-      await _startPresenceListening(
-        conversationId: conversationId,
-        binding: binding,
-      );
-    } else {
-      await _emitCurrentPresenceMembers(
-        conversationId: conversationId,
-        binding: binding,
-      );
-    }
-  }
-
   Future<void> _detachChannel(int conversationId) async {
     final binding = _bindings.remove(conversationId);
     if (binding == null) return;
-    await binding.presenceSubscription?.cancel();
-    await binding.subscription.cancel();
+    _lastOnlineByConversation.remove(conversationId);
     try {
-      await _leaveConversationPresence(binding, reason: 'detach');
-      await binding.channel.detach();
+      await binding.presenceSubscription?.cancel();
     } catch (_) {}
-    if (_activeChatConversationId == conversationId) {
-      _activeChatConversationId = null;
+    try {
+      await binding.subscription.cancel();
+    } catch (_) {}
+    // Re-opened meanwhile — the new binding owns the same channel object.
+    if (_isOpen(conversationId) || _bindings.containsKey(conversationId)) {
+      return;
     }
+    try {
+      if (binding.hasEnteredPresence) {
+        binding.hasEnteredPresence = false;
+        await binding.channel.presence.leave();
+      }
+      if (_isOpen(conversationId) || _bindings.containsKey(conversationId)) {
+        return;
+      }
+      await _detach(binding.channel);
+    } catch (_) {}
   }
 
-  /// Leave active chat presence but keep the channel subscribed for inbox.
-  /// Safe to call after [clearActiveChat] if [conversationId] is passed.
+  /// Chat room closed: leave its presence (the channel stays listen-only if
+  /// the Chats list wants it). Skipped if the same chat was re-opened before
+  /// the old room finished closing.
   Future<void> unsubscribe({int? conversationId}) async {
-    final active = conversationId ?? _activeChatConversationId;
-    if (active == null) return;
-    await _downgradeActiveChat(active);
-    final binding = _bindings[active];
-    if (binding != null) {
-      // Re-broadcast who is still present so the inbox online dot doesn't
-      // go stale after popping the chat room.
-      await _emitCurrentPresenceMembers(
-        conversationId: active,
-        binding: binding,
-      );
+    final id = conversationId ?? _activeChatConversationId;
+    if (id == null) return;
+    if (conversationId != null && _activeChatConversationId == conversationId) {
+      return;
     }
+    if (_activeChatConversationId == id) {
+      _activeChatConversationId = null;
+      _localComposerActivity = ChatComposerActivity.none;
+    }
+    await _releaseChat(id);
   }
 
   Future<void> disconnect() async {
     // Signed out — nothing may re-enter presence for this account.
     _presenceUserId = null;
+    _activeChatConversationId = null;
+    _inboxListenIds = const {};
+    _localComposerActivity = ChatComposerActivity.none;
     _stopPresenceWatchdog();
     _cancelPendingAppOfflineChecks();
     _cancelBackgroundLeave();
-    _stopActivePresenceSync();
-    _stopAppHeartbeat();
-    _stopAppPresenceSync();
-    await _leaveAppPresence();
+
+    final appChannel = _appPresenceChannel;
+    if (appChannel != null && _hasEnteredAppPresence) {
+      try {
+        await appChannel.presence.leave();
+      } catch (_) {}
+    }
+    final userChannel = _userChannel;
+    if (userChannel != null) {
+      await _detach(userChannel);
+    }
+    for (final id in _bindings.keys.toList()) {
+      await _detachChannel(id);
+    }
+    _discardAppChannels();
     await _connectionStateSubscription?.cancel();
     _connectionStateSubscription = null;
-    await _appPresenceSubscription?.cancel();
-    _appPresenceSubscription = null;
-    await _appMessageSubscription?.cancel();
-    _appMessageSubscription = null;
-    await _secondaryAppPresenceSubscription?.cancel();
-    _secondaryAppPresenceSubscription = null;
-    _appPresenceSubscribedChannel = null;
-    _secondaryAppPresenceSubscribedChannel = null;
-    _appPresenceChannel = null;
-    _secondaryAppPresenceChannel = null;
-    _appPresenceRealtime = null;
-    _enteredAppChannelNames.clear();
-    _appPresenceCapabilityDenied = false;
-    _deniedAppPresenceChannels.clear();
-    _appPresenceChannelName = primaryAppPresenceChannel;
+
     _ensureAppPresenceFuture = null;
+    _subscribeFuture = null;
+    _subscribeFutureConversationId = null;
     _presenceRepairBackoff = _minPresenceRepairBackoff;
     _lastPresenceRepairAt = null;
-    _pendingResubscribeIds.clear();
+    _userChannelDeniedForCapability = null;
+    _capabilityDeniedConversationIds.clear();
+    _lastCapability = null;
     _appOnlineUserIds.clear();
     _appOnlineMembersByUser.clear();
     _appPresenceClientToUserId.clear();
-    _lastPresenceSeenAt.clear();
-    _heartbeatCapableUserIds.clear();
-    final ids = _bindings.keys.toList();
-    for (final id in ids) {
-      await _detachChannel(id);
-    }
     _lastOnlineByConversation.clear();
     _presenceClientToUserId.clear();
     try {
@@ -3077,9 +2336,6 @@ class ChatRealtimeService with WidgetsBindingObserver {
       WidgetsBinding.instance.removeObserver(this);
       _lifecycleAttached = false;
     }
-    _lifecycleLeaveTimer?.cancel();
-    _stopAppHeartbeat();
-    _stopAppPresenceSync();
     await disconnect();
     await _eventsController.close();
   }

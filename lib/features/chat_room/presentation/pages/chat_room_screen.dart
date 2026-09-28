@@ -64,14 +64,19 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin, RouteAware {
   static const Duration _chromeAnimDuration = Duration(milliseconds: 280);
+
+  ChatRoomCubit? _chatCubit;
+  bool _routeObserved = false;
 
   final HashtagTextEditingController _messageController =
       HashtagTextEditingController(
     hashtagStyle: const TextStyle(
       color: AppColors.primary,
       fontWeight: FontWeight.w700,
+      fontFamily: 'Tajawal',
+      height: 1.2,
     ),
   );
   final FocusNode _messageFocusNode = FocusNode();
@@ -391,25 +396,47 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
     return state.maybeWhen(
       loaded: (messages, _, __, ___, ____, _____, ______, ________, _________,
               __________, ___________, ____________) =>
-          [
-            for (final m in messages)
-              // Others' deleted messages stay hidden (no placeholder).
-              if (!(m.isDeleted && !m.isOutgoing)) m,
-          ],
+          messages,
       orElse: () => const [],
     );
   }
 
   @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    // Clear active chat immediately so inbox treats new messages as unread
-    // (don't wait for async Cubit.close / getMessages).
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.usesApi) _chatCubit ??= context.read<ChatRoomCubit>();
+    if (!_routeObserved) {
+      final route = ModalRoute.of(context);
+      if (route != null) {
+        appRouteObserver.subscribe(this, route);
+        _routeObserved = true;
+      }
+    }
+  }
+
+  /// A chat pushed on top of this one (push tap / forward) just closed.
+  @override
+  void didPopNext() {
+    _chatCubit?.onVisibleAgain();
+  }
+
+  void _clearActiveChat() {
     try {
       if (GetIt.I.isRegistered<ChatRealtimeService>()) {
-        GetIt.I<ChatRealtimeService>().clearActiveChat();
+        GetIt.I<ChatRealtimeService>().clearActiveChat(
+          conversationId: _chatCubit?.conversationId ?? widget.conversationId,
+        );
       }
     } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (_routeObserved) appRouteObserver.unsubscribe(this);
+    // Clear active chat immediately so inbox treats new messages as unread
+    // (don't wait for async Cubit.close / getMessages).
+    _clearActiveChat();
     _messageFocusNode.removeListener(_onComposerFocusChanged);
     _holdKeyboardInsetTimer?.cancel();
     _chromeController
@@ -636,12 +663,29 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
     setState(() => _pendingImages.clear());
   }
 
+  /// What the server accepts per field (`images[]`, `voices[]`, `files[]`).
+  /// Anything else fails the whole message with 422.
+  static const _imageExtensions = {'jpg', 'jpeg', 'png', 'gif', 'webp'};
+  static const _voiceExtensions = {'mp3', 'wav', 'ogg', 'm4a', 'aac'};
+  static const _documentExtensions = [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'txt',
+    'csv',
+  ];
+  static const _maxImageMb = 10;
+  static const _maxVoiceOrFileMb = 20;
+
   Future<void> _pickDocument() async {
     _closeAttachmentPanel();
     try {
       final result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
-        type: FileType.any,
+        type: FileType.custom,
+        allowedExtensions: _documentExtensions,
       );
       if (!mounted || result == null || result.files.isEmpty) return;
       final paths = result.files
@@ -668,17 +712,52 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
     final images = <File>[];
     final voices = <File>[];
     final files = <File>[];
+    final tooLargeTemplate = context.tr(AppStrings.chatFileTooLarge);
+    final notAllowedTemplate = context.tr(AppStrings.chatFileTypeNotAllowed);
+    String? rejection;
 
+    // One unsupported or oversized file would fail the whole message
+    // (photos included) — drop it here and say why.
     for (final file in picked) {
-      final ext = file.path.split('.').last.toLowerCase();
-      if (['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(ext)) {
-        images.add(file);
-      } else if (['mp3', 'wav', 'ogg', 'm4a', 'aac'].contains(ext)) {
-        voices.add(file);
+      final name = file.uri.pathSegments.isEmpty
+          ? file.path
+          : file.uri.pathSegments.last;
+      final dot = name.lastIndexOf('.');
+      final ext = dot < 0 ? '' : name.substring(dot + 1).toLowerCase();
+      final List<File> bucket;
+      final int maxMb;
+      if (_imageExtensions.contains(ext)) {
+        bucket = images;
+        maxMb = _maxImageMb;
+      } else if (_voiceExtensions.contains(ext)) {
+        bucket = voices;
+        maxMb = _maxVoiceOrFileMb;
+      } else if (_documentExtensions.contains(ext)) {
+        bucket = files;
+        maxMb = _maxVoiceOrFileMb;
       } else {
-        files.add(file);
+        rejection ??= notAllowedTemplate.replaceAll('{name}', name);
+        continue;
       }
+      int bytes;
+      try {
+        bytes = await file.length();
+      } catch (_) {
+        continue;
+      }
+      if (bytes > maxMb * 1024 * 1024) {
+        rejection ??= tooLargeTemplate
+            .replaceAll('{name}', name)
+            .replaceAll('{size}', '$maxMb');
+        continue;
+      }
+      bucket.add(file);
     }
+    if (!mounted) return;
+    if (rejection != null) {
+      customSnackBar(context: context, message: rejection);
+    }
+    if (images.isEmpty && voices.isEmpty && files.isEmpty) return;
 
     final caption = (captionOverride ?? _messageController.text).trim();
     _messageController.clear();
@@ -862,10 +941,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
 
     if (widget.usesApi) {
       final cubit = context.read<ChatRoomCubit>();
+      // Local-only failed/cancelled uploads have no server id — discard them.
+      for (final m in selected) {
+        final tempId = m.clientTempId;
+        if (tempId != null && int.tryParse(m.id) == null) {
+          cubit.discardOptimisticSend(tempId);
+        }
+      }
       final messageIds = <int>[
         for (final idStr in ids)
           if (int.tryParse(idStr) != null) int.parse(idStr),
       ];
+      if (messageIds.isEmpty) return;
       final ok = await cubit.deleteMessages(messageIds);
       if (!mounted || ok) return;
       customSnackBar(
@@ -991,8 +1078,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
       var messages =
           widget.usesApi ? _messagesFromState(cubit!.state) : _messages;
 
-      var exists = messages.any((m) => m.id == targetId);
-      if (!exists && cubit != null) {
+      String? resolvedId = _resolveMessageIdInList(messages, targetId);
+      if (resolvedId == null && cubit != null) {
         final loaded = await cubit.ensureMessageLoaded(targetId);
         if (!mounted) return;
         if (!loaded) {
@@ -1008,10 +1095,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
         await WidgetsBinding.instance.endOfFrame;
         if (!mounted) return;
         messages = _messagesFromState(cubit.state);
-        exists = messages.any((m) => m.id == targetId);
+        resolvedId = cubit.resolveMessageId(targetId) ??
+            _resolveMessageIdInList(messages, targetId);
       }
 
-      if (!exists) {
+      if (resolvedId == null) {
         if (!mounted) return;
         customSnackBar(
           context: context,
@@ -1027,7 +1115,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
       if (!mounted) return;
 
       final ok =
-          await _messageListKey.currentState?.scrollToMessageId(targetId) ??
+          await _messageListKey.currentState?.scrollToMessageId(resolvedId) ??
               false;
       if (!mounted) return;
       if (!ok) {
@@ -1038,7 +1126,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
         return;
       }
 
-      setState(() => _flashMessageId = targetId);
+      setState(() => _flashMessageId = resolvedId);
     } catch (_) {
       if (!mounted) return;
       customSnackBar(
@@ -1050,6 +1138,21 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
         setState(() => _isSeekingMessage = false);
       }
     }
+  }
+
+  String? _resolveMessageIdInList(
+    List<ChatMessageItem> messages,
+    String targetId,
+  ) {
+    final t = targetId.trim();
+    if (t.isEmpty || t == '0') return null;
+    for (final m in messages) {
+      if (m.id == t || m.clientTempId == t) return m.id;
+      for (final a in m.attachments) {
+        if (a.id != null && '${a.id}' == t) return m.id;
+      }
+    }
+    return null;
   }
 
   void _onFlashFinished(String messageId) {
@@ -1565,11 +1668,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                     return;
                   }
                   // Leaving chat room — inbox must treat following messages as unread.
-                  try {
-                    if (GetIt.I.isRegistered<ChatRealtimeService>()) {
-                      GetIt.I<ChatRealtimeService>().clearActiveChat();
-                    }
-                  } catch (_) {}
+                  _clearActiveChat();
                 },
                 child: ChatHashtagScope(
                   currentDoctorModel: widget.currentDoctorModel,

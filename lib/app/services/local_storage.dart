@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:egy_akin/app/services/native_shared_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../exports.dart';
 
@@ -75,16 +76,23 @@ class AppPreferences implements LocalStorageProcess {
   @override
   Future<void> setData(String key, value) async {
     await _sharedPreferences.setString(key, value);
+    if (key == AppLocalStrings.keyToken) {
+      unawaited(NativeSharedAuth.save(value as String?));
+    }
   }
 
   @override
   Future<void> removeData(String key) async {
     await _sharedPreferences.remove(key);
+    if (key == AppLocalStrings.keyToken) {
+      unawaited(NativeSharedAuth.save(null));
+    }
   }
 
   @override
   Future<void> clearAllData() async {
     await _sharedPreferences.clear();
+    unawaited(NativeSharedAuth.save(null));
   }
 
   @override
@@ -107,6 +115,7 @@ class AppPreferences implements LocalStorageProcess {
   @override
   Future<void> removeDoctorData() async {
     await _sharedPreferences.remove(AppLocalStrings.keyToken);
+    unawaited(NativeSharedAuth.save(null));
     await _sharedPreferences.remove(AppLocalStrings.doctorData);
     await _sharedPreferences.remove(AppLocalStrings.isExistVerificationBanner);
     await _sharedPreferences.remove(AppLocalStrings.localProfileImageUrl);

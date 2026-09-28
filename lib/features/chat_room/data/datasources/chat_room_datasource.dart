@@ -46,6 +46,11 @@ abstract class ChatRoomDataSource {
     bool forEveryone = false,
   });
 
+  Future<ChatEnvelopeModel> deleteMessagesForEveryone({
+    required int conversationId,
+    required List<int> messageIds,
+  });
+
   Future<ChatMessageEnvelopeModelResponse> editMessage({
     required int conversationId,
     required String chatType,
@@ -248,6 +253,17 @@ class ChatRoomDataSourceImpl implements ChatRoomDataSource {
         'conversation_id': conversationId,
         'message_id': messageId,
       },
+    );
+  }
+
+  @override
+  Future<ChatEnvelopeModel> deleteMessagesForEveryone({
+    required int conversationId,
+    required List<int> messageIds,
+  }) {
+    return _apiServices.deleteChatMessagesForEveryone(
+      conversationId,
+      {'message_ids': messageIds},
     );
   }
 

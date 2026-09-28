@@ -66,6 +66,8 @@ class ChatMessageList extends StatefulWidget {
 class ChatMessageListState extends State<ChatMessageList> {
   late final ScrollController _scrollController;
   final Set<String> _seenIds = {};
+  /// Enter pop-in plays once per identity — status updates must not replay it.
+  final Set<String> _enterAnimPlayed = {};
   final Map<String, GlobalKey> _keysByMessageId = {};
   String? _latestAnimatedId;
 
@@ -131,14 +133,40 @@ class ChatMessageListState extends State<ChatMessageList> {
   Future<bool> scrollToMessageId(String messageId) async {
     _jumpLock = true;
     try {
+      String resolveIndex() {
+        for (final m in widget.messages) {
+          if (m.id == messageId || m.clientTempId == messageId) return m.id;
+          for (final a in m.attachments) {
+            if (a.id != null && '${a.id}' == messageId) return m.id;
+          }
+        }
+        return messageId;
+      }
+
+      final resolvedId = resolveIndex();
+
       for (var i = 0; i < 30; i++) {
         if (!mounted) return false;
-        if (widget.messages.any((m) => m.id == messageId)) break;
+        if (widget.messages.any((m) =>
+            m.id == resolvedId ||
+            m.clientTempId == resolvedId ||
+            m.id == messageId ||
+            m.clientTempId == messageId)) {
+          break;
+        }
         await Future<void>.delayed(const Duration(milliseconds: 32));
       }
 
-      final messageIndex = widget.messages.indexWhere((m) => m.id == messageId);
+      final messageIndex = widget.messages.indexWhere((m) =>
+          m.id == resolvedId ||
+          m.clientTempId == resolvedId ||
+          m.id == messageId ||
+          m.clientTempId == messageId ||
+          m.attachments.any((a) => a.id != null && '${a.id}' == messageId));
       if (messageIndex < 0) return false;
+      final identity =
+          widget.messages[messageIndex].clientTempId ??
+              widget.messages[messageIndex].id;
 
       await WidgetsBinding.instance.endOfFrame;
       await Future<void>.delayed(const Duration(milliseconds: 64));
@@ -147,7 +175,9 @@ class ChatMessageListState extends State<ChatMessageList> {
 
       for (var attempt = 0; attempt < 60; attempt++) {
         if (!mounted) return false;
-        final ctx = _keysByMessageId[messageId]?.currentContext;
+        final ctx = _keysByMessageId[identity]?.currentContext ??
+            _keysByMessageId[widget.messages[messageIndex].id]?.currentContext ??
+            _keysByMessageId[messageId]?.currentContext;
         if (ctx != null && ctx.mounted) {
           await Scrollable.ensureVisible(
             ctx,
@@ -410,9 +440,15 @@ class ChatMessageListState extends State<ChatMessageList> {
 
                     final messageIndex = widget.messages.length - 1 - index;
                     final message = widget.messages[messageIndex];
+                    // Stable across optimistic → server id swap so the tile
+                    // does not remount / replay the send animation.
                     final identity = message.clientTempId ?? message.id;
-                    final shouldAnimate =
-                        identity == _latestAnimatedId && !message.isSystem;
+                    final shouldAnimate = identity == _latestAnimatedId &&
+                        !_enterAnimPlayed.contains(identity) &&
+                        !message.isSystem;
+                    if (shouldAnimate) {
+                      _enterAnimPlayed.add(identity);
+                    }
                     final isFlashing = widget.flashMessageId == message.id;
                     final showDateChip = _isFirstMessageOfDay(
                       widget.messages,
@@ -468,10 +504,10 @@ class ChatMessageListState extends State<ChatMessageList> {
                           : tile,
                     );
 
-                    // Key the full row (date chip + bubble) so the sticky
-                    // pin tracks correctly when scrolling either direction.
+                    // Key the full row by stable identity (temp id preferred)
+                    // so optimistic → sent does not remount the bubble.
                     return KeyedSubtree(
-                      key: _keyForMessageId(message.id),
+                      key: _keyForMessageId(identity),
                       child: showDateChip
                           ? Column(
                               mainAxisSize: MainAxisSize.min,
@@ -661,7 +697,7 @@ class _ScrollToBottomButtonState extends State<_ScrollToBottomButton>
                     child: ClipOval(
                       child: Stack(
                         fit: StackFit.expand,
-                        children: [
+          children: [
                           // Glass / tinted base.
                           BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -827,34 +863,37 @@ class _AnimatedMessageTileState extends State<_AnimatedMessageTile>
     _controller?.dispose();
     _exitController?.dispose();
 
+    // WhatsApp-like land: quick, soft, no bounce.
     final controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 360),
+      duration: const Duration(milliseconds: 240),
     );
     _controller = controller;
 
     final exit = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 280),
     );
     _exitController = exit;
 
-    const land = Cubic(0.22, 1.0, 0.36, 1.0);
+    const land = Cubic(0.2, 0.0, 0.0, 1.0); // ease-out, WhatsApp-ish
 
     _fade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0.0, 0.55, curve: Curves.easeOut),
       ),
     );
-    _scale = Tween<double>(begin: 0.86, end: 1).animate(
+    // Subtle scale — WhatsApp pops from ~95%, not a big shrink.
+    _scale = Tween<double>(begin: 0.94, end: 1).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.0, 0.85, curve: land),
+        curve: const Interval(0.0, 1.0, curve: land),
       ),
     );
+    // Rise from the composer corner (outgoing) / peer side (incoming).
     _fromComposer = Tween<Offset>(
-      begin: Offset(widget.isOutgoing ? 0.06 : -0.06, 0.22),
+      begin: Offset(widget.isOutgoing ? 0.04 : -0.04, 0.12),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
@@ -874,14 +913,14 @@ class _AnimatedMessageTileState extends State<_AnimatedMessageTile>
       ),
     );
     _exitSize = Tween<double>(begin: 1, end: 0).animate(exitCurve);
-    _exitScale = Tween<double>(begin: 1, end: 0.86).animate(exitCurve);
+    _exitScale = Tween<double>(begin: 1, end: 0.92).animate(exitCurve);
     _exitSlide = Tween<Offset>(
       begin: Offset.zero,
-      end: Offset(widget.isOutgoing ? 0.12 : -0.12, -0.04),
+      end: Offset(widget.isOutgoing ? 0.08 : -0.08, -0.02),
     ).animate(exitCurve);
 
     if (widget.animate) {
-      controller.forward();
+      controller.forward(from: 0);
     } else {
       controller.value = 1;
     }
@@ -903,7 +942,10 @@ class _AnimatedMessageTileState extends State<_AnimatedMessageTile>
     }
     _ensureAnimations();
     if (widget.animate && !oldWidget.animate) {
-      _c.forward(from: 0);
+      // Only play enter anim when newly flagged — never restart on status updates.
+      if (_c.isCompleted || _c.isDismissed) {
+        _c.forward(from: 0);
+      }
     }
     // Soft-delete morph is handled by MessageBubbleCard AnimatedSwitcher.
     // Keep exit size factor at 1 so the deleted placeholder stays visible.
@@ -971,17 +1013,17 @@ class _DateChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
+              child: Container(
         margin: EdgeInsets.only(
           top: pinned ? 0 : 14.h,
           bottom: pinned ? 0 : 8.h,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
-        decoration: BoxDecoration(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+                decoration: BoxDecoration(
           color: (isDarkMode ? Colors.black : Colors.white).withOpacity(
             pinned ? (isDarkMode ? 0.55 : 0.92) : (isDarkMode ? 0.32 : 0.72),
           ),
-          borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: (isDarkMode ? Colors.white : AppColors.primary)
                 .withOpacity(pinned ? 0.12 : 0.08),
@@ -993,13 +1035,13 @@ class _DateChip extends StatelessWidget {
               offset: Offset(0, pinned ? 4 : 2),
             ),
           ],
-        ),
-        child: Text(
+                ),
+                child: Text(
           label,
-          style: TextStyle(
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
             color:
                 isDarkMode ? AppColors.darkDescription : Colors.grey.shade600,
           ),
@@ -1288,15 +1330,15 @@ class _LongPressMessageTile extends StatelessWidget {
             themeState is ThemeLoaded && themeState.isDarkMode;
 
         final bubble = ChatMessageBubble(
-          message: message,
-          peerImageUrl: peerImageUrl,
-          peerInitials: peerInitials,
+        message: message,
+        peerImageUrl: peerImageUrl,
+        peerInitials: peerInitials,
           isGroup: isGroup,
           onLongPress: (selectionMode ||
                   onMessageLongPress == null ||
                   !_selectable)
-              ? null
-              : (rect) => onMessageLongPress!(index, message, rect),
+            ? null
+            : (rect) => onMessageLongPress!(index, message, rect),
           onResend: selectionMode ? null : onResend,
           onCancelUpload: selectionMode ? null : onCancelUpload,
           onReactionTap:

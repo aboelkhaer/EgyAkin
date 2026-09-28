@@ -229,6 +229,7 @@ class _MyAppState extends State<MyApp> {
                     child: MaterialApp(
                       title: AppStrings.appName,
                       navigatorKey: navigatorKey,
+                      navigatorObservers: [appRouteObserver],
                       debugShowCheckedModeBanner: false,
                       theme: Themes.lightTheme,
                       darkTheme: Themes.darkTheme,

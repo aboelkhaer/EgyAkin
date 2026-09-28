@@ -148,9 +148,8 @@ String? _safeFileBaseName(String? originalName) {
   final raw = originalName?.trim() ?? '';
   if (raw.isEmpty) return null;
   final base = raw.split(RegExp(r'[\\/]')).last;
-  final withoutExt = base.contains('.')
-      ? base.substring(0, base.lastIndexOf('.'))
-      : base;
+  final withoutExt =
+      base.contains('.') ? base.substring(0, base.lastIndexOf('.')) : base;
   final cleaned = withoutExt.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
   if (cleaned.isEmpty) return null;
   return cleaned.length > 40 ? cleaned.substring(0, 40) : cleaned;
@@ -316,9 +315,10 @@ class _ChatAttachmentImageState extends State<ChatAttachmentImage> {
             final w = constraints.maxWidth.isFinite && constraints.maxWidth > 0
                 ? constraints.maxWidth
                 : (widget.width.isFinite ? widget.width : 220.0);
-            final h = constraints.maxHeight.isFinite && constraints.maxHeight > 0
-                ? constraints.maxHeight
-                : (widget.height.isFinite ? widget.height : 200.0);
+            final h =
+                constraints.maxHeight.isFinite && constraints.maxHeight > 0
+                    ? constraints.maxHeight
+                    : (widget.height.isFinite ? widget.height : 200.0);
             // Chat tiles always cover; full-screen uses PhotoView separately.
             const fit = BoxFit.cover;
             final local = widget.attachment.localFile;

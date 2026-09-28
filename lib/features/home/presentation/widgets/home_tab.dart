@@ -152,7 +152,8 @@ class _HomeTabState extends State<HomeTab> {
 
               final dashboard = Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w) +
-                    EdgeInsets.only(top: 6.h, bottom: 16.h),
+                    // Clear floating bottom nav (height 72 + margin ~20).
+                    EdgeInsets.only(top: 6.h, bottom: 100.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

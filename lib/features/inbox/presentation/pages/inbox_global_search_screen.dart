@@ -307,7 +307,7 @@ class _InboxGlobalSearchScreenState extends State<InboxGlobalSearchScreen>
   }
 
   void _openHit(ChatMessageSearchHit hit) {
-    final chatType = hit.chatType;
+    final chatType = ChatApiType.fromApi(hit.chatType) ?? hit.chatType;
     final conversationId = hit.conversationId;
     final contextId = () {
       if (chatType == ChatApiType.group) {
@@ -985,8 +985,10 @@ class _MessageResultTile extends StatelessWidget {
     required this.onTap,
   });
 
+  String? get _chatType => ChatApiType.fromApi(hit.chatType) ?? hit.chatType;
+
   ({String label, IconData icon, Color color}) _typeMeta(BuildContext context) {
-    switch (hit.chatType) {
+    switch (_chatType) {
       case ChatApiType.caseGroup:
         return (
           label: context.tr(AppStrings.chatTypeCaseGroup),
@@ -1025,9 +1027,9 @@ class _MessageResultTile extends StatelessWidget {
         ? context.tr(AppStrings.unknownUser)
         : senderLabel.trim();
     final type = _typeMeta(context);
-    final isGroupLike = hit.chatType == ChatApiType.group ||
-        hit.chatType == ChatApiType.socialGroup ||
-        hit.chatType == ChatApiType.caseGroup;
+    final isGroupLike = _chatType == ChatApiType.group ||
+        _chatType == ChatApiType.socialGroup ||
+        _chatType == ChatApiType.caseGroup;
     final showChatContext = chatTitle.isNotEmpty &&
         (isGroupLike || chatTitle.toLowerCase() != sender.toLowerCase());
 

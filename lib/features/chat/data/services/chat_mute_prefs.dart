@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ class ChatMutePrefs {
       return 'c:$conversationId';
     }
     if (chatType != null && contextId != null) {
-      return '$chatType:$contextId';
+      return '${ChatApiType.fromApi(chatType) ?? chatType}:$contextId';
     }
     return '';
   }

@@ -19,6 +19,7 @@ class ChatMediaGalleryScreen extends StatefulWidget {
   final String? chatType;
   final int? contextId;
   final int? conversationId;
+
   /// 1:1 peer avatar fallback when media API omits sender image.
   final String? peerImageUrl;
 
@@ -87,8 +88,7 @@ class _ChatMediaGalleryScreenState extends State<ChatMediaGalleryScreen>
       widget.chatType != null &&
       widget.chatType!.isNotEmpty;
 
-  bool get _loading =>
-      _loadingImages || _loadingVoices || _loadingDocs;
+  bool get _loading => _loadingImages || _loadingVoices || _loadingDocs;
 
   /// Prefer server `counts`; never flash seeded/local page lengths while API loads.
   int? get _displayImageCount {
@@ -286,7 +286,8 @@ class _ChatMediaGalleryScreenState extends State<ChatMediaGalleryScreen>
           : '${item.messageId ?? ''}:${attachment.url ?? ''}';
       final createdAt = DateTime.tryParse(item.createdAt ?? '');
       final timeLabel = ChatMappers.formatMessageTime(item.createdAt);
-      final messageId = (item.messageId ?? item.id ?? 0).toString();
+      // Never fall back to attachment [id] — that breaks "Go to message".
+      final messageId = _resolveMediaMessageId(item, attachment);
 
       if (kind == 'image') {
         if (!_seenImageKeys.add(key)) continue;
@@ -338,6 +339,49 @@ class _ChatMediaGalleryScreenState extends State<ChatMediaGalleryScreen>
         ));
       }
     }
+  }
+
+  /// Prefer a match from loaded chat messages; else API [messageId].
+  String _resolveMediaMessageId(
+    ChatMediaItemModel item,
+    ChatAttachmentItem attachment,
+  ) {
+    final fromChat = _findMessageIdForAttachment(attachment);
+    if (fromChat != null && fromChat.isNotEmpty && fromChat != '0') {
+      return fromChat;
+    }
+    final fromApi = item.messageId;
+    if (fromApi != null && fromApi > 0) return '$fromApi';
+    return '';
+  }
+
+  String? _findMessageIdForAttachment(ChatAttachmentItem attachment) {
+    final attachId = attachment.id;
+    final url = attachment.url?.trim();
+    final localPath = attachment.localFile?.path;
+    for (final m in widget.messages) {
+      for (final a in m.attachments) {
+        if (attachId != null && a.id != null && a.id == attachId) {
+          return m.id;
+        }
+        final aUrl = a.url?.trim();
+        if (url != null &&
+            url.isNotEmpty &&
+            aUrl != null &&
+            aUrl.isNotEmpty &&
+            aUrl == url) {
+          return m.id;
+        }
+        final aLocal = a.localFile?.path;
+        if (localPath != null &&
+            localPath.isNotEmpty &&
+            aLocal != null &&
+            aLocal == localPath) {
+          return m.id;
+        }
+      }
+    }
+    return null;
   }
 
   String? _formatBytes(int? bytes) {
@@ -559,8 +603,13 @@ class _ChatMediaGalleryScreenState extends State<ChatMediaGalleryScreen>
     );
   }
 
-  void _goToMessage(String messageId) {
-    final id = messageId.trim();
+  void _goToMessage(String messageId, {ChatAttachmentItem? attachment}) {
+    var id = messageId.trim();
+    if (id.isEmpty || id == '0') {
+      final resolved =
+          attachment == null ? null : _findMessageIdForAttachment(attachment);
+      id = resolved?.trim() ?? '';
+    }
     if (id.isEmpty || id == '0') {
       customSnackBar(
         context: context,
@@ -612,7 +661,7 @@ class _ChatMediaGalleryScreenState extends State<ChatMediaGalleryScreen>
       },
     );
     if (!mounted || action != 'goto') return;
-    _goToMessage(messageId);
+    _goToMessage(messageId, attachment: attachment);
   }
 
   Future<void> _openDoc(_DocEntry doc) async {
@@ -2118,8 +2167,7 @@ class _GoToMessageOverlayState extends State<_GoToMessageOverlay> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color:
-                              widget.isDark ? Colors.white : AppColors.title,
+                          color: widget.isDark ? Colors.white : AppColors.title,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),

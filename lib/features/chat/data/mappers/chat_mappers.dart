@@ -47,31 +47,14 @@ class ChatMappers {
     return initials.isEmpty ? 'G' : initials;
   }
 
+  /// Tombstone `content` the server keeps on messages deleted for everyone.
+  static const deletedForEveryoneContent = 'This message was deleted';
+
   static String? normalizeChatType(String? raw) {
+    final known = ChatApiType.fromApi(raw);
+    if (known != null) return known;
     final t = raw?.trim().toLowerCase().replaceAll('-', '_');
-    if (t == null || t.isEmpty) return raw;
-    switch (t) {
-      case 'private':
-      case 'direct':
-      case 'dm':
-        return ChatApiType.private;
-      case 'case_group':
-      case 'casegroup':
-      case 'patient_group':
-      case 'patientgroup':
-      case 'patient':
-      case 'case':
-        return ChatApiType.caseGroup;
-      case 'social_group':
-      case 'socialgroup':
-      case 'community_group':
-        return ChatApiType.socialGroup;
-      case 'group':
-      case 'adhoc_group':
-        return ChatApiType.group;
-      default:
-        return t;
-    }
+    return (t == null || t.isEmpty) ? raw : t;
   }
 
   static bool isAdHocGroup(String? chatType) =>
@@ -275,6 +258,74 @@ class ChatMappers {
     caseSensitive: false,
   );
 
+  /// Translated media labels the server sends as the inbox preview — no
+  /// brackets, English or Arabic ("Photo" / "صورة", "3 photos" / "3 صور",
+  /// "Voice message" / "رسالة صوتية", "Video" / "فيديو", "Attachment" /
+  /// "مرفق", "3 attachments" / "3 مرفقات", or a file name like report.pdf).
+  static final RegExp _photoLabelRe = RegExp(
+    r'^(?:photo|image|صورة|صورتان|([0-9٠-٩]+)\s*(?:photos|images|صور|صورة))$',
+    caseSensitive: false,
+  );
+  static final RegExp _videoLabelRe = RegExp(
+    r'^(?:video|فيديو|([0-9٠-٩]+)\s*(?:videos|فيديوهات|فيديو))$',
+    caseSensitive: false,
+  );
+  static final RegExp _voiceLabelRe = RegExp(
+    r'^(?:voice|voice message|voice note|audio|رسالة صوتية|رسالة صوتيه|مقطع صوتي)$',
+    caseSensitive: false,
+  );
+  static final RegExp _attachmentLabelRe = RegExp(
+    r'^(?:attachment|مرفق|مرفقان|([0-9٠-٩]+)\s*(?:attachments|مرفقات|مرفق))$',
+    caseSensitive: false,
+  );
+  static final RegExp _fileNameLabelRe = RegExp(
+    r'^[^\n\\/]{1,120}\.(?:pdf|docx?|xlsx?|txt|csv)$',
+    caseSensitive: false,
+  );
+
+  /// Media kind of a server label, or null for ordinary text.
+  static InboxPreviewKind? mediaKindFromLabel(String preview) {
+    final p = preview.trim();
+    if (p.isEmpty) return null;
+    if (_photoLabelRe.hasMatch(p)) return InboxPreviewKind.photo;
+    if (_videoLabelRe.hasMatch(p)) return InboxPreviewKind.video;
+    if (_voiceLabelRe.hasMatch(p)) return InboxPreviewKind.voice;
+    if (_attachmentLabelRe.hasMatch(p) || _fileNameLabelRe.hasMatch(p)) {
+      return InboxPreviewKind.file;
+    }
+    return null;
+  }
+
+  static int? _labelCount(String preview) {
+    final p = preview.trim();
+    if (p == 'صورتان' || p == 'مرفقان') return 2;
+    for (final re in [_photoLabelRe, _videoLabelRe, _attachmentLabelRe]) {
+      final match = re.firstMatch(p);
+      if (match == null) continue;
+      final digits = match.group(1);
+      if (digits == null) return 1;
+      return int.tryParse(_westernDigits(digits));
+    }
+    return null;
+  }
+
+  static String _westernDigits(String value) {
+    const arabicIndic = '٠١٢٣٤٥٦٧٨٩';
+    final out = StringBuffer();
+    for (final ch in value.split('')) {
+      final i = arabicIndic.indexOf(ch);
+      out.write(i >= 0 ? '$i' : ch);
+    }
+    return out.toString();
+  }
+
+  /// Tombstone preview for a message deleted for everyone.
+  static bool isDeletedTombstone(String preview) {
+    final p = preview.trim().toLowerCase().replaceAll(RegExp(r'[.。]$'), '');
+    return p == deletedForEveryoneContent.toLowerCase() ||
+        p == 'تم حذف هذه الرسالة';
+  }
+
   static int previewCountFromText(String preview) {
     final p = preview.trim();
     final image = _imagePlaceholderRe.firstMatch(p);
@@ -287,6 +338,8 @@ class ChatMappers {
       final n = int.tryParse(file.group(1) ?? file.group(2) ?? '');
       return (n != null && n > 0) ? n : 1;
     }
+    final fromLabel = _labelCount(p);
+    if (fromLabel != null && fromLabel > 0) return fromLabel;
     return 1;
   }
 
@@ -804,11 +857,14 @@ class ChatMappers {
     int? lastVisibleSenderId;
     for (var i = 0; i < messages.length; i++) {
       final msg = messages[i];
-      // Hide others' permanently deleted messages (no placeholder).
+      // "Delete for me" rows come back as tombstones without content — keep
+      // them hidden, like right after deleting. A delete for everyone keeps
+      // its content and shows the "deleted" bubble.
       if (msg.isDeleted == true) {
         final senderId = msg.sender?.id;
         final isMine = senderId != null && senderId == currentUserId;
-        if (!isMine) continue;
+        final deletedForMe = (msg.content ?? '').trim().isEmpty;
+        if (!isMine && deletedForMe) continue;
       }
       final isSystem = msg.type == 'system';
       // System rows (created/removed/…) share the actor's sender id — don't
@@ -874,17 +930,10 @@ class ChatMappers {
   static InboxPreviewKind previewKindFromText(String preview) {
     final p = preview.trim();
     if (p.isEmpty) return InboxPreviewKind.text;
-    final lower = p.toLowerCase();
-    if (isImagePlaceholder(p) || lower == 'photo' || lower == 'image') {
-      return InboxPreviewKind.photo;
-    }
-    if (isVoicePlaceholder(p) || lower == 'voice' || lower == 'voice message') {
-      return InboxPreviewKind.voice;
-    }
-    if (isFilePlaceholder(p) || p == '[Attachment]') {
-      return InboxPreviewKind.file;
-    }
-    return InboxPreviewKind.text;
+    if (isImagePlaceholder(p)) return InboxPreviewKind.photo;
+    if (isVoicePlaceholder(p)) return InboxPreviewKind.voice;
+    if (isFilePlaceholder(p)) return InboxPreviewKind.file;
+    return mediaKindFromLabel(p) ?? InboxPreviewKind.text;
   }
 
   static InboxPreviewKind previewKindFromLast(InboxLastMessageModel? last) {
@@ -940,6 +989,7 @@ class ChatMappers {
         return previewCountFromText(last.content ?? '');
       case InboxPreviewKind.voice:
         return voiceCount > 0 ? voiceCount : 1;
+      case InboxPreviewKind.video:
       case InboxPreviewKind.text:
         return previewCountFromText(last.content ?? '');
     }
@@ -954,6 +1004,10 @@ class ChatMappers {
             isVoicePlaceholder(content))) {
       return normalizeMediaPlaceholder(content);
     }
+    // Server media labels are already translated — show them as-is.
+    if (content.isNotEmpty && mediaKindFromLabel(content) != null) {
+      return content;
+    }
 
     final kind = previewKindFromLast(last);
     final count = previewCountFromLast(last);
@@ -962,6 +1016,8 @@ class ChatMappers {
         return count > 1 ? '[Images:$count]' : '[Image]';
       case InboxPreviewKind.voice:
         return '[Voice]';
+      case InboxPreviewKind.video:
+        return content;
       case InboxPreviewKind.file:
         if (count > 1) return '[Files:$count]';
         if (content.isNotEmpty && !isFilePlaceholder(content)) return content;
@@ -1053,6 +1109,7 @@ class ChatMappers {
           (!isGroupChat ? contextId : null),
       isConsultationOpen: item.isOpen,
       consultationDirection: item.direction,
+      lastMessageId: last?.id,
     );
   }
 
@@ -1138,6 +1195,7 @@ class ChatMappers {
           (!isGroupChat ? contextId : null),
       isPinned: item.isPinned ?? false,
       isMuted: item.isMuted ?? false,
+      lastMessageId: last?.id,
     );
   }
 

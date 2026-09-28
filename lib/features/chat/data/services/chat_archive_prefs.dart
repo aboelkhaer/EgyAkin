@@ -264,6 +264,7 @@ class ChatArchivePrefs {
         'counterpartUserId': t.counterpartUserId,
         'isPinned': t.isPinned,
         'isMuted': t.isMuted,
+        'lastMessageId': t.lastMessageId,
       });
 
   static InboxThread? _decode(String raw) {
@@ -302,6 +303,7 @@ class ChatArchivePrefs {
         counterpartUserId: (j['counterpartUserId'] as num?)?.toInt(),
         isPinned: j['isPinned'] as bool? ?? false,
         isMuted: j['isMuted'] as bool? ?? false,
+        lastMessageId: (j['lastMessageId'] as num?)?.toInt(),
       );
     } catch (_) {
       return null;

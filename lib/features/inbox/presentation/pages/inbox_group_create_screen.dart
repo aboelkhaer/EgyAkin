@@ -218,16 +218,6 @@ class _InboxGroupCreateScreenState extends State<InboxGroupCreateScreen>
 
         // Replace this create screen so Back from the new chat lands on Chats.
         unawaited(di.sl<InboxCubit>().refresh());
-        final ctxId = conversation?.id;
-        if (ctxId != null) {
-          unawaited(
-            di.sl<ChatRealtimeService>().publishConversationCreated(
-              conversationId: ctxId,
-              contextId: ctxId,
-              chatType: ChatApiType.group,
-            ),
-          );
-        }
         navigatorKey.currentState?.pushReplacementNamed(
           AppRoutes.chatRoom,
           arguments: AppRoutesArgs.chatRoomRouteArgs(

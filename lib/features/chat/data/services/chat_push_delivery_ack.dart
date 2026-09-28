@@ -18,13 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChatPushDeliveryAck {
   ChatPushDeliveryAck._();
 
-  static const _validChatTypes = {
-    ChatApiType.private,
-    ChatApiType.caseGroup,
-    ChatApiType.group,
-    ChatApiType.socialGroup,
-  };
-
   static final Map<String, DateTime> _recentAcks = {};
   static const _dedupeWindow = Duration(seconds: 8);
 
@@ -178,27 +171,8 @@ class ChatPushDeliveryAck {
         .toString()
         .trim()
         .toLowerCase();
-    if (raw.isNotEmpty) {
-      if (_validChatTypes.contains(raw)) return raw;
-      switch (raw) {
-        case 'private_chat':
-        case 'dm':
-        case 'direct':
-        case 'one_to_one':
-          return ChatApiType.private;
-        case 'case':
-        case 'casegroup':
-          return ChatApiType.caseGroup;
-        case 'social':
-        case 'socialgroup':
-        case 'social_chat':
-          return ChatApiType.socialGroup;
-        case 'group_chat':
-        case 'ad_hoc':
-        case 'adhoc':
-          return ChatApiType.group;
-      }
-    }
+    final known = ChatApiType.fromApi(raw);
+    if (known != null) return known;
 
     // Infer private when the payload only identifies a peer sender.
     final hasSender = _asInt(

@@ -123,6 +123,19 @@ class ChatRoomRepositoryImpl extends ChatRoomRepository {
   }
 
   @override
+  Future<Either<Failure, ChatEnvelopeModel>> deleteMessagesForEveryone({
+    required int conversationId,
+    required List<int> messageIds,
+  }) {
+    return _guard(
+      () => chatRoomRemoteDataSource.deleteMessagesForEveryone(
+        conversationId: conversationId,
+        messageIds: messageIds,
+      ),
+    );
+  }
+
+  @override
   Future<Either<Failure, ChatMessageEnvelopeModelResponse>> editMessage({
     required int conversationId,
     required String chatType,

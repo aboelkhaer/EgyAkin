@@ -31,6 +31,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   String currentUserVersion = '';
   bool _isConnected = true;
+  StreamSubscription<InternetConnectionStatus>? _connectivitySub;
+  Timer? _connectivityPoll;
+  bool _restoringConnectivity = false;
 
   bool _settingsReady = false;
   bool _updateCheckDone = false;
@@ -111,6 +114,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    _stopConnectivityWatch();
     _introController.dispose();
     _pulseController.dispose();
     _orbitController.dispose();
@@ -241,8 +245,47 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkConnection() async {
-    _isConnected = await InternetConnectionChecker().hasConnection;
+    final checker = sl<InternetConnectionChecker>();
+    _isConnected = await checker.hasConnection;
     if (mounted) setState(() {});
+    if (!_isConnected) {
+      _startConnectivityWatch(checker);
+    }
+  }
+
+  void _startConnectivityWatch(InternetConnectionChecker checker) {
+    _stopConnectivityWatch();
+    _connectivitySub = checker.onStatusChange.listen((status) {
+      if (status == InternetConnectionStatus.connected) {
+        unawaited(_onConnectivityRestored());
+      }
+    });
+    // Backup poll — some devices are slow / silent on status change.
+    _connectivityPoll = Timer.periodic(const Duration(seconds: 2), (_) async {
+      if (!mounted || _isConnected || _restoringConnectivity) return;
+      final ok = await checker.hasConnection;
+      if (ok) unawaited(_onConnectivityRestored());
+    });
+  }
+
+  void _stopConnectivityWatch() {
+    _connectivitySub?.cancel();
+    _connectivitySub = null;
+    _connectivityPoll?.cancel();
+    _connectivityPoll = null;
+  }
+
+  Future<void> _onConnectivityRestored() async {
+    if (!mounted || _isConnected || _restoringConnectivity) return;
+    _restoringConnectivity = true;
+    _stopConnectivityWatch();
+    _isConnected = true;
+    if (mounted) setState(() {});
+    try {
+      await _tryProceed();
+    } finally {
+      _restoringConnectivity = false;
+    }
   }
 
   Future<void> _onSplashLoaded({

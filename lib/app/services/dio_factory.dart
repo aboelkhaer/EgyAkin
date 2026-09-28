@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import '../../exports.dart';
 
-const String applicationJson = "application/json";
-const String contentType = "content-type";
-const String accept = "accept";
+const String applicationJson = 'application/json';
+const String contentType = 'content-type';
+const String accept = 'accept';
 // const String xtent = "X-Tenant";
-const String xtentValue = "sst";
-const String authorization = "authorization";
-const String defaultLanguage = "Accept-Language";
+const String xtentValue = 'sst';
+const String authorization = 'authorization';
+const String defaultLanguage = 'Accept-Language';
 
 class DioFactory {
   DioFactory({required this.appPreferences});

@@ -21,7 +21,7 @@ class HomeTabLoading extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w) +
-          EdgeInsets.only(top: 6.h, bottom: 16.h),
+          EdgeInsets.only(top: 6.h, bottom: 100.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

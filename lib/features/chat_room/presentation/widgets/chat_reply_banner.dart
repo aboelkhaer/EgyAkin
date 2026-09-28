@@ -258,9 +258,10 @@ class _ChatReplyBannerState extends State<ChatReplyBanner>
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 11.5.sp,
+                                            fontSize: 13.sp,
                                             fontWeight: FontWeight.w700,
-                                            height: 1.15,
+                                            fontFamily: 'Tajawal',
+                                            height: 1.2,
                                             color: nameColor,
                                           ),
                                         ),
@@ -273,14 +274,14 @@ class _ChatReplyBannerState extends State<ChatReplyBanner>
                                       if (image != null || imageCount > 0) ...[
                                         Icon(
                                           Icons.photo_camera_outlined,
-                                          size: 12.sp,
+                                          size: 14.sp,
                                           color: textColor,
                                         ),
                                         SizedBox(width: 4.w),
                                       ] else if (voice != null) ...[
                                         Icon(
                                           Icons.mic_rounded,
-                                          size: 12.sp,
+                                          size: 14.sp,
                                           color: textColor,
                                         ),
                                         SizedBox(width: 4.w),
@@ -291,9 +292,17 @@ class _ChatReplyBannerState extends State<ChatReplyBanner>
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 11.5.sp,
-                                            height: 1.15,
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Tajawal',
+                                            height: 1.2,
                                             color: textColor,
+                                            fontFamilyFallback: const [
+                                              'Apple Color Emoji',
+                                              'Segoe UI Emoji',
+                                              'Noto Color Emoji',
+                                              'Android Emoji',
+                                            ],
                                           ),
                                         ),
                                       ),

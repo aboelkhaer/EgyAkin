@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/utilities/enums.dart';
-import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/create_group_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_header_image_in_community_usecase.dart';
@@ -297,9 +296,6 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
             unawaited(
               GetIt.I<InboxCubit>().silentRefresh(bypassThrottle: true),
             );
-          }
-          if (GetIt.I.isRegistered<ChatRealtimeService>()) {
-            unawaited(GetIt.I<ChatRealtimeService>().publishInboxRefresh());
           }
         } catch (_) {}
       },

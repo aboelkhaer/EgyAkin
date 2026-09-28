@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:egy_akin/app/services/app_screen_tracker.dart';
 import 'package:egy_akin/features/chat/data/services/chat_push_delivery_ack.dart';
 import 'package:egy_akin/features/chat/data/services/chat_push_navigation.dart';
+import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'exports.dart';
@@ -351,6 +355,7 @@ class NotificationServices {
     try {
       debugPrint('Received FCM message: ${message.data}');
 
+      // Ack + inbox refresh first — even when we skip the banner.
       unawaited(ChatPushDeliveryAck.ackFromRemoteMessageData(message.data));
       ChatPushNavigation.onForegroundChatPush(message.data);
 
@@ -362,7 +367,14 @@ class NotificationServices {
         return;
       }
 
-      // Always show a local notification with JSON payload so tap opens chat.
+      // Already looking at this chat or at the Chats inbox — no banner.
+      if (_isChatAlreadyOnScreen(message.data)) {
+        debugPrint(
+          'Foreground chat push: skipping banner (chat/inbox on screen)',
+        );
+        return;
+      }
+
       await ensureLocalNotificationsReady();
       final notificationId = notificationCounter++;
       final idKey = notificationId.toString();
@@ -373,6 +385,33 @@ class NotificationServices {
     } catch (e, st) {
       debugPrint('Foreground push handle failed: $e\n$st');
     }
+  }
+
+  /// Skip the in-app banner when the user is already seeing the message
+  /// (same open chat) or watching the Chats list update live.
+  bool _isChatAlreadyOnScreen(Map<String, dynamic> data) {
+    final type = (data['type'] ?? '').toString().trim().toLowerCase();
+    final looksLikeChat = type == 'chat_message' ||
+        type == 'chat' ||
+        type == 'message' ||
+        type == 'new_message' ||
+        data['chat_type'] != null ||
+        data['chatType'] != null;
+    if (!looksLikeChat) return false;
+
+    final conversationId = int.tryParse(
+      '${data['conversation_id'] ?? data['conversationId'] ?? ''}',
+    );
+    try {
+      if (di.sl.isRegistered<ChatRealtimeService>()) {
+        final openId = di.sl<ChatRealtimeService>().subscribedConversationId;
+        if (conversationId != null && conversationId == openId) {
+          return true;
+        }
+      }
+    } catch (_) {}
+
+    return AppScreenTracker.inboxOnScreen;
   }
 
   Future<void> _handleMessageOpened(RemoteMessage message) async {
@@ -592,6 +631,56 @@ class NotificationServices {
     RemoteMessage message,
     String notificationId,
   ) async {
+    final title = message.notification?.title ??
+        (message.data['title'] ?? message.data['sender_name'] ?? 'EgyAkin')
+            .toString();
+    final body = message.notification?.body ??
+        (message.data['body'] ?? message.data['content'] ?? '').toString();
+
+    final avatarUrl = _avatarImageUrl(message);
+    final mediaUrl = _messageImageUrl(message, avatarUrl: avatarUrl);
+
+    final avatarBytes = await _downloadImageBytes(avatarUrl);
+    final mediaPath = await _downloadImageFile(mediaUrl);
+
+    ByteArrayAndroidBitmap? largeIcon;
+    ByteArrayAndroidIcon? personIcon;
+    if (avatarBytes != null && avatarBytes.isNotEmpty) {
+      largeIcon = ByteArrayAndroidBitmap(avatarBytes);
+      personIcon = ByteArrayAndroidIcon(avatarBytes);
+    }
+
+    StyleInformation? style;
+    final person = Person(
+      name: title,
+      key: (message.data['sender_id'] ?? message.data['senderId'] ?? title)
+          .toString(),
+      icon: personIcon,
+    );
+
+    if (mediaPath != null) {
+      // Collapsed: avatar as largeIcon; expanded: message photo.
+      style = BigPictureStyleInformation(
+        FilePathAndroidBitmap(mediaPath),
+        largeIcon: largeIcon,
+        contentTitle: title,
+        summaryText: body.isEmpty ? null : body,
+        hideExpandedLargeIcon: true,
+      );
+    } else {
+      style = MessagingStyleInformation(
+        person,
+        groupConversation: false,
+        messages: [
+          Message(
+            body.isEmpty ? title : body,
+            DateTime.now(),
+            person,
+          ),
+        ],
+      );
+    }
+
     final androidDetails = AndroidNotificationDetails(
       'high_importance_channel',
       'high_importance_channel',
@@ -603,17 +692,27 @@ class NotificationServices {
       channelShowBadge: true,
       enableVibration: true,
       icon: '@mipmap/ic_launcher',
+      largeIcon: largeIcon,
+      styleInformation: style,
       sound: const RawResourceAndroidNotificationSound('notification'),
       vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
     );
 
-    const iOSDetails = DarwinNotificationDetails(
+    final iOSDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
       presentBanner: true,
       interruptionLevel: InterruptionLevel.timeSensitive,
       presentList: true,
+      attachments: mediaPath == null
+          ? null
+          : [
+              DarwinNotificationAttachment(
+                mediaPath,
+                identifier: 'message-image',
+              ),
+            ],
     );
 
     final notificationDetails = NotificationDetails(
@@ -621,19 +720,10 @@ class NotificationServices {
       iOS: iOSDetails,
     );
 
-    final title = message.notification?.title ??
-        (message.data['title'] ?? message.data['sender_name'] ?? 'EgyAkin')
-            .toString();
-    final body = message.notification?.body ??
-        (message.data['body'] ?? message.data['content'] ?? '').toString();
-
     // Prefer full data map so tap can open the chat / target screen.
     final payloadMap = ChatPushNavigation.normalizeData(
       Map<String, dynamic>.from(message.data),
     );
-    if (payloadMap.isEmpty && message.notification != null) {
-      // Nothing to route — still show the banner.
-    }
 
     await _localNotificationsPlugin.show(
       int.parse(notificationId),
@@ -642,5 +732,103 @@ class NotificationServices {
       notificationDetails,
       payload: jsonEncode(payloadMap.isEmpty ? message.data : payloadMap),
     );
+  }
+
+  String? _dataString(Map<String, dynamic> data, List<String> keys) {
+    for (final key in keys) {
+      final raw = data[key];
+      if (raw == null) continue;
+      final s = raw.toString().trim();
+      if (s.isNotEmpty) return s;
+    }
+    return null;
+  }
+
+  String? _avatarImageUrl(RemoteMessage message) {
+    return _dataString(message.data, const [
+      'sender_image',
+      'senderImage',
+      'sender_avatar',
+      'senderAvatar',
+      'sender_image_url',
+      'senderImageUrl',
+      'avatar',
+      'peer_image',
+      'peerImage',
+      'conversation_image',
+      'conversationImage',
+      'group_image',
+      'groupImage',
+    ]);
+  }
+
+  String? _messageImageUrl(RemoteMessage message, {String? avatarUrl}) {
+    final fromData = _dataString(message.data, const [
+      'attachment_url',
+      'attachmentUrl',
+      'media_url',
+      'mediaUrl',
+      'message_image',
+      'messageImage',
+      'photo_url',
+      'photoUrl',
+      'image_url',
+      'imageUrl',
+    ]);
+    if (fromData != null && fromData != avatarUrl) return fromData;
+
+    final fcmImage = message.notification?.android?.imageUrl ??
+        message.notification?.apple?.imageUrl;
+    if (fcmImage != null &&
+        fcmImage.trim().isNotEmpty &&
+        fcmImage.trim() != avatarUrl) {
+      return fcmImage.trim();
+    }
+
+    final generic = _dataString(message.data, const ['image']);
+    if (generic != null && generic != avatarUrl) return generic;
+    return null;
+  }
+
+  Future<Uint8List?> _downloadImageBytes(String? url) async {
+    if (url == null || url.isEmpty) return null;
+    try {
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 8));
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        return null;
+      }
+      if (response.bodyBytes.isEmpty) return null;
+      return response.bodyBytes;
+    } catch (e) {
+      debugPrint('Notification avatar download failed: $e');
+      return null;
+    }
+  }
+
+  Future<String?> _downloadImageFile(String? url) async {
+    final bytes = await _downloadImageBytes(url);
+    if (bytes == null) return null;
+    try {
+      final dir = await getTemporaryDirectory();
+      final ext = _imageExtFromUrl(url!);
+      final file = File(
+        '${dir.path}/notif_${DateTime.now().millisecondsSinceEpoch}.$ext',
+      );
+      await file.writeAsBytes(bytes, flush: true);
+      return file.path;
+    } catch (e) {
+      debugPrint('Notification media file write failed: $e');
+      return null;
+    }
+  }
+
+  String _imageExtFromUrl(String url) {
+    final lower = url.toLowerCase();
+    if (lower.contains('.png')) return 'png';
+    if (lower.contains('.gif')) return 'gif';
+    if (lower.contains('.webp')) return 'webp';
+    return 'jpg';
   }
 }

@@ -25,6 +25,10 @@ import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/webview/presentation/pages/webview_screen.dart';
 
+/// Lets a screen react when the route above it pops (see [RouteAware]).
+final RouteObserver<ModalRoute<void>> appRouteObserver =
+    RouteObserver<ModalRoute<void>>();
+
 class AppRoutes {
   static const String splash = '/';
 
@@ -1219,7 +1223,8 @@ class RouteGenerator {
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
             final doctor = args['currentDoctorModel'] as DoctorModel;
-            final chatType = args['chatType'] as String?;
+            final rawChatType = args['chatType'] as String?;
+            final chatType = ChatApiType.fromApi(rawChatType) ?? rawChatType;
             final contextId = args['contextId'] as int?;
             // Use create (not .value) so the factory cubit is closed on pop —
             // otherwise Ably listeners + cubit state leak and can crash on
@@ -1263,7 +1268,7 @@ class RouteGenerator {
                   peerInitials: args['peerInitials'] as String?,
                   peerVerified: args['peerVerified'] as bool?,
                   peerIsOnline: args['peerIsOnline'] as bool?,
-                  chatType: args['chatType'] as String?,
+                  chatType: chatType,
                   contextId: args['contextId'] as int?,
                   conversationId: args['conversationId'] as int?,
                   peerImageUrl: args['peerImageUrl'] as String?,

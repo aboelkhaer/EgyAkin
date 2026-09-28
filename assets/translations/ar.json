@@ -1174,5 +1174,7 @@
   "Contact info": "معلومات جهة الاتصال",
   "Block": "حظر",
   "Could not block user": "تعذر حظر المستخدم",
-  "User blocked": "تم حظر المستخدم"
+  "User blocked": "تم حظر المستخدم",
+  "{name} is larger than {size} MB and can't be sent.": "لا يمكن إرسال {name} لأن حجمه أكبر من {size} ميجابايت.",
+  "{name} can't be sent. Allowed files: PDF, Word, Excel, TXT and CSV.": "لا يمكن إرسال {name}. الملفات المسموح بها: PDF وWord وExcel وTXT وCSV."
 }

@@ -1167,5 +1167,7 @@
   "Contact info": "Contact info",
   "Block": "Block",
   "Could not block user": "Could not block user",
-  "User blocked": "User blocked"
+  "User blocked": "User blocked",
+  "{name} is larger than {size} MB and can't be sent.": "{name} is larger than {size} MB and can't be sent.",
+  "{name} can't be sent. Allowed files: PDF, Word, Excel, TXT and CSV.": "{name} can't be sent. Allowed files: PDF, Word, Excel, TXT and CSV."
 }

@@ -25,13 +25,6 @@ class ChatPushNavigation {
   static const _lastConsumedPrefsKey = 'chat_push_last_consumed_v1';
   /// Ignore stale disk pending left over from a previous session.
   static const _pendingMaxAge = Duration(minutes: 2);
-  static const _validChatTypes = {
-    ChatApiType.private,
-    ChatApiType.caseGroup,
-    ChatApiType.group,
-    ChatApiType.socialGroup,
-  };
-
   /// Held until home / session is ready (cold start from killed state).
   static Map<String, dynamic>? _pending;
 
@@ -278,27 +271,8 @@ class ChatPushNavigation {
         .toString()
         .trim()
         .toLowerCase();
-    if (raw.isNotEmpty) {
-      if (_validChatTypes.contains(raw)) return raw;
-      switch (raw) {
-        case 'private_chat':
-        case 'dm':
-        case 'direct':
-        case 'one_to_one':
-          return ChatApiType.private;
-        case 'case':
-        case 'casegroup':
-          return ChatApiType.caseGroup;
-        case 'social':
-        case 'socialgroup':
-        case 'social_chat':
-          return ChatApiType.socialGroup;
-        case 'group_chat':
-        case 'ad_hoc':
-        case 'adhoc':
-          return ChatApiType.group;
-      }
-    }
+    final known = ChatApiType.fromApi(raw);
+    if (known != null) return known;
 
     final hasSender = _asInt(
           data['sender_id'] ?? data['senderId'] ?? data['from_user_id'],
@@ -633,9 +607,7 @@ class ChatPushNavigation {
       }
 
       // Refresh after the chat route has settled — not during resume GPU work.
-      Future<void>.delayed(const Duration(seconds: 1), () {
-        _refreshInboxQuietly(currentUserId: doctor.id);
-      });
+      Future<void>.delayed(const Duration(seconds: 1), _refreshInboxQuietly);
     } catch (e, st) {
       debugPrint('ChatPushNavigation failed: $e\n$st');
       await _queuePending(pendingMap);
@@ -797,12 +769,10 @@ class ChatPushNavigation {
     } catch (_) {}
   }
 
-  static void _refreshInboxQuietly({int? currentUserId}) {
+  static void _refreshInboxQuietly() {
     try {
       if (!di.sl.isRegistered<InboxCubit>()) return;
-      di.sl<InboxCubit>().silentRefresh(
-            currentUserId: currentUserId,
-          );
+      di.sl<InboxCubit>().refreshSoon();
     } catch (_) {}
   }
 

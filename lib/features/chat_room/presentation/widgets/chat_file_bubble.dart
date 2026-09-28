@@ -137,9 +137,8 @@ class _ChatFileBubbleState extends State<ChatFileBubble> {
     final row = Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: widget.isUploading || widget.showRetry || _loading
-            ? null
-            : _open,
+        onTap:
+            widget.isUploading || widget.showRetry || _loading ? null : _open,
         borderRadius: BorderRadius.circular(10.r),
         child: Container(
           constraints: BoxConstraints(minWidth: 180.w, maxWidth: 260.w),

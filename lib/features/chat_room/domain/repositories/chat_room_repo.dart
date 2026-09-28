@@ -47,6 +47,12 @@ abstract class ChatRoomRepository {
     bool forEveryone = false,
   });
 
+  /// Own messages, one request (server accepts 1–100 ids).
+  Future<Either<Failure, ChatEnvelopeModel>> deleteMessagesForEveryone({
+    required int conversationId,
+    required List<int> messageIds,
+  });
+
   Future<Either<Failure, ChatMessageEnvelopeModelResponse>> editMessage({
     required int conversationId,
     required String chatType,
