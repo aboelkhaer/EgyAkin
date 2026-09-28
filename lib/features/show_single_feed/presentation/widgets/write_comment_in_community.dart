@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -231,11 +232,7 @@ class _ComposerShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final replyName = replyingTo == null
         ? null
-        : doctorName(
-            firstName: replyingTo.doctor!.firstName,
-            lastName: replyingTo.doctor!.lastName,
-            role: replyingTo.doctor!.isSyndicateCardRequired.toString(),
-          );
+        : doctorDisplayName(replyingTo.doctor);
 
     return ClipRect(
       child: BackdropFilter(

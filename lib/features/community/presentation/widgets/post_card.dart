@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_like_action.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
@@ -199,15 +200,10 @@ class PostCard extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  child: CircleAvatar(
-                                    radius: 20.r,
-                                    backgroundColor:
-                                        AppColors.primary.withOpacity(0.8),
-                                    child: CustomCachedNetworkImage(
-                                      imageUrl: feed.doctor!.image.toString(),
-                                      height: 100.h,
-                                      width: 100.w,
-                                    ),
+                                  child: DoctorCircleAvatar(
+                                    doctor: feed.doctor,
+                                    primary: AppColors.primary,
+                                    size: 40.r,
                                   ),
                                 ),
                               ),
@@ -261,14 +257,9 @@ class PostCard extends StatelessWidget {
                                                 );
                                               },
                                               child: Text(
-                                                doctorName(
-                                                  firstName:
-                                                      feed.doctor!.firstName,
-                                                  lastName:
-                                                      feed.doctor!.lastName,
-                                                  role: feed.doctor!
-                                                      .isSyndicateCardRequired
-                                                      .toString(),
+                                                doctorDisplayName(
+                                                  feed.doctor,
+                                                  fallback: '',
                                                 ),
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -282,8 +273,7 @@ class PostCard extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                          isVerifiedUser(feed.doctor!
-                                                  .isSyndicateCardRequired)
+                                          doctorIsVerified(feed.doctor)
                                               ? const VerificationIcon(
                                                   isPatientCard: false,
                                                 )

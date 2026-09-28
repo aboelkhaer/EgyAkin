@@ -1949,44 +1949,6 @@ class InboxCubit extends Cubit<InboxState> {
     _notifyArchived();
   }
 
-  /// Leaving a chat: don't flash blue ticks from a sticky local "seen" while
-  /// GET /inbox may still report delivered. API can re-upgrade to seen.
-  void _clearStickySeenForConversation(int conversationId) {
-    var changed = false;
-    final idx = _threads.indexWhere((t) => t.conversationId == conversationId);
-    if (idx >= 0 &&
-        _threads[idx].lastMessageStatus == ChatMessageStatus.seen) {
-      changed = true;
-      _threads = [
-        for (var i = 0; i < _threads.length; i++)
-          if (i == idx)
-            _threads[i].copyWith(
-              lastMessageStatus: ChatMessageStatus.delivered,
-            )
-          else
-            _threads[i],
-      ];
-    }
-    final archIdx =
-        _archivedThreads.indexWhere((t) => t.conversationId == conversationId);
-    if (archIdx >= 0 &&
-        _archivedThreads[archIdx].lastMessageStatus ==
-            ChatMessageStatus.seen) {
-      changed = true;
-      _archivedThreads = [
-        for (var i = 0; i < _archivedThreads.length; i++)
-          if (i == archIdx)
-            _archivedThreads[i].copyWith(
-              lastMessageStatus: ChatMessageStatus.delivered,
-            )
-          else
-            _archivedThreads[i],
-      ];
-      _notifyArchived();
-    }
-    if (changed) _emitLoaded();
-  }
-
   /// Ack delivery for a thread (message reached this device, chat may be closed).
   void _markThreadDelivered(InboxThread thread) {
     if (!_shouldAckDelivered(thread)) return;
@@ -2301,9 +2263,6 @@ class InboxCubit extends Cubit<InboxState> {
   }) async {
     if (forceReadConversationId != null) {
       markConversationRead(forceReadConversationId);
-      // Drop sticky local "seen" immediately so returning to Chats doesn't
-      // flash blue ticks before GET /inbox confirms (often still delivered).
-      _clearStickySeenForConversation(forceReadConversationId);
     }
     if (_isRefreshing || _inboxPageRequestInFlight) return;
     final now = DateTime.now();

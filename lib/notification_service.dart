@@ -745,7 +745,7 @@ class NotificationServices {
   }
 
   String? _avatarImageUrl(RemoteMessage message) {
-    return _dataString(message.data, const [
+    final fromData = _dataString(message.data, const [
       'sender_image',
       'senderImage',
       'sender_avatar',
@@ -760,8 +760,19 @@ class NotificationServices {
       'group_image',
       'groupImage',
     ]);
+    if (fromData != null) return fromData;
+
+    // FCM often only sends the sender photo as the generic notification image.
+    final fcmImage = message.notification?.android?.imageUrl ??
+        message.notification?.apple?.imageUrl;
+    if (fcmImage != null && fcmImage.trim().isNotEmpty) {
+      return fcmImage.trim();
+    }
+    return _dataString(message.data, const ['image']);
   }
 
+  /// Right-side / big-picture media: explicit message photos only — never the
+  /// sender avatar or FCM generic `image` (those belong on the left).
   String? _messageImageUrl(RemoteMessage message, {String? avatarUrl}) {
     final fromData = _dataString(message.data, const [
       'attachment_url',
@@ -772,21 +783,8 @@ class NotificationServices {
       'messageImage',
       'photo_url',
       'photoUrl',
-      'image_url',
-      'imageUrl',
     ]);
     if (fromData != null && fromData != avatarUrl) return fromData;
-
-    final fcmImage = message.notification?.android?.imageUrl ??
-        message.notification?.apple?.imageUrl;
-    if (fcmImage != null &&
-        fcmImage.trim().isNotEmpty &&
-        fcmImage.trim() != avatarUrl) {
-      return fcmImage.trim();
-    }
-
-    final generic = _dataString(message.data, const ['image']);
-    if (generic != null && generic != avatarUrl) return generic;
     return null;
   }
 

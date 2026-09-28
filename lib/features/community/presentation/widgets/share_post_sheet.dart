@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/services/deep_link_handler.dart';
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -14,6 +15,8 @@ Future<void> showSharePostSheet({
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withOpacity(0.45),
+    // Above PersistentTabView floating nav (same pattern as custom sheets).
+    useRootNavigator: true,
     builder: (ctx) => _SharePostSheet(feed: feed),
   );
 }
@@ -44,13 +47,7 @@ class _SharePostSheetState extends State<_SharePostSheet> {
       DeepLinkHandler().generatePostDeepLink(widget.feed.id.toString());
 
   String get _authorName {
-    final d = widget.feed.doctor;
-    if (d == null) return 'EgyAkin';
-    return doctorName(
-      firstName: d.firstName,
-      lastName: d.lastName,
-      role: d.isSyndicateCardRequired?.toString() ?? '',
-    );
+    return doctorDisplayName(widget.feed.doctor, fallback: 'EgyAkin');
   }
 
   String get _previewText {
@@ -158,12 +155,13 @@ class _SharePostSheetState extends State<_SharePostSheet> {
     final cardBg = isDark ? const Color(0xFF2C2C2E) : Colors.white;
     final bottom = MediaQuery.paddingOf(context).bottom;
     final thumb = _thumbUrl;
-    final doctorImage = widget.feed.doctor?.image?.toString() ?? '';
 
     return SafeArea(
       top: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h + bottom * 0.25),
+        // Clear home-indicator / gesture inset; sheet is on the root navigator
+        // so it already sits above the floating tab bar.
+        padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h + bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -245,10 +243,10 @@ class _SharePostSheetState extends State<_SharePostSheet> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _AuthorAvatar(
-                            imageUrl: doctorImage,
+                          DoctorCircleAvatar(
+                            doctor: widget.feed.doctor,
                             primary: primary,
-                            name: _authorName,
+                            size: 40.r,
                           ),
                           SizedBox(width: 10.w),
                           Expanded(
@@ -444,54 +442,6 @@ class _CopiedToast extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _AuthorAvatar extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final Color primary;
-
-  const _AuthorAvatar({
-    required this.imageUrl,
-    required this.name,
-    required this.primary,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final initial = name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : 'E';
-    return Container(
-      width: 40.r,
-      height: 40.r,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: primary.withOpacity(0.35), width: 1.4),
-      ),
-      child: ClipOval(
-        child: imageUrl.isEmpty
-            ? ColoredBox(
-                color: primary.withOpacity(0.14),
-                child: Center(
-                  child: Text(
-                    initial,
-                    style: TextStyle(
-                      color: primary,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15.sp,
-                    ),
-                  ),
-                ),
-              )
-            : CustomCachedNetworkImage(
-                imageUrl: imageUrl,
-                width: 40.r,
-                height: 40.r,
-                fit: BoxFit.cover,
-                showLoaderPlaceholder: false,
-              ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 import '../../../../app/shared/functions/permissions_helper.dart';
@@ -109,40 +110,10 @@ class CommentCard extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.4),
-                                spreadRadius: 2,
-                                blurRadius: 9,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(80.r),
-                            child: CircleAvatar(
-                              radius: 20.r,
-                              backgroundColor:
-                                  AppColors.primary.withOpacity(0.8),
-                              child: commentModel.doctor!.id == null
-                                  ? Text(
-                                      commentModel.doctor!.firstName![0]
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp),
-                                    )
-                                  : CustomCachedNetworkImage(
-                                      imageUrl:
-                                          commentModel.doctor!.image.toString(),
-                                      height: 100.h,
-                                      width: 100.w,
-                                    ),
-                            ),
-                          ),
+                        child: DoctorCircleAvatar(
+                          doctor: commentModel.doctor,
+                          primary: AppColors.primary,
+                          size: 40.r,
                         ),
                       ),
                       Expanded(
@@ -159,26 +130,20 @@ class CommentCard extends StatelessWidget {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        doctorName(
-                                          firstName:
-                                              commentModel.doctor!.firstName ??
-                                                  '',
-                                          lastName:
-                                              commentModel.doctor!.lastName ??
-                                                  '',
-                                          role: commentModel
-                                              .doctor!.isSyndicateCardRequired
-                                              .toString(),
+                                      Flexible(
+                                        child: Text(
+                                          doctorDisplayName(
+                                            commentModel.doctor,
+                                          ),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: isDarkMode
+                                                  ? AppColors.title
+                                                  : Colors.black,
+                                              fontSize: 14),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isDarkMode
-                                                ? AppColors.title
-                                                : Colors.black,
-                                            fontSize: 14),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),

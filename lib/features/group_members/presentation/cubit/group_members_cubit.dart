@@ -209,9 +209,21 @@ class GroupMembersCubit extends Cubit<GroupMembersState> {
                 ?.where((doctor) => doctor.id.toString() != doctorId)
                 .toList();
 
-            // Create updated members list
+            final previousTotal = currentMembers?.total ??
+                currentMembers?.data?.length ??
+                0;
+            final nextTotal = updatedDoctors?.length ??
+                (previousTotal > 0 ? previousTotal - 1 : 0);
+            final previousTo = currentMembers?.to;
+            final nextTo = previousTo == null
+                ? null
+                : (previousTo > 0 ? previousTo - 1 : 0);
+
+            // Keep list + counters in sync for the bottom-sheet header/badge.
             final updatedMembers = currentMembers?.copyWith(
               data: updatedDoctors,
+              total: nextTotal,
+              to: nextTo,
             );
 
             // Update the full response
@@ -223,14 +235,17 @@ class GroupMembersCubit extends Cubit<GroupMembersState> {
             sl<GroupDetailsInCommunityCubit>().increaseOrDecreaseMembers(false);
 
             return GroupMembersState.loaded(
-              '', // snackBarMessage
+              (r.message?.trim().isNotEmpty ?? false)
+                  ? r.message!.trim()
+                  : 'Member removed',
               '', // dialogMessage
               updatedResponse,
               false,
               false,
               true, // isRemoveMemberFromGroupLoaded
               value.isAcceptLoading,
-              value.isDeclineLoading, value.postLikesResponse,
+              value.isDeclineLoading,
+              value.postLikesResponse,
             );
           },
         ));

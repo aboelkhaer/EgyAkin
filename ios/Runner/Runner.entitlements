@@ -17,5 +17,7 @@
 	<array>
 		<string>group.com.incodeco.EgyAkin</string>
 	</array>
+	<key>com.apple.developer.usernotifications.communication</key>
+	<true/>
 </dict>
 </plist>

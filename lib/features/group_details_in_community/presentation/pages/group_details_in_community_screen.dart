@@ -124,8 +124,16 @@ class _GroupDetailsInCommunityScreenState
       (g.userStatus == GroupInviteStatus.invited.name &&
           g.privacy == GroupStatus.public.name);
 
-  bool _isOwner(GroupModel g) =>
-      widget.currentDoctorModel.id.toString() == g.owner?.id.toString();
+  /// Prefer nested [owner.id], fall back to [ownerId] when API omits the object.
+  String _groupOwnerId(GroupModel g) =>
+      g.owner?.id?.toString() ?? g.ownerId?.toString() ?? '';
+
+  bool _isOwner(GroupModel g) {
+    final me = widget.currentDoctorModel.id?.toString();
+    if (me == null || me.isEmpty) return false;
+    final owner = _groupOwnerId(g);
+    return owner.isNotEmpty && me == owner;
+  }
 
   void _openImage(String url) {
     Navigator.push(
@@ -171,7 +179,7 @@ class _GroupDetailsInCommunityScreenState
             currentDoctorModel: widget.currentDoctorModel,
             homeDataModel: widget.homeDataModel,
             postId: '',
-            ownerId: group.owner?.id.toString() ?? '',
+            ownerId: _groupOwnerId(group),
           ),
         );
       },

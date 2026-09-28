@@ -417,7 +417,10 @@ class HomeCubit extends Cubit<HomeState> {
     if (localDoctor == null) return;
     currentDoctorModel = localDoctor;
     unawaited(
-      LocalProfileImageHelper.ensureCached(currentDoctorModel.image),
+      LocalProfileImageHelper.ensureCached(
+        currentDoctorModel.image,
+        userId: currentDoctorModel.id,
+      ),
     );
     if (getCurrentUserVersion == false) {
       currentUserVersion = (await sl<AppPreferences>()
@@ -1164,6 +1167,13 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       await LocalProfileImageHelper.clear();
     } catch (_) {}
+    // Drop singleton community/groups caches so the next account never sees
+    // the previous user's "Your groups" / discover lists.
+    try {
+      resetCommunitySessionCubits();
+    } catch (e) {
+      debugPrint('resetCommunitySessionCubits failed: $e');
+    }
   }
 
   signOutForUnUnauthenticated() async {

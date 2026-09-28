@@ -133,6 +133,7 @@ class ProfileTabContent extends StatelessWidget {
                   primary: primary,
                   initials: _initials,
                   imageUrl: imageUrl,
+                  userId: doctorFromCubit.id ?? currentDoctorModel.id,
                   imageRevision: cubit.imageRevision,
                   displayName: _displayName,
                   specialtyLine: _specialtyLine,
@@ -618,6 +619,7 @@ class _ProfileHeader extends StatelessWidget {
   final Color primary;
   final String initials;
   final String? imageUrl;
+  final int? userId;
   final int imageRevision;
   final String displayName;
   final String specialtyLine;
@@ -631,6 +633,7 @@ class _ProfileHeader extends StatelessWidget {
     required this.primary,
     required this.initials,
     required this.imageUrl,
+    this.userId,
     required this.imageRevision,
     required this.displayName,
     required this.specialtyLine,
@@ -739,6 +742,7 @@ class _ProfileHeader extends StatelessWidget {
                                       width: avatarRadius * 2,
                                       child: LocalProfileAvatarImage(
                                         imageUrl: imageUrl,
+                                        userId: userId,
                                         revision: imageRevision,
                                         height: avatarRadius * 2,
                                         width: avatarRadius * 2,

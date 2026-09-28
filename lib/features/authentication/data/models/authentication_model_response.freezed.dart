@@ -575,9 +575,9 @@ DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DoctorModel {
   int? get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'name')
+  @JsonKey(name: 'name', readValue: _readDoctorFirstName)
   String? get firstName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'lname')
+  @JsonKey(name: 'lname', readValue: _readDoctorLastName)
   String? get lastName => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get age => throw _privateConstructorUsedError;
@@ -590,6 +590,7 @@ mixin _$DoctorModel {
   String? get phone => throw _privateConstructorUsedError;
   String? get job => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
+  @JsonKey(name: 'image', readValue: _readDoctorImage)
   String? get image => throw _privateConstructorUsedError;
   @JsonKey(name: 'password_confirmation')
   String? get passwordConfirmation => throw _privateConstructorUsedError;
@@ -637,8 +638,8 @@ abstract class $DoctorModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
-      @JsonKey(name: 'name') String? firstName,
-      @JsonKey(name: 'lname') String? lastName,
+      @JsonKey(name: 'name', readValue: _readDoctorFirstName) String? firstName,
+      @JsonKey(name: 'lname', readValue: _readDoctorLastName) String? lastName,
       String? email,
       String? age,
       String? fcmToken,
@@ -650,7 +651,7 @@ abstract class $DoctorModelCopyWith<$Res> {
       String? phone,
       String? job,
       String? gender,
-      String? image,
+      @JsonKey(name: 'image', readValue: _readDoctorImage) String? image,
       @JsonKey(name: 'password_confirmation') String? passwordConfirmation,
       @JsonKey(name: 'syndicate_card') String? syndicateCard,
       @JsonKey(name: 'patients_count') String? patientsCount,
@@ -849,8 +850,8 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
-      @JsonKey(name: 'name') String? firstName,
-      @JsonKey(name: 'lname') String? lastName,
+      @JsonKey(name: 'name', readValue: _readDoctorFirstName) String? firstName,
+      @JsonKey(name: 'lname', readValue: _readDoctorLastName) String? lastName,
       String? email,
       String? age,
       String? fcmToken,
@@ -862,7 +863,7 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       String? phone,
       String? job,
       String? gender,
-      String? image,
+      @JsonKey(name: 'image', readValue: _readDoctorImage) String? image,
       @JsonKey(name: 'password_confirmation') String? passwordConfirmation,
       @JsonKey(name: 'syndicate_card') String? syndicateCard,
       @JsonKey(name: 'patients_count') String? patientsCount,
@@ -1054,8 +1055,8 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
 class _$DoctorModelImpl implements _DoctorModel {
   const _$DoctorModelImpl(
       {this.id,
-      @JsonKey(name: 'name') this.firstName,
-      @JsonKey(name: 'lname') this.lastName,
+      @JsonKey(name: 'name', readValue: _readDoctorFirstName) this.firstName,
+      @JsonKey(name: 'lname', readValue: _readDoctorLastName) this.lastName,
       this.email,
       this.age,
       this.fcmToken,
@@ -1067,7 +1068,7 @@ class _$DoctorModelImpl implements _DoctorModel {
       this.phone,
       this.job,
       this.gender,
-      this.image,
+      @JsonKey(name: 'image', readValue: _readDoctorImage) this.image,
       @JsonKey(name: 'password_confirmation') this.passwordConfirmation,
       @JsonKey(name: 'syndicate_card') this.syndicateCard,
       @JsonKey(name: 'patients_count') this.patientsCount,
@@ -1091,10 +1092,10 @@ class _$DoctorModelImpl implements _DoctorModel {
   @override
   final int? id;
   @override
-  @JsonKey(name: 'name')
+  @JsonKey(name: 'name', readValue: _readDoctorFirstName)
   final String? firstName;
   @override
-  @JsonKey(name: 'lname')
+  @JsonKey(name: 'lname', readValue: _readDoctorLastName)
   final String? lastName;
   @override
   final String? email;
@@ -1119,6 +1120,7 @@ class _$DoctorModelImpl implements _DoctorModel {
   @override
   final String? gender;
   @override
+  @JsonKey(name: 'image', readValue: _readDoctorImage)
   final String? image;
   @override
   @JsonKey(name: 'password_confirmation')
@@ -1287,8 +1289,10 @@ class _$DoctorModelImpl implements _DoctorModel {
 abstract class _DoctorModel implements DoctorModel {
   const factory _DoctorModel(
       {final int? id,
-      @JsonKey(name: 'name') final String? firstName,
-      @JsonKey(name: 'lname') final String? lastName,
+      @JsonKey(name: 'name', readValue: _readDoctorFirstName)
+      final String? firstName,
+      @JsonKey(name: 'lname', readValue: _readDoctorLastName)
+      final String? lastName,
       final String? email,
       final String? age,
       final String? fcmToken,
@@ -1300,7 +1304,7 @@ abstract class _DoctorModel implements DoctorModel {
       final String? phone,
       final String? job,
       final String? gender,
-      final String? image,
+      @JsonKey(name: 'image', readValue: _readDoctorImage) final String? image,
       @JsonKey(name: 'password_confirmation')
       final String? passwordConfirmation,
       @JsonKey(name: 'syndicate_card') final String? syndicateCard,
@@ -1325,10 +1329,10 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   int? get id;
   @override
-  @JsonKey(name: 'name')
+  @JsonKey(name: 'name', readValue: _readDoctorFirstName)
   String? get firstName;
   @override
-  @JsonKey(name: 'lname')
+  @JsonKey(name: 'lname', readValue: _readDoctorLastName)
   String? get lastName;
   @override
   String? get email;
@@ -1353,6 +1357,7 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   String? get gender;
   @override
+  @JsonKey(name: 'image', readValue: _readDoctorImage)
   String? get image;
   @override
   @JsonKey(name: 'password_confirmation')

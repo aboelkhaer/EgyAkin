@@ -10,6 +10,9 @@ import 'package:egy_akin/app/constants/local_storage_key.dart';
 
 /// Persists the current doctor's profile photo on disk so avatars open
 /// instantly without a network placeholder on every refresh.
+///
+/// Cache is bound to both [remoteUrl] and [userId] so a previous account's
+/// photo is never shown after sign-out / account switch.
 class LocalProfileImageHelper {
   LocalProfileImageHelper._();
 
@@ -44,6 +47,23 @@ class LocalProfileImageHelper {
     await prefs.setString(AppLocalStrings.localProfileImageUrl, url);
   }
 
+  static Future<int?> _savedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.get(AppLocalStrings.localProfileImageUserId);
+    if (raw is int) return raw;
+    if (raw is String) return int.tryParse(raw);
+    return null;
+  }
+
+  static Future<void> _setSavedUserId(int? userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (userId == null || userId <= 0) {
+      await prefs.remove(AppLocalStrings.localProfileImageUserId);
+      return;
+    }
+    await prefs.setInt(AppLocalStrings.localProfileImageUserId, userId);
+  }
+
   static Future<void> _evictFileImage(File file) async {
     try {
       PaintingBinding.instance.imageCache.evict(FileImage(file));
@@ -68,24 +88,38 @@ class LocalProfileImageHelper {
     } catch (_) {}
   }
 
-  static Future<File?> getLocalFile() async {
+  static Future<File?> getLocalFile({int? userId}) async {
+    final savedUserId = await _savedUserId();
+    if (userId != null &&
+        userId > 0 &&
+        savedUserId != null &&
+        savedUserId != userId) {
+      return null;
+    }
+
     final savedPath = await _savedPath();
     if (savedPath != null) {
       final file = File(savedPath);
       if (await file.exists() && await file.length() > 0) return file;
     }
 
-    // Legacy fallback for the old fixed filename.
-    final dir = await _docsDir();
-    final legacy = File('${dir.path}/current_doctor_profile.jpg');
-    if (await legacy.exists() && await legacy.length() > 0) return legacy;
+    // Legacy fallback for the old fixed filename (no user binding).
+    if (userId == null || savedUserId == null) {
+      final dir = await _docsDir();
+      final legacy = File('${dir.path}/current_doctor_profile.jpg');
+      if (await legacy.exists() && await legacy.length() > 0) return legacy;
+    }
     return null;
   }
 
   /// Copies [source] into the app documents folder immediately.
   /// Uses a unique path each time so Flutter's image cache cannot keep
   /// showing a previous photo that shared the same filename.
-  static Future<File> saveFromFile(File source, {String? remoteUrl}) async {
+  static Future<File> saveFromFile(
+    File source, {
+    String? remoteUrl,
+    int? userId,
+  }) async {
     final dir = await _docsDir();
     final target = File(
       '${dir.path}/$_filePrefix${DateTime.now().microsecondsSinceEpoch}.jpg',
@@ -96,6 +130,9 @@ class LocalProfileImageHelper {
     if (remoteUrl != null && remoteUrl.isNotEmpty) {
       await _setSavedRemoteUrl(remoteUrl);
     }
+    if (userId != null && userId > 0) {
+      await _setSavedUserId(userId);
+    }
     await _deletePreviousLocalFiles(keepPath: target.path);
     await _evictFileImage(target);
     revision.value++;
@@ -103,25 +140,33 @@ class LocalProfileImageHelper {
   }
 
   /// Returns a local file for [remoteUrl], downloading once when needed.
-  static Future<File?> resolve(String? remoteUrl) async {
-    final local = await getLocalFile();
+  ///
+  /// Never returns another account's cached file: local is reused only when
+  /// [userId] (if given) and [remoteUrl] both match what was saved.
+  static Future<File?> resolve(String? remoteUrl, {int? userId}) async {
+    final trimmedRemote = remoteUrl?.trim() ?? '';
+    final local = await getLocalFile(userId: userId);
     final savedUrl = await _savedRemoteUrl();
+    final savedUserId = await _savedUserId();
 
-    if (local != null) {
-      if (remoteUrl == null ||
-          remoteUrl.isEmpty ||
-          savedUrl.isEmpty ||
-          savedUrl == remoteUrl) {
-        return local;
-      }
+    final userMatches = userId == null ||
+        userId <= 0 ||
+        savedUserId == null ||
+        savedUserId == userId;
+
+    // Reuse disk cache only when it belongs to this user AND this URL.
+    if (local != null && userMatches) {
+      if (trimmedRemote.isEmpty) return local;
+      if (savedUrl.isNotEmpty && savedUrl == trimmedRemote) return local;
     }
 
-    if (remoteUrl == null || remoteUrl.isEmpty) return local;
+    if (trimmedRemote.isEmpty) return null;
 
     try {
-      final response = await http.get(Uri.parse(remoteUrl));
+      final response = await http.get(Uri.parse(trimmedRemote));
       if (response.statusCode != 200 || response.bodyBytes.isEmpty) {
-        return local;
+        // Network failed: only fall back to local when it is still this user.
+        return (local != null && userMatches) ? local : null;
       }
       final dir = await _docsDir();
       final target = File(
@@ -129,24 +174,30 @@ class LocalProfileImageHelper {
       );
       await target.writeAsBytes(response.bodyBytes, flush: true);
       await _setSavedPath(target.path);
-      await _setSavedRemoteUrl(remoteUrl);
+      await _setSavedRemoteUrl(trimmedRemote);
+      if (userId != null && userId > 0) {
+        await _setSavedUserId(userId);
+      }
       await _deletePreviousLocalFiles(keepPath: target.path);
       await _evictFileImage(target);
       revision.value++;
       return target;
     } catch (_) {
-      return local;
+      return (local != null && userMatches) ? local : null;
     }
   }
 
   /// Downloads and stores the image if a local copy is missing / outdated.
-  static Future<void> ensureCached(String? remoteUrl) async {
-    await resolve(remoteUrl);
+  static Future<void> ensureCached(String? remoteUrl, {int? userId}) async {
+    await resolve(remoteUrl, userId: userId);
   }
 
-  static Future<void> bindRemoteUrl(String remoteUrl) async {
+  static Future<void> bindRemoteUrl(String remoteUrl, {int? userId}) async {
     if (remoteUrl.isEmpty) return;
     await _setSavedRemoteUrl(remoteUrl);
+    if (userId != null && userId > 0) {
+      await _setSavedUserId(userId);
+    }
   }
 
   static Future<void> clear() async {
@@ -154,6 +205,7 @@ class LocalProfileImageHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(AppLocalStrings.localProfileImageUrl);
     await prefs.remove(AppLocalStrings.localProfileImagePath);
+    await prefs.remove(AppLocalStrings.localProfileImageUserId);
     revision.value++;
   }
 }

@@ -157,6 +157,46 @@ AllGroupsInCommunityCubit resolveAllGroupsInCommunityCubit() {
   return sl<AllGroupsInCommunityCubit>();
 }
 
+/// Clears community / groups singleton cubits so the next login never shows
+/// the previous account's "Your groups", discover list, or feeds.
+void resetCommunitySessionCubits() {
+  void reset<T extends Cubit>(T Function() create) {
+    if (!sl.isRegistered<T>()) {
+      sl.registerLazySingleton<T>(create);
+      return;
+    }
+    final cubit = sl<T>();
+    sl.unregister<T>();
+    if (!cubit.isClosed) {
+      cubit.close();
+    }
+    sl.registerLazySingleton<T>(create);
+  }
+
+  reset<CommunityCubit>(
+      () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  reset<TrendingCubit>(() => TrendingCubit(sl()));
+  reset<GroupsCubit>(
+      () => GroupsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  reset<MyGroupsInCommunityCubit>(
+      () => MyGroupsInCommunityCubit(sl(), sl()));
+  reset<AllGroupsInCommunityCubit>(
+      () => AllGroupsInCommunityCubit(sl(), sl()));
+  reset<GroupDetailsInCommunityCubit>(() => GroupDetailsInCommunityCubit(
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+      ));
+  reset<CommunitySearchCubit>(
+      () => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
+}
+
 Future<void> diInit() async {
   //! Core
   final sharedPrefs = await SharedPreferences.getInstance();

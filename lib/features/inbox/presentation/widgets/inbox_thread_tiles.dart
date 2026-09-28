@@ -267,7 +267,8 @@ class InboxThreadCard extends StatelessWidget {
                   children: [
                     if (!thread.hasPeerActivity &&
                         thread.unreadCount == 0 &&
-                        thread.lastMessageStatus != null) ...[
+                        thread.lastMessageStatus != null &&
+                        !ChatMappers.isReactionPreview(thread.preview)) ...[
                       _InboxStatusTicks(
                         status: thread.lastMessageStatus!,
                         isDark: isDark,
@@ -523,7 +524,8 @@ class _AdHocGroupThreadRow extends StatelessWidget {
                   children: [
                     if (!thread.hasPeerActivity &&
                         thread.unreadCount == 0 &&
-                        thread.lastMessageStatus != null) ...[
+                        thread.lastMessageStatus != null &&
+                        !ChatMappers.isReactionPreview(thread.preview)) ...[
                       _InboxStatusTicks(
                         status: thread.lastMessageStatus!,
                         isDark: isDark,

@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/chat_text_direction.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
 import 'package:egy_akin/features/chat_room/presentation/widgets/chat_link_preview.dart';
@@ -198,6 +199,11 @@ class _ChatReplyBannerState extends State<ChatReplyBanner>
                         imageCount: imageCount,
                         voiceDurationMs: voiceDurationMs,
                       );
+                      final previewDirection = ChatTextDirection.resolve(
+                        message.text.trim().isNotEmpty
+                            ? message.text
+                            : previewLabel,
+                      );
 
                       return Container(
                         padding: EdgeInsets.fromLTRB(6.w, 4.h, 2.w, 4.h),
@@ -269,44 +275,49 @@ class _ChatReplyBannerState extends State<ChatReplyBanner>
                                     ],
                                   ),
                                   SizedBox(height: 1.h),
-                                  Row(
-                                    children: [
-                                      if (image != null || imageCount > 0) ...[
-                                        Icon(
-                                          Icons.photo_camera_outlined,
-                                          size: 14.sp,
-                                          color: textColor,
-                                        ),
-                                        SizedBox(width: 4.w),
-                                      ] else if (voice != null) ...[
-                                        Icon(
-                                          Icons.mic_rounded,
-                                          size: 14.sp,
-                                          color: textColor,
-                                        ),
-                                        SizedBox(width: 4.w),
-                                      ],
-                                      Expanded(
-                                        child: Text(
-                                          previewLabel,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'Tajawal',
-                                            height: 1.2,
+                                  Directionality(
+                                    textDirection: previewDirection,
+                                    child: Row(
+                                      children: [
+                                        if (image != null ||
+                                            imageCount > 0) ...[
+                                          Icon(
+                                            Icons.photo_camera_outlined,
+                                            size: 14.sp,
                                             color: textColor,
-                                            fontFamilyFallback: const [
-                                              'Apple Color Emoji',
-                                              'Segoe UI Emoji',
-                                              'Noto Color Emoji',
-                                              'Android Emoji',
-                                            ],
+                                          ),
+                                          SizedBox(width: 4.w),
+                                        ] else if (voice != null) ...[
+                                          Icon(
+                                            Icons.mic_rounded,
+                                            size: 14.sp,
+                                            color: textColor,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                        ],
+                                        Expanded(
+                                          child: Text(
+                                            previewLabel,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              fontSize: 15.sp,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'Tajawal',
+                                              height: 1.2,
+                                              color: textColor,
+                                              fontFamilyFallback: const [
+                                                'Apple Color Emoji',
+                                                'Segoe UI Emoji',
+                                                'Noto Color Emoji',
+                                                'Android Emoji',
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

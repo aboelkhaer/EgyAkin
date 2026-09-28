@@ -1766,6 +1766,9 @@ class _ReplyQuoteBanner extends StatelessWidget {
           voiceDurationMs:
               voice == null ? null : ChatVoiceDurationCache.get(voice),
         );
+        final previewDirection = ChatTextDirection.resolve(
+          reply.text.trim().isNotEmpty ? reply.text : previewLabel,
+        );
 
         final banner = Container(
           margin: EdgeInsets.only(bottom: 1.h),
@@ -1798,44 +1801,48 @@ class _ReplyQuoteBanner extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 2.h),
-                    Row(
-                      children: [
-                        if (image != null || reply.imageCount > 0) ...[
-                          Icon(
-                            Icons.photo_camera_outlined,
-                            size: 14.sp,
-                            color: textColor,
-                          ),
-                          SizedBox(width: 3.w),
-                        ] else if (voice != null) ...[
-                          Icon(
-                            Icons.mic_rounded,
-                            size: 14.sp,
-                            color: textColor,
-                          ),
-                          SizedBox(width: 3.w),
-                        ],
-                        Expanded(
-                          child: Text(
-                            previewLabel,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Tajawal',
-                              height: 1.2,
+                    Directionality(
+                      textDirection: previewDirection,
+                      child: Row(
+                        children: [
+                          if (image != null || reply.imageCount > 0) ...[
+                            Icon(
+                              Icons.photo_camera_outlined,
+                              size: 14.sp,
                               color: textColor,
-                              fontFamilyFallback: const [
-                                'Apple Color Emoji',
-                                'Segoe UI Emoji',
-                                'Noto Color Emoji',
-                                'Android Emoji',
-                              ],
+                            ),
+                            SizedBox(width: 3.w),
+                          ] else if (voice != null) ...[
+                            Icon(
+                              Icons.mic_rounded,
+                              size: 14.sp,
+                              color: textColor,
+                            ),
+                            SizedBox(width: 3.w),
+                          ],
+                          Expanded(
+                            child: Text(
+                              previewLabel,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Tajawal',
+                                height: 1.2,
+                                color: textColor,
+                                fontFamilyFallback: const [
+                                  'Apple Color Emoji',
+                                  'Segoe UI Emoji',
+                                  'Noto Color Emoji',
+                                  'Android Emoji',
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -290,15 +290,6 @@ class _CommunityScreenState extends State<CommunityScreen>
     super.dispose();
   }
 
-  String _initials() {
-    final first = widget.currentDoctorModel.firstName;
-    final last = widget.currentDoctorModel.lastName;
-    final a = (first != null && first.isNotEmpty) ? first[0] : '';
-    final b = (last != null && last.isNotEmpty) ? last[0] : '';
-    final value = ('$a$b').toUpperCase();
-    return value.isEmpty ? 'DR' : value;
-  }
-
   void _openSearch() {
     navigatorKey.currentState?.pushNamed(
       AppRoutes.communitySearch,
@@ -452,8 +443,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               child: _CreatePostStrip(
                                 isDark: isDark,
                                 primary: primary,
-                                initials: _initials(),
-                                imageUrl: widget.currentDoctorModel.image,
+                                doctor: widget.currentDoctorModel,
                                 onTap: _openCreatePost,
                               ),
                             ),
@@ -463,6 +453,9 @@ class _CommunityScreenState extends State<CommunityScreen>
                             currentDoctorModel: widget.currentDoctorModel,
                           ),
                           GroupsTab(
+                            key: ValueKey(
+                              'community_groups_${widget.currentDoctorModel.id}',
+                            ),
                             homeDataModel: widget.homeDataModel,
                             currentDoctorModel: widget.currentDoctorModel,
                           ),
@@ -624,20 +617,22 @@ class _CommunityTabs extends StatelessWidget {
 class _CreatePostStrip extends StatelessWidget {
   final bool isDark;
   final Color primary;
-  final String initials;
-  final String? imageUrl;
+  final DoctorModel doctor;
   final VoidCallback onTap;
 
   const _CreatePostStrip({
     required this.isDark,
     required this.primary,
-    required this.initials,
-    required this.imageUrl,
+    required this.doctor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Prefer HomeCubit's live doctor so the strip shows the real photo even
+    // when the route arg is a stale / incomplete DoctorModel.
+    final avatarDoctor = resolveDoctorForAvatar(doctor) ?? doctor;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -652,25 +647,10 @@ class _CreatePostStrip extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 16.r,
-              backgroundColor: primary.withOpacity(0.15),
-              child: imageUrl == null || imageUrl!.isEmpty
-                  ? Text(
-                      initials,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w800,
-                        color: primary,
-                      ),
-                    )
-                  : ClipOval(
-                      child: CustomCachedNetworkImage(
-                        imageUrl: imageUrl!,
-                        height: 32.h,
-                        width: 32.w,
-                      ),
-                    ),
+            DoctorCircleAvatar(
+              doctor: avatarDoctor,
+              primary: primary,
+              size: 32.r,
             ),
             SizedBox(width: 10.w),
             Expanded(

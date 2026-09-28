@@ -248,12 +248,14 @@ class _HomeHeaderState extends State<HomeHeader> {
         BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             final image = widget.cubit.currentDoctorModel.image;
+            final userId = widget.cubit.currentDoctorModel.id;
             return CircleAvatar(
               radius: 18.r,
               backgroundColor: primary.withOpacity(0.15),
               child: ClipOval(
                 child: LocalProfileAvatarImage(
                   imageUrl: image,
+                  userId: userId,
                   width: 36.w,
                   height: 36.h,
                   fallback: Center(

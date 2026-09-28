@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/comment_exit_animator.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_comment_dialog.dart';
@@ -182,17 +183,11 @@ class CommentWidgetInCommunity extends StatelessWidget {
                 final isOwn = commentModel.doctor != null &&
                     currentDoctorModel.id.toString() ==
                         commentModel.doctor!.id.toString();
-                final name = commentModel.doctor == null
-                    ? ''
-                    : doctorName(
-                        firstName: commentModel.doctor!.firstName,
-                        lastName: commentModel.doctor!.lastName,
-                        role: commentModel.doctor!.isSyndicateCardRequired
-                            .toString(),
-                      );
-                final isVerified = commentModel.doctor
-                        ?.isSyndicateCardRequired ==
-                    'Verified';
+                final name = doctorDisplayName(
+                  commentModel.doctor,
+                  fallback: '',
+                );
+                final isVerified = doctorIsVerified(commentModel.doctor);
                 final commentText = commentModel.comment ?? '';
                 final replies = commentModel.replies ?? [];
                 final deleting = isDeleteCommentLoading &&
@@ -238,9 +233,10 @@ class CommentWidgetInCommunity extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () => _openDoctorProfile(context),
-                              child: _CommentAvatar(
+                              child: DoctorCircleAvatar(
                                 doctor: commentModel.doctor,
                                 primary: primary,
+                                size: 36.r,
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -497,55 +493,6 @@ class CommentWidgetInCommunity extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class _CommentAvatar extends StatelessWidget {
-  final DoctorModel? doctor;
-  final Color primary;
-
-  const _CommentAvatar({
-    required this.doctor,
-    required this.primary,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36.r,
-      height: 36.r,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: primary.withOpacity(0.25), width: 1.2),
-      ),
-      child: ClipOval(
-        child: doctor == null
-            ? ColoredBox(
-                color: primary.withOpacity(0.15),
-                child: Icon(Icons.person, size: 18.sp, color: primary),
-              )
-            : doctor!.id == null
-                ? ColoredBox(
-                    color: primary.withOpacity(0.15),
-                    child: Center(
-                      child: Text(
-                        (doctor!.firstName ?? 'D')[0].toUpperCase(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 14.sp,
-                          color: primary,
-                        ),
-                      ),
-                    ),
-                  )
-                : CustomCachedNetworkImage(
-                    imageUrl: doctor!.image.toString(),
-                    height: 36.r,
-                    width: 36.r,
-                    fit: BoxFit.cover,
-                  ),
-      ),
     );
   }
 }

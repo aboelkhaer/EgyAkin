@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/widgets/local_profile_avatar_image.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/pages/create_poll_screen.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/widgets/build_setting_item.dart';
@@ -288,48 +289,98 @@ class _CreatePostInCommunityScreenState
                                 padding:
                                     EdgeInsets.fromLTRB(18.w, 4.h, 18.w, 16.h),
                                 children: [
-                                  _IdentityPill(
-                                    palette: palette,
-                                    imageUrl: cubit.editableFeed != null
-                                        ? cubit.editableFeed!.doctor!.image
-                                            .toString()
-                                        : widget.currentDoctorModel.image
-                                            .toString(),
-                                    name: cubit.editableFeed != null
-                                        ? doctorName(
-                                            firstName: cubit.editableFeed!
-                                                .doctor!.firstName,
-                                            lastName: cubit
-                                                .editableFeed!.doctor!.lastName,
-                                            role: cubit.editableFeed!.doctor!
-                                                .isSyndicateCardRequired
-                                                .toString(),
-                                          )
-                                        : doctorName(
-                                            firstName: widget
-                                                .currentDoctorModel.firstName,
-                                            lastName: widget
-                                                .currentDoctorModel.lastName,
-                                            role: widget.homeDataModel
-                                                .isSyndicateCardRequired
-                                                .toString(),
-                                          ),
-                                    showVerified: cubit.editableFeed != null
-                                        ? true
-                                        : widget.currentDoctorModel
-                                                .isSyndicateCardRequired ==
-                                            'Verified',
-                                    destinationLabel: () {
-                                      final name = widget.groupName?.trim();
-                                      if (name != null && name.isNotEmpty) {
-                                        return name;
-                                      }
-                                      if (widget.groupId != null) {
-                                        return context.tr(AppStrings.groupFeed);
-                                      }
-                                      return context.tr(AppStrings.community);
-                                    }(),
-                                    postingInGroup: widget.groupId != null,
+                                  Builder(
+                                    builder: (context) {
+                                      DoctorModel? homeDoctor;
+                                      try {
+                                        homeDoctor =
+                                            resolveHomeCubit().currentDoctorModel;
+                                      } catch (_) {}
+
+                                      final feedDoctor =
+                                          cubit.editableFeed?.doctor;
+                                      final widgetDoctor =
+                                          widget.currentDoctorModel;
+
+                                      // Create-post route args often omit name;
+                                      // prefer live HomeCubit / feed doctor.
+                                      final DoctorModel doctor = () {
+                                        if (feedDoctor != null &&
+                                            ((feedDoctor.firstName
+                                                        ?.trim()
+                                                        .isNotEmpty ??
+                                                    false) ||
+                                                (feedDoctor.lastName
+                                                        ?.trim()
+                                                        .isNotEmpty ??
+                                                    false))) {
+                                          return feedDoctor;
+                                        }
+                                        if (homeDoctor != null &&
+                                            ((homeDoctor.firstName
+                                                        ?.trim()
+                                                        .isNotEmpty ??
+                                                    false) ||
+                                                (homeDoctor.lastName
+                                                        ?.trim()
+                                                        .isNotEmpty ??
+                                                    false))) {
+                                          return homeDoctor;
+                                        }
+                                        return widgetDoctor;
+                                      }();
+
+                                      final role = (doctor
+                                                  .isSyndicateCardRequired ??
+                                              homeDoctor
+                                                  ?.isSyndicateCardRequired ??
+                                              widget.homeDataModel
+                                                  .isSyndicateCardRequired)
+                                          ?.toString() ??
+                                          '';
+
+                                      final displayName = doctorName(
+                                        firstName: doctor.firstName ??
+                                            homeDoctor?.firstName ??
+                                            widgetDoctor.firstName,
+                                        lastName: doctor.lastName ??
+                                            homeDoctor?.lastName ??
+                                            widgetDoctor.lastName,
+                                        role: role,
+                                      ).trim();
+
+                                      return _IdentityPill(
+                                        palette: palette,
+                                        imageUrl: doctor.image ??
+                                            homeDoctor?.image ??
+                                            widgetDoctor.image,
+                                        userId: doctor.id ??
+                                            homeDoctor?.id ??
+                                            widgetDoctor.id,
+                                        name: displayName,
+                                        showVerified: role == 'Verified' ||
+                                            doctor.isSyndicateCardRequired ==
+                                                'Verified' ||
+                                            widgetDoctor
+                                                    .isSyndicateCardRequired ==
+                                                'Verified',
+                                        destinationLabel: () {
+                                          final groupName =
+                                              widget.groupName?.trim();
+                                          if (groupName != null &&
+                                              groupName.isNotEmpty) {
+                                            return groupName;
+                                          }
+                                          if (widget.groupId != null) {
+                                            return context
+                                                .tr(AppStrings.groupFeed);
+                                          }
+                                          return context
+                                              .tr(AppStrings.community);
+                                        }(),
+                                        postingInGroup: widget.groupId != null,
+                                      );
+                                    },
                                   ),
                                   SizedBox(height: 16.h),
                                   _WritingSheet(
@@ -887,7 +938,8 @@ class _StudioTopBar extends StatelessWidget {
 
 class _IdentityPill extends StatelessWidget {
   final _StudioPalette palette;
-  final String imageUrl;
+  final String? imageUrl;
+  final int? userId;
   final String name;
   final bool showVerified;
   final String destinationLabel;
@@ -896,11 +948,19 @@ class _IdentityPill extends StatelessWidget {
   const _IdentityPill({
     required this.palette,
     required this.imageUrl,
+    this.userId,
     required this.name,
     required this.showVerified,
     required this.destinationLabel,
     this.postingInGroup = false,
   });
+
+  String get _initials {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return 'DR';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -912,27 +972,52 @@ class _IdentityPill extends StatelessWidget {
         border: Border.all(color: palette.line.withOpacity(0.7)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
+          SizedBox(
             width: 34.w,
             height: 34.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: palette.accent.withOpacity(0.45), width: 1.5),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: CustomCachedNetworkImage(
-              imageUrl: imageUrl,
-              height: 34.w,
-              width: 34.w,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: palette.accent.withOpacity(0.45),
+                  width: 1.5,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(1.5.w),
+                child: ClipOval(
+                  child: LocalProfileAvatarImage(
+                    imageUrl:
+                        (imageUrl ?? '').trim().isEmpty ? null : imageUrl,
+                    userId: userId,
+                    width: 31.w,
+                    height: 31.w,
+                    fallback: ColoredBox(
+                      color: palette.accent.withOpacity(0.12),
+                      child: Center(
+                        child: Text(
+                          _initials,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w800,
+                            color: palette.accent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
           SizedBox(width: 10.w),
           Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Row(
                   children: [
                     Flexible(
@@ -940,7 +1025,7 @@ class _IdentityPill extends StatelessWidget {
                         name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5.sp,
                           fontWeight: FontWeight.w700,
                           color: palette.ink,
@@ -949,7 +1034,10 @@ class _IdentityPill extends StatelessWidget {
                     ),
                     if (showVerified) ...[
                       SizedBox(width: 4.w),
-                      const VerificationIcon(isPatientCard: false),
+                      const VerificationIcon(
+                        isPatientCard: false,
+                        isSmaller: true,
+                      ),
                     ],
                   ],
                 ),

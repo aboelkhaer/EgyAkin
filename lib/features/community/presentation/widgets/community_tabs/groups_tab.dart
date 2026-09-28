@@ -20,7 +20,8 @@ class GroupsTab extends StatefulWidget {
 
 class _GroupsTabState extends State<GroupsTab>
     with AutomaticKeepAliveClientMixin {
-  late final MyGroupsInCommunityCubit _myGroupsCubit;
+  late MyGroupsInCommunityCubit _myGroupsCubit;
+  int? _boundUserId;
 
   @override
   bool get wantKeepAlive => true;
@@ -28,14 +29,27 @@ class _GroupsTabState extends State<GroupsTab>
   @override
   void initState() {
     super.initState();
+    _boundUserId = widget.currentDoctorModel.id;
+    _bindAndLoad(force: false);
+  }
+
+  @override
+  void didUpdateWidget(covariant GroupsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newId = widget.currentDoctorModel.id;
+    if (newId != _boundUserId) {
+      _boundUserId = newId;
+      _bindAndLoad(force: true);
+    }
+  }
+
+  void _bindAndLoad({required bool force}) {
     _myGroupsCubit = resolveMyGroupsInCommunityCubit();
-    // Load once when the tab is first created; keep-alive prevents
-    // reloading when switching away to Feeds/Trending.
     final alreadyLoaded = _myGroupsCubit.state.maybeWhen(
       loaded: (_, __, ___, ____) => true,
       orElse: () => false,
     );
-    if (!alreadyLoaded && _myGroupsCubit.callMyGroups == 0) {
+    if (force || (!alreadyLoaded && _myGroupsCubit.callMyGroups == 0)) {
       _myGroupsCubit.callMyGroups = 1;
       _myGroupsCubit.getMyGroups();
     }
@@ -47,6 +61,7 @@ class _GroupsTabState extends State<GroupsTab>
     return BlocProvider<MyGroupsInCommunityCubit>.value(
       value: _myGroupsCubit,
       child: _GroupsTabView(
+        key: ValueKey('groups_view_${widget.currentDoctorModel.id}'),
         homeDataModel: widget.homeDataModel,
         currentDoctorModel: widget.currentDoctorModel,
       ),
@@ -59,6 +74,7 @@ class _GroupsTabView extends StatefulWidget {
   final DoctorModel currentDoctorModel;
 
   const _GroupsTabView({
+    super.key,
     required this.homeDataModel,
     required this.currentDoctorModel,
   });
@@ -85,6 +101,7 @@ class _GroupsTabViewState extends State<_GroupsTabView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final groupsCubit = context.read<GroupsCubit>();
+      // Fresh singleton after account switch always has callGroupsTabTimes == 0.
       if (groupsCubit.callGroupsTabTimes == 0) {
         groupsCubit.getGroupsTab();
         groupsCubit.callGroupsTabTimes++;
@@ -377,6 +394,8 @@ class _GroupAvatar extends StatelessWidget {
               fit: BoxFit.cover,
               fadeInDuration: Duration.zero,
               fadeOutDuration: Duration.zero,
+              // Impeller: avoid mipmaps on tiny/odd remote group images.
+              filterQuality: FilterQuality.low,
               memCacheWidth: cacheSize,
               memCacheHeight: cacheSize,
               placeholder: (_, __) => ColoredBox(
@@ -781,7 +800,7 @@ class _DiscoverEmpty extends StatelessWidget {
   }
 }
 
-class _ShimmerBox extends StatelessWidget {
+class _ShimmerBox extends StatefulWidget {
   final bool isDark;
   final double width;
   final double height;
@@ -795,18 +814,51 @@ class _ShimmerBox extends StatelessWidget {
   });
 
   @override
+  State<_ShimmerBox> createState() => _ShimmerBoxState();
+}
+
+class _ShimmerBoxState extends State<_ShimmerBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _t;
+
+  @override
+  void initState() {
+    super.initState();
+    // Color lerp pulse — avoids Shimmer's ShaderMask, which Impeller rejects
+    // for tiny textures (mip_count / size (4,4) validation on refresh).
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    )..repeat(reverse: true);
+    _t = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: isDark ? AppColors.darkSurface : Colors.grey[300]!,
-      highlightColor: isDark ? AppColors.darkBorder : Colors.grey[100]!,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkCardBG : Colors.white,
-          borderRadius: BorderRadius.circular(radius),
-        ),
-      ),
+    final base =
+        widget.isDark ? AppColors.darkSurface : Colors.grey[300]!;
+    final highlight =
+        widget.isDark ? AppColors.darkBorder : Colors.grey[100]!;
+
+    return AnimatedBuilder(
+      animation: _t,
+      builder: (context, _) {
+        return Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            color: Color.lerp(base, highlight, _t.value),
+            borderRadius: BorderRadius.circular(widget.radius),
+          ),
+        );
+      },
     );
   }
 }

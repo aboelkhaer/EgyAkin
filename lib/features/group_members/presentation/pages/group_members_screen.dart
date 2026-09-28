@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -70,26 +71,207 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
   }
 
   void _openDoctor(DoctorModel doctor) {
+    final doctorId = doctor.id?.toString();
+    if (doctorId == null || doctorId.isEmpty) {
+      customSnackBar(
+        context: context,
+        message: context.tr(AppStrings.somethingWentWrong),
+      );
+      return;
+    }
+
+    // Prefer live home payload — sheet args can carry a stale/partial model.
+    HomeModelResponse home = widget.homeDataModel;
+    DoctorModel current = widget.currentDoctorModel;
+    try {
+      final live = resolveHomeCubit();
+      if (live.homeDataModel.verified != null ||
+          (live.homeDataModel.scoreValue?.isNotEmpty ?? false)) {
+        home = live.homeDataModel;
+      }
+      if (live.currentDoctorModel.id != null) {
+        current = live.currentDoctorModel;
+      }
+    } catch (_) {}
+
+    final points = int.tryParse(home.scoreValue?.trim() ?? '') ??
+        int.tryParse(widget.homeDataModel.scoreValue?.trim() ?? '') ??
+        0;
+
     navigatorKey.currentState?.pushNamed(
       AppRoutes.doctorInfoView,
       arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
-        doctorId: doctor.id.toString(),
-        currentDoctorModel: widget.currentDoctorModel,
+        doctorId: doctorId,
+        currentDoctorModel: current,
         isSyndicateCardRequired:
-            widget.homeDataModel.isSyndicateCardRequired.toString(),
+            (home.isSyndicateCardRequired ??
+                    widget.homeDataModel.isSyndicateCardRequired ??
+                    '')
+                .toString(),
         initialIndex: 0,
-        accountVerification: widget.homeDataModel.verified!,
-        currentDoctorRole: widget.homeDataModel.role.toString(),
-        currentDoctorPoints: int.parse(widget.homeDataModel.scoreValue!),
-        homeDataModel: widget.homeDataModel,
+        accountVerification: home.verified ??
+            widget.homeDataModel.verified ??
+            false,
+        currentDoctorRole:
+            (home.role ?? widget.homeDataModel.role ?? '').toString(),
+        currentDoctorPoints: points,
+        homeDataModel: home,
         isNavigateToTheButtonOfInformationTab: false,
       ),
     );
   }
 
+  bool get _isSystemAdmin {
+    final role = (widget.homeDataModel.role ?? '').trim().toLowerCase();
+    return role == AppStrings.roleAdmin.toLowerCase();
+  }
+
+  bool get _isGroupOwner {
+    final owner = widget.ownerId.trim();
+    if (owner.isEmpty) return false;
+    final me = widget.currentDoctorModel.id?.toString() ??
+        (() {
+          try {
+            return resolveHomeCubit().currentDoctorModel.id?.toString();
+          } catch (_) {
+            return null;
+          }
+        })();
+    if (me == null || me.isEmpty) return false;
+    return me == owner;
+  }
+
+  /// Group admin/owner (or system admin / remove permission) can remove members.
   bool get _canModerate =>
-      widget.homeDataModel.role == AppStrings.roleAdmin ||
-      widget.currentDoctorModel.id.toString() == widget.ownerId;
+      _isGroupOwner ||
+      _isSystemAdmin ||
+      PermissionHelper.canPermission(AppPermissions.removeGroupMember);
+
+  Future<void> _confirmAndRemove(DoctorModel doctor) async {
+    final confirmed = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.55),
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final primary = HomeDashboardColors.primary(isDark);
+        final surface = HomeDashboardColors.cardBg(isDark);
+        final title = HomeDashboardColors.title(isDark);
+        final sub = HomeDashboardColors.subtitle(isDark);
+        final name = doctorDisplayName(doctor, fallback: 'this member');
+
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 12.h),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 16.h),
+              decoration: BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(
+                  color: HomeDashboardColors.border(isDark).withOpacity(0.85),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 36.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: HomeDashboardColors.border(isDark),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                  ),
+                  SizedBox(height: 14.h),
+                  DoctorCircleAvatar(
+                    doctor: doctor,
+                    primary: primary,
+                    size: 52.r,
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    context.tr(AppStrings.removeMember),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w800,
+                      color: title,
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    context.tr(AppStrings.removeMemberConfirm),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.5.sp,
+                      fontWeight: FontWeight.w500,
+                      height: 1.35,
+                      color: sub,
+                    ),
+                  ),
+                  if (name.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w700,
+                        color: title,
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: 16.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: title,
+                            side: BorderSide(
+                              color: HomeDashboardColors.border(isDark),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: Text(context.tr(AppStrings.cancel)),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: HomeDashboardColors.danger,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: Text(context.tr(AppStrings.remove)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+    final cubit = context.read<GroupMembersCubit>();
+    cubit.doctorIdForLoading = doctor.id.toString();
+    cubit.removeMemberFromGroup(widget.groupId, doctor.id.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -461,14 +643,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                                             doctor.id.toString(),
                                     onTap: () => _openDoctor(doctor),
                                     onRemove: canRemove
-                                        ? () {
-                                            cubit.doctorIdForLoading =
-                                                doctor.id.toString();
-                                            cubit.removeMemberFromGroup(
-                                              widget.groupId,
-                                              doctor.id.toString(),
-                                            );
-                                          }
+                                        ? () => _confirmAndRemove(doctor)
                                         : null,
                                   ),
                                 ),
@@ -605,21 +780,14 @@ class _MemberTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = doctorName(
-      firstName: doctor.firstName,
-      lastName: doctor.lastName,
-      role: doctor.isSyndicateCardRequired.toString(),
-    );
-    final verified = doctor.isSyndicateCardRequired.toString() == 'Verified';
-    final image = doctor.image?.toString() ?? '';
-    final initial = (doctor.firstName != null && doctor.firstName!.isNotEmpty)
-        ? doctor.firstName![0].toUpperCase()
-        : 'D';
+    final name = doctorDisplayName(doctor);
+    final verified = doctorIsVerified(doctor);
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onRemove,
         borderRadius: BorderRadius.circular(16.r),
         child: Ink(
           padding: EdgeInsets.fromLTRB(12.w, 10.h, 10.w, 10.h),
@@ -632,40 +800,12 @@ class _MemberTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Container(
-                width: 44.r,
-                height: 44.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: isAdmin
-                        ? primary.withOpacity(0.55)
-                        : HomeDashboardColors.border(isDark),
-                    width: isAdmin ? 1.6 : 1,
-                  ),
-                ),
-                child: ClipOval(
-                  child: image.trim().isEmpty
-                      ? ColoredBox(
-                          color: primary.withOpacity(isDark ? 0.22 : 0.12),
-                          child: Center(
-                            child: Text(
-                              initial,
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w800,
-                                color: primary,
-                              ),
-                            ),
-                          ),
-                        )
-                      : CustomCachedNetworkImage(
-                          imageUrl: image,
-                          width: 44.r,
-                          height: 44.r,
-                          fit: BoxFit.cover,
-                        ),
-                ),
+              DoctorCircleAvatar(
+                doctor: doctor,
+                primary: isAdmin
+                    ? primary
+                    : HomeDashboardColors.border(isDark),
+                size: 44.r,
               ),
               SizedBox(width: 10.w),
               Expanded(
@@ -724,22 +864,80 @@ class _MemberTile extends StatelessWidget {
                   loading: isAcceptLoading,
                   onTap: onAccept,
                 ),
-              ] else if (onRemove != null) ...[
-                _RoundAction(
-                  isDark: isDark,
-                  color: HomeDashboardColors.danger,
-                  icon: Icons.person_remove_rounded,
-                  loading: isRemoving,
-                  onTap: onRemove,
-                ),
-              ] else
+              ] else ...[
+                if (onRemove != null) ...[
+                  _RemoveMemberChip(
+                    isDark: isDark,
+                    loading: isRemoving,
+                    onTap: onRemove!,
+                  ),
+                  SizedBox(width: 4.w),
+                ],
                 Icon(
                   Icons.chevron_right_rounded,
                   size: 20.sp,
-                  color: HomeDashboardColors.subtitle(isDark).withOpacity(0.7),
+                  color:
+                      HomeDashboardColors.subtitle(isDark).withOpacity(0.7),
                 ),
+              ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RemoveMemberChip extends StatelessWidget {
+  final bool isDark;
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _RemoveMemberChip({
+    required this.isDark,
+    required this.loading,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = HomeDashboardColors.danger;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: loading ? null : onTap,
+        borderRadius: BorderRadius.circular(20.r),
+        child: Ink(
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+          decoration: BoxDecoration(
+            color: color.withOpacity(isDark ? 0.18 : 0.12),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: color.withOpacity(0.35)),
+          ),
+          child: loading
+              ? SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.8,
+                    color: color,
+                  ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.person_remove_rounded, size: 14.sp, color: color),
+                    SizedBox(width: 4.w),
+                    Text(
+                      context.tr(AppStrings.remove),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w700,
+                        color: color,
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

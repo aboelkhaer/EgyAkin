@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -537,13 +538,7 @@ class _PreviewCommentCard extends StatelessWidget {
     final titleColor = HomeDashboardColors.title(isDark);
     final subtitleColor = HomeDashboardColors.subtitle(isDark);
     final doctor = comment.doctor;
-    final firstName = doctor?.firstName ?? '';
-    final initial = firstName.isNotEmpty ? firstName[0].toUpperCase() : 'D';
-    final name = doctorName(
-      firstName: doctor?.firstName ?? '',
-      lastName: doctor?.lastName ?? '',
-      role: doctor?.isSyndicateCardRequired.toString() ?? '',
-    );
+    final name = doctorDisplayName(doctor);
     final content = (comment.content ?? '').trim();
     final timeAgo = TimeAgoService.instance.formatTimeAgoFromString(
       comment.updatedAt.toString(),
@@ -558,35 +553,12 @@ class _PreviewCommentCard extends StatelessWidget {
             width: 40.w,
             child: Column(
               children: [
-                Container(
-                  width: 36.r,
-                  height: 36.r,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isMine
-                          ? primary.withOpacity(0.55)
-                          : HomeDashboardColors.border(isDark),
-                      width: 1.6,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primary.withOpacity(isDark ? 0.2 : 0.12),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: doctor?.image == null ||
-                            doctor!.image.toString().isEmpty
-                        ? HomeInitialsAvatar(initials: initial, radius: 17)
-                        : CustomCachedNetworkImage(
-                            imageUrl: doctor.image.toString(),
-                            height: 36.r,
-                            width: 36.r,
-                          ),
-                  ),
+                DoctorCircleAvatar(
+                  doctor: doctor,
+                  primary: isMine
+                      ? primary
+                      : HomeDashboardColors.border(isDark),
+                  size: 36.r,
                 ),
                 if (showConnector)
                   Expanded(

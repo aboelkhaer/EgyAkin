@@ -1033,6 +1033,36 @@ class ChatMappers {
     }
   }
 
+  /// Reaction summary rows ("Reacted with 👍") are not real messages — hide ticks.
+  static bool isReactionLastMessage(InboxLastMessageModel? last) {
+    if (last == null) return false;
+    final type = (last.type ?? '').trim().toLowerCase();
+    if (type == 'reaction' ||
+        type == 'message_reaction' ||
+        type == 'reacted' ||
+        type == 'emoji_reaction') {
+      return true;
+    }
+    return isReactionPreview(last.content);
+  }
+
+  /// True when inbox preview text is a reaction sentence (EN/AR).
+  static bool isReactionPreview(String? text) {
+    final p = (text ?? '').trim().toLowerCase();
+    if (p.isEmpty) return false;
+    if (p.contains('reacted with') ||
+        p.contains('reacted to') ||
+        p.startsWith('reacted ') ||
+        p.contains('تفاعل ب') ||
+        p.contains('تفاعل على') ||
+        p.contains('تفاعل مع')) {
+      return true;
+    }
+    // "You reacted …" / "Reacted …" system copy without emoji verb variants.
+    if (RegExp(r'^(you\s+)?reacted\b').hasMatch(p)) return true;
+    return false;
+  }
+
   static InboxThread toInboxThread(InboxItemModel item) {
     final counterpart = item.counterpart;
     final last = item.lastMessage;
@@ -1092,7 +1122,7 @@ class ChatMappers {
       isVerified: isGroupChat ? false : userIsVerified(counterpart),
       isUrgent: item.isUrgent ?? false,
       isPriority: item.section == 'priority',
-      lastMessageStatus: last?.isMine == true
+      lastMessageStatus: last?.isMine == true && !isReactionLastMessage(last)
           ? messageStatusFromApi(last?.status, isOutgoing: true)
           : null,
       filter: filter,
@@ -1180,7 +1210,7 @@ class ChatMappers {
       unreadCount: item.unreadCount ?? 0,
       isVerified: isGroupChat ? false : userIsVerified(counterpart),
       isPriority: (item.unreadCount ?? 0) > 0,
-      lastMessageStatus: last?.isMine == true
+      lastMessageStatus: last?.isMine == true && !isReactionLastMessage(last)
           ? messageStatusFromApi(last?.status, isOutgoing: true)
           : null,
       filter: filter,

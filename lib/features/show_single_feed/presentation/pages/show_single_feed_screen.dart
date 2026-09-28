@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:ui';
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
@@ -638,22 +639,14 @@ class _FeedHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final doctor = feed.doctor;
-    final name = doctor == null
-        ? 'Unknown User'
-        : doctorName(
-            firstName: doctor.firstName,
-            lastName: doctor.lastName,
-            role: doctor.isSyndicateCardRequired.toString(),
-          );
-    final image = doctor?.image?.toString() ?? '';
+    final name = doctorDisplayName(doctor, fallback: 'Unknown User');
     final time = feed.createdAt == null
         ? ''
         : TimeAgoService.instance.formatTimeAgoFromString(
             feed.createdAt.toString(),
             context,
           );
-    final verified =
-        doctor != null && isVerifiedUser(doctor.isSyndicateCardRequired);
+    final verified = doctorIsVerified(doctor);
 
     return Container(
       width: double.infinity,
@@ -685,15 +678,9 @@ class _FeedHeader extends StatelessWidget {
           ),
           GestureDetector(
             onTap: onOpenDoctor,
-            child: Container(
-              width: 42.r,
-              height: 42.r,
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: primary.withOpacity(0.35),
-                  width: 1.5,
-                ),
                 boxShadow: [
                   BoxShadow(
                     color: primary.withOpacity(isDark ? 0.2 : 0.12),
@@ -702,26 +689,10 @@ class _FeedHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              child: ClipOval(
-                child: image.isEmpty
-                    ? ColoredBox(
-                        color: primary.withOpacity(0.15),
-                        child: Center(
-                          child: Text(
-                            '@',
-                            style: TextStyle(
-                              color: primary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                        ),
-                      )
-                    : CustomCachedNetworkImage(
-                        imageUrl: image,
-                        height: 42.r,
-                        width: 42.r,
-                      ),
+              child: DoctorCircleAvatar(
+                doctor: doctor,
+                primary: primary,
+                size: 42.r,
               ),
             ),
           ),

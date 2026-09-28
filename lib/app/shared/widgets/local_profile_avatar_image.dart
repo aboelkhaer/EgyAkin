@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 /// Local-first profile avatar with a calm old→new crossfade (no flicker).
 class LocalProfileAvatarImage extends StatefulWidget {
   final String? imageUrl;
+  /// Current doctor id — keeps the disk cache from showing another account.
+  final int? userId;
   final double width;
   final double height;
   final int revision;
@@ -15,6 +17,7 @@ class LocalProfileAvatarImage extends StatefulWidget {
   const LocalProfileAvatarImage({
     super.key,
     required this.imageUrl,
+    this.userId,
     required this.width,
     required this.height,
     this.revision = 0,
@@ -63,8 +66,9 @@ class _LocalProfileAvatarImageState extends State<LocalProfileAvatarImage>
   @override
   void didUpdateWidget(covariant LocalProfileAvatarImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // URL-only; local file changes come from [LocalProfileImageHelper.revision].
-    if (oldWidget.imageUrl != widget.imageUrl) {
+    // URL / account changes; local file updates come from [revision].
+    if (oldWidget.imageUrl != widget.imageUrl ||
+        oldWidget.userId != widget.userId) {
       _loadLatest();
     }
   }
@@ -73,7 +77,10 @@ class _LocalProfileAvatarImageState extends State<LocalProfileAvatarImage>
 
   Future<void> _loadLatest() async {
     final generation = ++_loadGeneration;
-    final file = await LocalProfileImageHelper.resolve(widget.imageUrl);
+    final file = await LocalProfileImageHelper.resolve(
+      widget.imageUrl,
+      userId: widget.userId,
+    );
     if (!mounted || generation != _loadGeneration) return;
 
     if (file == null) {
@@ -215,6 +222,8 @@ class _LocalProfileAvatarImageState extends State<LocalProfileAvatarImage>
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
+        // Lottie loader can overflow small circles and paint over nearby text.
+        showLoaderPlaceholder: false,
       );
     }
     return SizedBox(

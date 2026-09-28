@@ -57,8 +57,8 @@ Map<String, dynamic> _$$RegisterInviteInfoImplToJson(
 _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
     _$DoctorModelImpl(
       id: (json['id'] as num?)?.toInt(),
-      firstName: json['name'] as String?,
-      lastName: json['lname'] as String?,
+      firstName: _readDoctorFirstName(json, 'name') as String?,
+      lastName: _readDoctorLastName(json, 'lname') as String?,
       email: json['email'] as String?,
       age: json['age'] as String?,
       fcmToken: json['fcmToken'] as String?,
@@ -70,7 +70,7 @@ _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
       phone: json['phone'] as String?,
       job: json['job'] as String?,
       gender: json['gender'] as String?,
-      image: json['image'] as String?,
+      image: _readDoctorImage(json, 'image') as String?,
       passwordConfirmation: json['password_confirmation'] as String?,
       syndicateCard: json['syndicate_card'] as String?,
       patientsCount: json['patients_count'] as String?,

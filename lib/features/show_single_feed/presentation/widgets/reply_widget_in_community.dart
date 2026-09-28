@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_comment_dialog.dart';
 
@@ -92,16 +93,8 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                 final isOwn = replyModel.doctor != null &&
                     currentDoctorModel.id.toString() ==
                         replyModel.doctor!.id.toString();
-                final name = replyModel.doctor == null
-                    ? ''
-                    : doctorName(
-                        firstName: replyModel.doctor!.firstName,
-                        lastName: replyModel.doctor!.lastName,
-                        role: replyModel.doctor!.isSyndicateCardRequired
-                            .toString(),
-                      );
-                final isVerified =
-                    replyModel.doctor?.isSyndicateCardRequired == 'Verified';
+                final name = doctorDisplayName(replyModel.doctor);
+                final isVerified = doctorIsVerified(replyModel.doctor);
                 final replyText = replyModel.comment ?? '';
                 final deleting = isDeleteCommentLoading &&
                     replyModel.id.toString() == cubit.deleteCommentId;
@@ -130,50 +123,10 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: _openDoctorProfile,
-                        child: Container(
-                          width: 28.r,
-                          height: 28.r,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: primary.withOpacity(0.22),
-                              width: 1,
-                            ),
-                          ),
-                          child: ClipOval(
-                            child: replyModel.doctor == null
-                                ? ColoredBox(
-                                    color: primary.withOpacity(0.12),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 14.sp,
-                                      color: primary,
-                                    ),
-                                  )
-                                : replyModel.doctor!.id == null
-                                    ? ColoredBox(
-                                        color: primary.withOpacity(0.12),
-                                        child: Center(
-                                          child: Text(
-                                            (replyModel.doctor!.firstName ??
-                                                    'D')[0]
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w800,
-                                              fontSize: 11.sp,
-                                              color: primary,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : CustomCachedNetworkImage(
-                                        imageUrl:
-                                            replyModel.doctor!.image.toString(),
-                                        height: 28.r,
-                                        width: 28.r,
-                                        fit: BoxFit.cover,
-                                      ),
-                          ),
+                        child: DoctorCircleAvatar(
+                          doctor: replyModel.doctor,
+                          primary: primary,
+                          size: 28.r,
                         ),
                       ),
                       SizedBox(width: 8.w),

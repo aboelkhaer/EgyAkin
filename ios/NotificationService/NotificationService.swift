@@ -6,7 +6,8 @@ import UserNotifications
 /// server the chat message reached this phone, so the sender sees ✓✓.
 ///
 /// Also upgrades chat banners to WhatsApp-style Communication Notifications:
-/// sender profile on the left, message photo thumbnail on the right.
+/// sender profile on the left; no right-side thumb for text (avatar must not
+/// appear as an FCM attachment on the right).
 ///
 /// Deliberately has no pods: a second Firebase copy for this target makes
 /// CocoaPods build GoogleUtilities twice, which breaks Archive.
@@ -37,7 +38,9 @@ class NotificationService: UNNotificationServiceExtension {
     }
 
     group.notify(queue: .main) { [weak self] in
-      self?.finish(content ?? request.content)
+      guard let self else { return }
+      // Prefer bestAttempt — Communication Notification / attachment edits land there.
+      self.finish(self.bestAttempt ?? content ?? request.content)
     }
   }
 
@@ -79,15 +82,23 @@ class NotificationService: UNNotificationServiceExtension {
 
   // MARK: - Banner enrichment
 
-  /// Avatar (left via Communication Notification) + message image (right attachment).
+  /// Avatar on the left (Communication Notification). Right-side attachment only
+  /// for a real message photo — never the sender avatar / FCM generic `image`.
   private func enhanceChatBanner(
     _ info: [AnyHashable: Any],
     content: UNMutableNotificationContent,
     done: @escaping () -> Void
   ) {
-    let avatarURL = Self.avatarImageURL(info)
-    let mediaURL = Self.messageImageURL(info, avatarURL: avatarURL)
     let isChat = Self.isChatPush(info)
+    let avatarURL = Self.avatarImageURL(info)
+    // Only explicit message-media keys — do NOT use fcm_options.image / `image`
+    // (servers often put the sender avatar there, which iOS shows on the right).
+    let mediaURL = isChat ? Self.messagePhotoURL(info, avatarURL: avatarURL) : nil
+
+    // Drop any pre-attached FCM image so text chats don't show a right thumb.
+    if isChat {
+      content.attachments = []
+    }
 
     let group = DispatchGroup()
     var avatarData: Data?
@@ -112,6 +123,7 @@ class NotificationService: UNNotificationServiceExtension {
     group.notify(queue: .global(qos: .userInitiated)) { [weak self] in
       guard let self else { return done() }
 
+      // Right side: message photo only (WhatsApp-style for image messages).
       if let file = mediaFileURL {
         do {
           let attachment = try UNNotificationAttachment(
@@ -120,8 +132,10 @@ class NotificationService: UNNotificationServiceExtension {
           )
           content.attachments = [attachment]
         } catch {
-          // Banner still shows without the photo thumb.
+          content.attachments = []
         }
+      } else if isChat {
+        content.attachments = []
       }
 
       if isChat {
@@ -130,6 +144,10 @@ class NotificationService: UNNotificationServiceExtension {
           info: info,
           avatarData: avatarData
         ) {
+          // Keep attachments only if we intentionally set a message photo.
+          if mediaFileURL == nil {
+            updated.attachments = []
+          }
           self.bestAttempt = updated
           return done()
         }
@@ -261,40 +279,36 @@ class NotificationService: UNNotificationServiceExtension {
         return url
       }
     }
+
+    // Many payloads only put the sender photo in FCM's generic image field.
+    if let options = info["fcm_options"] as? [AnyHashable: Any],
+       let raw = options["image"] as? String,
+       let url = URL(string: raw),
+       url.scheme?.hasPrefix("http") == true {
+      return url
+    }
+    if let raw = stringValue(info, "image"),
+       let url = URL(string: raw),
+       url.scheme?.hasPrefix("http") == true {
+      return url
+    }
     return nil
   }
 
-  /// Message photo for the right-side notification thumbnail.
-  private static func messageImageURL(
+  /// Real message photo only (right thumb). Never FCM generic `image` / avatar.
+  private static func messagePhotoURL(
     _ info: [AnyHashable: Any],
     avatarURL: URL?
   ) -> URL? {
     for key in [
       "attachment_url", "attachmentUrl", "media_url", "mediaUrl",
       "message_image", "messageImage", "photo_url", "photoUrl",
-      "image_url", "imageUrl",
     ] {
       if let s = stringValue(info, key), let url = URL(string: s),
          url.scheme?.hasPrefix("http") == true,
          url.absoluteString != avatarURL?.absoluteString {
         return url
       }
-    }
-
-    if let options = info["fcm_options"] as? [AnyHashable: Any],
-       let raw = options["image"] as? String,
-       let url = URL(string: raw),
-       url.scheme?.hasPrefix("http") == true,
-       url.absoluteString != avatarURL?.absoluteString {
-      return url
-    }
-
-    // Generic `image` only when it isn't the avatar we already picked.
-    if let raw = stringValue(info, "image"),
-       let url = URL(string: raw),
-       url.scheme?.hasPrefix("http") == true,
-       url.absoluteString != avatarURL?.absoluteString {
-      return url
     }
     return nil
   }

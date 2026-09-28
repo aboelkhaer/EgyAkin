@@ -6,12 +6,7 @@ import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
-import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
-import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
-import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
-import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
-import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
 import 'package:egy_akin/features/home/presentation/cubit/home_cubit.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/features/profile/domain/usecases/upload_profile_image_usecase.dart';
@@ -45,7 +40,10 @@ class ProfileCubit extends Cubit<ProfileState> {
   getDoctorDataFromLocal() async {
     currentDoctor = (await sl<AppPreferences>().getDoctorData())!;
     // Warm local avatar cache so profile opens without network flicker.
-    unawaited(LocalProfileImageHelper.ensureCached(currentDoctor.image));
+    unawaited(LocalProfileImageHelper.ensureCached(
+      currentDoctor.image,
+      userId: currentDoctor.id,
+    ));
     emit(ProfileState.loaded(currentDoctor, false));
   }
 
@@ -140,6 +138,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           await LocalProfileImageHelper.saveFromFile(
             fileToUpload,
             remoteUrl: newUrl,
+            userId: currentDoctor.id,
           );
           final previousUrl = currentDoctor.image;
           currentDoctor = currentDoctor.copyWith(image: newUrl);
@@ -178,17 +177,8 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   signOut() async {
     emit(const ProfileState.signOutLoading());
-    // Reset each cubit
-    _resetCubit<CommunityCubit>(
-        () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
-    _resetCubit<TrendingCubit>(() => TrendingCubit(sl()));
-    _resetCubit<GroupsCubit>(
-        () => GroupsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
-    _resetCubit<GroupDetailsInCommunityCubit>(() =>
-        GroupDetailsInCommunityCubit(
-            sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
-    _resetCubit<CommunitySearchCubit>(
-        () => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
+    // Drop community / groups singleton state (includes My Groups).
+    resetCommunitySessionCubits();
     _resetCubit<ConsultationCubit>(
         () => ConsultationCubit(sl(), sl()));
     _resetCubit<HomeCubit>(() => HomeCubit(sl(), sl(), sl(), sl(), sl()));

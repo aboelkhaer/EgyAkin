@@ -37,8 +37,8 @@ class RegisterInviteInfo with _$RegisterInviteInfo {
 class DoctorModel with _$DoctorModel {
   const factory DoctorModel({
     int? id,
-    @JsonKey(name: 'name') String? firstName,
-    @JsonKey(name: 'lname') String? lastName,
+    @JsonKey(name: 'name', readValue: _readDoctorFirstName) String? firstName,
+    @JsonKey(name: 'lname', readValue: _readDoctorLastName) String? lastName,
     String? email,
     String? age,
     String? fcmToken,
@@ -50,7 +50,7 @@ class DoctorModel with _$DoctorModel {
     String? phone,
     String? job,
     String? gender,
-    String? image,
+    @JsonKey(name: 'image', readValue: _readDoctorImage) String? image,
     @JsonKey(name: 'password_confirmation') String? passwordConfirmation,
     @JsonKey(name: 'syndicate_card') String? syndicateCard,
     @JsonKey(name: 'patients_count') String? patientsCount,
@@ -69,4 +69,23 @@ class DoctorModel with _$DoctorModel {
   }) = _DoctorModel;
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelFromJson(json);
+}
+
+Object? _readDoctorFirstName(Map json, String key) {
+  return json['name'] ??
+      json['first_name'] ??
+      json['firstName'] ??
+      json['full_name'];
+}
+
+Object? _readDoctorLastName(Map json, String key) {
+  return json['lname'] ?? json['last_name'] ?? json['lastName'];
+}
+
+Object? _readDoctorImage(Map json, String key) {
+  return json['image'] ??
+      json['avatar'] ??
+      json['profile_image'] ??
+      json['profileImage'] ??
+      json['photo'];
 }

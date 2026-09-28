@@ -313,6 +313,7 @@ export 'package:egy_akin/features/consultation/domain/repositories/consultation_
 export 'package:egy_akin/features/consultation/presentation/widgets/my_consultations_tab.dart';
 export 'package:egy_akin/features/consultation/presentation/widgets/received_tab.dart';
 export 'package:egy_akin/app/shared/functions/doctor_name.dart';
+export 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 export 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
 export 'package:egy_akin/features/consultation/presentation/cubit/consultation_state.dart';
 export 'package:egy_akin/features/consultation_details/data/models/get_consultation_details_model_response.dart';
