@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/community/presentation/widgets/post_removal_animator.dart';
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
@@ -263,76 +264,92 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                   ),
                                   itemBuilder: (context, index) {
                                     var feed = response.data!.data![index];
-                                    return PostCard(
-                                      feed: feed,
-                                      homeDataModel: widget.homeDataModel,
-                                      isCommunitySearch: true,
-                                      showPostFrom:
-                                          ShowPostFromEnum.searchTab.name,
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      highlightWord: _cubit.searchValue,
-                                      viewPollWidget: ViewPollWidget(
-                                        poll: feed.poll,
+                                    final postId = feed.id.toString();
+                                    return PostRemovalAnimator(
+                                      key: ValueKey('search_feed_$postId'),
+                                      animateOut: cubit.removingPostIds
+                                          .contains(postId),
+                                      onExitComplete: () =>
+                                          cubit.finishRemovingPost(postId),
+                                      child: PostCard(
+                                        feed: feed,
+                                        homeDataModel: widget.homeDataModel,
+                                        isCommunitySearch: true,
+                                        showPostFrom:
+                                            ShowPostFromEnum.searchTab.name,
                                         currentDoctorModel:
                                             widget.currentDoctorModel,
-                                        homeDataModel: widget.homeDataModel,
-                                        selectedOptions: _cubit
-                                                .postSelectedOptions[feed.id] ??
-                                            {},
-                                        onAddOption: (pollId, option) async {
-                                          await _cubit.addOptionOnPoll(pollId,
-                                              option); // Call your function here
-                                        },
-                                        initiallyExpanded: false,
-                                        selectedOption:
-                                            _cubit.postSelectedOption[feed.id],
-                                        onOptionSelected: (optionId) {
-                                          _cubit.postSelectedOption[feed.id!] =
-                                              optionId;
-                                          _cubit.addVoteAndUnVote(
-                                            feed.poll!.id.toString(),
-                                            optionId!,
+                                        highlightWord: _cubit.searchValue,
+                                        viewPollWidget: ViewPollWidget(
+                                          poll: feed.poll,
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          homeDataModel: widget.homeDataModel,
+                                          selectedOptions: _cubit
+                                                  .postSelectedOptions[
+                                                      feed.id] ??
+                                              {},
+                                          onAddOption:
+                                              (pollId, option) async {
+                                            await _cubit.addOptionOnPoll(
+                                                pollId, option);
+                                          },
+                                          initiallyExpanded: false,
+                                          selectedOption: _cubit
+                                              .postSelectedOption[feed.id],
+                                          onOptionSelected: (optionId) {
+                                            _cubit.postSelectedOption[
+                                                feed.id!] = optionId;
+                                            _cubit.addVoteAndUnVote(
+                                              feed.poll!.id.toString(),
+                                              optionId!,
+                                            );
+                                            _cubit.refreshScreen();
+                                          },
+                                          onOptionToggled:
+                                              (optionId, isSelected) {
+                                            _cubit.postSelectedOptions[
+                                                feed.id!] ??= {};
+                                            _cubit.addVoteAndUnVote(
+                                              feed.poll!.id.toString(),
+                                              optionId,
+                                            );
+                                            if (isSelected) {
+                                              _cubit
+                                                  .postSelectedOptions[
+                                                      feed.id!]!
+                                                  .add(optionId);
+                                            } else {
+                                              _cubit
+                                                  .postSelectedOptions[
+                                                      feed.id!]!
+                                                  .remove(optionId);
+                                            }
+                                            _cubit.refreshScreen();
+                                          },
+                                        ),
+                                        onLikeAndUnlikeAdditional: () {
+                                          cubit.addLikeOrUnlikeOnPost(
+                                            feed.id.toString(),
+                                            likeOrUnlike: feed.isLiked!
+                                                ? 'unlike'
+                                                : 'like',
                                           );
-                                          _cubit.refreshScreen();
                                         },
-                                        onOptionToggled:
-                                            (optionId, isSelected) {
-                                          _cubit.postSelectedOptions[
-                                              feed.id!] ??= {};
-                                          _cubit.addVoteAndUnVote(
-                                            feed.poll!.id.toString(),
-                                            optionId,
+                                        onSaveAndUnSaveAdditional: () {
+                                          cubit.addSaveOrUnsaveOnPost(
+                                            feed.id.toString(),
+                                            saveOrUnsave:
+                                                feed.isSaved == true
+                                                    ? 'unsave'
+                                                    : 'save',
                                           );
-                                          if (isSelected) {
-                                            _cubit
-                                                .postSelectedOptions[feed.id!]!
-                                                .add(optionId);
-                                          } else {
-                                            _cubit
-                                                .postSelectedOptions[feed.id!]!
-                                                .remove(optionId);
-                                          }
-                                          _cubit.refreshScreen();
+                                        },
+                                        onDeleteAdditional: () {
+                                          cubit.deletePost(
+                                              feed.id.toString());
                                         },
                                       ),
-                                      onLikeAndUnlikeAdditional: () {
-                                        cubit.addLikeOrUnlikeOnPost(
-                                          feed.id.toString(),
-                                          likeOrUnlike:
-                                              feed.isLiked! ? 'unlike' : 'like',
-                                        );
-                                      },
-                                      onSaveAndUnSaveAdditional: () {
-                                        cubit.addSaveOrUnsaveOnPost(
-                                          feed.id.toString(),
-                                          saveOrUnsave:
-                                              feed.isSaved == true ? 'unsave' : 'save',
-                                        );
-                                      },
-                                      onDeleteAdditional: () {
-                                        cubit.deletePost(feed.id.toString());
-                                      },
                                     );
                                   },
                                 );

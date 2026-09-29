@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/export_patients_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/domain/usecases/patients_list_page_input.dart';
 import '../../../../exports.dart';
 
 class AllDoctorsPatientsRepositoryImpl extends AllDoctorsPatientsRepository {
@@ -12,13 +13,13 @@ class AllDoctorsPatientsRepositoryImpl extends AllDoctorsPatientsRepository {
 
   @override
   Future<Either<Failure, GetAllDoctorsPatientsModelResponse>>
-      getAllDoctorsPatients(int page) async {
+      getAllDoctorsPatients(PatientsListPageInput input) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response =
-            await allDoctorsPatientsDataSource.getAllDoctorPatients(page);
+            await allDoctorsPatientsDataSource.getAllDoctorPatients(input);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

@@ -22,6 +22,11 @@ GetSearchModelResponse _$GetSearchModelResponseFromJson(
 /// @nodoc
 mixin _$GetSearchModelResponse {
   bool? get value => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort => throw _privateConstructorUsedError;
   GetSearchDataModelResponse? get data => throw _privateConstructorUsedError;
 
   /// Serializes this GetSearchModelResponse to a JSON map.
@@ -40,8 +45,13 @@ abstract class $GetSearchModelResponseCopyWith<$Res> {
           $Res Function(GetSearchModelResponse) then) =
       _$GetSearchModelResponseCopyWithImpl<$Res, GetSearchModelResponse>;
   @useResult
-  $Res call({bool? value, GetSearchDataModelResponse? data});
+  $Res call(
+      {bool? value,
+      @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
+      GetSearchDataModelResponse? data});
 
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   $GetSearchDataModelResponseCopyWith<$Res>? get data;
 }
 
@@ -62,6 +72,8 @@ class _$GetSearchModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? value = freezed,
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -69,11 +81,33 @@ class _$GetSearchModelResponseCopyWithImpl<$Res,
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
+      sortOptions: freezed == sortOptions
+          ? _value.sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as GetSearchDataModelResponse?,
     ) as $Val);
+  }
+
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppliedSortModelResponseCopyWith<$Res>? get sort {
+    if (_value.sort == null) {
+      return null;
+    }
+
+    return $AppliedSortModelResponseCopyWith<$Res>(_value.sort!, (value) {
+      return _then(_value.copyWith(sort: value) as $Val);
+    });
   }
 
   /// Create a copy of GetSearchModelResponse
@@ -100,8 +134,14 @@ abstract class _$$GetSearchModelResponseImplCopyWith<$Res>
       __$$GetSearchModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool? value, GetSearchDataModelResponse? data});
+  $Res call(
+      {bool? value,
+      @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
+      GetSearchDataModelResponse? data});
 
+  @override
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   @override
   $GetSearchDataModelResponseCopyWith<$Res>? get data;
 }
@@ -122,6 +162,8 @@ class __$$GetSearchModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? value = freezed,
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? data = freezed,
   }) {
     return _then(_$GetSearchModelResponseImpl(
@@ -129,6 +171,14 @@ class __$$GetSearchModelResponseImplCopyWithImpl<$Res>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
+      sortOptions: freezed == sortOptions
+          ? _value._sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -140,19 +190,39 @@ class __$$GetSearchModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetSearchModelResponseImpl implements _GetSearchModelResponse {
-  const _$GetSearchModelResponseImpl({this.value, this.data});
+  const _$GetSearchModelResponseImpl(
+      {this.value,
+      @JsonKey(name: 'sort_options')
+      final List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') this.sort,
+      this.data})
+      : _sortOptions = sortOptions;
 
   factory _$GetSearchModelResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetSearchModelResponseImplFromJson(json);
 
   @override
   final bool? value;
+  final List<SortOptionModelResponse>? _sortOptions;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions {
+    final value = _sortOptions;
+    if (value == null) return null;
+    if (_sortOptions is EqualUnmodifiableListView) return _sortOptions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'sort')
+  final AppliedSortModelResponse? sort;
   @override
   final GetSearchDataModelResponse? data;
 
   @override
   String toString() {
-    return 'GetSearchModelResponse(value: $value, data: $data)';
+    return 'GetSearchModelResponse(value: $value, sortOptions: $sortOptions, sort: $sort, data: $data)';
   }
 
   @override
@@ -161,12 +231,16 @@ class _$GetSearchModelResponseImpl implements _GetSearchModelResponse {
         (other.runtimeType == runtimeType &&
             other is _$GetSearchModelResponseImpl &&
             (identical(other.value, value) || other.value == value) &&
+            const DeepCollectionEquality()
+                .equals(other._sortOptions, _sortOptions) &&
+            (identical(other.sort, sort) || other.sort == sort) &&
             (identical(other.data, data) || other.data == data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, value, data);
+  int get hashCode => Object.hash(runtimeType, value,
+      const DeepCollectionEquality().hash(_sortOptions), sort, data);
 
   /// Create a copy of GetSearchModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -188,6 +262,9 @@ class _$GetSearchModelResponseImpl implements _GetSearchModelResponse {
 abstract class _GetSearchModelResponse implements GetSearchModelResponse {
   const factory _GetSearchModelResponse(
       {final bool? value,
+      @JsonKey(name: 'sort_options')
+      final List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') final AppliedSortModelResponse? sort,
       final GetSearchDataModelResponse? data}) = _$GetSearchModelResponseImpl;
 
   factory _GetSearchModelResponse.fromJson(Map<String, dynamic> json) =
@@ -195,6 +272,12 @@ abstract class _GetSearchModelResponse implements GetSearchModelResponse {
 
   @override
   bool? get value;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions;
+  @override
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort;
   @override
   GetSearchDataModelResponse? get data;
 

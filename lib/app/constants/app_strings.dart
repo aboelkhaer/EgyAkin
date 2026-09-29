@@ -419,6 +419,7 @@ class AppStrings {
   static const String postLikes = 'Post Likes';
   static const String groupMembers = 'Group Members';
   static const String adminOfGroup = 'Admin';
+  static const String ownerOfGroup = 'Owner';
   static const String memberOfGroup = 'Member';
   static const String noData = 'No Data';
   static const String workPlace = 'Work place';
@@ -612,6 +613,21 @@ class AppStrings {
   static const String theSyndicateCardIsBeingProcessedForVerification =
       'The Syndicate card is being processed for verification.';
   static const String filter = 'Filter';
+  static const String sort = 'Sort';
+  static const String direction = 'Direction';
+  static const String ascending = 'Ascending';
+  static const String descending = 'Descending';
+  static const String applySort = 'Apply';
+  static const String chooseSortOption = 'Choose how to order patients';
+  static const String sortingPatients = 'Sorting patients…';
+  static const String sortingPatientsHint = 'Reordering your list';
+  static const String sortByLastUpdated = 'Last Updated';
+  static const String sortByRegistrationDate = 'Registration Date';
+  static const String sortByPatientName = 'Patient Name';
+  static const String sortByHospital = 'Hospital';
+  static const String sortByAge = 'Age';
+  static const String sortByDoctorName = 'Doctor Name';
+  static const String sortByDateMarked = 'Date Marked';
   static const String addDoctorsToConsultation = 'Add doctors to consultation';
   static const String updateGroup = 'Update Group';
   static const String create = 'Create';
@@ -1083,6 +1099,13 @@ class AppStrings {
   static const String noGroupsToDiscoverYet = 'No groups to discover yet';
   static const String topTrend = 'TOP TREND';
   static const String postsCount = 'posts';
+  static const String noTrendsYet = 'No trends yet';
+  static const String noTrendsYetSubtitle =
+      'When the community starts talking, hot topics and hashtags will show up here.';
+  static const String pullDownToRefreshTrends = 'Pull down to refresh';
+  static const String couldNotLoadTrends = 'Couldn’t load trends';
+  static const String couldNotLoadTrendsSubtitle =
+      'Check your connection, then pull down to try again.';
   static const String figure = 'Figure';
 
   // Notifications

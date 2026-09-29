@@ -926,120 +926,119 @@ class _LiveMessageBubbleBody extends StatelessWidget {
               ),
             ),
           if (hasCaptionText)
-            Padding(
-              padding: EdgeInsets.only(
-                left: (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
-                    ? 10.w
-                    : 0,
-                right:
+            Builder(
+              builder: (context) {
+                final linkUrl = linkUrlInText;
+                final urlOnly = urlOnlyLink;
+                // When preview is shown, hide the URL itself and drop the
+                // blank line from "paste link → Enter → hello".
+                final displayText = linkUrl != null
+                    ? chatCaptionWithoutPreviewUrl(
+                        message.text,
+                        previewUrl: linkUrl,
+                      )
+                    : message.text;
+                final showCaption = !urlOnly && displayText.isNotEmpty;
+                final jumboCount = _jumboEmojiCount(displayText);
+                // Same base type as the composer field (jumbo emoji scales up).
+                final fontSize = jumboCount == null
+                    ? 15.sp
+                    : jumboCount == 1
+                        ? 40.sp
+                        : jumboCount == 2
+                            ? 34.sp
+                            : 28.sp;
+                final baseStyle = TextStyle(
+                  color: isOutgoing
+                      ? Colors.white
+                      : (isDarkMode ? AppColors.darkTitle : AppColors.title),
+                  fontSize: fontSize,
+                  height: jumboCount == null ? 1.2 : 1.1,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Tajawal',
+                  fontFamilyFallback: const [
+                    'Apple Color Emoji',
+                    'Segoe UI Emoji',
+                    'Noto Color Emoji',
+                    'Android Emoji',
+                  ],
+                );
+                final hashtagStyle = baseStyle.copyWith(
+                  color: isOutgoing
+                      ? const Color(0xFFB3E5FC)
+                      : (isDarkMode
+                          ? AppColors.darkPrimary
+                          : AppColors.primary),
+                  fontWeight: FontWeight.w700,
+                );
+                final scope = ChatHashtagScope.maybeOf(context);
+                final textDirection = ChatTextDirection.resolve(displayText);
+                final textWidget = scope != null
+                    ? HashtagText(
+                        content: displayText,
+                        currentDoctorModel: scope.currentDoctorModel,
+                        homeDataModel: scope.homeDataModel,
+                        disableTrimLines: true,
+                        showLinkPreviews: false,
+                        style: baseStyle,
+                        hashtagStyle: hashtagStyle,
+                      )
+                    : Text(
+                        displayText,
+                        style: baseStyle,
+                        textDirection: textDirection,
+                        textAlign: textDirection == TextDirection.rtl
+                            ? TextAlign.right
+                            : TextAlign.left,
+                      );
+
+                // Horizontal pad for caption/text only — link preview stays
+                // full bubble width (edge-to-edge). Images/voice/files still pad.
+                final textHPad =
                     (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
                         ? 10.w
-                        : 0,
-                top: message.attachments.isNotEmpty
-                    ? 6.h
-                    : (message.replyTo != null ? 2.h : 0),
-              ),
-              child: Builder(
-                builder: (context) {
-                  final linkUrl = linkUrlInText;
-                  final urlOnly = urlOnlyLink;
-                  // When preview is shown, hide the URL itself and drop the
-                  // blank line from "paste link → Enter → hello".
-                  final displayText = linkUrl != null
-                      ? chatCaptionWithoutPreviewUrl(
-                          message.text,
-                          previewUrl: linkUrl,
-                        )
-                      : message.text;
-                  final showCaption = !urlOnly && displayText.isNotEmpty;
-                  final jumboCount = _jumboEmojiCount(displayText);
-                  // Same base type as the composer field (jumbo emoji scales up).
-                  final fontSize = jumboCount == null
-                      ? 15.sp
-                      : jumboCount == 1
-                          ? 40.sp
-                          : jumboCount == 2
-                              ? 34.sp
-                              : 28.sp;
-                  final baseStyle = TextStyle(
-                    color: isOutgoing
-                        ? Colors.white
-                        : (isDarkMode ? AppColors.darkTitle : AppColors.title),
-                    fontSize: fontSize,
-                    height: jumboCount == null ? 1.2 : 1.1,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Tajawal',
-                    fontFamilyFallback: const [
-                      'Apple Color Emoji',
-                      'Segoe UI Emoji',
-                      'Noto Color Emoji',
-                      'Android Emoji',
-                    ],
-                  );
-                  final hashtagStyle = baseStyle.copyWith(
-                    color: isOutgoing
-                        ? const Color(0xFFB3E5FC)
-                        : (isDarkMode
-                            ? AppColors.darkPrimary
-                            : AppColors.primary),
-                    fontWeight: FontWeight.w700,
-                  );
-                  final scope = ChatHashtagScope.maybeOf(context);
-                  final textDirection = ChatTextDirection.resolve(displayText);
-                  final textWidget = scope != null
-                      ? HashtagText(
-                          content: displayText,
-                          currentDoctorModel: scope.currentDoctorModel,
-                          homeDataModel: scope.homeDataModel,
-                          disableTrimLines: true,
-                          showLinkPreviews: false,
-                          style: baseStyle,
-                          hashtagStyle: hashtagStyle,
-                        )
-                      : Text(
-                          displayText,
-                          style: baseStyle,
-                          textDirection: textDirection,
-                          textAlign: textDirection == TextDirection.rtl
-                              ? TextAlign.right
-                              : TextAlign.left,
-                        );
+                        : 0.0;
 
-                  return Column(
-                    crossAxisAlignment: linkUrl != null
-                        ? CrossAxisAlignment.stretch
-                        : (textDirection == TextDirection.rtl
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start),
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (linkUrl != null)
-                        ChatLinkBubblePreview(
-                          url: linkUrl,
-                          isOutgoing: isOutgoing,
-                          isDark: isDarkMode,
-                          edgeToEdge: linkEdgeBleed,
-                          maxImageHeight: linkImageMaxHeight,
+                return Column(
+                  crossAxisAlignment: linkUrl != null
+                      ? CrossAxisAlignment.stretch
+                      : (textDirection == TextDirection.rtl
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (linkUrl != null)
+                      ChatLinkBubblePreview(
+                        url: linkUrl,
+                        isOutgoing: isOutgoing,
+                        isDark: isDarkMode,
+                        edgeToEdge: linkEdgeBleed,
+                        maxImageHeight: linkImageMaxHeight,
+                      ),
+                    if (showCaption)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: textHPad,
+                          right: textHPad,
+                          top: linkUrl != null
+                              ? 6.h
+                              : (message.attachments.isNotEmpty
+                                  ? 6.h
+                                  : (message.replyTo != null ? 2.h : 0)),
                         ),
-                      if (showCaption)
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: linkUrl != null ? 6.h : 0,
-                          ),
-                          child: Directionality(
-                            textDirection: textDirection,
-                            child: Align(
-                              alignment: textDirection == TextDirection.rtl
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: textWidget,
-                            ),
+                        child: Directionality(
+                          textDirection: textDirection,
+                          child: Align(
+                            alignment: textDirection == TextDirection.rtl
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: textWidget,
                           ),
                         ),
-                    ],
-                  );
-                },
-              ),
+                      ),
+                  ],
+                );
+              },
             ),
           if (!embedVoiceMeta && !embedImageMeta)
             Padding(
@@ -1051,8 +1050,12 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                     (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
                         ? 10.w
                         : 0,
-                // Keep time tucked under the last text line (WhatsApp-tight).
-                top: hasVoice || hasFiles ? 2.h : 1.h,
+                // Incoming text: a bit more air before the time; links/outgoing stay tight.
+                top: hasLinkPreview
+                    ? 6.h
+                    : hasVoice || hasFiles
+                        ? 2.h
+                        : (isOutgoing ? 1.h : 5.h),
               ),
               child: ChatMessageMetaRow(
                 message: message,

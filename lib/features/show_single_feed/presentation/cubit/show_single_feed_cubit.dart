@@ -59,6 +59,39 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     );
   }
 
+  /// Best-effort doctor for optimistic own comments/replies so name + badge
+  /// show immediately (route/local [current] is sometimes incomplete).
+  DoctorModel _doctorForOptimisticOwnComment(
+    DoctorModel current, {
+    List<CommentModelInCommunity> comments = const [],
+    PostCommunityModel? feed,
+  }) {
+    final resolved = resolveDoctorForAvatar(current) ?? current;
+    if (doctorDisplayName(resolved).isNotEmpty) return resolved;
+
+    final myId = resolved.id ?? current.id;
+    if (myId != null) {
+      for (final c in comments) {
+        final d = c.doctor;
+        if (d?.id == myId && doctorDisplayName(d).isNotEmpty) {
+          return resolveDoctorForAvatar(d) ?? d!;
+        }
+        for (final r in c.replies ?? const <CommentModelInCommunity>[]) {
+          final rd = r.doctor;
+          if (rd?.id == myId && doctorDisplayName(rd).isNotEmpty) {
+            return resolveDoctorForAvatar(rd) ?? rd!;
+          }
+        }
+      }
+      final feedDoctor = feed?.doctor;
+      if (feedDoctor?.id == myId &&
+          doctorDisplayName(feedDoctor).isNotEmpty) {
+        return resolveDoctorForAvatar(feedDoctor) ?? feedDoctor!;
+      }
+    }
+    return resolved;
+  }
+
   void clearReplyTarget({bool refresh = true}) {
     commentToReply = null;
     replyAnchorTopPadding = 0;
@@ -1105,10 +1138,16 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           sl<CommunityCubit>().updatePost(updatedFeed);
         } catch (_) {}
 
+        final optimisticDoctor = _doctorForOptimisticOwnComment(
+          currentDoctorModel,
+          comments: commentsList,
+          feed: updatedFeed,
+        );
         final newComment = CommentModelInCommunity(
           id: r.data!.id,
           feedPostId: int.parse(postId),
-          doctor: currentDoctorModel,
+          doctorId: optimisticDoctor.id ?? currentDoctorModel.id,
+          doctor: optimisticDoctor,
           comment: comment,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
@@ -1179,8 +1218,21 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
     if (currentState == null) return;
 
-    final deletedComment = currentState.commentsResponse.data?.data?[index];
-    if (deletedComment == null) return;
+    final comments = currentState.commentsResponse.data?.data ?? const [];
+    CommentModelInCommunity? matchedComment;
+    for (final c in comments) {
+      if (c.id?.toString() == commentId) {
+        matchedComment = c;
+        break;
+      }
+    }
+    matchedComment ??=
+        (index >= 0 && index < comments.length) ? comments[index] : null;
+    final deletedComment = matchedComment;
+    if (deletedComment == null) {
+      deleteCommentId = '';
+      return;
+    }
 
     final isReply = deletedComment.parentId != null;
 
@@ -1441,11 +1493,20 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         } catch (_) {}
 
         // Create the new reply model
+        final existingComments =
+            currentState.commentsResponse.data?.data ??
+                const <CommentModelInCommunity>[];
+        final optimisticDoctor = _doctorForOptimisticOwnComment(
+          currentDoctorModel,
+          comments: existingComments,
+          feed: updatedFeed,
+        );
         final newReply = CommentModelInCommunity(
           id: success.data!.id,
           feedPostId: parentComment.feedPostId,
           parentId: parentComment.id,
-          doctor: currentDoctorModel,
+          doctorId: optimisticDoctor.id ?? currentDoctorModel.id,
+          doctor: optimisticDoctor,
           comment: replyText,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),

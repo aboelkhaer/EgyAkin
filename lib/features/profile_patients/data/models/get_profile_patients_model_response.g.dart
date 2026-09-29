@@ -10,6 +10,14 @@ _$GetProfilePatientsModelResponseImpl
     _$$GetProfilePatientsModelResponseImplFromJson(Map<String, dynamic> json) =>
         _$GetProfilePatientsModelResponseImpl(
           value: json['value'] as bool?,
+          sortOptions: (json['sort_options'] as List<dynamic>?)
+              ?.map((e) =>
+                  SortOptionModelResponse.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          sort: json['sort'] == null
+              ? null
+              : AppliedSortModelResponse.fromJson(
+                  json['sort'] as Map<String, dynamic>),
           data: json['data'] == null
               ? null
               : GetProfilePatientsDataModelResponse.fromJson(
@@ -20,6 +28,8 @@ Map<String, dynamic> _$$GetProfilePatientsModelResponseImplToJson(
         _$GetProfilePatientsModelResponseImpl instance) =>
     <String, dynamic>{
       'value': instance.value,
+      'sort_options': instance.sortOptions,
+      'sort': instance.sort,
       'data': instance.data,
     };
 

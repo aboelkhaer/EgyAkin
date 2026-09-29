@@ -58,6 +58,7 @@ class _HashtagTextState extends State<HashtagText> {
           final richText = RichText(
             text: span,
             textDirection: direction,
+            textAlign: TextAlign.start,
             softWrap: true,
             overflow: TextOverflow.visible,
           );
@@ -84,15 +85,21 @@ class _HashtagTextState extends State<HashtagText> {
                   ? () => setState(() => isExpanded = !isExpanded)
                   : null,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: direction == TextDirection.rtl
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    maxLines: isExpanded ? null : widget.trimLines,
-                    overflow: isExpanded
-                        ? TextOverflow.visible
-                        : TextOverflow.ellipsis,
-                    text: span,
-                    textDirection: direction,
+                  SizedBox(
+                    width: double.infinity,
+                    child: RichText(
+                      maxLines: isExpanded ? null : widget.trimLines,
+                      overflow: isExpanded
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      text: span,
+                      textDirection: direction,
+                      textAlign: TextAlign.start,
+                    ),
                   ),
                   if (shouldShowToggle || isExpanded)
                     Text(

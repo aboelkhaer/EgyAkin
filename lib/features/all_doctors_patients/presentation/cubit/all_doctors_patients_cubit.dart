@@ -1,5 +1,7 @@
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/patient_sort_models.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/export_patients_usecase.dart';
+import 'package:egy_akin/features/all_doctors_patients/domain/usecases/patients_list_page_input.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 
 import '../../../../exports.dart';
@@ -17,6 +19,31 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
   GetFiltersOptionsModelResponse filtersOptions =
       const GetFiltersOptionsModelResponse(data: []);
   Map<String, TextEditingController> controllers = {};
+
+  String? selectedSort;
+  String? selectedDirection;
+  List<SortOptionModelResponse> sortOptions = const [];
+  AppliedSortModelResponse? appliedSort;
+
+  PatientsListPageInput _pageInput(int page) => PatientsListPageInput(
+        page: page,
+        sort: selectedSort,
+        direction: selectedDirection,
+      );
+
+  void _rememberSort({
+    List<SortOptionModelResponse>? options,
+    AppliedSortModelResponse? sort,
+  }) {
+    if (options != null && options.isNotEmpty) {
+      sortOptions = options;
+    }
+    if (sort != null) {
+      appliedSort = sort;
+      selectedSort = sort.key ?? selectedSort;
+      selectedDirection = sort.direction ?? selectedDirection;
+    }
+  }
 
   void setFiltersForRequest(List<GetFiltersOptionsDataModelResponse>? filters) {
     filtersOptions = GetFiltersOptionsModelResponse(data: filters ?? []);
@@ -57,7 +84,19 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         result[e.key] = e.value;
       }
     }
+    if (selectedSort != null) result['sort'] = selectedSort;
+    if (selectedDirection != null) result['direction'] = selectedDirection;
     return result;
+  }
+
+  Future<void> changeSort(String key, String direction) async {
+    selectedSort = key;
+    selectedDirection = direction;
+    if (isApplyFilterDone) {
+      await applyPatientFilters(formData['only_my_patients'] ?? 'false');
+    } else {
+      await getCurrentDoctorPatients(showLoading: false);
+    }
   }
 
   Future<void> getCurrentDoctorPatients({bool showLoading = true}) async {
@@ -70,7 +109,8 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
     isLoadingMoreForScroll = false;
     isApplyFilterDone = false;
 
-    final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
+    final result =
+        await _getAllDoctorsPatientsUsecase.execute(_pageInput(_currentPage));
     if (isClosed) return;
     result.fold(
       (l) {
@@ -97,6 +137,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         if (isClosed) return;
         filtersOptions =
             GetFiltersOptionsModelResponse(data: r.filters ?? []);
+        _rememberSort(options: r.sortOptions, sort: r.sort);
         final lastPage = r.data?.lastPage ?? 1;
         final currentPage = r.data?.currentPage ?? 1;
         isLastPage = currentPage >= lastPage;
@@ -110,12 +151,13 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
   Future<bool> prefetchFilterOptions() async {
     if (filtersOptions.data?.isNotEmpty ?? false) return true;
 
-    final result = await _getAllDoctorsPatientsUsecase.execute(1);
+    final result = await _getAllDoctorsPatientsUsecase.execute(_pageInput(1));
     return result.fold(
       (l) => false,
       (r) {
         filtersOptions =
             GetFiltersOptionsModelResponse(data: r.filters ?? []);
+        _rememberSort(options: r.sortOptions, sort: r.sort);
         final alreadyLoaded = state.maybeWhen(
           loaded: (_, __, ___, ____, _____, ______, _______, ________) => true,
           orElse: () => false,
@@ -139,7 +181,11 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
           emit(state.maybeMap(
             orElse: () => state,
             loaded: (value) => AllDoctorsPatientsState.loaded(
-              value.response.copyWith(filters: r.filters),
+              value.response.copyWith(
+                filters: r.filters,
+                sortOptions: r.sortOptions ?? value.response.sortOptions,
+                sort: r.sort ?? value.response.sort,
+              ),
               value.isSeeMore,
               value.message,
               value.isApplyFilterLoading,
@@ -178,7 +224,8 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         value.fileUrl,
       ),
     ));
-    final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
+    final result =
+        await _getAllDoctorsPatientsUsecase.execute(_pageInput(_currentPage));
     if (isClosed) return;
     result.fold(
       (l) {
@@ -201,6 +248,10 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       },
       (loadMorePatients) async {
         if (isClosed) return;
+        _rememberSort(
+          options: loadMorePatients.sortOptions,
+          sort: loadMorePatients.sort,
+        );
         final currentState = state;
         currentState.when(
           initial: () {
@@ -225,6 +276,9 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             isLastPage = _currentPage >= pageLast;
             isLoadingMoreForScroll = false;
             final updatedData = responseData.copyWith(
+              sortOptions: loadMorePatients.sortOptions ??
+                  responseData.sortOptions,
+              sort: loadMorePatients.sort ?? responseData.sort,
               data: responseData.data!.copyWith(
                 data: [
                   ...responseData.data!.data!,
@@ -318,6 +372,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         final lastPage = r.pagination?.lastPage ?? 1;
         isLastPageFilter = currentPageInFilter >= lastPage;
         isApplyFilterDone = true;
+        _rememberSort(options: r.sortOptions, sort: r.sort);
 
         final existing = state.maybeWhen(
           loaded: (response, _, __, ___, ____, _____, ______, _______) =>
@@ -335,6 +390,8 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         final updatedResponse = base.copyWith(
           data: updatedData,
           patientCount: '$totalPatientInFilter',
+          sortOptions: r.sortOptions ?? base.sortOptions,
+          sort: r.sort ?? base.sort,
         );
 
         emit(
@@ -407,6 +464,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       },
       (r) async {
         if (isClosed) return;
+        _rememberSort(options: r.sortOptions, sort: r.sort);
         final currentState = state;
         totalPatientInFilter = r.pagination!.total!;
 

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
+import 'package:egy_akin/app/shared/functions/chat_text_direction.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -25,32 +25,36 @@ class WriteCommentInCommunity extends StatefulWidget {
 }
 
 class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
-  late final TextEditingController _controller;
+  late final HashtagTextEditingController _controller;
   late TextDirection _textDirection;
   late bool _hasText;
-
-  static final _arabicChar = RegExp(r'[\u0600-\u06FF]');
-  static final _latinChar = RegExp(r'[A-Za-z]');
 
   TextDirection _appTextDirection() =>
       context.isRTL ? TextDirection.rtl : TextDirection.ltr;
 
-  TextDirection _directionFor(String text) {
-    final trimmed = text.trim();
-    if (trimmed.isEmpty) return _appTextDirection();
-    for (final match in RegExp(r'[A-Za-z\u0600-\u06FF]').allMatches(trimmed)) {
-      final ch = match.group(0)!;
-      if (_arabicChar.hasMatch(ch)) return TextDirection.rtl;
-      if (_latinChar.hasMatch(ch)) return TextDirection.ltr;
-    }
-    return _appTextDirection();
-  }
+  TextDirection _directionFor(String text) => ChatTextDirection.resolve(
+        text,
+        fallback: _appTextDirection(),
+      );
+
+  TextStyle _hashtagStyle(Color primary) => TextStyle(
+        color: primary,
+        fontWeight: FontWeight.w700,
+        fontFamily: 'Tajawal',
+      );
 
   @override
   void initState() {
     super.initState();
     final cubit = context.read<ShowSingleFeedCubit>();
-    _controller = TextEditingController(text: cubit.commentContent.text);
+    _controller = HashtagTextEditingController(
+      text: cubit.commentContent.text,
+      hashtagStyle: const TextStyle(
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        fontFamily: 'Tajawal',
+      ),
+    );
     _hasText = _controller.text.trim().isNotEmpty;
     _textDirection =
         _hasText ? _directionFor(_controller.text) : _appTextDirection();
@@ -115,10 +119,11 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
   @override
   Widget build(BuildContext context) {
     final cubit = ShowSingleFeedCubit.get(context);
-    final padding = MediaQuery.paddingOf(context).bottom;
+    final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    // Lift with the keyboard; keep home-indicator only when keyboard is closed.
-    final bottomInset = keyboard > 0 ? keyboard : padding;
+    // Never drop below the home-indicator inset. `padding.bottom` is often 0
+    // while the keyboard is animating away, which made the bar flash too low.
+    final bottomInset = keyboard > safeBottom ? keyboard : safeBottom;
 
     return PermissionGuard(
       permission: AppPermissions.createFeedComment,
@@ -126,6 +131,7 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
         builder: (context, themeState) {
           final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
           final primary = HomeDashboardColors.primary(isDark);
+          _controller.updateHashtagStyle(_hashtagStyle(primary));
 
           return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
             buildWhen: (previous, current) {
@@ -182,6 +188,7 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                 primary: primary,
                 bottomInset: bottomInset,
                 replyingTo: cubit.commentToReply,
+                hasText: _hasText,
                 canSend: canSend,
                 isSending: isSending,
                 controller: _controller,
@@ -206,6 +213,7 @@ class _ComposerShell extends StatelessWidget {
   final Color primary;
   final double bottomInset;
   final dynamic replyingTo;
+  final bool hasText;
   final bool canSend;
   final bool isSending;
   final TextEditingController controller;
@@ -219,6 +227,7 @@ class _ComposerShell extends StatelessWidget {
     required this.primary,
     required this.bottomInset,
     required this.replyingTo,
+    required this.hasText,
     required this.canSend,
     required this.isSending,
     required this.controller,
@@ -300,55 +309,96 @@ class _ComposerShell extends StatelessWidget {
                         final fieldColor = isDark
                             ? AppColors.darkSurface
                             : const Color(0xFFF3F4F6);
+                        const barHeight = 44.0;
+                        const maxLines = 5;
+                        final borderColor = HomeDashboardColors.border(isDark)
+                            .withOpacity(0.8);
 
-                        return Container(
-                          height: 52,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          decoration: BoxDecoration(
-                            color: fieldColor,
-                            borderRadius: BorderRadius.circular(26),
-                            border: Border.all(
-                              color: HomeDashboardColors.border(isDark)
-                                  .withOpacity(0.8),
-                            ),
+                        // Same growth + hint centering model as chat composer.
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: barHeight,
+                            maxHeight: (barHeight * maxLines) + 12,
                           ),
-                          child: TextField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            enabled: !isSending,
-                            cursorColor: primary,
-                            minLines: 1,
-                            maxLines: 1,
-                            textDirection: textDirection,
-                            textAlign: TextAlign.start,
-                            textAlignVertical: TextAlignVertical.center,
-                            textInputAction: TextInputAction.send,
-                            onSubmitted: (_) {
-                              if (canSend) onSend();
-                            },
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: HomeDashboardColors.title(isDark),
-                            ),
-                            decoration: InputDecoration(
-                              isDense: true,
-                              isCollapsed: true,
-                              filled: true,
-                              fillColor: Colors.transparent,
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.zero,
-                              hintText: context.tr(AppStrings.writeComment),
-                              hintStyle: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: HomeDashboardColors.subtitle(isDark),
+                          child: Stack(
+                            alignment: Alignment.topLeft,
+                            children: [
+                              TextField(
+                                controller: controller,
+                                focusNode: focusNode,
+                                enabled: !isSending,
+                                cursorColor: primary,
+                                minLines: 1,
+                                maxLines: maxLines,
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.newline,
+                                textDirection: textDirection,
+                                textAlign: TextAlign.start,
+                                textAlignVertical: TextAlignVertical.center,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Tajawal',
+                                  color: HomeDashboardColors.title(isDark),
+                                ),
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor: fieldColor,
+                                  hintText: null,
+                                  // Extra top padding so Tajawal glyphs sit on
+                                  // the caret midline (same as chat message).
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                    16.w,
+                                    10.h,
+                                    16.w,
+                                    6.h,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(22.r),
+                                    borderSide: BorderSide(color: borderColor),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(22.r),
+                                    borderSide: BorderSide(color: borderColor),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(22.r),
+                                    borderSide: BorderSide(color: primary),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(22.r),
+                                    borderSide: BorderSide(color: borderColor),
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (!hasText)
+                                IgnorePointer(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      16.w,
+                                      10.h,
+                                      16.w,
+                                      0,
+                                    ),
+                                    child: Text(
+                                      context.tr(AppStrings.writeComment),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        height: 1.2,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Tajawal',
+                                        color: HomeDashboardColors.subtitle(
+                                          isDark,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         );
                       },
@@ -404,8 +454,8 @@ class _SendCommentButton extends StatelessWidget {
         final shadowOpacity = 0.28 * t;
 
         return Container(
-          width: 52,
-          height: 52,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,

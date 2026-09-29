@@ -15,6 +15,6 @@ class ProfilePatientsDataSourceImpl implements ProfilePatientsDataSource {
   @override
   Future<GetProfilePatientsModelResponse> getProfilePatients(
       {required int pageNumber, required String doctorId}) async {
-    return _apiServices.getProfilePatients(pageNumber, doctorId);
+    return _apiServices.getProfilePatients(pageNumber, doctorId, null, null);
   }
 }

@@ -26,6 +26,11 @@ mixin _$GetAllDoctorsPatientsModelResponse {
   @JsonKey(name: 'filter')
   List<GetFiltersOptionsDataModelResponse>? get filters =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort => throw _privateConstructorUsedError;
   @JsonKey(name: 'score_value')
   String? get scoreValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'patient_count')
@@ -57,10 +62,13 @@ abstract class $GetAllDoctorsPatientsModelResponseCopyWith<$Res> {
       bool? verified,
       @JsonKey(name: 'filter')
       List<GetFiltersOptionsDataModelResponse>? filters,
+      @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'patient_count') String? patientCount,
       GetAllDoctorsPatientDataModelResponse? data});
 
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   $GetAllDoctorsPatientDataModelResponseCopyWith<$Res>? get data;
 }
 
@@ -83,6 +91,8 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
     Object? value = freezed,
     Object? verified = freezed,
     Object? filters = freezed,
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? scoreValue = freezed,
     Object? patientCount = freezed,
     Object? data = freezed,
@@ -100,6 +110,14 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
           ? _value.filters
           : filters // ignore: cast_nullable_to_non_nullable
               as List<GetFiltersOptionsDataModelResponse>?,
+      sortOptions: freezed == sortOptions
+          ? _value.sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
           : scoreValue // ignore: cast_nullable_to_non_nullable
@@ -113,6 +131,20 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
           : data // ignore: cast_nullable_to_non_nullable
               as GetAllDoctorsPatientDataModelResponse?,
     ) as $Val);
+  }
+
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppliedSortModelResponseCopyWith<$Res>? get sort {
+    if (_value.sort == null) {
+      return null;
+    }
+
+    return $AppliedSortModelResponseCopyWith<$Res>(_value.sort!, (value) {
+      return _then(_value.copyWith(sort: value) as $Val);
+    });
   }
 
   /// Create a copy of GetAllDoctorsPatientsModelResponse
@@ -145,10 +177,14 @@ abstract class _$$GetAllDoctorsPatientsModelResponseImplCopyWith<$Res>
       bool? verified,
       @JsonKey(name: 'filter')
       List<GetFiltersOptionsDataModelResponse>? filters,
+      @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'patient_count') String? patientCount,
       GetAllDoctorsPatientDataModelResponse? data});
 
+  @override
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   @override
   $GetAllDoctorsPatientDataModelResponseCopyWith<$Res>? get data;
 }
@@ -171,6 +207,8 @@ class __$$GetAllDoctorsPatientsModelResponseImplCopyWithImpl<$Res>
     Object? value = freezed,
     Object? verified = freezed,
     Object? filters = freezed,
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? scoreValue = freezed,
     Object? patientCount = freezed,
     Object? data = freezed,
@@ -188,6 +226,14 @@ class __$$GetAllDoctorsPatientsModelResponseImplCopyWithImpl<$Res>
           ? _value._filters
           : filters // ignore: cast_nullable_to_non_nullable
               as List<GetFiltersOptionsDataModelResponse>?,
+      sortOptions: freezed == sortOptions
+          ? _value._sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
           : scoreValue // ignore: cast_nullable_to_non_nullable
@@ -213,10 +259,14 @@ class _$GetAllDoctorsPatientsModelResponseImpl
       this.verified,
       @JsonKey(name: 'filter')
       final List<GetFiltersOptionsDataModelResponse>? filters,
+      @JsonKey(name: 'sort_options')
+      final List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') this.sort,
       @JsonKey(name: 'score_value') this.scoreValue,
       @JsonKey(name: 'patient_count') this.patientCount,
       this.data})
-      : _filters = filters;
+      : _filters = filters,
+        _sortOptions = sortOptions;
 
   factory _$GetAllDoctorsPatientsModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -237,6 +287,20 @@ class _$GetAllDoctorsPatientsModelResponseImpl
     return EqualUnmodifiableListView(value);
   }
 
+  final List<SortOptionModelResponse>? _sortOptions;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions {
+    final value = _sortOptions;
+    if (value == null) return null;
+    if (_sortOptions is EqualUnmodifiableListView) return _sortOptions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'sort')
+  final AppliedSortModelResponse? sort;
   @override
   @JsonKey(name: 'score_value')
   final String? scoreValue;
@@ -248,7 +312,7 @@ class _$GetAllDoctorsPatientsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetAllDoctorsPatientsModelResponse(value: $value, verified: $verified, filters: $filters, scoreValue: $scoreValue, patientCount: $patientCount, data: $data)';
+    return 'GetAllDoctorsPatientsModelResponse(value: $value, verified: $verified, filters: $filters, sortOptions: $sortOptions, sort: $sort, scoreValue: $scoreValue, patientCount: $patientCount, data: $data)';
   }
 
   @override
@@ -260,6 +324,9 @@ class _$GetAllDoctorsPatientsModelResponseImpl
             (identical(other.verified, verified) ||
                 other.verified == verified) &&
             const DeepCollectionEquality().equals(other._filters, _filters) &&
+            const DeepCollectionEquality()
+                .equals(other._sortOptions, _sortOptions) &&
+            (identical(other.sort, sort) || other.sort == sort) &&
             (identical(other.scoreValue, scoreValue) ||
                 other.scoreValue == scoreValue) &&
             (identical(other.patientCount, patientCount) ||
@@ -274,6 +341,8 @@ class _$GetAllDoctorsPatientsModelResponseImpl
       value,
       verified,
       const DeepCollectionEquality().hash(_filters),
+      const DeepCollectionEquality().hash(_sortOptions),
+      sort,
       scoreValue,
       patientCount,
       data);
@@ -303,6 +372,9 @@ abstract class _GetAllDoctorsPatientsModelResponse
           final bool? verified,
           @JsonKey(name: 'filter')
           final List<GetFiltersOptionsDataModelResponse>? filters,
+          @JsonKey(name: 'sort_options')
+          final List<SortOptionModelResponse>? sortOptions,
+          @JsonKey(name: 'sort') final AppliedSortModelResponse? sort,
           @JsonKey(name: 'score_value') final String? scoreValue,
           @JsonKey(name: 'patient_count') final String? patientCount,
           final GetAllDoctorsPatientDataModelResponse? data}) =
@@ -319,6 +391,12 @@ abstract class _GetAllDoctorsPatientsModelResponse
   @override
   @JsonKey(name: 'filter')
   List<GetFiltersOptionsDataModelResponse>? get filters;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions;
+  @override
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort;
   @override
   @JsonKey(name: 'score_value')
   String? get scoreValue;

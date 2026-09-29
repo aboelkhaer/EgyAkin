@@ -288,9 +288,9 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                               ],
                             ),
 
-                            // Progress Bar for votes
-                            LinearProgressIndicator(
-                              value: votePercentage,
+                            // Progress Bar for votes (smooth width animation)
+                            _AnimatedPollProgressBar(
+                              percentage: votePercentage,
                               backgroundColor: isDarkMode
                                   ? AppColors.darkBorder
                                   : Colors.grey.shade300,
@@ -379,6 +379,39 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                 ),
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Animates poll vote fill width when counts change after selecting an option.
+class _AnimatedPollProgressBar extends StatelessWidget {
+  final double percentage;
+  final Color backgroundColor;
+  final Color color;
+
+  const _AnimatedPollProgressBar({
+    required this.percentage,
+    required this.backgroundColor,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(end: percentage.clamp(0.0, 1.0)),
+      duration: const Duration(milliseconds: 450),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, _) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(
+            value: value,
+            minHeight: 4,
+            backgroundColor: backgroundColor,
+            color: color,
           ),
         );
       },

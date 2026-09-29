@@ -13,6 +13,6 @@ class MarkedPatientsDataSourceImpl implements MarkedPatientsDataSource {
 
   @override
   Future<GetMarkedPatientsModelResponse> getMarkedPatients(int page) async {
-    return await _apiServices.getMarkedPatients(page);
+    return await _apiServices.getMarkedPatients(page, 10, null, null);
   }
 }

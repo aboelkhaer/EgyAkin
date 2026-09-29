@@ -15,6 +15,6 @@ class SearchDataSourceImpl implements SearchDataSource {
   @override
   Future<GetSearchModelResponse> getSearchHome(
       {required String patient, required String dose}) async {
-    return await _apiServices.searchHome(patient, dose);
+    return await _apiServices.searchHome(patient, dose, null, null);
   }
 }

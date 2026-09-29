@@ -138,9 +138,17 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetAllDoctorsPatientsModelResponse> getAllPatients(
-      int pageNumber) async {
+    int pageNumber,
+    String? sort,
+    String? direction,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final queryParameters = <String, dynamic>{
+      r'page': pageNumber,
+      r'sort': sort,
+      r'direction': direction,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<GetAllDoctorsPatientsModelResponse>(Options(
@@ -174,9 +182,16 @@ class _ApiServices implements ApiServices {
   Future<GetProfilePatientsModelResponse> getProfilePatients(
     int pageNumber,
     String doctorId,
+    String? sort,
+    String? direction,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final queryParameters = <String, dynamic>{
+      r'page': pageNumber,
+      r'sort': sort,
+      r'direction': direction,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<GetProfilePatientsModelResponse>(Options(
@@ -208,9 +223,17 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetDoctorPatientsModelResponse> getCurrentPatients(
-      int pageNumber) async {
+    int pageNumber,
+    String? sort,
+    String? direction,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final queryParameters = <String, dynamic>{
+      r'page': pageNumber,
+      r'sort': sort,
+      r'direction': direction,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<GetDoctorPatientsModelResponse>(Options(
@@ -244,14 +267,20 @@ class _ApiServices implements ApiServices {
   Future<GetSearchModelResponse> searchHome(
     String patient,
     String dose,
+    String? sort,
+    String? direction,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = {
       'patient': patient,
       'dose': dose,
+      'sort': sort,
+      'direction': direction,
     };
+    _data.removeWhere((k, v) => v == null);
     final _options = _setStreamType<GetSearchModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -4295,9 +4324,19 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetMarkedPatientsModelResponse> getMarkedPatients(
-      int pageNumber) async {
+    int pageNumber,
+    int perPage,
+    String? sort,
+    String? direction,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final queryParameters = <String, dynamic>{
+      r'page': pageNumber,
+      r'per_page': perPage,
+      r'sort': sort,
+      r'direction': direction,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<GetMarkedPatientsModelResponse>(Options(
@@ -4307,7 +4346,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/v3/markedPatients?per_page=10&page=/{page}',
+          'https://test.egyakin.com/api/v3/markedPatients',
           queryParameters: queryParameters,
           data: _data,
         )

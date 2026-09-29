@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
-import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
 
@@ -115,12 +115,13 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
       arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
         doctorId: doctor!.id.toString(),
         currentDoctorModel: widget.currentDoctorModel,
-        currentDoctorPoints: int.parse(widget.homeDataModel.scoreValue!),
-        accountVerification: widget.homeDataModel.verified!,
+        currentDoctorPoints:
+            int.tryParse(widget.homeDataModel.scoreValue ?? '') ?? 0,
+        accountVerification: widget.homeDataModel.verified ?? false,
         initialIndex: 0,
         isSyndicateCardRequired:
-            widget.homeDataModel.isSyndicateCardRequired.toString(),
-        currentDoctorRole: widget.homeDataModel.role.toString(),
+            widget.homeDataModel.isSyndicateCardRequired?.toString() ?? '',
+        currentDoctorRole: widget.homeDataModel.role?.toString() ?? '',
         homeDataModel: widget.homeDataModel,
         isNavigateToTheButtonOfInformationTab: false,
       ),
@@ -128,12 +129,11 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
   }
 
   bool _canManagePost(PostCommunityModel feed) {
-    final isOwner =
-        feed.doctor?.id?.toString() == widget.currentDoctorModel.id.toString();
-    final isAdmin = PermissionHelper.canPermission(
-      AppPermissions.viewEditAndDeletePostForAdmin,
+    return canManageFeedPost(
+      feed: feed,
+      currentDoctor: widget.currentDoctorModel,
+      homeData: widget.homeDataModel,
     );
-    return isOwner || isAdmin;
   }
 
   void _onMenuSelected(String value, PostCommunityModel feed, bool isDark) {
@@ -164,6 +164,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
         sl<CommunityCubit>().deletePost(
           feed.id.toString(),
           wasSaved: feed.isSaved,
+          postContent: feed.content,
+          animateInFeed: false,
         );
         navigatorKey.currentState?.pop();
       },
@@ -174,10 +176,11 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
     final items = <PopupMenuEntry<String>>[];
     if (!_canManagePost(feed)) return items;
 
-    final showAdminBadge = PermissionHelper.canPermission(
-          AppPermissions.viewEditAndDeletePostForAdmin,
-        ) &&
-        widget.currentDoctorModel.id.toString() != feed.doctor!.id.toString();
+    final showAdminBadge = showAdminOnlyBadgeOnFeedPost(
+      feed: feed,
+      currentDoctor: widget.currentDoctorModel,
+      homeData: widget.homeDataModel,
+    );
 
     items.add(
       PopupMenuItem(
@@ -490,8 +493,9 @@ class _FeedScaffoldState extends State<_FeedScaffold>
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.paddingOf(context).top;
-    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+    final bottomInset = keyboard > safeBottom ? keyboard : safeBottom;
     final cubit = context.watch<ShowSingleFeedCubit>();
     final replyBannerExtra = cubit.commentToReply != null ? 48.h : 0.0;
     final composerReserve = 120.h + replyBannerExtra;
@@ -532,7 +536,9 @@ class _FeedScaffoldState extends State<_FeedScaffold>
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.only(
                     top: cubit.replyAnchorTopPadding,
-                    bottom: composerReserve + bottomInset + keyboard,
+                    // One inset only — do not add padding.bottom + keyboard
+                    // (padding.bottom collapses to 0 mid keyboard dismiss).
+                    bottom: composerReserve + bottomInset,
                   ),
                   child: Column(
                     children: [

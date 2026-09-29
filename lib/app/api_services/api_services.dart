@@ -52,23 +52,31 @@ abstract class ApiServices {
   @GET(ApiEndPoint.allPatients)
   Future<GetAllDoctorsPatientsModelResponse> getAllPatients(
     @Query('page') int pageNumber,
+    @Query('sort') String? sort,
+    @Query('direction') String? direction,
   );
 
   @GET('${ApiEndPoint.doctorProfileGetPatients}/{doctorId}')
   Future<GetProfilePatientsModelResponse> getProfilePatients(
     @Query('page') int pageNumber,
     @Path('doctorId') String doctorId,
+    @Query('sort') String? sort,
+    @Query('direction') String? direction,
   );
 
   @GET(ApiEndPoint.currentPatientsHome)
   Future<GetDoctorPatientsModelResponse> getCurrentPatients(
     @Query('page') int pageNumber,
+    @Query('sort') String? sort,
+    @Query('direction') String? direction,
   );
 
   @POST(ApiEndPoint.search)
   Future<GetSearchModelResponse> searchHome(
     @Field('patient') String patient,
     @Field('dose') String dose,
+    @Field('sort') String? sort,
+    @Field('direction') String? direction,
   );
   @PUT(ApiEndPoint.updateProfile)
   Future<UpdateDoctorProfileModelResponse> updateProfile(
@@ -711,9 +719,12 @@ abstract class ApiServices {
     @Field('fcmToken') String? fcmToken,
   );
 
-  @GET('${ApiEndPoint.getMarkedPatients}?per_page=10&page=/{page}')
+  @GET(ApiEndPoint.getMarkedPatients)
   Future<GetMarkedPatientsModelResponse> getMarkedPatients(
     @Query('page') int pageNumber,
+    @Query('per_page') int perPage,
+    @Query('sort') String? sort,
+    @Query('direction') String? direction,
   );
   @GET(ApiEndPoint.getRolePermissions)
   Future<GetPermissionsModelResponse> getRolePermissions();

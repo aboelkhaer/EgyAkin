@@ -442,42 +442,71 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
     debugPrint('[Save] 🏁 Operation completed for post $postId');
   }
 
+  final Set<String> removingPostIds = {};
+
   Future<void> deletePost(String postId) async {
     var wasSaved = false;
+    String? content;
     state.maybeWhen(
       orElse: () {},
       loaded: (_, __, response, ___, ____) {
         for (final post in response.data?.data ?? const []) {
           if (post.id.toString() == postId) {
             wasSaved = post.isSaved ?? false;
+            content = post.content;
             break;
           }
         }
       },
     );
-    await sl<CommunityCubit>().deletePost(postId, wasSaved: wasSaved);
 
-    // Step 2: Emit a new state with the updated list of posts
+    final ok = await sl<CommunityCubit>().deletePost(
+      postId,
+      wasSaved: wasSaved,
+      postContent: content,
+      animateInFeed: false,
+    );
+    if (!ok || isClosed) return;
+
+    // Keep the card mounted so [PostRemovalAnimator] can play.
+    removingPostIds.add(postId);
+    changeCounter++;
     emit(
       state.maybeMap(
-        orElse: () =>
-            state, // Return the current state if it's not the expected type
+        orElse: () => state,
+        loaded: (value) => CommunitySearchState.loaded(
+          value.snackBarMessage,
+          value.dialogMessage,
+          value.response,
+          value.isSeeMore,
+          changeCounter,
+        ),
+      ),
+    );
+  }
+
+  void finishRemovingPost(String postId) {
+    if (isClosed) return;
+    if (!removingPostIds.remove(postId)) return;
+
+    emit(
+      state.maybeMap(
+        orElse: () => state,
         loaded: (value) {
-          // Step 3: Filter out the deleted post
           final updatedPosts = value.response.data?.data
               ?.where((post) => post.id.toString() != postId)
               .toList();
-
-          // Step 4: Create a new state with the updated posts
+          changeCounter++;
           return CommunitySearchState.loaded(
-            'Post deleted successfully', // snackBarMessage
-            '', // dialogMessage (optional)
+            'Post deleted successfully',
+            '',
             value.response.copyWith(
               data: value.response.data?.copyWith(
                 data: updatedPosts,
               ),
             ),
-            false, changeCounter,
+            false,
+            changeCounter,
           );
         },
       ),

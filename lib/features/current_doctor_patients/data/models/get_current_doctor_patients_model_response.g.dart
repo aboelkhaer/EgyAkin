@@ -17,6 +17,14 @@ _$GetDoctorPatientsModelResponseImpl
               ?.map((e) => GetFiltersOptionsDataModelResponse.fromJson(
                   e as Map<String, dynamic>))
               .toList(),
+          sortOptions: (json['sort_options'] as List<dynamic>?)
+              ?.map((e) =>
+                  SortOptionModelResponse.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          sort: json['sort'] == null
+              ? null
+              : AppliedSortModelResponse.fromJson(
+                  json['sort'] as Map<String, dynamic>),
           data: json['data'] == null
               ? null
               : GetDoctorPatientsDataModelResponse.fromJson(
@@ -31,6 +39,8 @@ Map<String, dynamic> _$$GetDoctorPatientsModelResponseImplToJson(
       'score_value': instance.scoreValue,
       'patient_count': instance.patientCount,
       'filter': instance.filters,
+      'sort_options': instance.sortOptions,
+      'sort': instance.sort,
       'data': instance.data,
     };
 

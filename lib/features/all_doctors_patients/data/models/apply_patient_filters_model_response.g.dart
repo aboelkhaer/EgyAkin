@@ -10,6 +10,15 @@ _$ApplyPatientFiltersModelResponseImpl
     _$$ApplyPatientFiltersModelResponseImplFromJson(
             Map<String, dynamic> json) =>
         _$ApplyPatientFiltersModelResponseImpl(
+          value: json['value'] as bool?,
+          sortOptions: (json['sort_options'] as List<dynamic>?)
+              ?.map((e) =>
+                  SortOptionModelResponse.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          sort: json['sort'] == null
+              ? null
+              : AppliedSortModelResponse.fromJson(
+                  json['sort'] as Map<String, dynamic>),
           data: (json['data'] as List<dynamic>?)
               ?.map((e) =>
                   PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
@@ -23,6 +32,9 @@ _$ApplyPatientFiltersModelResponseImpl
 Map<String, dynamic> _$$ApplyPatientFiltersModelResponseImplToJson(
         _$ApplyPatientFiltersModelResponseImpl instance) =>
     <String, dynamic>{
+      'value': instance.value,
+      'sort_options': instance.sortOptions,
+      'sort': instance.sort,
       'data': instance.data,
       'pagination': instance.pagination,
     };

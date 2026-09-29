@@ -434,18 +434,25 @@ class GroupsCubit extends Cubit<GroupsState> {
 
   Future<void> deletePost(String postId) async {
     var wasSaved = false;
+    String? content;
     state.maybeWhen(
       orElse: () {},
       loaded: (response, _, __, ___, ____) {
         for (final post in response.data?.randomPosts?.data ?? const []) {
           if (post.id.toString() == postId) {
             wasSaved = post.isSaved ?? false;
+            content = post.content;
             break;
           }
         }
       },
     );
-    await sl<CommunityCubit>().deletePost(postId, wasSaved: wasSaved);
+    await sl<CommunityCubit>().deletePost(
+      postId,
+      wasSaved: wasSaved,
+      postContent: content,
+      animateInFeed: false,
+    );
 
     emit(
       state.maybeMap(

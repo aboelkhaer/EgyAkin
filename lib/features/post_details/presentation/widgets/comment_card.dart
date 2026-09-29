@@ -98,12 +98,16 @@ class CommentCard extends StatelessWidget {
                               doctorId: commentModel.doctor!.id.toString(),
                               currentDoctorModel: currentDoctorModel,
                               isSyndicateCardRequired: homeDataModel
-                                  .isSyndicateCardRequired
-                                  .toString(),
-                              accountVerification: homeDataModel.verified!,
+                                      .isSyndicateCardRequired
+                                      ?.toString() ??
+                                  '',
+                              accountVerification:
+                                  homeDataModel.verified ?? false,
                               currentDoctorRole: currentDoctorRole,
-                              currentDoctorPoints:
-                                  int.parse(homeDataModel.scoreValue!),
+                              currentDoctorPoints: int.tryParse(
+                                    homeDataModel.scoreValue ?? '',
+                                  ) ??
+                                  0,
                               homeDataModel: homeDataModel,
                               initialIndex: 0,
                               isNavigateToTheButtonOfInformationTab: false,

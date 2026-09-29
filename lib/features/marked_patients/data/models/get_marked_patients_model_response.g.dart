@@ -9,6 +9,14 @@ part of 'get_marked_patients_model_response.dart';
 _$GetMarkedPatientsModelResponseImpl
     _$$GetMarkedPatientsModelResponseImplFromJson(Map<String, dynamic> json) =>
         _$GetMarkedPatientsModelResponseImpl(
+          sortOptions: (json['sort_options'] as List<dynamic>?)
+              ?.map((e) =>
+                  SortOptionModelResponse.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          sort: json['sort'] == null
+              ? null
+              : AppliedSortModelResponse.fromJson(
+                  json['sort'] as Map<String, dynamic>),
           data: json['data'] == null
               ? null
               : GetMarkedPatientsDataModelResponse.fromJson(
@@ -29,6 +37,8 @@ _$GetMarkedPatientsModelResponseImpl
 Map<String, dynamic> _$$GetMarkedPatientsModelResponseImplToJson(
         _$GetMarkedPatientsModelResponseImpl instance) =>
     <String, dynamic>{
+      'sort_options': instance.sortOptions,
+      'sort': instance.sort,
       'data': instance.data,
       'current_page': instance.currentPage,
       'first_page_url': instance.firstPageUrl,

@@ -128,11 +128,44 @@ class _GroupDetailsInCommunityScreenState
   String _groupOwnerId(GroupModel g) =>
       g.owner?.id?.toString() ?? g.ownerId?.toString() ?? '';
 
+  Set<String> _myDoctorIds() {
+    final ids = <String>{};
+    final current = widget.currentDoctorModel.id?.toString();
+    if (current != null && current.isNotEmpty && current != 'null') {
+      ids.add(current);
+    }
+    try {
+      final homeId = resolveHomeCubit().currentDoctorModel.id?.toString();
+      if (homeId != null && homeId.isNotEmpty && homeId != 'null') {
+        ids.add(homeId);
+      }
+    } catch (_) {}
+    return ids;
+  }
+
   bool _isOwner(GroupModel g) {
-    final me = widget.currentDoctorModel.id?.toString();
-    if (me == null || me.isEmpty) return false;
-    final owner = _groupOwnerId(g);
-    return owner.isNotEmpty && me == owner;
+    final me = _myDoctorIds();
+    if (me.isEmpty) return false;
+
+    final ownerIds = <String>{
+      if (g.owner?.id != null) g.owner!.id!.toString(),
+      if (g.ownerId != null) g.ownerId!.toString(),
+    }..removeWhere((id) => id.isEmpty || id == 'null');
+
+    if (ownerIds.isNotEmpty) {
+      return me.any(ownerIds.contains);
+    }
+
+    // Last resort: API sent owner profile without ids — match name to me.
+    final o = g.owner;
+    if (o == null) return false;
+    final my = widget.currentDoctorModel;
+    final first = (o.firstName ?? '').trim().toLowerCase();
+    final last = (o.lastName ?? '').trim().toLowerCase();
+    final myFirst = (my.firstName ?? '').trim().toLowerCase();
+    final myLast = (my.lastName ?? '').trim().toLowerCase();
+    if (first.isEmpty || myFirst.isEmpty) return false;
+    return first == myFirst && last == myLast;
   }
 
   void _openImage(String url) {
@@ -391,22 +424,22 @@ class _GroupDetailsInCommunityScreenState
                                     PermissionHelper.canPermission(
                                       AppPermissions.updateGroupForAdmin,
                                     ),
-                                showAdminEditBadge:
+                                // "A" badge only for non-owners acting via admin
+                                // permission — owners edit as owners, no badge.
+                                showAdminEditBadge: !_isOwner(group) &&
                                     PermissionHelper.canPermission(
-                                          AppPermissions.updateGroupForAdmin,
-                                        ) &&
-                                        !_isOwner(group),
+                                      AppPermissions.updateGroupForAdmin,
+                                    ),
                                 isDeleteGroupLoading: isDeleteGroupLoading,
                                 canLeave: _canPost(group),
                                 canDelete: _isOwner(group) ||
                                     PermissionHelper.canPermission(
                                       AppPermissions.deleteGroupForAdmin,
                                     ),
-                                showAdminDeleteBadge:
+                                showAdminDeleteBadge: !_isOwner(group) &&
                                     PermissionHelper.canPermission(
-                                          AppPermissions.deleteGroupForAdmin,
-                                        ) &&
-                                        !_isOwner(group),
+                                      AppPermissions.deleteGroupForAdmin,
+                                    ),
                                 canOpenMembers: _canPost(group) ||
                                     PermissionHelper.canPermission(
                                       AppPermissions.viewGroupMembersForAdmin,
@@ -836,26 +869,32 @@ class _ProfileHeader extends StatelessWidget {
                       ),
                       const Spacer(),
                       if (canEdit)
-                        AdminOnlyBadge(
-                          showBadge: showAdminEditBadge,
-                                                      style: BadgeStyle.premium,
-                                                      fontSize: 6.sp,
-                          badgePadding: EdgeInsets.symmetric(
-                                                              horizontal: 3.w,
-                            vertical: 0.5.h,
-                          ),
-                                                      showIcon: false,
-                                                      glowEffect: true,
-                                                      pulseAnimation: true,
-                                                      badgeText: 'A',
-                          top: -6,
-                          right: -6,
-                          child: _GlassIconButton(
-                            isDark: isDark,
-                            icon: Icons.edit_rounded,
-                            onTap: onEdit,
-                          ),
-                        ),
+                        showAdminEditBadge
+                            ? AdminOnlyBadge(
+                                showBadge: true,
+                                style: BadgeStyle.premium,
+                                fontSize: 6.sp,
+                                badgePadding: EdgeInsets.symmetric(
+                                  horizontal: 3.w,
+                                  vertical: 0.5.h,
+                                ),
+                                showIcon: false,
+                                glowEffect: true,
+                                pulseAnimation: true,
+                                badgeText: 'A',
+                                top: -6,
+                                right: -6,
+                                child: _GlassIconButton(
+                                  isDark: isDark,
+                                  icon: Icons.edit_rounded,
+                                  onTap: onEdit,
+                                ),
+                              )
+                            : _GlassIconButton(
+                                isDark: isDark,
+                                icon: Icons.edit_rounded,
+                                onTap: onEdit,
+                              ),
                       if (!isDeleteGroupLoading && (canLeave || canDelete)) ...[
                         SizedBox(width: 8.w),
                         PopupMenuButton<String>(
@@ -876,23 +915,26 @@ class _ProfileHeader extends StatelessWidget {
                             if (canDelete)
                               PopupMenuItem(
                                 value: 'delete',
-                                child: AdminOnlyBadge(
-                                  showBadge: showAdminDeleteBadge,
-                                                      style: BadgeStyle.premium,
-                                                      fontSize: 6.sp,
-                                  badgePadding: EdgeInsets.symmetric(
-                                                              horizontal: 3.w,
-                                    vertical: 0.5.h,
-                                  ),
-                                                      showIcon: false,
-                                                      glowEffect: true,
-                                                      pulseAnimation: true,
-                                                      badgeText: 'A',
-                                                      top: -5,
-                                  right: -5,
-                                                                child:
-                                      Text(context.tr(AppStrings.deleteGroup)),
-                                ),
+                                child: showAdminDeleteBadge
+                                    ? AdminOnlyBadge(
+                                        showBadge: true,
+                                        style: BadgeStyle.premium,
+                                        fontSize: 6.sp,
+                                        badgePadding: EdgeInsets.symmetric(
+                                          horizontal: 3.w,
+                                          vertical: 0.5.h,
+                                        ),
+                                        showIcon: false,
+                                        glowEffect: true,
+                                        pulseAnimation: true,
+                                        badgeText: 'A',
+                                        top: -5,
+                                        right: -5,
+                                        child: Text(
+                                          context.tr(AppStrings.deleteGroup),
+                                        ),
+                                      )
+                                    : Text(context.tr(AppStrings.deleteGroup)),
                               ),
                           ],
                           child: IgnorePointer(
@@ -1702,7 +1744,7 @@ class _AboutBody extends StatelessWidget {
               _AboutRow(
                 isDark: isDark,
                 icon: Icons.shield_outlined,
-                label: context.tr(AppStrings.adminOfGroup),
+                label: context.tr(AppStrings.ownerOfGroup),
                 value: owner.isEmpty ? '—' : owner,
                           ),
                           Divider(

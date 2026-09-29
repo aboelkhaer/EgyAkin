@@ -51,6 +51,70 @@ class TrendingCubit extends Cubit<TrendingState> {
     await getTrendingPostsInCommunity();
   }
 
+  static final RegExp _hashtagPattern = RegExp(
+    r'#[a-zA-Z0-9_\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+',
+  );
+
+  /// Normalized tag keys (no leading `#`, lowercased).
+  static List<String> extractHashtagKeys(String? content) {
+    if (content == null || content.isEmpty) return const [];
+    final seen = <String>{};
+    final out = <String>[];
+    for (final match in _hashtagPattern.allMatches(content)) {
+      final raw = match.group(0);
+      if (raw == null || raw.length < 2) continue;
+      final key = raw.substring(1).toLowerCase();
+      if (key.isEmpty || !seen.add(key)) continue;
+      out.add(key);
+    }
+    return out;
+  }
+
+  /// After a post with hashtags is deleted: decrement counts, drop at 0.
+  void decrementHashtags(Iterable<String> tagKeys) {
+    if (isClosed) return;
+    final keys = tagKeys
+        .map((t) => t.trim().toLowerCase().replaceFirst(RegExp(r'^#'), ''))
+        .where((t) => t.isNotEmpty)
+        .toSet();
+    if (keys.isEmpty) return;
+
+    final current = state;
+    current.maybeWhen(
+      loaded: (snack, dialog, response, isSeeMore) {
+        final existing = response.data ?? const <TrendModel>[];
+        if (existing.isEmpty) return;
+
+        final updated = <TrendModel>[];
+        for (final trend in existing) {
+          final raw = (trend.tag ?? '').trim();
+          final key = raw.startsWith('#')
+              ? raw.substring(1).toLowerCase()
+              : raw.toLowerCase();
+          if (!keys.contains(key)) {
+            updated.add(trend);
+            continue;
+          }
+          final nextCount = (trend.usageCount ?? 1) - 1;
+          if (nextCount > 0) {
+            updated.add(trend.copyWith(usageCount: nextCount));
+          }
+        }
+
+        emit(TrendingState.loaded(
+          snack,
+          dialog,
+          response.copyWith(
+            data: updated,
+            total: updated.length,
+          ),
+          isSeeMore,
+        ));
+      },
+      orElse: () {},
+    );
+  }
+
   void loadMoreTrends() async {
     // Add this check at the start of the method
     if (isLastPage || isLoadingMoreForScroll) return;

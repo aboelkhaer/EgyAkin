@@ -1,13 +1,9 @@
-import 'dart:developer';
-
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_like_action.dart';
-import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
+import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 
@@ -184,16 +180,20 @@ class PostCard extends StatelessWidget {
                                           AppRoutesArgs.doctorInfoViewRouteArgs(
                                         doctorId: feed.doctor!.id.toString(),
                                         currentDoctorModel: currentDoctorModel,
-                                        currentDoctorPoints: int.parse(
-                                            homeDataModel.scoreValue!),
+                                        currentDoctorPoints: int.tryParse(
+                                              homeDataModel.scoreValue ?? '',
+                                            ) ??
+                                            0,
                                         accountVerification:
-                                            homeDataModel.verified!,
+                                            homeDataModel.verified ?? false,
                                         initialIndex: 0,
                                         isSyndicateCardRequired: homeDataModel
-                                            .isSyndicateCardRequired
-                                            .toString(),
+                                                .isSyndicateCardRequired
+                                                ?.toString() ??
+                                            '',
                                         currentDoctorRole:
-                                            homeDataModel.role.toString(),
+                                            homeDataModel.role?.toString() ??
+                                                '',
                                         homeDataModel: homeDataModel,
                                         isNavigateToTheButtonOfInformationTab:
                                             false,
@@ -237,18 +237,26 @@ class PostCard extends StatelessWidget {
                                                     currentDoctorModel:
                                                         currentDoctorModel,
                                                     currentDoctorPoints:
-                                                        int.parse(homeDataModel
-                                                            .scoreValue!),
+                                                        int.tryParse(
+                                                              homeDataModel
+                                                                      .scoreValue ??
+                                                                  '',
+                                                            ) ??
+                                                            0,
                                                     accountVerification:
-                                                        homeDataModel.verified!,
+                                                        homeDataModel
+                                                                .verified ??
+                                                            false,
                                                     initialIndex: 0,
                                                     isSyndicateCardRequired:
                                                         homeDataModel
-                                                            .isSyndicateCardRequired
-                                                            .toString(),
+                                                                .isSyndicateCardRequired
+                                                                ?.toString() ??
+                                                            '',
                                                     currentDoctorRole:
                                                         homeDataModel.role
-                                                            .toString(),
+                                                                ?.toString() ??
+                                                            '',
                                                     homeDataModel:
                                                         homeDataModel,
                                                     isNavigateToTheButtonOfInformationTab:
@@ -389,31 +397,36 @@ class PostCard extends StatelessWidget {
                                                 );
                                               }
 
-                                              // Show menu if user has viewEditAndDeletePostForAdmin permission OR is the post owner (same as show_single_feed_screen)
-                                              return (!PermissionHelper
-                                                          .canPermission(
-                                                              AppPermissions
-                                                                  .viewEditAndDeletePostForAdmin) &&
-                                                      (feed.doctor == null ||
-                                                          currentDoctorModel.id
-                                                                  .toString() !=
-                                                              feed.doctor!.id
-                                                                  .toString()))
-                                                  ? const SizedBox.shrink()
-                                                  : PopupMenuButton<String>(
+                                              // Owner: edit/delete own post.
+                                              // Admin: edit/delete any post.
+                                              final canManage = canManageFeedPost(
+                                                feed: feed,
+                                                currentDoctor: currentDoctorModel,
+                                                homeData: homeDataModel,
+                                              );
+                                              if (!canManage) {
+                                                return const SizedBox.shrink();
+                                              }
+
+                                              final showAdminBadge =
+                                                  showAdminOnlyBadgeOnFeedPost(
+                                                feed: feed,
+                                                currentDoctor:
+                                                    currentDoctorModel,
+                                                homeData: homeDataModel,
+                                              );
+
+                                              return PopupMenuButton<String>(
                                                       icon: const Icon(
                                                           Icons.more_vert),
                                                       onSelected:
                                                           (String value) {
                                                         switch (value) {
                                                           case 'Report':
-                                                            // Handle report action
                                                             debugPrint(
                                                                 'Report clicked');
                                                             break;
                                                           case 'Edit':
-
-                                                            // Handle edit action
                                                             navigatorKey
                                                                 .currentState
                                                                 ?.pushNamed(
@@ -459,147 +472,90 @@ class PostCard extends StatelessWidget {
                                                       },
                                                       itemBuilder: (BuildContext
                                                           context) {
-                                                        final items =
-                                                            <PopupMenuEntry<
-                                                                String>>[
-                                                          // PopupMenuItem(
-                                                          //   value: 'Report',
-                                                          //   child: Row(
-                                                          //     children: [
-                                                          //       const Icon(Icons.report,
-                                                          //           color:
-                                                          //               AppColors.description),
-                                                          //       SizedBox(width: 8.w),
-                                                          //       const Text('Report'),
-                                                          //     ],
-                                                          //   ),
-                                                          // ),
+                                                        return [
+                                                          PopupMenuItem(
+                                                            value: 'Edit',
+                                                            child:
+                                                                AdminOnlyBadge(
+                                                              showBadge:
+                                                                  showAdminBadge,
+                                                              style: BadgeStyle
+                                                                  .premium,
+                                                              fontSize: 6.sp,
+                                                              badgePadding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          3.w,
+                                                                      vertical:
+                                                                          0.5.h),
+                                                              showIcon: false,
+                                                              glowEffect: true,
+                                                              pulseAnimation:
+                                                                  true,
+                                                              badgeText: 'A',
+                                                              top: -5,
+                                                              right: -5,
+                                                              child: Row(
+                                                                children: [
+                                                                  const Icon(
+                                                                      Icons
+                                                                          .edit,
+                                                                      color: AppColors
+                                                                          .description),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          8.w),
+                                                                  Text(
+                                                                    context.tr(
+                                                                        AppStrings
+                                                                            .edit),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          PopupMenuItem(
+                                                            value: 'Delete',
+                                                            child:
+                                                                AdminOnlyBadge(
+                                                              showBadge:
+                                                                  showAdminBadge,
+                                                              style: BadgeStyle
+                                                                  .premium,
+                                                              fontSize: 6.sp,
+                                                              badgePadding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          3.w,
+                                                                      vertical:
+                                                                          0.5.h),
+                                                              showIcon: false,
+                                                              glowEffect: true,
+                                                              pulseAnimation:
+                                                                  true,
+                                                              badgeText: 'A',
+                                                              top: -5,
+                                                              right: -5,
+                                                              child: Row(
+                                                                children: [
+                                                                  const Icon(
+                                                                      Icons
+                                                                          .delete,
+                                                                      color: AppColors
+                                                                          .description),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          8.w),
+                                                                  Text(
+                                                                    context.tr(
+                                                                        AppStrings
+                                                                            .delete),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ];
-
-                                                        if (feed.doctor!.id
-                                                                    .toString() ==
-                                                                currentDoctorModel
-                                                                    .id
-                                                                    .toString() ||
-                                                            PermissionHelper
-                                                                .canPermission(
-                                                                    AppPermissions
-                                                                        .viewEditAndDeletePostForAdmin)) {
-                                                          items.add(
-                                                            PopupMenuItem(
-                                                              value: 'Edit',
-                                                              child:
-                                                                  AdminOnlyBadge(
-                                                                showBadge: PermissionHelper.canPermission(
-                                                                        AppPermissions
-                                                                            .viewEditAndDeletePostForAdmin) &&
-                                                                    currentDoctorModel
-                                                                            .id
-                                                                            .toString() !=
-                                                                        feed.doctor!
-                                                                            .id
-                                                                            .toString(),
-                                                                style: BadgeStyle
-                                                                    .premium,
-                                                                fontSize: 6.sp,
-                                                                badgePadding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            3.w,
-                                                                        vertical:
-                                                                            0.5.h),
-                                                                showIcon: false,
-                                                                glowEffect:
-                                                                    true,
-                                                                pulseAnimation:
-                                                                    true,
-                                                                badgeText: 'A',
-                                                                top: -5,
-                                                                right: -5,
-                                                                child: Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        color: AppColors
-                                                                            .description),
-                                                                    SizedBox(
-                                                                        width: 8
-                                                                            .w),
-                                                                    Text(
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .edit),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }
-                                                        if ((feed.doctor!.id
-                                                                    .toString() ==
-                                                                currentDoctorModel
-                                                                    .id
-                                                                    .toString() ||
-                                                            PermissionHelper
-                                                                .canPermission(
-                                                                    AppPermissions
-                                                                        .viewEditAndDeletePostForAdmin))) {
-                                                          items.add(
-                                                            PopupMenuItem(
-                                                              value: 'Delete',
-                                                              child:
-                                                                  AdminOnlyBadge(
-                                                                showBadge: PermissionHelper.canPermission(
-                                                                        AppPermissions
-                                                                            .viewEditAndDeletePostForAdmin) &&
-                                                                    currentDoctorModel
-                                                                            .id
-                                                                            .toString() !=
-                                                                        feed.doctor!
-                                                                            .id
-                                                                            .toString(),
-                                                                style: BadgeStyle
-                                                                    .premium,
-                                                                fontSize: 6.sp,
-                                                                badgePadding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            3.w,
-                                                                        vertical:
-                                                                            0.5.h),
-                                                                showIcon: false,
-                                                                glowEffect:
-                                                                    true,
-                                                                pulseAnimation:
-                                                                    true,
-                                                                badgeText: 'A',
-                                                                top: -5,
-                                                                right: -5,
-                                                                child: Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                        Icons
-                                                                            .delete,
-                                                                        color: AppColors
-                                                                            .description),
-                                                                    SizedBox(
-                                                                        width: 8
-                                                                            .w),
-                                                                    Text(
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .delete),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }
-
-                                                        return items;
                                                       },
                                                     );
                                             },

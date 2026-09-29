@@ -1,11 +1,12 @@
 import 'package:egy_akin/features/all_doctors_patients/data/models/export_patients_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/domain/usecases/patients_list_page_input.dart';
 
 import '../../../../exports.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class AllDoctorsPatientsRepository {
   Future<Either<Failure, GetAllDoctorsPatientsModelResponse>>
-      getAllDoctorsPatients(int page);
+      getAllDoctorsPatients(PatientsListPageInput input);
   Future<Either<Failure, ApplyPatientFiltersModelResponse>>
       applyPatientsFilters(
     Map<String, dynamic> map,

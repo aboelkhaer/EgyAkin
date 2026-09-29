@@ -1,5 +1,6 @@
 // ignore_for_file: invalid_annotation_target
 
+import 'package:egy_akin/features/all_doctors_patients/data/models/patient_sort_models.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../exports.dart';
@@ -10,6 +11,8 @@ part 'get_search_model_response.g.dart';
 class GetSearchModelResponse with _$GetSearchModelResponse {
   const factory GetSearchModelResponse({
     bool? value,
+    @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+    @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
     GetSearchDataModelResponse? data,
   }) = _GetSearchModelResponse;
   factory GetSearchModelResponse.fromJson(Map<String, dynamic> json) =>

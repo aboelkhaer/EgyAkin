@@ -1770,18 +1770,24 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                                                   ),
                                                 )
                                               : messages.isEmpty
-                                                  ? _ChatEmptyMessagesState(
-                                                      isDark: isDarkMode,
-                                                      isGroup: _isGroupChat,
-                                                      topInset:
-                                                          _headerOverlayHeight >
-                                                                  0
-                                                              ? _headerOverlayHeight
-                                                              : MediaQuery
-                                                                          .paddingOf(
-                                                                              context)
-                                                                      .top +
-                                                                  56.h,
+                                                  ? GestureDetector(
+                                                      behavior:
+                                                          HitTestBehavior.opaque,
+                                                      onTap: _dismissKeyboard,
+                                                      child:
+                                                          _ChatEmptyMessagesState(
+                                                        isDark: isDarkMode,
+                                                        isGroup: _isGroupChat,
+                                                        topInset:
+                                                            _headerOverlayHeight >
+                                                                    0
+                                                                ? _headerOverlayHeight
+                                                                : MediaQuery
+                                                                        .paddingOf(
+                                                                            context)
+                                                                    .top +
+                                                                    56.h,
+                                                      ),
                                                     )
                                                   : ChatMessageList(
                                                   key: _messageListKey,
@@ -2235,64 +2241,66 @@ class _ChatEmptyMessagesState extends StatelessWidget {
         ? Colors.white.withOpacity(0.08)
         : AppColors.primary.withOpacity(0.12);
 
-    return Padding(
-      padding: EdgeInsets.only(top: topInset),
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 36.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 76.r,
-                height: 76.r,
-                decoration: BoxDecoration(
-                  color: card,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: border),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.14),
-                      blurRadius: 28,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+    return SizedBox.expand(
+      child: Padding(
+        padding: EdgeInsets.only(top: topInset),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 36.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 76.r,
+                  height: 76.r,
+                  decoration: BoxDecoration(
+                    color: card,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: border),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.14),
+                        blurRadius: 28,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    isGroup
+                        ? Icons.forum_rounded
+                        : Icons.chat_bubble_outline_rounded,
+                    color: AppColors.primary,
+                    size: 32.sp,
+                  ),
                 ),
-                child: Icon(
-                  isGroup
-                      ? Icons.forum_rounded
-                      : Icons.chat_bubble_outline_rounded,
-                  color: AppColors.primary,
-                  size: 32.sp,
+                SizedBox(height: 18.h),
+                Text(
+                  context.tr(AppStrings.noMessagesYet),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: titleColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.2,
+                  ),
                 ),
-              ),
-              SizedBox(height: 18.h),
-              Text(
-                context.tr(AppStrings.noMessagesYet),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: titleColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.2,
+                SizedBox(height: 8.h),
+                Text(
+                  context.tr(
+                    isGroup
+                        ? AppStrings.sendFirstMessageInGroup
+                        : AppStrings.sendFirstMessage,
+                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: subColor,
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
+                    height: 1.4,
+                  ),
                 ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                context.tr(
-                  isGroup
-                      ? AppStrings.sendFirstMessageInGroup
-                      : AppStrings.sendFirstMessage,
-                ),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: subColor,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  height: 1.4,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

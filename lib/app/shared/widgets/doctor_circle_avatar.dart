@@ -41,17 +41,26 @@ bool doctorIsVerified(DoctorModel? doctor) =>
     doctor?.isSyndicateCardRequired == 'Verified';
 
 /// Prefer [HomeCubit]'s doctor when [doctor] is the signed-in user (or an
-/// incomplete local copy), so community strips / comments keep the real photo.
+/// incomplete local copy), so community strips / comments keep the real photo
+/// and display name.
 DoctorModel? resolveDoctorForAvatar(DoctorModel? doctor) {
-  DoctorModel? home;
+  DoctorModel? homeDoctor;
+  String? homeVerification;
   try {
-    home = resolveHomeCubit().currentDoctorModel;
+    final home = resolveHomeCubit();
+    homeDoctor = home.currentDoctorModel;
+    homeVerification = home.homeDataModel.isSyndicateCardRequired?.toString();
   } catch (_) {
     return doctor;
   }
-  final homeDoctor = home;
   if (homeDoctor.id == null) return doctor;
-  if (doctor == null) return homeDoctor;
+  if (doctor == null) {
+    final role = homeDoctor.isSyndicateCardRequired ?? homeVerification;
+    if (role == null || role == homeDoctor.isSyndicateCardRequired) {
+      return homeDoctor;
+    }
+    return homeDoctor.copyWith(isSyndicateCardRequired: role);
+  }
   if (doctor.id != null && doctor.id != homeDoctor.id) return doctor;
 
   final image =
@@ -62,8 +71,9 @@ DoctorModel? resolveDoctorForAvatar(DoctorModel? doctor) {
   final last = (doctor.lastName?.trim().isNotEmpty ?? false)
       ? doctor.lastName
       : homeDoctor.lastName;
-  final role =
-      doctor.isSyndicateCardRequired ?? homeDoctor.isSyndicateCardRequired;
+  final role = doctor.isSyndicateCardRequired ??
+      homeDoctor.isSyndicateCardRequired ??
+      homeVerification;
 
   return doctor.copyWith(
     id: doctor.id ?? homeDoctor.id,

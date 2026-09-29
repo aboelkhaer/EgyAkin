@@ -1,6 +1,8 @@
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/patient_sort_models.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
+import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_patient_sort_sheet.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/home_patients_loading.dart';
@@ -23,6 +25,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   bool _showMyPatients = true;
   bool _usingFilteredResults = false;
   bool _preparingFilters = false;
+  bool _isSorting = false;
   bool _allPatientsLoaded = false;
   bool _myPatientsLoaded = false;
   int _lastHandledWithoutOutcomeSignal = 0;
@@ -389,6 +392,83 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
         initialIndex: 0,
         isNavigateToTheButtonOfInformationTab: false,
       ),
+    );
+  }
+
+  Future<void> _openSort() async {
+    final useFilterCubit = _usingFilteredResults || !_showMyOnly;
+    List<SortOptionModelResponse> options;
+    String? selectedKey;
+    String? selectedDirection;
+
+    if (useFilterCubit) {
+      options = _filterCubit.sortOptions;
+      selectedKey = _filterCubit.selectedSort;
+      selectedDirection = _filterCubit.selectedDirection;
+      if (options.isEmpty && !_usingFilteredResults) {
+        await _filterCubit.getCurrentDoctorPatients(showLoading: false);
+        if (!mounted) return;
+        options = _filterCubit.sortOptions;
+        selectedKey = _filterCubit.selectedSort;
+        selectedDirection = _filterCubit.selectedDirection;
+      }
+    } else {
+      options = _myPatientsCubit.sortOptions;
+      selectedKey = _myPatientsCubit.selectedSort;
+      selectedDirection = _myPatientsCubit.selectedDirection;
+      if (options.isEmpty) {
+        await _myPatientsCubit.getCurrentDoctorPatients(showLoading: false);
+        if (!mounted) return;
+        options = _myPatientsCubit.sortOptions;
+        selectedKey = _myPatientsCubit.selectedSort;
+        selectedDirection = _myPatientsCubit.selectedDirection;
+      }
+    }
+
+    if (!mounted) return;
+    if (options.isEmpty) {
+      customSnackBar(
+        context: context,
+        message: context.tr(AppStrings.somethingWentWrong),
+      );
+      return;
+    }
+
+    final isMy = _showMyOnly;
+    showCustomBottomSheet(
+      context: context,
+      heightFactor: 0.64,
+      builder: (sheetContext) {
+        return BuildPatientSortSheet(
+          options: List<SortOptionModelResponse>.from(options),
+          selectedKey: selectedKey,
+          selectedDirection: selectedDirection,
+          onApply: (selection) async {
+            if (!mounted) return;
+            setState(() => _isSorting = true);
+            try {
+              if (_usingFilteredResults) {
+                _filterCubit.selectedSort = selection.key;
+                _filterCubit.selectedDirection = selection.direction;
+                await _filterCubit
+                    .applyPatientFilters(isMy ? 'true' : 'false');
+              } else if (isMy) {
+                await _myPatientsCubit.changeSort(
+                  selection.key,
+                  selection.direction,
+                );
+              } else {
+                await _filterCubit.changeSort(
+                  selection.key,
+                  selection.direction,
+                );
+              }
+            } finally {
+              if (mounted) setState(() => _isSorting = false);
+            }
+          },
+        );
+      },
     );
   }
 
@@ -818,6 +898,31 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                     onTap: (_preparingFilters ||
                                             isApplyFilterLoading)
                                         ? null
+                                        : _openSort,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.sort_rounded,
+                                          size: 16.sp,
+                                          color: primary,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          context.tr(AppStrings.sort),
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  GestureDetector(
+                                    onTap: (_preparingFilters ||
+                                            isApplyFilterLoading)
+                                        ? null
                                         : _openFilter,
                                     child: Row(
                                       children: [
@@ -851,6 +956,13 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                   ),
                                 ],
                               ),
+                              if (_isSorting) ...[
+                                SizedBox(height: 10.h),
+                                _SortingStatusBanner(
+                                  isDark: isDark,
+                                  primary: primary,
+                                ),
+                              ],
                               SizedBox(height: 12.h),
                             ],
                           ),
@@ -868,7 +980,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                       primary: primary,
                                       scrollController: _myScrollController,
                                       onRefresh: _onRefreshMyPatients,
-                                      isInitialLoading: isLoadingMyPatients ||
+                                      isInitialLoading: _isSorting ||
+                                          isLoadingMyPatients ||
                                           isLoadingFilteredMyPatients,
                                       patients: _showMyOnly
                                           ? patients
@@ -890,7 +1003,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                       primary: primary,
                                       scrollController: _allScrollController,
                                       onRefresh: _onRefreshAllPatients,
-                                      isInitialLoading: isLoadingAllPatients,
+                                      isInitialLoading:
+                                          _isSorting || isLoadingAllPatients,
                                       patients: !_showMyOnly
                                           ? patients
                                           : (_usingFilteredResults
@@ -912,7 +1026,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                   primary: primary,
                                   scrollController: _myScrollController,
                                   onRefresh: _onRefreshMyPatients,
-                                  isInitialLoading: isLoadingMyPatients ||
+                                  isInitialLoading: _isSorting ||
+                                      isLoadingMyPatients ||
                                       isLoadingFilteredMyPatients,
                                   patients: patients,
                                   showLoadMoreFooter: showLoadMoreFooter,
@@ -931,6 +1046,85 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _SortingStatusBanner extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+
+  const _SortingStatusBanner({
+    required this.isDark,
+    required this.primary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, (1 - value) * 8),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              primary.withOpacity(isDark ? 0.22 : 0.12),
+              primary.withOpacity(isDark ? 0.08 : 0.04),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: primary.withOpacity(0.28)),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 14.sp,
+              height: 14.sp,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: primary,
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.tr(AppStrings.sortingPatients),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: HomeDashboardColors.title(isDark),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
+                  Text(
+                    context.tr(AppStrings.sortingPatientsHint),
+                    style: TextStyle(
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.w500,
+                      color: HomeDashboardColors.subtitle(isDark),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.swap_vert_rounded, size: 16.sp, color: primary),
+          ],
+        ),
       ),
     );
   }

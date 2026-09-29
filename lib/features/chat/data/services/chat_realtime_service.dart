@@ -985,34 +985,44 @@ class ChatRealtimeService with WidgetsBindingObserver {
   Future<void> _ensureConnected({String? clientId}) async {
     if (_realtime != null) {
       final state = _realtime!.connection.state;
-      // Attach/presence require Connected — never return while Connecting.
       if (state == ably.ConnectionState.connected) {
         return;
       }
       if (state == ably.ConnectionState.connecting) {
-        await _waitForConnectionConnected();
-        return;
-      }
-      if (state == ably.ConnectionState.disconnected ||
+        if (_connectFuture != null) {
+          await _connectFuture;
+        } else {
+          await _waitForConnectionConnected();
+        }
+        if (_realtime?.connection.state == ably.ConnectionState.connected) {
+          return;
+        }
+        // Stuck Connecting with no in-flight owner — recreate below.
+        if (_connectFuture == null) {
+          await _discardDeadRealtime();
+        }
+      } else if (state == ably.ConnectionState.disconnected ||
           state == ably.ConnectionState.suspended) {
         try {
           await _realtime!.connection.connect();
           await _waitForConnectionConnected();
-          return;
+          if (_realtime?.connection.state == ably.ConnectionState.connected) {
+            return;
+          }
         } catch (e) {
           debugPrint('Ably reconnect failed: $e');
         }
-      }
-      if (state == ably.ConnectionState.closing ||
+        // Reconnect timed out / failed — recreate so authCallback runs clean.
+        await _discardDeadRealtime();
+      } else if (state == ably.ConnectionState.closing ||
           state == ably.ConnectionState.closed ||
           state == ably.ConnectionState.failed) {
-        final dead = _realtime!;
-        _discardRealtimeBoundState();
-        try {
-          await dead.close();
-        } catch (_) {}
-        if (identical(_realtime, dead)) _realtime = null;
+        await _discardDeadRealtime();
       }
+    }
+
+    if (_realtime?.connection.state == ably.ConnectionState.connected) {
+      return;
     }
 
     if (_connectFuture != null) {
@@ -1021,6 +1031,18 @@ class ChatRealtimeService with WidgetsBindingObserver {
         return;
       }
       await _waitForConnectionConnected();
+      if (_realtime?.connection.state == ably.ConnectionState.connected) {
+        return;
+      }
+      // Shared connect did not finish connected — try a fresh client.
+      if (_connectFuture == null) {
+        await _discardDeadRealtime();
+      } else {
+        return;
+      }
+    }
+
+    if (_realtime?.connection.state == ably.ConnectionState.connected) {
       return;
     }
 
@@ -1032,8 +1054,19 @@ class ChatRealtimeService with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _discardDeadRealtime() async {
+    final dead = _realtime;
+    if (dead == null) return;
+    _discardRealtimeBoundState();
+    _lastAuthorizeTime = null;
+    try {
+      await dead.close();
+    } catch (_) {}
+    if (identical(_realtime, dead)) _realtime = null;
+  }
+
   Future<void> _waitForConnectionConnected({
-    Duration timeout = const Duration(seconds: 5),
+    Duration timeout = const Duration(seconds: 10),
   }) async {
     final realtime = _realtime;
     if (realtime == null) return;
@@ -1124,7 +1157,17 @@ class ChatRealtimeService with WidgetsBindingObserver {
   }
 
   /// Rate-limited authorize — at most once per 30 seconds.
+  ///
+  /// Only when already Connected. Calling `auth.authorize()` while
+  /// disconnected makes ably_flutter return [ErrorInfo] where Dart expects
+  /// [TokenDetails] (`type 'ErrorInfo' is not a subtype of type 'TokenDetails?'`).
+  /// Reconnect via [_ensureConnected] / authCallback instead.
   Future<void> _authorizeIfNeeded() async {
+    final realtime = _realtime;
+    if (realtime == null ||
+        realtime.connection.state != ably.ConnectionState.connected) {
+      return;
+    }
     final now = DateTime.now();
     if (_lastAuthorizeTime != null &&
         now.difference(_lastAuthorizeTime!).inSeconds < 30) {
@@ -1144,11 +1187,16 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
   Future<void> _doAuthorize() async {
     final realtime = _realtime;
-    if (realtime == null) return;
+    if (realtime == null ||
+        realtime.connection.state != ably.ConnectionState.connected) {
+      return;
+    }
     try {
       await realtime.auth.authorize();
       _lastAuthorizeTime = DateTime.now();
     } catch (e) {
+      // ably_flutter iOS returns ErrorInfo as the method-channel value on
+      // auth failure, which surfaces as a TypeError cast rather than AblyException.
       debugPrint('Ably authorize failed: $e');
     }
   }

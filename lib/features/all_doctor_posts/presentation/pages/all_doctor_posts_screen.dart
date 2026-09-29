@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
 
 import '../../../../exports.dart';
 
@@ -332,14 +333,17 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
                                             );
                                           }
 
-                                          return (widget.homeDataModel.role !=
-                                                      AppStrings.roleAdmin &&
-                                                  widget.currentDoctorModel.id
-                                                          .toString() !=
-                                                      feed.doctor!.id
-                                                          .toString())
-                                              ? const SizedBox.shrink()
-                                              : PopupMenuButton<String>(
+                                          final canManage = canManageFeedPost(
+                                            feed: feed,
+                                            currentDoctor:
+                                                widget.currentDoctorModel,
+                                            homeData: widget.homeDataModel,
+                                          );
+                                          if (!canManage) {
+                                            return const SizedBox.shrink();
+                                          }
+
+                                          return PopupMenuButton<String>(
                                                   icon: Icon(
                                                     Icons.more_vert,
                                                     color: titleColor,
@@ -347,12 +351,10 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
                                                   onSelected: (String value) {
                                                     switch (value) {
                                                       case 'Report':
-                                                        // Handle report action
                                                         debugPrint(
                                                             'Report clicked');
                                                         break;
                                                       case 'Edit':
-                                                        // Handle edit action
                                                         navigatorKey
                                                             .currentState
                                                             ?.pushNamed(
@@ -373,94 +375,47 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
                                                         cubit.deletePost(
                                                           feed.id.toString(),
                                                         );
-
                                                         break;
                                                     }
                                                   },
                                                   itemBuilder:
                                                       (BuildContext context) {
-                                                    final items =
-                                                        <PopupMenuEntry<
-                                                            String>>[];
-
-                                                    if (feed.doctor!.id
-                                                                .toString() ==
-                                                            widget
-                                                                .currentDoctorModel
-                                                                .id
-                                                                .toString() ||
-                                                        widget.homeDataModel
-                                                                .role ==
-                                                            AppStrings
-                                                                .roleAdmin) {
-                                                      items.add(
-                                                        PopupMenuItem(
-                                                          value: 'Edit',
-                                                          child: Row(
-                                                            children: [
-                                                              const Icon(
-                                                                  Icons.edit,
-                                                                  color: AppColors
-                                                                      .description),
-                                                              SizedBox(
-                                                                  width: 8.w),
-                                                              Text(context.tr(
-                                                                  AppStrings
-                                                                      .edit)),
-                                                            ],
-                                                          ),
+                                                    return [
+                                                      PopupMenuItem(
+                                                        value: 'Edit',
+                                                        child: Row(
+                                                          children: [
+                                                            const Icon(
+                                                                Icons.edit,
+                                                                color: AppColors
+                                                                    .description),
+                                                            SizedBox(
+                                                                width: 8.w),
+                                                            Text(context.tr(
+                                                                AppStrings
+                                                                    .edit)),
+                                                          ],
                                                         ),
-                                                      );
-                                                    }
-                                                    if ((feed.doctor!.id
-                                                                .toString() ==
-                                                            widget
-                                                                .currentDoctorModel
-                                                                .id
-                                                                .toString() ||
-                                                        widget.homeDataModel
-                                                                .role ==
-                                                            AppStrings
-                                                                .roleAdmin)) {
-                                                      items.add(
-                                                        PopupMenuItem(
-                                                          value: 'Delete',
-                                                          child: Row(
-                                                            children: [
-                                                              const Icon(
-                                                                  Icons.delete,
-                                                                  color: AppColors
-                                                                      .description),
-                                                              SizedBox(
-                                                                  width: 8.w),
-                                                              Text(context.tr(
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'Delete',
+                                                        child: Row(
+                                                          children: [
+                                                            const Icon(
+                                                                Icons.delete,
+                                                                color: AppColors
+                                                                    .description),
+                                                            SizedBox(
+                                                                width: 8.w),
+                                                            Text(
+                                                              context.tr(
                                                                   AppStrings
-                                                                      .delete)),
-                                                            ],
-                                                          ),
+                                                                      .delete),
+                                                            ),
+                                                          ],
                                                         ),
-                                                      );
-                                                    }
-
-                                                    // items.add(
-                                                    //   PopupMenuItem(
-                                                    //     value: 'Report',
-                                                    //     child: Row(
-                                                    //       children: [
-                                                    //         const Icon(
-                                                    //             Icons.report,
-                                                    //             color: AppColors
-                                                    //                 .description),
-                                                    //         SizedBox(
-                                                    //             width: 8.w),
-                                                    //         const Text(
-                                                    //             'Report'),
-                                                    //       ],
-                                                    //     ),
-                                                    //   ),
-                                                    // );
-
-                                                    return items;
+                                                      ),
+                                                    ];
                                                   },
                                                 );
                                         },

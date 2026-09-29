@@ -605,12 +605,14 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
 
   deletePost(String postId) async {
     var wasSaved = false;
+    String? content;
     state.maybeWhen(
       orElse: () {},
       loaded: (groupDetails, _, __, ___, ____, _____, ______, _______) {
         for (final post in groupDetails.data?.posts?.data ?? const []) {
           if (post.id.toString() == postId) {
             wasSaved = post.isSaved ?? false;
+            content = post.content;
             break;
           }
         }
@@ -619,6 +621,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
     await sl<CommunityCubit>().deletePost(
       postId,
       wasSaved: wasSaved,
+      postContent: content,
+      animateInFeed: false,
     );
     emit(
       state.maybeMap(

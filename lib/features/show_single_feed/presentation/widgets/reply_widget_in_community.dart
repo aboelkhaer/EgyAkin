@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/chat_text_direction.dart';
 import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_comment_dialog.dart';
@@ -20,29 +21,39 @@ class ReplyWidgetInCommunity extends StatelessWidget {
     required this.replyIndex,
   });
 
-  bool _isArabic(String text) {
-    if (text.isEmpty) return false;
-    return RegExp(r'[\u0600-\u06FF]').hasMatch(text.trim());
+  int? get _authorDoctorId =>
+      replyModel.doctor?.id ?? replyModel.doctorId;
+
+  int? get _myDoctorId {
+    if (currentDoctorModel.id != null) return currentDoctorModel.id;
+    try {
+      return resolveHomeCubit().currentDoctorModel.id;
+    } catch (_) {
+      return null;
+    }
   }
 
-  TextDirection _getTextDirection(String text) {
-    return _isArabic(text) ? TextDirection.rtl : TextDirection.ltr;
+  bool _isOwnAuthor() {
+    final myId = _myDoctorId;
+    final authorId = _authorDoctorId;
+    return myId != null && authorId != null && myId == authorId;
   }
 
   void _openDoctorProfile() {
-    final doctor = replyModel.doctor;
-    if (doctor?.id == null) return;
+    final doctorId = _authorDoctorId;
+    if (doctorId == null) return;
 
     navigatorKey.currentState?.pushNamed(
       AppRoutes.doctorInfoView,
       arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
-        doctorId: doctor!.id.toString(),
+        doctorId: doctorId.toString(),
         currentDoctorModel: currentDoctorModel,
         isSyndicateCardRequired:
-            homeDataModel.isSyndicateCardRequired.toString(),
-        accountVerification: homeDataModel.verified!,
-        currentDoctorRole: homeDataModel.role.toString(),
-        currentDoctorPoints: int.parse(homeDataModel.scoreValue!),
+            homeDataModel.isSyndicateCardRequired?.toString() ?? '',
+        accountVerification: homeDataModel.verified ?? false,
+        currentDoctorRole: homeDataModel.role?.toString() ?? '',
+        currentDoctorPoints:
+            int.tryParse(homeDataModel.scoreValue ?? '') ?? 0,
         homeDataModel: homeDataModel,
         initialIndex: 0,
         isNavigateToTheButtonOfInformationTab: false,
@@ -51,10 +62,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
   }
 
   bool _canManage() {
-    return homeDataModel.role == AppStrings.roleAdmin ||
-        (replyModel.doctor != null &&
-            currentDoctorModel.id.toString() ==
-                replyModel.doctor!.id.toString());
+    return homeDataModel.role == AppStrings.roleAdmin || _isOwnAuthor();
   }
 
   @override
@@ -90,11 +98,20 @@ class ReplyWidgetInCommunity extends StatelessWidget {
               ) {
                 final isHighlighted =
                     replyModel.id.toString() == highlightedCommentId;
-                final isOwn = replyModel.doctor != null &&
-                    currentDoctorModel.id.toString() ==
-                        replyModel.doctor!.id.toString();
-                final name = doctorDisplayName(replyModel.doctor);
-                final isVerified = doctorIsVerified(replyModel.doctor);
+                final isOwn = _isOwnAuthor();
+                final displayDoctor = resolveDoctorForAvatar(
+                      replyModel.doctor ??
+                          (isOwn ? currentDoctorModel : null),
+                    ) ??
+                    replyModel.doctor ??
+                    (isOwn ? currentDoctorModel : null);
+                final name = doctorDisplayName(
+                  displayDoctor,
+                  fallback: isOwn
+                      ? doctorDisplayName(currentDoctorModel)
+                      : '',
+                );
+                final isVerified = doctorIsVerified(displayDoctor);
                 final replyText = replyModel.comment ?? '';
                 final deleting = isDeleteCommentLoading &&
                     replyModel.id.toString() == cubit.deleteCommentId;
@@ -124,7 +141,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                       GestureDetector(
                         onTap: _openDoctorProfile,
                         child: DoctorCircleAvatar(
-                          doctor: replyModel.doctor,
+                          doctor: displayDoctor ?? replyModel.doctor,
                           primary: primary,
                           size: 28.r,
                         ),
@@ -140,17 +157,20 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Flexible(
-                                        child: Text(
-                                          name,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11.5.sp,
-                                            fontWeight: FontWeight.w800,
-                                            color: isOwn
-                                                ? HomeDashboardColors.success
-                                                : HomeDashboardColors.title(
-                                                    isDark),
+                                        child: GestureDetector(
+                                          onTap: _openDoctorProfile,
+                                          child: Text(
+                                            name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 11.5.sp,
+                                              fontWeight: FontWeight.w800,
+                                              color: isOwn
+                                                  ? HomeDashboardColors.success
+                                                  : HomeDashboardColors.title(
+                                                      isDark),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -191,81 +211,93 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                             ),
                                           ),
                                         )
-                                      : SizedBox(
-                                          width: 26,
-                                          height: 26,
-                                          child: PopupMenuButton<String>(
-                                            padding: EdgeInsets.zero,
-                                            iconSize: 16.sp,
-                                            icon: Icon(
-                                              Icons.more_horiz_rounded,
-                                              color:
-                                                  HomeDashboardColors.subtitle(
-                                                      isDark),
-                                            ),
-                                            onSelected: (value) {
-                                              if (value != 'Delete') return;
-                                              showDeleteFeedCommentDialog(
-                                                context: context,
-                                                isReply: true,
-                                                onConfirm: () {
-                                                  cubit.deleteReplyOnComment(
-                                                    replyModel.id.toString(),
-                                                    commentModel,
-                                                    replyIndex,
-                                                    feed,
-                                                    commentsResponse,
-                                                    homeDataModel,
-                                                    currentDoctorModel,
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                value: 'Delete',
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons
-                                                          .delete_outline_rounded,
-                                                      size: 18.sp,
+                                      : PopupMenuButton<String>(
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(
+                                            minWidth: 30,
+                                            minHeight: 30,
+                                          ),
+                                          iconSize: 16.sp,
+                                          icon: Icon(
+                                            Icons.more_horiz_rounded,
+                                            color:
+                                                HomeDashboardColors.subtitle(
+                                                    isDark),
+                                          ),
+                                          onSelected: (value) {
+                                            if (value != 'Delete') return;
+                                            showDeleteFeedCommentDialog(
+                                              context: context,
+                                              isReply: true,
+                                              onConfirm: () {
+                                                cubit.deleteReplyOnComment(
+                                                  replyModel.id.toString(),
+                                                  commentModel,
+                                                  replyIndex,
+                                                  feed,
+                                                  commentsResponse,
+                                                  homeDataModel,
+                                                  currentDoctorModel,
+                                                );
+                                              },
+                                            );
+                                          },
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              value: 'Delete',
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons
+                                                        .delete_outline_rounded,
+                                                    size: 18.sp,
+                                                    color: HomeDashboardColors
+                                                        .danger,
+                                                  ),
+                                                  SizedBox(width: 8.w),
+                                                  Text(
+                                                    context.tr(
+                                                        AppStrings.delete),
+                                                    style: TextStyle(
                                                       color: HomeDashboardColors
                                                           .danger,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
-                                                    SizedBox(width: 8.w),
-                                                    Text(
-                                                      context.tr(
-                                                          AppStrings.delete),
-                                                      style: TextStyle(
-                                                        color:
-                                                            HomeDashboardColors
-                                                                .danger,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                               ],
                             ),
                             SizedBox(height: 6.h),
-                            Text(
-                              replyText,
-                              textDirection: _getTextDirection(replyText),
-                              textAlign: _isArabic(replyText)
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 12.5.sp,
-                                fontWeight: FontWeight.w500,
-                                height: 1.4,
-                                fontFamily: 'Tajawal',
-                                color: HomeDashboardColors.title(isDark),
+                            Align(
+                              alignment: ChatTextDirection.resolve(replyText) ==
+                                      TextDirection.rtl
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: HashtagText(
+                                content: replyText,
+                                currentDoctorModel: currentDoctorModel,
+                                homeDataModel: homeDataModel,
+                                disableTrimLines: true,
+                                showLinkPreviews: false,
+                                style: TextStyle(
+                                  fontSize: 12.5.sp,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                  fontFamily: 'Tajawal',
+                                  color: HomeDashboardColors.title(isDark),
+                                ),
+                                hashtagStyle: TextStyle(
+                                  fontSize: 12.5.sp,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.4,
+                                  fontFamily: 'Tajawal',
+                                  color: primary,
+                                ),
                               ),
                             ),
                             SizedBox(height: 6.h),

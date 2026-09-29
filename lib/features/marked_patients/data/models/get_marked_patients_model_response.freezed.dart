@@ -21,6 +21,11 @@ GetMarkedPatientsModelResponse _$GetMarkedPatientsModelResponseFromJson(
 
 /// @nodoc
 mixin _$GetMarkedPatientsModelResponse {
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort => throw _privateConstructorUsedError;
   GetMarkedPatientsDataModelResponse? get data =>
       throw _privateConstructorUsedError;
   @JsonKey(name: 'current_page')
@@ -60,7 +65,10 @@ abstract class $GetMarkedPatientsModelResponseCopyWith<$Res> {
           GetMarkedPatientsModelResponse>;
   @useResult
   $Res call(
-      {GetMarkedPatientsDataModelResponse? data,
+      {@JsonKey(name: 'sort_options')
+      List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
+      GetMarkedPatientsDataModelResponse? data,
       @JsonKey(name: 'current_page') int? currentPage,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
       int? from,
@@ -73,6 +81,7 @@ abstract class $GetMarkedPatientsModelResponseCopyWith<$Res> {
       int? to,
       int? total});
 
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   $GetMarkedPatientsDataModelResponseCopyWith<$Res>? get data;
 }
 
@@ -92,6 +101,8 @@ class _$GetMarkedPatientsModelResponseCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? data = freezed,
     Object? currentPage = freezed,
     Object? firstPageUrl = freezed,
@@ -106,6 +117,14 @@ class _$GetMarkedPatientsModelResponseCopyWithImpl<$Res,
     Object? total = freezed,
   }) {
     return _then(_value.copyWith(
+      sortOptions: freezed == sortOptions
+          ? _value.sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -161,6 +180,20 @@ class _$GetMarkedPatientsModelResponseCopyWithImpl<$Res,
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $AppliedSortModelResponseCopyWith<$Res>? get sort {
+    if (_value.sort == null) {
+      return null;
+    }
+
+    return $AppliedSortModelResponseCopyWith<$Res>(_value.sort!, (value) {
+      return _then(_value.copyWith(sort: value) as $Val);
+    });
+  }
+
+  /// Create a copy of GetMarkedPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $GetMarkedPatientsDataModelResponseCopyWith<$Res>? get data {
     if (_value.data == null) {
       return null;
@@ -183,7 +216,10 @@ abstract class _$$GetMarkedPatientsModelResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {GetMarkedPatientsDataModelResponse? data,
+      {@JsonKey(name: 'sort_options')
+      List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
+      GetMarkedPatientsDataModelResponse? data,
       @JsonKey(name: 'current_page') int? currentPage,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
       int? from,
@@ -196,6 +232,8 @@ abstract class _$$GetMarkedPatientsModelResponseImplCopyWith<$Res>
       int? to,
       int? total});
 
+  @override
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   @override
   $GetMarkedPatientsDataModelResponseCopyWith<$Res>? get data;
 }
@@ -215,6 +253,8 @@ class __$$GetMarkedPatientsModelResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? data = freezed,
     Object? currentPage = freezed,
     Object? firstPageUrl = freezed,
@@ -229,6 +269,14 @@ class __$$GetMarkedPatientsModelResponseImplCopyWithImpl<$Res>
     Object? total = freezed,
   }) {
     return _then(_$GetMarkedPatientsModelResponseImpl(
+      sortOptions: freezed == sortOptions
+          ? _value._sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -286,7 +334,10 @@ class __$$GetMarkedPatientsModelResponseImplCopyWithImpl<$Res>
 class _$GetMarkedPatientsModelResponseImpl
     implements _GetMarkedPatientsModelResponse {
   const _$GetMarkedPatientsModelResponseImpl(
-      {this.data,
+      {@JsonKey(name: 'sort_options')
+      final List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') this.sort,
+      this.data,
       @JsonKey(name: 'current_page') this.currentPage,
       @JsonKey(name: 'first_page_url') this.firstPageUrl,
       this.from,
@@ -297,12 +348,27 @@ class _$GetMarkedPatientsModelResponseImpl
       this.perPage,
       @JsonKey(name: 'prev_page_url') this.prevPageUrl,
       this.to,
-      this.total});
+      this.total})
+      : _sortOptions = sortOptions;
 
   factory _$GetMarkedPatientsModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$GetMarkedPatientsModelResponseImplFromJson(json);
 
+  final List<SortOptionModelResponse>? _sortOptions;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions {
+    final value = _sortOptions;
+    if (value == null) return null;
+    if (_sortOptions is EqualUnmodifiableListView) return _sortOptions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'sort')
+  final AppliedSortModelResponse? sort;
   @override
   final GetMarkedPatientsDataModelResponse? data;
   @override
@@ -336,7 +402,7 @@ class _$GetMarkedPatientsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetMarkedPatientsModelResponse(data: $data, currentPage: $currentPage, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
+    return 'GetMarkedPatientsModelResponse(sortOptions: $sortOptions, sort: $sort, data: $data, currentPage: $currentPage, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
   }
 
   @override
@@ -344,6 +410,9 @@ class _$GetMarkedPatientsModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GetMarkedPatientsModelResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._sortOptions, _sortOptions) &&
+            (identical(other.sort, sort) || other.sort == sort) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.currentPage, currentPage) ||
                 other.currentPage == currentPage) &&
@@ -368,6 +437,8 @@ class _$GetMarkedPatientsModelResponseImpl
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      const DeepCollectionEquality().hash(_sortOptions),
+      sort,
       data,
       currentPage,
       firstPageUrl,
@@ -402,7 +473,10 @@ class _$GetMarkedPatientsModelResponseImpl
 abstract class _GetMarkedPatientsModelResponse
     implements GetMarkedPatientsModelResponse {
   const factory _GetMarkedPatientsModelResponse(
-      {final GetMarkedPatientsDataModelResponse? data,
+      {@JsonKey(name: 'sort_options')
+      final List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') final AppliedSortModelResponse? sort,
+      final GetMarkedPatientsDataModelResponse? data,
       @JsonKey(name: 'current_page') final int? currentPage,
       @JsonKey(name: 'first_page_url') final String? firstPageUrl,
       final int? from,
@@ -418,6 +492,12 @@ abstract class _GetMarkedPatientsModelResponse
   factory _GetMarkedPatientsModelResponse.fromJson(Map<String, dynamic> json) =
       _$GetMarkedPatientsModelResponseImpl.fromJson;
 
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions;
+  @override
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort;
   @override
   GetMarkedPatientsDataModelResponse? get data;
   @override

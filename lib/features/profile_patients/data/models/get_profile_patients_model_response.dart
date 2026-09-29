@@ -1,5 +1,6 @@
 // ignore_for_file: invalid_annotation_target
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/patient_sort_models.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_profile_patients_model_response.freezed.dart';
 part 'get_profile_patients_model_response.g.dart';
@@ -8,6 +9,8 @@ part 'get_profile_patients_model_response.g.dart';
 class GetProfilePatientsModelResponse with _$GetProfilePatientsModelResponse {
   const factory GetProfilePatientsModelResponse({
     bool? value,
+    @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+    @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
     GetProfilePatientsDataModelResponse? data,
   }) = _GetProfilePatientsModelResponse;
   factory GetProfilePatientsModelResponse.fromJson(Map<String, dynamic> json) =>

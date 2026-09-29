@@ -225,12 +225,21 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   // make delete post function
-  deletePost(
+  /// Returns `true` when the API delete succeeded.
+  ///
+  /// [animateInFeed] should be true only when the visible Posts tab owns the
+  /// delete UI (so [PostRemovalAnimator] can call [finishRemovingPost]).
+  /// Callers from search / groups / details should pass `false` so the feed
+  /// list is updated immediately if the post was also loaded there.
+  Future<bool> deletePost(
     String postId, {
     bool? wasSaved,
+    String? postContent,
+    bool animateInFeed = true,
   }) async {
     var saved = wasSaved ?? false;
     var foundInFeed = false;
+    String? content = postContent;
     state.maybeWhen(
       orElse: () {},
       loaded: (feedsResponse, _, __, ___, ____, _____) {
@@ -238,6 +247,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           if (post.id.toString() == postId) {
             foundInFeed = true;
             saved = post.isSaved ?? false;
+            content ??= post.content;
             break;
           }
         }
@@ -247,6 +257,7 @@ class CommunityCubit extends Cubit<CommunityState> {
       saved = wasSaved;
     }
     postIdDeleted = postId;
+    // Drive the PostCard menu spinner (feeds, search, groups, etc.).
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -255,8 +266,8 @@ class CommunityCubit extends Cubit<CommunityState> {
           true,
           false,
           '',
-          false,
-          changeCounter,
+          value.isSeeMore,
+          value.changeCounter + 1,
         ),
       ),
     );
@@ -264,7 +275,7 @@ class CommunityCubit extends Cubit<CommunityState> {
     final deleteResult = await _deletePostInFeedsUsecase.execute(
       postId,
     );
-    deleteResult.fold(
+    return deleteResult.fold(
       (failure) {
         postIdDeleted = '';
         emit(
@@ -275,30 +286,77 @@ class CommunityCubit extends Cubit<CommunityState> {
               false,
               false,
               failure.message,
-              false,
-              changeCounter,
+              value.isSeeMore,
+              value.changeCounter + 1,
             ),
           ),
         );
+        return false;
       },
       (success) {
-        // Keep post in list briefly so the feed can animate it out.
-        removingPostIds.add(postId);
         postIdDeleted = '';
         ProfilePostCounts.onOwnPostDeleted(wasSaved: saved);
-        emit(state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => CommunityState.loaded(
-            value.feedsResponse,
-            false,
-            true,
-            success.message.toString(),
-            value.isSeeMore,
-            value.changeCounter + 1,
-          ),
-        ));
+        _syncTrendsAfterPostDeleted(content);
+        if (foundInFeed && animateInFeed) {
+          // Keep post in list briefly so the feed can animate it out.
+          removingPostIds.add(postId);
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CommunityState.loaded(
+              value.feedsResponse,
+              false,
+              true,
+              success.message.toString(),
+              value.isSeeMore,
+              value.changeCounter + 1,
+            ),
+          ));
+        } else if (foundInFeed) {
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              final currentPosts = value.feedsResponse.data?.data ?? [];
+              return CommunityState.loaded(
+                value.feedsResponse.copyWith(
+                  data: value.feedsResponse.data?.copyWith(
+                    data: currentPosts
+                        .where((post) => post.id.toString() != postId)
+                        .toList(),
+                  ),
+                ),
+                false,
+                false,
+                '',
+                value.isSeeMore,
+                value.changeCounter + 1,
+              );
+            },
+          ));
+        } else {
+          // Clear the spinner on PostCards (e.g. search) listening to this cubit.
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CommunityState.loaded(
+              value.feedsResponse,
+              false,
+              false,
+              '',
+              value.isSeeMore,
+              value.changeCounter + 1,
+            ),
+          ));
+        }
+        return true;
       },
     );
+  }
+
+  void _syncTrendsAfterPostDeleted(String? content) {
+    final tags = TrendingCubit.extractHashtagKeys(content);
+    if (tags.isEmpty) return;
+    try {
+      sl<TrendingCubit>().decrementHashtags(tags);
+    } catch (_) {}
   }
 
   /// Drops the post from the list after the exit animation completes.

@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_annotation_target
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/patient_sort_models.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_current_doctor_patients_model_response.freezed.dart';
 part 'get_current_doctor_patients_model_response.g.dart';
@@ -13,6 +14,8 @@ class GetDoctorPatientsModelResponse with _$GetDoctorPatientsModelResponse {
     @JsonKey(name: 'score_value') String? scoreValue,
     @JsonKey(name: 'patient_count') String? patientCount,
     @JsonKey(name: 'filter') List<GetFiltersOptionsDataModelResponse>? filters,
+    @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+    @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
     GetDoctorPatientsDataModelResponse? data,
   }) = _GetDoctorPatientsModelResponse;
   factory GetDoctorPatientsModelResponse.fromJson(Map<String, dynamic> json) =>

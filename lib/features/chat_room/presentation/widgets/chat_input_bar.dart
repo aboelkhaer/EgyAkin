@@ -618,130 +618,158 @@ class _ChatInputBarState extends State<ChatInputBar>
                 minHeight: _barHeight,
                 maxHeight: (_barHeight * _maxInputLines) + 12,
               ),
-              child: TextField(
-                controller: widget.controller,
-                focusNode: widget.focusNode,
-                onTap: (widget.attachmentPanelOpen || widget.emojiPanelOpen)
-                    ? widget.onOpenKeyboard
-                    : null,
-                onChanged: (value) {
-                  _syncTextDirection();
-                  widget.onChanged?.call(value);
-                },
-                onSubmitted: (_) {
-                  if (widget.hasText) widget.onSendText();
-                },
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
-                minLines: 1,
-                maxLines: _maxInputLines,
-                textDirection: _textDirection,
-                textAlign: TextAlign.start,
-                textAlignVertical: TextAlignVertical.center,
-                enableSuggestions: true,
-                // iOS 16+: Flutter's toolbar hides Paste for cross-app clipboard
-                // until permission is probed. System menu shows Paste natively.
-                contextMenuBuilder: (context, editableTextState) {
-                  if (SystemContextMenu.isSupported(context)) {
-                    return SystemContextMenu.editableText(
-                      editableTextState: editableTextState,
-                    );
-                  }
-                  final items = List<ContextMenuButtonItem>.of(
-                    editableTextState.contextMenuButtonItems,
-                  );
-                  final hasPaste = items.any(
-                    (item) => item.type == ContextMenuButtonType.paste,
-                  );
-                  if (!hasPaste) {
-                    items.insert(
-                      0,
-                      ContextMenuButtonItem(
-                        type: ContextMenuButtonType.paste,
-                        onPressed: () {
-                          editableTextState
-                              .pasteText(SelectionChangedCause.toolbar);
-                        },
+              child: Stack(
+                alignment: Alignment.topLeft,
+                children: [
+                  TextField(
+                    controller: widget.controller,
+                    focusNode: widget.focusNode,
+                    onTap: (widget.attachmentPanelOpen ||
+                            widget.emojiPanelOpen)
+                        ? widget.onOpenKeyboard
+                        : null,
+                    onChanged: (value) {
+                      _syncTextDirection();
+                      widget.onChanged?.call(value);
+                    },
+                    onSubmitted: (_) {
+                      if (widget.hasText) widget.onSendText();
+                    },
+                    textInputAction: TextInputAction.newline,
+                    keyboardType: TextInputType.multiline,
+                    minLines: 1,
+                    maxLines: _maxInputLines,
+                    textDirection: _textDirection,
+                    textAlign: TextAlign.start,
+                    textAlignVertical: TextAlignVertical.center,
+                    enableSuggestions: true,
+                    // iOS 16+: Flutter's toolbar hides Paste for cross-app
+                    // clipboard until permission is probed. System menu shows
+                    // Paste natively.
+                    contextMenuBuilder: (context, editableTextState) {
+                      if (SystemContextMenu.isSupported(context)) {
+                        return SystemContextMenu.editableText(
+                          editableTextState: editableTextState,
+                        );
+                      }
+                      final items = List<ContextMenuButtonItem>.of(
+                        editableTextState.contextMenuButtonItems,
+                      );
+                      final hasPaste = items.any(
+                        (item) => item.type == ContextMenuButtonType.paste,
+                      );
+                      if (!hasPaste) {
+                        items.insert(
+                          0,
+                          ContextMenuButtonItem(
+                            type: ContextMenuButtonType.paste,
+                            onPressed: () {
+                              editableTextState.pasteText(
+                                SelectionChangedCause.toolbar,
+                              );
+                            },
+                          ),
+                        );
+                      }
+                      return AdaptiveTextSelectionToolbar.buttonItems(
+                        anchors: editableTextState.contextMenuAnchors,
+                        buttonItems: items,
+                      );
+                    },
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      height: 1.2,
+                      color: textColor,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Tajawal',
+                      fontFamilyFallback: const [
+                        'Apple Color Emoji',
+                        'Segoe UI Emoji',
+                        'Noto Color Emoji',
+                        'Android Emoji',
+                      ],
+                    ),
+                    cursorColor: AppColors.primary,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: fieldBg,
+                      hintText: null,
+                      // Extra top padding so Tajawal glyphs sit on the
+                      // caret midline (font sits visually high in the line).
+                      contentPadding: EdgeInsets.fromLTRB(
+                        14.w,
+                        10.h,
+                        14.w,
+                        6.h,
                       ),
-                    );
-                  }
-                  return AdaptiveTextSelectionToolbar.buttonItems(
-                    anchors: editableTextState.contextMenuAnchors,
-                    buttonItems: items,
-                  );
-                },
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  height: 1.2,
-                  color: textColor,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Tajawal',
-                  fontFamilyFallback: const [
-                    'Apple Color Emoji',
-                    'Segoe UI Emoji',
-                    'Noto Color Emoji',
-                    'Android Emoji',
-                  ],
-                ),
-                cursorColor: AppColors.primary,
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  fillColor: fieldBg,
-                  hintText: '${context.tr(AppStrings.message)}...',
-                  hintStyle: TextStyle(
-                    fontSize: 15.sp,
-                    height: 1.2,
-                    color: hintColor,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Tajawal',
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 8.h,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.r),
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.r),
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.r),
-                    borderSide: BorderSide(
-                      color: isDarkMode
-                          ? AppColors.darkPrimary
-                          : AppColors.primary,
-                    ),
-                  ),
-                  suffixIconConstraints: const BoxConstraints(
-                    minWidth: _barHeight,
-                    minHeight: _barHeight,
-                    maxWidth: _barHeight,
-                    maxHeight: _barHeight,
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: widget.onEmoji ?? () {},
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(
-                      minWidth: _barHeight,
-                      minHeight: _barHeight,
-                    ),
-                    icon: Icon(
-                      widget.emojiPanelOpen
-                          ? Icons.keyboard_rounded
-                          : Icons.emoji_emotions_outlined,
-                      color: widget.emojiPanelOpen
-                          ? (isDarkMode
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                        borderSide: BorderSide(color: borderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                        borderSide: BorderSide(color: borderColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                        borderSide: BorderSide(
+                          color: isDarkMode
                               ? AppColors.darkPrimary
-                              : AppColors.primary)
-                          : hintColor,
-                      size: 20.sp,
+                              : AppColors.primary,
+                        ),
+                      ),
+                      suffixIconConstraints: const BoxConstraints(
+                        minWidth: _barHeight,
+                        minHeight: _barHeight,
+                        maxWidth: _barHeight,
+                        maxHeight: _barHeight,
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: widget.onEmoji ?? () {},
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: _barHeight,
+                          minHeight: _barHeight,
+                        ),
+                        icon: Icon(
+                          widget.emojiPanelOpen
+                              ? Icons.keyboard_rounded
+                              : Icons.emoji_emotions_outlined,
+                          color: widget.emojiPanelOpen
+                              ? (isDarkMode
+                                  ? AppColors.darkPrimary
+                                  : AppColors.primary)
+                              : hintColor,
+                          size: 20.sp,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  if (!widget.hasText)
+                    IgnorePointer(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          14.w,
+                          10.h,
+                          _barHeight,
+                          0,
+                        ),
+                        child: Text(
+                          '${context.tr(AppStrings.message)}...',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            height: 1.2,
+                            color: hintColor,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Tajawal',
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),

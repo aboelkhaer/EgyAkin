@@ -30,6 +30,11 @@ mixin _$GetDoctorPatientsModelResponse {
   @JsonKey(name: 'filter')
   List<GetFiltersOptionsDataModelResponse>? get filters =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort => throw _privateConstructorUsedError;
   GetDoctorPatientsDataModelResponse? get data =>
       throw _privateConstructorUsedError;
 
@@ -58,8 +63,11 @@ abstract class $GetDoctorPatientsModelResponseCopyWith<$Res> {
       @JsonKey(name: 'patient_count') String? patientCount,
       @JsonKey(name: 'filter')
       List<GetFiltersOptionsDataModelResponse>? filters,
+      @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
       GetDoctorPatientsDataModelResponse? data});
 
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   $GetDoctorPatientsDataModelResponseCopyWith<$Res>? get data;
 }
 
@@ -84,6 +92,8 @@ class _$GetDoctorPatientsModelResponseCopyWithImpl<$Res,
     Object? scoreValue = freezed,
     Object? patientCount = freezed,
     Object? filters = freezed,
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -107,11 +117,33 @@ class _$GetDoctorPatientsModelResponseCopyWithImpl<$Res,
           ? _value.filters
           : filters // ignore: cast_nullable_to_non_nullable
               as List<GetFiltersOptionsDataModelResponse>?,
+      sortOptions: freezed == sortOptions
+          ? _value.sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as GetDoctorPatientsDataModelResponse?,
     ) as $Val);
+  }
+
+  /// Create a copy of GetDoctorPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppliedSortModelResponseCopyWith<$Res>? get sort {
+    if (_value.sort == null) {
+      return null;
+    }
+
+    return $AppliedSortModelResponseCopyWith<$Res>(_value.sort!, (value) {
+      return _then(_value.copyWith(sort: value) as $Val);
+    });
   }
 
   /// Create a copy of GetDoctorPatientsModelResponse
@@ -146,8 +178,12 @@ abstract class _$$GetDoctorPatientsModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'patient_count') String? patientCount,
       @JsonKey(name: 'filter')
       List<GetFiltersOptionsDataModelResponse>? filters,
+      @JsonKey(name: 'sort_options') List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') AppliedSortModelResponse? sort,
       GetDoctorPatientsDataModelResponse? data});
 
+  @override
+  $AppliedSortModelResponseCopyWith<$Res>? get sort;
   @override
   $GetDoctorPatientsDataModelResponseCopyWith<$Res>? get data;
 }
@@ -172,6 +208,8 @@ class __$$GetDoctorPatientsModelResponseImplCopyWithImpl<$Res>
     Object? scoreValue = freezed,
     Object? patientCount = freezed,
     Object? filters = freezed,
+    Object? sortOptions = freezed,
+    Object? sort = freezed,
     Object? data = freezed,
   }) {
     return _then(_$GetDoctorPatientsModelResponseImpl(
@@ -195,6 +233,14 @@ class __$$GetDoctorPatientsModelResponseImplCopyWithImpl<$Res>
           ? _value._filters
           : filters // ignore: cast_nullable_to_non_nullable
               as List<GetFiltersOptionsDataModelResponse>?,
+      sortOptions: freezed == sortOptions
+          ? _value._sortOptions
+          : sortOptions // ignore: cast_nullable_to_non_nullable
+              as List<SortOptionModelResponse>?,
+      sort: freezed == sort
+          ? _value.sort
+          : sort // ignore: cast_nullable_to_non_nullable
+              as AppliedSortModelResponse?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -214,8 +260,12 @@ class _$GetDoctorPatientsModelResponseImpl
       @JsonKey(name: 'patient_count') this.patientCount,
       @JsonKey(name: 'filter')
       final List<GetFiltersOptionsDataModelResponse>? filters,
+      @JsonKey(name: 'sort_options')
+      final List<SortOptionModelResponse>? sortOptions,
+      @JsonKey(name: 'sort') this.sort,
       this.data})
-      : _filters = filters;
+      : _filters = filters,
+        _sortOptions = sortOptions;
 
   factory _$GetDoctorPatientsModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -242,12 +292,26 @@ class _$GetDoctorPatientsModelResponseImpl
     return EqualUnmodifiableListView(value);
   }
 
+  final List<SortOptionModelResponse>? _sortOptions;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions {
+    final value = _sortOptions;
+    if (value == null) return null;
+    if (_sortOptions is EqualUnmodifiableListView) return _sortOptions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'sort')
+  final AppliedSortModelResponse? sort;
   @override
   final GetDoctorPatientsDataModelResponse? data;
 
   @override
   String toString() {
-    return 'GetDoctorPatientsModelResponse(value: $value, verified: $verified, scoreValue: $scoreValue, patientCount: $patientCount, filters: $filters, data: $data)';
+    return 'GetDoctorPatientsModelResponse(value: $value, verified: $verified, scoreValue: $scoreValue, patientCount: $patientCount, filters: $filters, sortOptions: $sortOptions, sort: $sort, data: $data)';
   }
 
   @override
@@ -263,13 +327,24 @@ class _$GetDoctorPatientsModelResponseImpl
             (identical(other.patientCount, patientCount) ||
                 other.patientCount == patientCount) &&
             const DeepCollectionEquality().equals(other._filters, _filters) &&
+            const DeepCollectionEquality()
+                .equals(other._sortOptions, _sortOptions) &&
+            (identical(other.sort, sort) || other.sort == sort) &&
             (identical(other.data, data) || other.data == data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, value, verified, scoreValue,
-      patientCount, const DeepCollectionEquality().hash(_filters), data);
+  int get hashCode => Object.hash(
+      runtimeType,
+      value,
+      verified,
+      scoreValue,
+      patientCount,
+      const DeepCollectionEquality().hash(_filters),
+      const DeepCollectionEquality().hash(_sortOptions),
+      sort,
+      data);
 
   /// Create a copy of GetDoctorPatientsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -298,6 +373,9 @@ abstract class _GetDoctorPatientsModelResponse
           @JsonKey(name: 'patient_count') final String? patientCount,
           @JsonKey(name: 'filter')
           final List<GetFiltersOptionsDataModelResponse>? filters,
+          @JsonKey(name: 'sort_options')
+          final List<SortOptionModelResponse>? sortOptions,
+          @JsonKey(name: 'sort') final AppliedSortModelResponse? sort,
           final GetDoctorPatientsDataModelResponse? data}) =
       _$GetDoctorPatientsModelResponseImpl;
 
@@ -317,6 +395,12 @@ abstract class _GetDoctorPatientsModelResponse
   @override
   @JsonKey(name: 'filter')
   List<GetFiltersOptionsDataModelResponse>? get filters;
+  @override
+  @JsonKey(name: 'sort_options')
+  List<SortOptionModelResponse>? get sortOptions;
+  @override
+  @JsonKey(name: 'sort')
+  AppliedSortModelResponse? get sort;
   @override
   GetDoctorPatientsDataModelResponse? get data;
 

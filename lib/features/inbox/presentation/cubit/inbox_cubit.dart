@@ -79,11 +79,16 @@ class InboxCubit extends Cubit<InboxState> {
   bool _archivedScreenVisible = false;
   List<int> _inboxListenIds = const [];
   Timer? _inboxListenLinger;
-  static const _inboxListenMax = 12;
+  static const _inboxListenMax = 25;
 
   /// Keep listening briefly after the list is hidden so quick tab switches
   /// don't re-attach every channel.
   static const _inboxListenLingerFor = Duration(seconds: 30);
+
+  /// While Chats/Archived is open, periodically GET /inbox so rows outside
+  /// the Ably listen cap still catch up without extra channels.
+  Timer? _inboxBackgroundRefresh;
+  static const _inboxBackgroundRefreshEvery = Duration(seconds: 25);
 
   /// Last unread count we already POSTed `receipts/delivered` for.
   /// Key: `chatType:contextId`. Prevents Home open from re-acking forever.
@@ -256,6 +261,8 @@ class InboxCubit extends Cubit<InboxState> {
     _serverStateRefreshDebounce = null;
     _inboxListenLinger?.cancel();
     _inboxListenLinger = null;
+    _inboxBackgroundRefresh?.cancel();
+    _inboxBackgroundRefresh = null;
     _inboxListenIds = const [];
     _chatsListVisible = false;
     _archivedScreenVisible = false;
@@ -409,6 +416,8 @@ class InboxCubit extends Cubit<InboxState> {
     if (_archivedScreenVisible) addFrom(_archivedThreads);
     if (_chatsListVisible) addFrom(_threads);
 
+    _syncInboxBackgroundRefresh();
+
     if (ids.isEmpty) {
       if (_inboxListenIds.isEmpty) return;
       _inboxListenLinger ??= Timer(_inboxListenLingerFor, () {
@@ -425,6 +434,24 @@ class InboxCubit extends Cubit<InboxState> {
     if (sameSet) return;
     _inboxListenIds = ids;
     unawaited(_realtime.listenToInboxConversations(ids));
+  }
+
+  void _syncInboxBackgroundRefresh() {
+    final anyVisible = _chatsListVisible || _archivedScreenVisible;
+    if (!anyVisible) {
+      _inboxBackgroundRefresh?.cancel();
+      _inboxBackgroundRefresh = null;
+      return;
+    }
+    if (_inboxBackgroundRefresh?.isActive == true) return;
+    _inboxBackgroundRefresh = Timer.periodic(
+      _inboxBackgroundRefreshEvery,
+      (_) {
+        if (isClosed) return;
+        if (!_chatsListVisible && !_archivedScreenVisible) return;
+        unawaited(silentRefresh(bypassThrottle: true));
+      },
+    );
   }
 
   /// A chat push arrived while the app is open — pick up the new row even if
@@ -2012,7 +2039,7 @@ class InboxCubit extends Cubit<InboxState> {
   void _ackUnreadDelivered() => _scheduleAckUnreadDelivered();
 
   void _ackUnreadDeliveredNow() {
-    if (_ackDeliveredInFlight) return;
+    if (isClosed || _ackDeliveredInFlight) return;
     final pending = <InboxThread>[];
     final seenKeys = <String>{};
 
@@ -2430,7 +2457,13 @@ class InboxCubit extends Cubit<InboxState> {
   Future<void> close() {
     stopLiveUpdates();
     _inboxListenLinger?.cancel();
+    _inboxListenLinger = null;
+    _inboxBackgroundRefresh?.cancel();
+    _inboxBackgroundRefresh = null;
     _serverStateRefreshDebounce?.cancel();
+    _serverStateRefreshDebounce = null;
+    _ackDeliveredDebounce?.cancel();
+    _ackDeliveredDebounce = null;
     _realtimeSub?.cancel();
     for (final timer in _typingClearTimers.values) {
       timer.cancel();

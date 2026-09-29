@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/all_doctors_patients/domain/usecases/patients_list_page_input.dart';
 import '../../../../exports.dart';
 
 class CurrentDoctorPatientsRepositoryImpl
@@ -11,13 +12,13 @@ class CurrentDoctorPatientsRepositoryImpl
 
   @override
   Future<Either<Failure, GetDoctorPatientsModelResponse>>
-      getCurrentDoctorPatients(int page) async {
+      getCurrentDoctorPatients(PatientsListPageInput input) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await currentDoctorPatientsDataSource
-            .getCurrentDoctorPatients(page);
+            .getCurrentDoctorPatients(input);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());
