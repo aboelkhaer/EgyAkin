@@ -1991,8 +1991,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                                               setState(
                                                   () => _isUnblocking = false);
                                               if (!ok) {
-                                                customSnackBar(
-                                                  context: context,
+                          customSnackBar(
+                            context: context,
                                                   message: context.tr(
                                                     AppStrings.unblockFailed,
                                                   ),
@@ -2040,9 +2040,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                                                   _messageController.clear();
                                                 } else {
                                                   cubit.clearReply();
-                                                }
-                                              },
-                                            ),
+                        }
+                      },
+                    ),
                                             if (_pendingImages.isNotEmpty &&
                                                 editingMessage == null)
                                               ChatPendingImagesBanner(

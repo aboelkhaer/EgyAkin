@@ -166,23 +166,23 @@ class CommentWidgetInCommunity extends StatelessWidget {
         final cubit = ShowSingleFeedCubit.get(context);
 
         return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-          builder: (context, state) {
-            return state.maybeWhen(
+              builder: (context, state) {
+                return state.maybeWhen(
               orElse: () => const SizedBox.shrink(),
-              loaded: (
-                commentsResponse,
-                changeCounter,
-                feed,
-                isSendCommentLoading,
-                isSendCommentLoaded,
-                message,
-                highlightedCommentId,
-                isDeleteCommentLoading,
-                isDeleteCommentLoaded,
-                isSendReplyLoading,
-                isSendReplyLoaded,
-                isSeeMore,
-              ) {
+                  loaded: (
+                    commentsResponse,
+                    changeCounter,
+                    feed,
+                    isSendCommentLoading,
+                    isSendCommentLoaded,
+                    message,
+                    highlightedCommentId,
+                    isDeleteCommentLoading,
+                    isDeleteCommentLoaded,
+                    isSendReplyLoading,
+                    isSendReplyLoaded,
+                    isSeeMore,
+                  ) {
                 final isHighlighted =
                     commentModel.id.toString() == highlightedCommentId;
                 final isOwn = _isOwnAuthor();
@@ -202,10 +202,10 @@ class CommentWidgetInCommunity extends StatelessWidget {
                 final deleting = isDeleteCommentLoading &&
                     commentModel.id.toString() == cubit.deleteCommentId;
 
-                return AnimatedContainer(
+                    return AnimatedContainer(
                   duration: const Duration(milliseconds: 280),
                   curve: Curves.easeOutCubic,
-                  decoration: BoxDecoration(
+                      decoration: BoxDecoration(
                     color: isHighlighted
                         ? primary.withOpacity(isDark ? 0.14 : 0.08)
                         : HomeDashboardColors.cardBg(isDark),
@@ -219,15 +219,15 @@ class CommentWidgetInCommunity extends StatelessWidget {
                     boxShadow: isDark
                         ? null
                         : [
-                            BoxShadow(
+                                        BoxShadow(
                               color: isHighlighted
                                   ? primary.withOpacity(0.1)
                                   : Colors.black.withOpacity(0.03),
                               blurRadius: isHighlighted ? 12 : 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                  ),
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(12.w, 12.h, 10.w, 10.h),
                     child: Column(
@@ -247,21 +247,21 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(width: 10.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
                                         Expanded(
-                                          child: Row(
-                                            children: [
-                                              Flexible(
+                                        child: Row(
+                                          children: [
+                                            Flexible(
                                                 child: GestureDetector(
                                                   onTap: () =>
                                                       _openDoctorProfile(
                                                           context),
-                                                  child: Text(
+                                              child: Text(
                                                     name,
                                                     maxLines: 1,
                                                     overflow:
@@ -284,16 +284,16 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                   padding:
                                                       EdgeInsets.only(left: 4),
                                                   child: VerificationIcon(
-                                                    duration: 300,
-                                                    isSmaller: true,
+                                                  duration: 300,
+                                                  isSmaller: true,
                                                   ),
                                                 ),
-                                            ],
-                                          ),
+                                          ],
                                         ),
-                                        Text(
-                                          TimeAgoService.instance
-                                              .formatTimeAgoFromString(
+                                      ),
+                                      Text(
+                                        TimeAgoService.instance
+                                            .formatTimeAgoFromString(
                                             commentModel.createdAt.toString(),
                                             context,
                                           ),
@@ -363,10 +363,10 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                                     ),
                                                   ],
                                                 ),
@@ -458,10 +458,10 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
                         if (isMainComment &&
                             commentModel.parentId == null &&
                             replies.isNotEmpty) ...[
@@ -499,26 +499,26 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                         child: ReplyWidgetInCommunity(
                                           replyModel: reply,
                                           homeDataModel: homeDataModel,
-                                          currentDoctorModel:
-                                              currentDoctorModel,
+                                                      currentDoctorModel:
+                                                          currentDoctorModel,
                                           commentModel: commentModel,
-                                          replyIndex: replyIndex,
+                                                      replyIndex: replyIndex,
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
+                                                    );
+                                                  },
                               ),
                             ),
                           ),
                         ],
-                      ],
-                    ),
-                  ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
         );
       },
     );
