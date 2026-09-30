@@ -384,6 +384,8 @@
   "Ask a question (optional)": "طرح سؤال (اختياري)",
   "Options": "الخيارات",
   "Please enter an option": "يرجى إدخال خيار",
+  "Option must be at most {count} characters":
+      "يجب ألا يتجاوز الخيار {count} حرفاً",
   "Add another option": "إضافة خيار آخر",
   "Settings": "الإعدادات",
   "Option": "خيار",
@@ -560,6 +562,8 @@
   "Offline": "غير متصل",
   "Today": "اليوم",
   "Reply": "الرد",
+  "1 reply": "رد واحد",
+  "{count} replies": "{count} ردود",
   "Forward": "إعادة توجيه",
   "Forwarded": "تم إعادة التوجيه",
   "Copy": "نسخ",

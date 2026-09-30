@@ -417,7 +417,11 @@ class _CommunityScreenState extends State<CommunityScreen>
           ),
           child: Scaffold(
             backgroundColor: scaffold,
-            body: CommunityChromeScope(
+            resizeToAvoidBottomInset: false,
+            body: GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              behavior: HitTestBehavior.deferToChild,
+              child: CommunityChromeScope(
               scrollTopInset: contentInset,
               child: Stack(
                 clipBehavior: Clip.hardEdge,
@@ -486,6 +490,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                   ),
                 ],
               ),
+            ),
             ),
           ),
         );

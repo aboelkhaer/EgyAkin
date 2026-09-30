@@ -507,6 +507,8 @@ class AppStrings {
   static const String askAQuestion = 'Ask a question (optional)';
   static const String options = 'Options';
   static const String pleaseEnterAnOption = 'Please enter an option';
+  static const String optionMaxLength =
+      'Option must be at most {count} characters';
   static const String addAnotherOption = 'Add another option';
   static const String settings = 'Settings';
   static const String option = 'Option';
@@ -740,6 +742,8 @@ class AppStrings {
   static const String offline = 'Offline';
   static const String today = 'Today';
   static const String reply = 'Reply';
+  static const String oneReplyCount = '1 reply';
+  static const String repliesCountLabel = '{count} replies';
   static const String forward = 'Forward';
   static const String forwarded = 'Forwarded';
   static const String copy = 'Copy';

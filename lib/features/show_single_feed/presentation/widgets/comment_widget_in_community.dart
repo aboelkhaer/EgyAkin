@@ -444,7 +444,19 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                         if (replies.isNotEmpty) ...[
                                           const Spacer(),
                                           Text(
-                                            '${replies.length} ${replies.length == 1 ? 'reply' : 'replies'}',
+                                            replies.length == 1
+                                                ? context.tr(
+                                                    AppStrings.oneReplyCount,
+                                                  )
+                                                : context
+                                                    .tr(
+                                                      AppStrings
+                                                          .repliesCountLabel,
+                                                    )
+                                                    .replaceAll(
+                                                      '{count}',
+                                                      '${replies.length}',
+                                                    ),
                                             style: TextStyle(
                                               fontSize: 10.5.sp,
                                               fontWeight: FontWeight.w600,
@@ -467,11 +479,11 @@ class CommentWidgetInCommunity extends StatelessWidget {
                             replies.isNotEmpty) ...[
                           SizedBox(height: 10.h),
                           Container(
-                            margin: EdgeInsets.only(left: 18.w),
-                            padding: EdgeInsets.only(left: 12.w),
+                            margin: EdgeInsetsDirectional.only(start: 18.w),
+                            padding: EdgeInsetsDirectional.only(start: 12.w),
                             decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
+                              border: BorderDirectional(
+                                start: BorderSide(
                                   color: primary.withOpacity(0.28),
                                   width: 2,
                                 ),
@@ -499,15 +511,15 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                         child: ReplyWidgetInCommunity(
                                           replyModel: reply,
                                           homeDataModel: homeDataModel,
-                                                      currentDoctorModel:
-                                                          currentDoctorModel,
+                                          currentDoctorModel:
+                                              currentDoctorModel,
                                           commentModel: commentModel,
-                                                      replyIndex: replyIndex,
+                                          replyIndex: replyIndex,
                                         ),
                                       ),
                                     ),
-                                                    );
-                                                  },
+                                  );
+                                },
                               ),
                             ),
                           ),

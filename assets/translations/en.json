@@ -378,6 +378,8 @@
   "Ask a question (optional)": "Ask a question (optional)",
   "Options": "Options",
   "Please enter an option": "Please enter an option",
+  "Option must be at most {count} characters":
+      "Option must be at most {count} characters",
   "Add another option": "Add another option",
   "Settings": "Settings",
   "Option": "Option",
@@ -554,6 +556,8 @@
   "Offline": "Offline",
   "Today": "Today",
   "Reply": "Reply",
+  "1 reply": "1 reply",
+  "{count} replies": "{count} replies",
   "Forward": "Forward",
   "Forwarded": "Forwarded",
   "Copy": "Copy",

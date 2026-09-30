@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/constants/app_strings.dart';
+import 'package:egy_akin/app/services/localization_service.dart';
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/chat/data/models/chat_conversations_list_models.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
@@ -107,7 +108,8 @@ class ChatMappers {
     final dt = DateTime.tryParse(iso);
     if (dt == null) return iso;
     // WhatsApp-style in-bubble timestamp: time only (day separators handle dates).
-    return DateFormat.jm().format(dt.toLocal());
+    final locale = LocalizationService.instance.currentLocale.toString();
+    return DateFormat.jm(locale).format(dt.toLocal());
   }
 
   static String formatInboxTime(String? iso) {
@@ -115,11 +117,33 @@ class ChatMappers {
     final dt = DateTime.tryParse(iso);
     if (dt == null) return iso;
     final diff = DateTime.now().difference(dt.toLocal());
+    final isAr = LocalizationService.instance.isRTL;
+    final locale = LocalizationService.instance.currentLocale.toString();
+
+    String numLabel(int n) {
+      if (!isAr) return '$n';
+      // Explicit Eastern Arabic-Indic digits (ICU `ar` alone can stay Western).
+      const western = '0123456789';
+      const eastern = '٠١٢٣٤٥٦٧٨٩';
+      return '$n'.split('').map((c) {
+        final i = western.indexOf(c);
+        return i >= 0 ? eastern[i] : c;
+      }).join();
+    }
+
     if (diff.inMinutes < 1) return AppStrings.now;
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m';
-    if (diff.inHours < 24) return '${diff.inHours}h';
-    if (diff.inDays < 7) return '${diff.inDays}d';
-    return DateFormat('MMM d').format(dt.toLocal());
+    if (diff.inMinutes < 60) {
+      return isAr
+          ? '${numLabel(diff.inMinutes)} د'
+          : '${diff.inMinutes}m';
+    }
+    if (diff.inHours < 24) {
+      return isAr ? '${numLabel(diff.inHours)} س' : '${diff.inHours}h';
+    }
+    if (diff.inDays < 7) {
+      return isAr ? '${numLabel(diff.inDays)} ي' : '${diff.inDays}d';
+    }
+    return DateFormat('MMM d', locale).format(dt.toLocal());
   }
 
   static bool isImageAttachment(ChatAttachmentModel a) => _isImageAttachment(a);
@@ -1112,6 +1136,7 @@ class ChatMappers {
       previewKind: previewKind,
       previewCount: previewCount,
       timeLabel: formatInboxTime(item.lastActivityAt ?? last?.createdAt),
+      lastActivityAt: item.lastActivityAt ?? last?.createdAt,
       initials: inboxAvatarInitials(
         chatType: chatType,
         displayTitle: displayTitle,
@@ -1201,6 +1226,8 @@ class ChatMappers {
       timeLabel: formatInboxTime(
         item.lastActivityAt ?? last?.createdAt ?? item.updatedAt,
       ),
+      lastActivityAt:
+          item.lastActivityAt ?? last?.createdAt ?? item.updatedAt,
       initials: inboxAvatarInitials(
         chatType: chatType,
         displayTitle: displayTitle,

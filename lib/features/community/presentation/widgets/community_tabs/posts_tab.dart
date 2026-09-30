@@ -176,7 +176,8 @@ class _PostsTabState extends State<PostsTab> {
                                       ScrollViewKeyboardDismissBehavior.onDrag,
                                   padding: EdgeInsets.only(
                                     top: chromeInset,
-                                    bottom: 60.h,
+                                    bottom: 60.h +
+                                        MediaQuery.viewInsetsOf(context).bottom,
                                   ),
                                   itemBuilder: (context, index) {
                                     if (headerCount == 1 && index == 0) {

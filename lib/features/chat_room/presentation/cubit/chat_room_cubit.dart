@@ -387,6 +387,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     final userId = _currentUserId ?? 0;
     final previousById = <String, ChatMessageItem>{
       for (final m in _messages) m.id: m,
+      for (final m in _messages)
+        if (m.clientTempId != null && m.clientTempId!.isNotEmpty)
+          m.clientTempId!: m,
     };
     final localPending = _messages
         .where(
@@ -409,7 +412,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     _messages = [
       for (final item in _mergeLocalPendingByCreatedAt(mapped, localPending))
         _enrichReplyMediaPreview(
-          _preserveLocalMessageState(previousById[item.id], item),
+          _preserveLocalMessageState(
+            previousById[item.id] ??
+                _previousOptimisticForServerMessage(item, previousById),
+            item,
+          ),
         ),
     ];
     for (final sys in localSystem) {
@@ -558,6 +565,30 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     );
   }
 
+  /// Soft-reload after background: optimistic row may still be keyed by
+  /// `local_*` while the API row uses the server id.
+  ChatMessageItem? _previousOptimisticForServerMessage(
+    ChatMessageItem next,
+    Map<String, ChatMessageItem> previousById,
+  ) {
+    if (!next.isOutgoing) return null;
+    for (final m in previousById.values) {
+      final temp = m.clientTempId;
+      if (temp == null || temp.isEmpty || !m.isOutgoing) continue;
+      if (m.id != temp) continue; // already swapped to server id
+      if (m.text != next.text) continue;
+      final a = m.createdAt;
+      final b = next.createdAt;
+      if (a != null &&
+          b != null &&
+          a.difference(b).abs() > const Duration(minutes: 2)) {
+        continue;
+      }
+      return m;
+    }
+    return null;
+  }
+
   ChatMessageItem _preserveLocalAttachments(
     ChatMessageItem? previous,
     ChatMessageItem next,
@@ -577,6 +608,14 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     ChatMessageItem next,
   ) {
     var merged = _preserveLocalAttachments(previous, next);
+    // Keep clientTempId across soft-reload so the list identity (and send
+    // pop-in) stays stable after background → resume.
+    final prevTemp = previous?.clientTempId;
+    if (prevTemp != null &&
+        prevTemp.isNotEmpty &&
+        (merged.clientTempId == null || merged.clientTempId!.isEmpty)) {
+      merged = merged.copyWith(clientTempId: prevTemp);
+    }
     if (previous == null || !previous.isOutgoing || !next.isOutgoing) {
       return merged;
     }
@@ -650,12 +689,14 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     if (toInsert.isNotEmpty) {
       final serverOnly = [
         for (final m in _messages)
-          if (m.clientTempId == null || !_pendingSends.containsKey(m.clientTempId))
+          if (m.clientTempId == null ||
+              !_pendingSends.containsKey(m.clientTempId))
             m,
       ];
       final pending = [
         for (final m in _messages)
-          if (m.clientTempId != null && _pendingSends.containsKey(m.clientTempId))
+          if (m.clientTempId != null &&
+              _pendingSends.containsKey(m.clientTempId))
             m,
         ...toInsert,
       ];

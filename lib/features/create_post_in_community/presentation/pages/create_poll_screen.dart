@@ -92,7 +92,9 @@ class _CreatePollScreenState extends State<CreatePollScreen>
 
     final poll = PollModel(
       question: _questionController.text,
-      options: _optionControllers.map((controller) => controller.text).toList(),
+      options: _optionControllers
+          .map((controller) => controller.text.trim())
+          .toList(),
       allowMultipleChoices: _allowMultipleChoices,
       allowAddOptions: _allowAddOptions,
     );
@@ -624,6 +626,8 @@ class _QuestionSheet extends StatelessWidget {
 }
 
 class _OptionRow extends StatelessWidget {
+  static const int maxOptionLength = 60;
+
   final _PollPalette palette;
   final int index;
   final TextEditingController controller;
@@ -682,6 +686,7 @@ class _OptionRow extends StatelessWidget {
               key: ValueKey('option_$index'),
               controller: controller,
               maxLines: 1,
+              maxLength: maxOptionLength,
               onTapOutside: (_) => FocusScope.of(context).unfocus(),
               style: TextStyle(
                 color: palette.ink,
@@ -703,11 +708,17 @@ class _OptionRow extends StatelessWidget {
                 focusedErrorBorder: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 8.h),
                 isDense: true,
+                counterText: '',
                 errorStyle: TextStyle(fontSize: 9.sp, height: 0.9),
               ),
               validator: (value) {
-                if (value == null || value.isEmpty) {
+                if (value == null || value.trim().isEmpty) {
                   return validatorMessage;
+                }
+                if (value.trim().length > maxOptionLength) {
+                  return context
+                      .tr(AppStrings.optionMaxLength)
+                      .replaceAll('{count}', '$maxOptionLength');
                 }
                 return null;
               },

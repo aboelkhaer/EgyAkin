@@ -160,18 +160,23 @@ AllGroupsInCommunityCubit resolveAllGroupsInCommunityCubit() {
 
 /// Clears community / groups singleton cubits so the next login never shows
 /// the previous account's "Your groups", discover list, or feeds.
+///
+/// Only closes instances that were already created — never constructs a lazy
+/// singleton just to dispose it (that caused noisy onCreate→onClose logs).
 void resetCommunitySessionCubits() {
   void reset<T extends Cubit>(T Function() create) {
+    if (sl.isRegistered<T>()) {
+      sl.unregister<T>(
+        disposingFunction: (T cubit) {
+          if (!cubit.isClosed) {
+            cubit.close();
+          }
+        },
+      );
+    }
     if (!sl.isRegistered<T>()) {
       sl.registerLazySingleton<T>(create);
-      return;
     }
-    final cubit = sl<T>();
-    sl.unregister<T>();
-    if (!cubit.isClosed) {
-      cubit.close();
-    }
-    sl.registerLazySingleton<T>(create);
   }
 
   reset<CommunityCubit>(

@@ -500,121 +500,133 @@ class _FeedScaffoldState extends State<_FeedScaffold>
     final replyBannerExtra = cubit.commentToReply != null ? 48.h : 0.0;
     final composerReserve = 120.h + replyBannerExtra;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Column(
+    return ListenableBuilder(
+      listenable: cubit.commentFocusNode,
+      builder: (context, _) {
+        final commentFocused = cubit.commentFocusNode.hasFocus;
+        // While another field (e.g. poll add-option) owns the keyboard, the
+        // comment bar stays hidden behind it — only reserve keyboard height.
+        final scrollBottom = (!commentFocused && keyboard > safeBottom)
+            ? bottomInset + 12
+            : composerReserve + bottomInset;
+
+        return Stack(
+          fit: StackFit.expand,
           children: [
-            FadeTransition(
-              opacity: _headerFade,
-              child: SlideTransition(
-                position: _headerSlide,
-                child: _FeedHeader(
-                  isDark: widget.isDark,
-                  primary: widget.primary,
-                  topInset: top,
-                  feed: widget.feed,
-                  canManage: widget.canManage,
-                  menuItems: widget.menuItems,
-                  onBack: widget.onBack,
-                  onOpenDoctor: widget.onOpenDoctor,
-                  onMenuSelected: widget.onMenuSelected,
+            Column(
+              children: [
+                FadeTransition(
+                  opacity: _headerFade,
+                  child: SlideTransition(
+                    position: _headerSlide,
+                    child: _FeedHeader(
+                      isDark: widget.isDark,
+                      primary: widget.primary,
+                      topInset: top,
+                      feed: widget.feed,
+                      canManage: widget.canManage,
+                      menuItems: widget.menuItems,
+                      onBack: widget.onBack,
+                      onOpenDoctor: widget.onOpenDoctor,
+                      onMenuSelected: widget.onMenuSelected,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              // onTap (not pointer-down) so Reply/Like still win the gesture.
-              child: GestureDetector(
-                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                behavior: HitTestBehavior.opaque,
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics(),
-                  ),
-                  controller: widget.scrollController,
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: EdgeInsets.only(
-                    top: cubit.replyAnchorTopPadding,
-                    // One inset only — do not add padding.bottom + keyboard
-                    // (padding.bottom collapses to 0 mid keyboard dismiss).
-                    bottom: composerReserve + bottomInset,
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 8.h),
-                      FadeTransition(
-                        opacity: _cardFade,
-                        child: SlideTransition(
-                          position: _cardSlide,
-                          child: ScaleTransition(
-                            scale: _cardScale,
-                            alignment: Alignment.topCenter,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: 12.w),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: HomeDashboardDecor.card(
-                                  widget.isDark,
-                                ).copyWith(
-                                  borderRadius: BorderRadius.circular(18.r),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: FeedContentInCommunity(
-                                  homeDataModel: widget.homeDataModel,
-                                  currentDoctorModel:
-                                      widget.currentDoctorModel,
-                                  feed: widget.feed,
+                Expanded(
+                  // onTap (not pointer-down) so Reply/Like still win the gesture.
+                  child: GestureDetector(
+                    onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                    behavior: HitTestBehavior.opaque,
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      controller: widget.scrollController,
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: EdgeInsets.only(
+                        top: cubit.replyAnchorTopPadding,
+                        // One inset only — do not add padding.bottom + keyboard
+                        // (padding.bottom collapses to 0 mid keyboard dismiss).
+                        bottom: scrollBottom,
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 8.h),
+                          FadeTransition(
+                            opacity: _cardFade,
+                            child: SlideTransition(
+                              position: _cardSlide,
+                              child: ScaleTransition(
+                                scale: _cardScale,
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 12.w),
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: HomeDashboardDecor.card(
+                                      widget.isDark,
+                                    ).copyWith(
+                                      borderRadius: BorderRadius.circular(18.r),
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: FeedContentInCommunity(
+                                      homeDataModel: widget.homeDataModel,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      feed: widget.feed,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      FadeTransition(
-                        opacity: _commentsFade,
-                        child: SlideTransition(
-                          position: _commentsSlide,
-                          child: CommentsInCommunity(
-                            homeDataModel: widget.homeDataModel,
-                            currentDoctorModel: widget.currentDoctorModel,
-                            feed: widget.feed,
+                          SizedBox(height: 12.h),
+                          FadeTransition(
+                            opacity: _commentsFade,
+                            child: SlideTransition(
+                              position: _commentsSlide,
+                              child: CommentsInCommunity(
+                                homeDataModel: widget.homeDataModel,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                feed: widget.feed,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: FadeTransition(
+                opacity: _composerFade,
+                child: SlideTransition(
+                  position: _composerSlide,
+                  child: KeyedSubtree(
+                    key: cubit.composerKey,
+                    child: WriteCommentInCommunity(
+                      accountVerification:
+                          widget.homeDataModel.verified ?? false,
+                      isSyndicateCardRequired:
+                          widget.homeDataModel.isSyndicateCardRequired ??
+                              'Required',
+                      feed: widget.feed,
+                      currentDoctorModel: widget.currentDoctorModel,
+                    ),
                   ),
                 ),
               ),
             ),
           ],
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: FadeTransition(
-            opacity: _composerFade,
-            child: SlideTransition(
-              position: _composerSlide,
-              child: KeyedSubtree(
-                key: cubit.composerKey,
-                child: WriteCommentInCommunity(
-                  accountVerification:
-                      widget.homeDataModel.verified ?? false,
-                  isSyndicateCardRequired:
-                      widget.homeDataModel.isSyndicateCardRequired ??
-                          'Required',
-                  feed: widget.feed,
-                  currentDoctorModel: widget.currentDoctorModel,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

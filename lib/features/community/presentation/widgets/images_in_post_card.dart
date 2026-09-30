@@ -82,61 +82,38 @@ class _ImagesInPostCardState extends State<ImagesInPostCard> {
                         );
                       },
                     ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.55),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.image_outlined,
-                              size: 12.sp,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              context.tr(AppStrings.figure),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                     if (feed.mediaPath!.length > 1)
                       Positioned(
                         bottom: 8,
                         child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 6,
-                            right: 6,
-                            top: 4,
-                            bottom: 4,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 5.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.black.withOpacity(0.55),
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.35),
+                              width: 0.8,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: SmoothPageIndicator(
                             controller: _pageController,
                             count: feed.mediaPath!.length,
                             effect: WormEffect(
-                              activeDotColor: AppColors.primary,
-                              dotColor: Colors.grey.shade400,
-                              dotHeight: 6,
-                              dotWidth: 6,
+                              activeDotColor: Colors.white,
+                              dotColor: Colors.white.withOpacity(0.45),
+                              dotHeight: 7,
+                              dotWidth: 7,
+                              spacing: 6,
                             ),
                           ),
                         ),

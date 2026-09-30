@@ -6,6 +6,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:carousel_slider/carousel_controller.dart';
+import 'package:egy_akin/app/network/api_error_handler.dart';
+import 'package:egy_akin/app/network/failure.dart';
 import 'package:egy_akin/app/constants/local_storage_key.dart';
 import 'package:egy_akin/app/routes/app_routes.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
@@ -73,10 +75,9 @@ class HomeCubit extends Cubit<HomeState> {
   /// `user_type == normal` → no Home / Patients tabs; Community is the root.
   /// Prefer local doctor type so loading UI matches before home API returns.
   bool get hideClinicalTabs {
-    final type =
-        (currentDoctorModel.userType ?? homeDataModel.userType ?? '')
-            .trim()
-            .toLowerCase();
+    final type = (currentDoctorModel.userType ?? homeDataModel.userType ?? '')
+        .trim()
+        .toLowerCase();
     return type == 'normal';
   }
 
@@ -195,8 +196,7 @@ class HomeCubit extends Cubit<HomeState> {
       accountVerification = false;
       isExistVerificationBanner = false;
       homeDataModel = homeDataModel.copyWith(verified: false);
-      currentDoctorModel =
-          currentDoctorModel.copyWith(emailVerifiedAt: null);
+      currentDoctorModel = currentDoctorModel.copyWith(emailVerifiedAt: null);
     }
 
     final nowHidingClinical = hideClinicalTabs;
@@ -267,6 +267,12 @@ class HomeCubit extends Cubit<HomeState> {
   DoctorModel currentDoctorModel = const DoctorModel();
   int dotsPosition = 0;
   int _cacheClearCounter = 0;
+
+  /// After `/user/me` 401 sign-out, stop leftover [getHome] work / Community push.
+  bool _endedByUnauth = false;
+
+  /// Prevents Dio + cubit both running a full session clear / cubit reset.
+  bool _signingOutUnauthInFlight = false;
   bool? accountVerification;
   String? doctorPatientCount;
   String? doctorScore;
@@ -275,7 +281,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Profile "Patients" tile: my patients + marked patients.
   String get myPlusMarkedPatientsCount {
-    final my = _parseCount(doctorPatientCount ?? homeDataModel.doctorPatientCount);
+    final my =
+        _parseCount(doctorPatientCount ?? homeDataModel.doctorPatientCount);
     final marked = _parseCount(homeDataModel.markedPatientsCount);
     return (my + marked).toString();
   }
@@ -622,7 +629,7 @@ class HomeCubit extends Cubit<HomeState> {
       // Always refresh account state via /user/me (works for normal + clinical,
       // and still works when the account is blocked).
       final meOk = await _fetchAndApplyUserMe();
-      if (isClosed) return;
+      if (isClosed || _endedByUnauth) return;
 
       // Normal users never open Home — skip the heavy /homeNew dashboard call.
       if (hideClinicalTabs) {
@@ -666,8 +673,7 @@ class HomeCubit extends Cubit<HomeState> {
           isSyndicateCardRequired =
               homeData.isSyndicateCardRequired?.toString() ??
                   isSyndicateCardRequired;
-          currentDoctorRole =
-              homeData.role?.toString() ?? currentDoctorRole;
+          currentDoctorRole = homeData.role?.toString() ?? currentDoctorRole;
           // Keep account fields from /user/me when home omits them; prefer home
           // for dashboard `data` and any non-null account overrides.
           // Never resurrect verified after a local email change cleared
@@ -688,15 +694,15 @@ class HomeCubit extends Cubit<HomeState> {
                 homeDataModel.isSyndicateCardRequired,
             appUpdateMessage:
                 homeData.appUpdateMessage ?? homeDataModel.appUpdateMessage,
-            doctorPatientCount: homeData.doctorPatientCount ??
-                homeDataModel.doctorPatientCount,
+            doctorPatientCount:
+                homeData.doctorPatientCount ?? homeDataModel.doctorPatientCount,
             allPatientCount:
                 homeData.allPatientCount ?? homeDataModel.allPatientCount,
             scoreValue: homeData.scoreValue ?? homeDataModel.scoreValue,
             role: homeData.role ?? homeDataModel.role,
             userType: homeData.userType ?? homeDataModel.userType,
-            permissionsChanged: homeData.permissionsChanged ??
-                homeDataModel.permissionsChanged,
+            permissionsChanged:
+                homeData.permissionsChanged ?? homeDataModel.permissionsChanged,
             isUserBlocked:
                 homeData.isUserBlocked ?? homeDataModel.isUserBlocked,
             postsCount: homeData.postsCount ?? homeDataModel.postsCount,
@@ -749,10 +755,21 @@ class HomeCubit extends Cubit<HomeState> {
 
     // Only redirect once when home cannot be accessed — not on every refresh.
     // Normal users already live on Community inside this shell — don't push.
-    if (!alreadyLoaded && !hideClinicalTabs) {
+    // Never push Community after an auth expiry (permissions are cleared, so
+    // accessHome is false and this would open Community on top of Sign In).
+    if (!alreadyLoaded && !hideClinicalTabs && !_endedByUnauth) {
+      final token =
+          await sl<AppPreferences>().getString(AppLocalStrings.keyToken);
+      if (token == null || token.isEmpty) return;
+
       final hasAccessHome =
           await PermissionHelper.hasPermission(AppPermissions.accessHome);
       if (!hasAccessHome) {
+        final context = navigatorKey.currentContext;
+        final currentName =
+            context != null ? ModalRoute.of(context)?.settings.name : null;
+        if (currentName == AppRoutes.signIn) return;
+
         navigatorKey.currentState?.pushNamed(
           AppRoutes.community,
           arguments: AppRoutesArgs.communityRouteArgs(
@@ -770,7 +787,8 @@ class HomeCubit extends Cubit<HomeState> {
     if (isClosed) return;
     await getDoctorDataFromLocal(emitState: false);
     final ok = await _fetchAndApplyUserMe();
-    if (!isClosed && ok) {
+    if (isClosed || _endedByUnauth) return;
+    if (ok) {
       _emitLoaded(homeData: homeDataModel);
     }
   }
@@ -782,14 +800,27 @@ class HomeCubit extends Cubit<HomeState> {
     return await result.fold<Future<bool>>(
       (l) async {
         debugPrint('getUserMe failed: ${l.message}');
+        if (_isUnauthenticatedFailure(l)) {
+          // Clears session + navigates once (Dio may also call this).
+          await signOutForUnUnauthenticated();
+        }
         return false;
       },
       (me) async {
         if (isClosed) return false;
+        _endedByUnauth = false;
         await _applyUserMe(me);
         return true;
       },
     );
+  }
+
+  bool _isUnauthenticatedFailure(Failure failure) {
+    if (failure.code == ResponseCode.unauthorized) return true;
+    final message = failure.message.toLowerCase();
+    return message.contains('authentication required') ||
+        message.contains('unauthenticated') ||
+        message.contains('unauthorized');
   }
 
   Future<void> _applyUserMe(UserMeResponse me) async {
@@ -810,14 +841,12 @@ class HomeCubit extends Cubit<HomeState> {
 
     // Prefer API `email_verified_at` when profile is present (null = unverified).
     // Do not fall back to a stale local timestamp after an email change.
-    final resolvedEmailVerifiedAt = profile != null
-        ? profile.emailVerifiedAt
-        : localDoctor.emailVerifiedAt;
+    final resolvedEmailVerifiedAt =
+        profile != null ? profile.emailVerifiedAt : localDoctor.emailVerifiedAt;
     final hasEmailVerifiedAt = resolvedEmailVerifiedAt != null &&
         resolvedEmailVerifiedAt.trim().isNotEmpty;
-    final resolvedVerified = hasEmailVerifiedAt
-        ? (me.verified ?? homeDataModel.verified)
-        : false;
+    final resolvedVerified =
+        hasEmailVerifiedAt ? (me.verified ?? homeDataModel.verified) : false;
     accountVerification = resolvedVerified ?? accountVerification;
 
     homeDataModel = homeDataModel.copyWith(
@@ -861,11 +890,10 @@ class HomeCubit extends Cubit<HomeState> {
             profile.registrationNumber ?? localDoctor.registrationNumber,
         syndicateCard: profile.syndicateCard ?? localDoctor.syndicateCard,
         emailVerifiedAt: resolvedEmailVerifiedAt,
-        phoneVerifiedAt:
-            profile.phoneVerifiedAt ?? localDoctor.phoneVerifiedAt,
+        phoneVerifiedAt: profile.phoneVerifiedAt ?? localDoctor.phoneVerifiedAt,
         userType: me.userType ?? localDoctor.userType,
-        isSyndicateCardRequired: me.isSyndicateCardRequired ??
-            localDoctor.isSyndicateCardRequired,
+        isSyndicateCardRequired:
+            me.isSyndicateCardRequired ?? localDoctor.isSyndicateCardRequired,
       );
     } else if (me.userType != null &&
         me.userType!.isNotEmpty &&
@@ -886,8 +914,7 @@ class HomeCubit extends Cubit<HomeState> {
     // Seed permissions from /user/me when local cache is empty.
     final permissionsJson =
         await sl<AppPreferences>().getString(AppLocalStrings.permissions);
-    final hasNoPermissions =
-        permissionsJson == null || permissionsJson.isEmpty;
+    final hasNoPermissions = permissionsJson == null || permissionsJson.isEmpty;
     if (hasNoPermissions &&
         me.permissions != null &&
         me.permissions!.isNotEmpty) {
@@ -1177,18 +1204,46 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   signOutForUnUnauthenticated() async {
-    await _clearSignedInSession();
-    currentDoctorModel = const DoctorModel();
-    homeDataModel = const HomeModelResponse(
-      data: HomeDataModelResponse(
-        allPatients: [],
-        currentPatients: [],
-        topDoctors: [],
-        pendingSyndicateCard: [],
-        posts: [],
-      ),
-    );
-    emit(const HomeState.initial());
+    if (_signingOutUnauthInFlight) return;
+    _signingOutUnauthInFlight = true;
+    _endedByUnauth = true;
+    try {
+      await _clearSignedInSession();
+      try {
+        await clearCacheForNetworkImages();
+      } catch (_) {}
+      currentDoctorModel = const DoctorModel();
+      homeDataModel = const HomeModelResponse(
+        data: HomeDataModelResponse(
+          allPatients: [],
+          currentPatients: [],
+          topDoctors: [],
+          pendingSyndicateCard: [],
+          posts: [],
+        ),
+      );
+      accountVerification = null;
+      isSyndicateCardRequired = '';
+      currentDoctorRole = '';
+      isUnreadNotification = false;
+      emit(const HomeState.initial());
+
+      // Single navigation entry — Dio interceptor must not also push Sign In.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final nav = navigatorKey.currentState;
+        if (nav == null) return;
+        final context = navigatorKey.currentContext;
+        final currentName =
+            context != null ? ModalRoute.of(context)?.settings.name : null;
+        if (currentName == AppRoutes.signIn) return;
+        nav.pushNamedAndRemoveUntil(AppRoutes.signIn, (route) => false);
+      });
+    } finally {
+      // Allow a later login's getHome / another expiry after re-auth.
+      Future<void>.delayed(const Duration(seconds: 2), () {
+        _signingOutUnauthInFlight = false;
+      });
+    }
   }
 
   removeNotificationCount() {

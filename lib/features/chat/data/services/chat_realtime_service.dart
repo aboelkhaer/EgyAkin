@@ -270,6 +270,13 @@ class ChatRealtimeService with WidgetsBindingObserver {
   Future<void>? _authorizeFuture;
   DateTime? _lastAuthorizeTime;
 
+  /// clientId of the live [_realtime] (token must match). Cleared on close.
+  String? _connectedClientId;
+
+  /// Bumped on every new Realtime construction so a superseded connect closes
+  /// its orphan client instead of racing into [_realtime].
+  int _connectSerial = 0;
+
   Timer? _backgroundLeaveTimer;
   bool _isLeavingForBackground = false;
 
@@ -434,7 +441,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
           binding.channel.state == ably.ChannelState.attaching;
       if (!wanted.contains(id) || !healthy) await _detachChannel(id);
     }
-    if (wanted.isEmpty || userId == null) return;
+    if (wanted.isEmpty || userId == null || userId <= 0) return;
 
     await _ensureConnected(clientId: '$userId');
     if (_realtime?.connection.state != ably.ConnectionState.connected) return;
@@ -513,6 +520,21 @@ class ChatRealtimeService with WidgetsBindingObserver {
     String? imageUrl,
     bool forceReenter = false,
   }) async {
+    if (currentUserId <= 0) {
+      debugPrint('Ably ensureAppPresence skipped: invalid userId=$currentUserId');
+      return;
+    }
+
+    // Logout → login as someone else: never reuse the previous Realtime/clientId.
+    if (_presenceUserId != null &&
+        _presenceUserId != currentUserId &&
+        _realtime != null) {
+      debugPrint(
+        'Ably user changed $_presenceUserId → $currentUserId; resetting connection',
+      );
+      await _resetConnectionForUserChange();
+    }
+
     _presenceUserId = currentUserId;
     if (displayName != null) _presenceDisplayName = displayName;
     if (imageUrl != null) _presenceImageUrl = imageUrl;
@@ -543,7 +565,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
     required bool verifySelf,
   }) async {
     // Online means the app is open — never (re)enter from the background.
-    if (!_appInForeground) return;
+    if (!_appInForeground || currentUserId <= 0) return;
 
     await _ensureConnected(clientId: '$currentUserId');
     await _authorizeIfNeeded();
@@ -805,6 +827,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
   }
 
   Future<void> _ensureUserChannel(int userId) async {
+    if (userId <= 0) {
+      debugPrint('Ably skip user channel: invalid userId=$userId');
+      return;
+    }
     final realtime = _realtime;
     if (realtime == null ||
         realtime.connection.state != ably.ConnectionState.connected) {
@@ -980,7 +1006,52 @@ class ChatRealtimeService with WidgetsBindingObserver {
     });
   }
 
+  /// Null when [raw] is missing / `"0"` / empty — never open Ably without a user.
+  String? _resolveClientId(String? raw) {
+    final fromArg = raw?.trim();
+    if (fromArg != null && fromArg.isNotEmpty && fromArg != '0') {
+      return fromArg;
+    }
+    final uid = _presenceUserId;
+    if (uid != null && uid > 0) return '$uid';
+    return null;
+  }
+
+  Future<void> _resetConnectionForUserChange() async {
+    _connectSerial++; // supersede any in-flight _doConnect
+    _discardRealtimeBoundState();
+    _hasEnteredAppPresence = false;
+    final old = _realtime;
+    _realtime = null;
+    _connectedClientId = null;
+    // Keep an in-flight connect's Future identity so its finally can clear
+    // itself; do not leave callers waiting forever on a dead client.
+    _connectFuture = null;
+    _ensureAppPresenceFuture = null;
+    _authorizeFuture = null;
+    _lastAuthorizeTime = null;
+    try {
+      await old?.close();
+    } catch (_) {}
+  }
+
   Future<void> _ensureConnected({String? clientId}) async {
+    final resolved = _resolveClientId(clientId);
+    if (resolved == null) {
+      debugPrint('Ably skip connect: no valid clientId');
+      return;
+    }
+
+    // Token clientId must match ClientOptions.clientId — recreate on switch.
+    if (_realtime != null &&
+        _connectedClientId != null &&
+        _connectedClientId != resolved) {
+      debugPrint(
+        'Ably clientId mismatch ($_connectedClientId → $resolved); recreating',
+      );
+      await _resetConnectionForUserChange();
+    }
+
     if (_realtime != null) {
       final state = _realtime!.connection.state;
       if (state == ably.ConnectionState.connected) {
@@ -1044,19 +1115,36 @@ class ChatRealtimeService with WidgetsBindingObserver {
       return;
     }
 
-    _connectFuture = _doConnect(clientId);
+    // Final guard: never construct a second live Realtime.
+    final live = _realtime;
+    if (live != null) {
+      final st = live.connection.state;
+      if (st != ably.ConnectionState.closed &&
+          st != ably.ConnectionState.failed &&
+          st != ably.ConnectionState.closing) {
+        await _waitForConnectionConnected();
+        return;
+      }
+    }
+
+    final future = _doConnect(resolved);
+    _connectFuture = future;
     try {
-      await _connectFuture;
+      await future;
     } finally {
-      _connectFuture = null;
+      if (identical(_connectFuture, future)) {
+        _connectFuture = null;
+      }
     }
   }
 
   Future<void> _discardDeadRealtime() async {
     final dead = _realtime;
     if (dead == null) return;
+    _connectSerial++; // supersede any in-flight _doConnect
     _discardRealtimeBoundState();
     _lastAuthorizeTime = null;
+    _connectedClientId = null;
     try {
       await dead.close();
     } catch (_) {}
@@ -1079,7 +1167,31 @@ class ChatRealtimeService with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _doConnect(String? clientId) async {
+  Future<void> _doConnect(String clientId) async {
+    // Close any previous client before replacing — orphan Realtime instances
+    // stay billed/connected until close() (burst root cause).
+    final old = _realtime;
+    if (old != null) {
+      final st = old.connection.state;
+      if (st != ably.ConnectionState.closed &&
+          st != ably.ConnectionState.failed &&
+          st != ably.ConnectionState.closing) {
+        // Another path already owns a live client — do not construct again.
+        debugPrint(
+          'Ably _doConnect skipped: live client already exists (state=$st)',
+        );
+        await _waitForConnectionConnected();
+        return;
+      }
+      _discardRealtimeBoundState();
+      _connectedClientId = null;
+      unawaited(old.close());
+      if (identical(_realtime, old)) _realtime = null;
+    }
+
+    final serial = ++_connectSerial;
+    debugPrint('Ably _doConnect serial=$serial clientId=$clientId');
+
     final options = ably.ClientOptions(
       autoConnect: true,
       clientId: clientId,
@@ -1090,10 +1202,22 @@ class ChatRealtimeService with WidgetsBindingObserver {
       },
     );
     final realtime = ably.Realtime(options: options);
+
+    if (serial != _connectSerial) {
+      debugPrint('Ably _doConnect serial=$serial superseded; closing orphan');
+      unawaited(realtime.close());
+      return;
+    }
+
     _realtime = realtime;
+    _connectedClientId = clientId;
     _watchConnection(realtime);
 
     await _waitForConnectionConnected();
+    if (serial != _connectSerial || !identical(_realtime, realtime)) {
+      unawaited(realtime.close());
+      return;
+    }
     // The connection already fetched a token via authCallback.
     if (_realtime?.connection.state == ably.ConnectionState.connected) {
       _lastAuthorizeTime = DateTime.now();
@@ -1430,8 +1554,17 @@ class ChatRealtimeService with WidgetsBindingObserver {
   Map<String, dynamic> _presencePayload({
     required ChatComposerActivity activity,
   }) {
+    final userId = _presenceUserId;
+    if (userId == null || userId <= 0) {
+      return _presenceData(
+        currentUserId: 0,
+        displayName: _presenceDisplayName,
+        imageUrl: _presenceImageUrl,
+        activity: activity,
+      );
+    }
     return _presenceData(
-      currentUserId: _presenceUserId ?? 0,
+      currentUserId: userId,
       displayName: _presenceDisplayName,
       imageUrl: _presenceImageUrl,
       activity: activity,
@@ -1700,7 +1833,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
   /// (reconnect, re-enter, re-attach the open chat).
   Future<void> _repairPresence(String reason, {bool light = false}) async {
     final userId = _presenceUserId;
-    if (userId == null || !_appInForeground || _isLeavingForBackground) {
+    if (userId == null ||
+        userId <= 0 ||
+        !_appInForeground ||
+        _isLeavingForBackground) {
       return;
     }
     if (_presenceRepairFuture != null || _resumeInFlight > 0) return;
@@ -1779,6 +1915,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
       if (epoch != _lifecycleEpoch) return;
       final realtime = _realtime;
+      _connectSerial++;
       _discardRealtimeBoundState();
       try {
         await realtime?.close().timeout(const Duration(milliseconds: 400));
@@ -1788,6 +1925,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
       if (epoch != _lifecycleEpoch) return;
 
       if (identical(_realtime, realtime)) _realtime = null;
+      _connectedClientId = null;
       _connectFuture = null;
       _ensureAppPresenceFuture = null;
       _authorizeFuture = null;
@@ -1850,6 +1988,10 @@ class ChatRealtimeService with WidgetsBindingObserver {
     String? displayName,
     String? imageUrl,
   }) async {
+    if (currentUserId <= 0) {
+      debugPrint('Ably onAppResumed skipped: invalid userId=$currentUserId');
+      return;
+    }
     _resumeInFlight++;
     try {
       await _restoreAfterResume(
@@ -1872,6 +2014,12 @@ class ChatRealtimeService with WidgetsBindingObserver {
     _lifecycleEpoch++;
     _isLeavingForBackground = false;
 
+    if (_presenceUserId != null &&
+        _presenceUserId != currentUserId &&
+        _realtime != null) {
+      await _resetConnectionForUserChange();
+    }
+
     _presenceUserId = currentUserId;
     if (displayName != null) _presenceDisplayName = displayName;
     if (imageUrl != null) _presenceImageUrl = imageUrl;
@@ -1892,7 +2040,9 @@ class ChatRealtimeService with WidgetsBindingObserver {
         await current.close();
       } catch (_) {}
       if (identical(_realtime, current)) _realtime = null;
-      _connectFuture = null;
+      _connectedClientId = null;
+      // Do NOT clear `_connectFuture` — an in-flight connect must keep its
+      // guard so callers cannot open parallel Realtime clients.
       _ensureAppPresenceFuture = null;
     }
 
@@ -1946,6 +2096,17 @@ class ChatRealtimeService with WidgetsBindingObserver {
     String? displayName,
     String? imageUrl,
   }) async {
+    if (currentUserId <= 0) {
+      debugPrint(
+        'Ably subscribeToConversation skipped: invalid userId=$currentUserId',
+      );
+      return;
+    }
+    if (_presenceUserId != null &&
+        _presenceUserId != currentUserId &&
+        _realtime != null) {
+      await _resetConnectionForUserChange();
+    }
     _presenceUserId = currentUserId;
     if (displayName != null) _presenceDisplayName = displayName;
     if (imageUrl != null) _presenceImageUrl = imageUrl;
@@ -2330,6 +2491,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
 
   Future<void> disconnect() async {
     // Signed out — nothing may re-enter presence for this account.
+    _connectSerial++;
     _presenceUserId = null;
     _activeChatConversationId = null;
     _inboxListenIds = const {};
@@ -2372,6 +2534,7 @@ class ChatRealtimeService with WidgetsBindingObserver {
       await _realtime?.close();
     } catch (_) {}
     _realtime = null;
+    _connectedClientId = null;
     _connectFuture = null;
     _authorizeFuture = null;
     _lastAuthorizeTime = null;

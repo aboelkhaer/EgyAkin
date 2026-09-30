@@ -20,6 +20,14 @@ const _kReactionReserve = 18.0;
 /// How far the badge hangs below the bubble into the reserved space.
 const _kReactionHang = 16.0;
 
+String _localizedBubbleTime(BuildContext context, ChatMessageItem message) {
+  final createdAt = message.createdAt;
+  if (createdAt != null) {
+    return ChatMappers.formatMessageTime(createdAt.toIso8601String());
+  }
+  return message.timeLabel;
+}
+
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessageItem message;
   final String? peerImageUrl;
@@ -100,6 +108,8 @@ class ChatMessageMetaRow extends StatelessWidget {
             : null;
 
         return Row(
+          // Keep time then ticks LTR so status stays on the right in Arabic.
+          textDirection: TextDirection.ltr,
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment:
               alignEnd ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -118,11 +128,16 @@ class ChatMessageMetaRow extends StatelessWidget {
               SizedBox(width: 4.w),
             ],
             Text(
-              message.timeLabel,
+              _localizedBubbleTime(context, message),
               style: TextStyle(
-                fontSize: 10.sp,
-                height: 1.0,
+                // Arabic glyphs (and Eastern digits) read smaller at the same
+                // point size — bump slightly so the footer matches EN visually.
+                fontSize: context.isRTL ? 12.sp : 10.sp,
+                height: context.isRTL ? 1.15 : 1.0,
                 color: timeColor,
+                fontFamily: context.isRTL ? 'Tajawal' : null,
+                fontWeight:
+                    context.isRTL ? FontWeight.w500 : FontWeight.normal,
                 shadows: shadow,
               ),
             ),
@@ -1050,12 +1065,12 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                     (hasAttachmentImages || hasVoice || hasFiles || edgeBleed)
                         ? 10.w
                         : 0,
-                // Incoming text: a bit more air before the time; links/outgoing stay tight.
+                // Keep time close under the message (same for in/out).
                 top: hasLinkPreview
                     ? 6.h
                     : hasVoice || hasFiles
                         ? 2.h
-                        : (isOutgoing ? 1.h : 5.h),
+                        : 1.h,
               ),
               child: ChatMessageMetaRow(
                 message: message,
@@ -1443,53 +1458,59 @@ class _IncomingBubble extends StatelessWidget {
             ? (_kBubbleBaseBottomPadding + _kReactionReserve).h
             : _kBubbleBaseBottomPadding.h,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (isGroup) ...[
-            if (!hideOuterAvatar && message.showAvatar)
-              Padding(
-                padding: EdgeInsets.only(right: 6.w, bottom: 4.h),
-                child: CircleAvatar(
-                  radius: 12.r,
-                  backgroundColor: AppColors.primary.withOpacity(0.15),
-                  child: avatarUrl != null && avatarUrl.isNotEmpty
-                      ? ClipOval(
-                          child: CustomCachedNetworkImage(
-                            imageUrl: avatarUrl,
-                            width: 24.r,
-                            height: 24.r,
-                            fit: BoxFit.cover,
+      // Keep peer bubbles on the physical left in Arabic (RTL) too — chat
+      // sides are sender-based, not reading-direction-based.
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          textDirection: TextDirection.ltr,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (isGroup) ...[
+              if (!hideOuterAvatar && message.showAvatar)
+                Padding(
+                  padding: EdgeInsets.only(right: 6.w, bottom: 4.h),
+                  child: CircleAvatar(
+                    radius: 12.r,
+                    backgroundColor: AppColors.primary.withOpacity(0.15),
+                    child: avatarUrl != null && avatarUrl.isNotEmpty
+                        ? ClipOval(
+                            child: CustomCachedNetworkImage(
+                              imageUrl: avatarUrl,
+                              width: 24.r,
+                              height: 24.r,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Text(
+                            avatarInitials,
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 9.sp,
+                            ),
                           ),
-                        )
-                      : Text(
-                          avatarInitials,
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 9.sp,
-                          ),
-                        ),
-                ),
-              )
-            else if (!hideOuterAvatar)
-              SizedBox(width: 30.w),
-          ],
-          Flexible(
-            child: MessageBubbleCard(
-              message: message,
-              isDarkMode: isDarkMode,
-              isOutgoing: false,
-              peerImageUrl: avatarUrl,
-              peerInitials: avatarInitials,
-              isGroup: isGroup,
-              showSenderName: showSenderName,
-              onLongPress: onLongPress,
-              onReactionTap: onReactionTap,
-              onReplyQuoteTap: onReplyQuoteTap,
+                  ),
+                )
+              else if (!hideOuterAvatar)
+                SizedBox(width: 30.w),
+            ],
+            Flexible(
+              child: MessageBubbleCard(
+                message: message,
+                isDarkMode: isDarkMode,
+                isOutgoing: false,
+                peerImageUrl: avatarUrl,
+                peerInitials: avatarInitials,
+                isGroup: isGroup,
+                showSenderName: showSenderName,
+                onLongPress: onLongPress,
+                onReactionTap: onReactionTap,
+                onReplyQuoteTap: onReplyQuoteTap,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -340,6 +340,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               child: Scaffold(
                 backgroundColor: HomeDashboardColors.scaffold(isDarkMode),
+                resizeToAvoidBottomInset: false,
                 body: Column(
                   children: [
                     BlocConsumer<HomeCubit, HomeState>(
@@ -542,9 +543,9 @@ class _HomeScreenState extends State<HomeScreen>
                                 : Colors.white,
                             popAllScreensOnTapAnyTabs: true,
                             handleAndroidBackButtonPress: true,
-                            resizeToAvoidBottomInset: true,
+                            resizeToAvoidBottomInset: false,
                             stateManagement: true,
-                            hideNavigationBarWhenKeyboardShows: true,
+                            hideNavigationBarWhenKeyboardShows: false,
                             hideNavigationBar: hideNav,
                             // Content extends under the floating pill (opacity < 1
                             // on items). Keep margin fixed — only the bar slides.

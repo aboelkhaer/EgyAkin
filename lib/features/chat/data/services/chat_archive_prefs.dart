@@ -246,6 +246,7 @@ class ChatArchivePrefs {
         'subtitle': t.subtitle,
         'preview': t.preview,
         'timeLabel': t.timeLabel,
+        'lastActivityAt': t.lastActivityAt,
         'initials': t.initials,
         'kind': t.kind.name,
         'unreadCount': t.unreadCount,
@@ -276,6 +277,7 @@ class ChatArchivePrefs {
         subtitle: j['subtitle'] as String? ?? '',
         preview: j['preview'] as String? ?? '',
         timeLabel: j['timeLabel'] as String? ?? '',
+        lastActivityAt: j['lastActivityAt'] as String?,
         initials: j['initials'] as String? ?? '?',
         kind: InboxThreadKind.values.firstWhere(
           (e) => e.name == j['kind'],

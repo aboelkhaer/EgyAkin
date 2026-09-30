@@ -120,7 +120,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                   key: cubit.listKeyForReplies[replyModel.id],
                   duration: const Duration(milliseconds: 220),
                   curve: Curves.easeOut,
-                  padding: EdgeInsets.fromLTRB(10.w, 10.h, 8.w, 8.h),
+                  padding: EdgeInsetsDirectional.fromSTEB(10.w, 10.h, 8.w, 8.h),
                   decoration: BoxDecoration(
                     color: isHighlighted
                         ? primary.withOpacity(isDark ? 0.16 : 0.1)
@@ -149,7 +149,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Row(
                               children: [
@@ -175,9 +175,11 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                         ),
                                       ),
                                       if (isVerified)
-                                        const Padding(
-                                          padding: EdgeInsets.only(left: 3),
-                                          child: VerificationIcon(
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.only(
+                                            start: 3,
+                                          ),
+                                          child: const VerificationIcon(
                                             duration: 300,
                                             isSmaller: true,
                                           ),
@@ -201,7 +203,9 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                 if (_canManage())
                                   deleting
                                       ? Padding(
-                                          padding: EdgeInsets.only(left: 4.w),
+                                          padding: EdgeInsetsDirectional.only(
+                                            start: 4.w,
+                                          ),
                                           child: SizedBox(
                                             width: 12,
                                             height: 12,
@@ -273,11 +277,13 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: 6.h),
-                            Align(
-                              alignment: ChatTextDirection.resolve(replyText) ==
-                                      TextDirection.rtl
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
+                            Container(
+                              width: double.infinity,
+                              alignment:
+                                  ChatTextDirection.resolve(replyText) ==
+                                          TextDirection.rtl
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
                               child: HashtagText(
                                 content: replyText,
                                 currentDoctorModel: currentDoctorModel,

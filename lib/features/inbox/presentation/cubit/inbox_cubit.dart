@@ -81,6 +81,7 @@ class InboxCubit extends Cubit<InboxState> {
   bool _archivedScreenVisible = false;
   List<int> _inboxListenIds = const [];
   Timer? _inboxListenLinger;
+
   /// Cap conversation-row Ably attaches. Each row = one
   /// `presence:conversation.{id}` channel. Combined with the user channel,
   /// `presence:app`, and an open chat room, a high cap burns the account's
@@ -609,6 +610,8 @@ class InboxCubit extends Cubit<InboxState> {
           timeLabel: ChatMappers.formatInboxTime(
             message.createdAt ?? DateTime.now().toIso8601String(),
           ),
+          lastActivityAt:
+              message.createdAt ?? DateTime.now().toIso8601String(),
           unreadCount: becomesUnread
               ? (_threads[idx].unreadCount + 1)
               : (isViewing || isMine ? 0 : _threads[idx].unreadCount),
@@ -704,8 +707,9 @@ class InboxCubit extends Cubit<InboxState> {
       case ChatMessageReactedEvent(:final conversationId):
         // Server writes a reaction sentence into last_message.content — refresh
         // the list (debounced) so the row picks it up without pull-to-refresh.
-        final inList = _threads.any((t) => t.conversationId == conversationId) ||
-            _archivedThreads.any((t) => t.conversationId == conversationId);
+        final inList =
+            _threads.any((t) => t.conversationId == conversationId) ||
+                _archivedThreads.any((t) => t.conversationId == conversationId);
         if (inList) refreshSoon();
       case ChatUserTypingEvent(
           :final conversationId,
@@ -871,9 +875,8 @@ class InboxCubit extends Cubit<InboxState> {
     final isViewing = _realtime.isViewingConversation(conversationId);
     final becomesUnread = !isMine && !isViewing;
     final preview = (event.messagePreview ?? '').trim();
-    final timeLabel = ChatMappers.formatInboxTime(
-      event.createdAt ?? DateTime.now().toIso8601String(),
-    );
+    final activityAt = event.createdAt ?? DateTime.now().toIso8601String();
+    final timeLabel = ChatMappers.formatInboxTime(activityAt);
 
     InboxThread apply(InboxThread t) => t.copyWith(
           preview: preview.isEmpty ? t.preview : preview,
@@ -884,6 +887,7 @@ class InboxCubit extends Cubit<InboxState> {
               ? t.previewCount
               : ChatMappers.previewCountFromText(preview),
           timeLabel: timeLabel,
+          lastActivityAt: activityAt,
           unreadCount: becomesUnread
               ? t.unreadCount + 1
               : (isViewing || isMine ? 0 : t.unreadCount),
@@ -1179,6 +1183,7 @@ class InboxCubit extends Cubit<InboxState> {
       timeLabel: ChatMappers.formatInboxTime(
         message.createdAt ?? DateTime.now().toIso8601String(),
       ),
+      lastActivityAt: message.createdAt ?? DateTime.now().toIso8601String(),
       unreadCount: becomesUnread
           ? (previous.unreadCount + 1)
           : (isViewing || isMine ? 0 : previous.unreadCount),
@@ -2201,6 +2206,7 @@ class InboxCubit extends Cubit<InboxState> {
       previewKind: kind,
       previewCount: count,
       timeLabel: AppStrings.now,
+      lastActivityAt: DateTime.now().toIso8601String(),
       lastMessageStatus: ChatMessageStatus.sent,
       conversationId: resolvedConversationId,
       unreadCount: 0,
@@ -2227,9 +2233,7 @@ class InboxCubit extends Cubit<InboxState> {
     if (filter != null) _filter = filter;
     // Home shell and the chats tab both start this on open.
     // Filter chip taps use [supersede] so a slow prior response is discarded.
-    if (refresh &&
-        !supersede &&
-        (_inboxPageRequestInFlight || _isRefreshing)) {
+    if (refresh && !supersede && (_inboxPageRequestInFlight || _isRefreshing)) {
       return;
     }
 

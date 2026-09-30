@@ -119,8 +119,6 @@ class _HomeTabState extends State<HomeTab> {
                   if (message == 'Unauthenticated.') {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       context.read<HomeCubit>().signOutForUnUnauthenticated();
-                      navigatorKey.currentState
-                          ?.pushReplacementNamed(AppRoutes.signIn);
                     });
                   }
                 },

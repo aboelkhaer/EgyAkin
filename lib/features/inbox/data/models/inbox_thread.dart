@@ -28,6 +28,8 @@ class InboxThread {
   final String subtitle;
   final String preview;
   final String timeLabel;
+  /// ISO timestamp used to rebuild [timeLabel] when the locale changes.
+  final String? lastActivityAt;
   final String initials;
   final InboxThreadKind kind;
   final int unreadCount;
@@ -66,6 +68,7 @@ class InboxThread {
     required this.subtitle,
     required this.preview,
     required this.timeLabel,
+    this.lastActivityAt,
     required this.initials,
     required this.kind,
     this.unreadCount = 0,
@@ -135,6 +138,7 @@ class InboxThread {
   InboxThread copyWith({
     String? preview,
     String? timeLabel,
+    String? lastActivityAt,
     int? unreadCount,
     bool? isPriority,
     ChatMessageStatus? lastMessageStatus,
@@ -159,6 +163,7 @@ class InboxThread {
       subtitle: subtitle,
       preview: preview ?? this.preview,
       timeLabel: timeLabel ?? this.timeLabel,
+      lastActivityAt: lastActivityAt ?? this.lastActivityAt,
       initials: initials,
       kind: kind,
       unreadCount: unreadCount ?? this.unreadCount,

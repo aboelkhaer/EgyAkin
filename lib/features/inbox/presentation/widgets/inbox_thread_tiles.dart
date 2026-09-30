@@ -13,6 +13,33 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../exports.dart';
 
+String _inboxDisplayTime(InboxThread thread) {
+  final iso = thread.lastActivityAt;
+  if (iso != null && iso.isNotEmpty) {
+    return ChatMappers.formatInboxTime(iso);
+  }
+  // Fallback: convert cached English relative labels when UI is Arabic.
+  if (LocalizationService.instance.isRTL) {
+    final m = RegExp(r'^(\d+)([mhd])$').firstMatch(thread.timeLabel.trim());
+    if (m != null) {
+      const western = '0123456789';
+      const eastern = '٠١٢٣٤٥٦٧٨٩';
+      final n = m.group(1)!.split('').map((c) {
+        final i = western.indexOf(c);
+        return i >= 0 ? eastern[i] : c;
+      }).join();
+      final unit = switch (m.group(2)!) {
+        'm' => 'د',
+        'h' => 'س',
+        'd' => 'ي',
+        _ => m.group(2)!,
+      };
+      return '$n $unit';
+    }
+  }
+  return thread.timeLabel;
+}
+
 class InboxThreadCard extends StatelessWidget {
   final InboxThread thread;
   final bool isDark;
@@ -276,9 +303,9 @@ class InboxThreadCard extends StatelessWidget {
                       SizedBox(width: 4.w),
                     ],
                     Text(
-                      thread.timeLabel == AppStrings.now
+                      _inboxDisplayTime(thread) == AppStrings.now
                           ? context.tr(AppStrings.now)
-                          : thread.timeLabel,
+                          : _inboxDisplayTime(thread),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
@@ -544,9 +571,9 @@ class _AdHocGroupThreadRow extends StatelessWidget {
                       SizedBox(width: 4.w),
                     ],
                     Text(
-                      thread.timeLabel == AppStrings.now
+                      _inboxDisplayTime(thread) == AppStrings.now
                           ? context.tr(AppStrings.now)
-                          : thread.timeLabel,
+                          : _inboxDisplayTime(thread),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w500,

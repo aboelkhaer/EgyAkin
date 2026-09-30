@@ -121,84 +121,102 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
     final cubit = ShowSingleFeedCubit.get(context);
     final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    // Never drop below the home-indicator inset. `padding.bottom` is often 0
-    // while the keyboard is animating away, which made the bar flash too low.
-    final bottomInset = keyboard > safeBottom ? keyboard : safeBottom;
 
     return PermissionGuard(
       permission: AppPermissions.createFeedComment,
-      child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
-          final primary = HomeDashboardColors.primary(isDark);
-          _controller.updateHashtagStyle(_hashtagStyle(primary));
+      child: ListenableBuilder(
+        listenable: cubit.commentFocusNode,
+        builder: (context, _) {
+          // Only ride the keyboard when THIS field is focused. Otherwise stay
+          // pinned to the screen bottom (hidden behind the keyboard) so poll
+          // "add option" / other fields aren't covered by the comment bar.
+          final commentFocused = cubit.commentFocusNode.hasFocus;
+          final bottomInset = commentFocused && keyboard > safeBottom
+              ? keyboard
+              : safeBottom;
+          final hideBehindKeyboard = keyboard > 0 && !commentFocused;
 
-          return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-            buildWhen: (previous, current) {
-              bool sendingOf(ShowSingleFeedState s) => s.maybeWhen(
-                    loaded: (_, __, ___, isSendCommentLoading, ____, _____,
-                            ______, _______, ________, isSendReplyLoading,
-                            _________, __________) =>
+          return BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              final isDark =
+                  themeState is ThemeLoaded && themeState.isDarkMode;
+              final primary = HomeDashboardColors.primary(isDark);
+              _controller.updateHashtagStyle(_hashtagStyle(primary));
+
+              return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
+                buildWhen: (previous, current) {
+                  bool sendingOf(ShowSingleFeedState s) => s.maybeWhen(
+                        loaded: (_, __, ___, isSendCommentLoading, ____,
+                                _____, ______, _______, ________,
+                                isSendReplyLoading, _________, __________) =>
+                            isSendCommentLoading || isSendReplyLoading,
+                        orElse: () => false,
+                      );
+                  List? commentsOf(ShowSingleFeedState s) => s.maybeWhen(
+                        loaded: (commentsResponse, _, __, ___, ____, _____,
+                                ______, _______, ________, _________,
+                                __________, ___________) =>
+                            commentsResponse.data?.data,
+                        orElse: () => null,
+                      );
+                  return sendingOf(previous) != sendingOf(current) ||
+                      !identical(commentsOf(previous), commentsOf(current));
+                },
+                builder: (context, state) {
+                  final isSending = state.maybeWhen(
+                    loaded: (
+                      _,
+                      __,
+                      ___,
+                      isSendCommentLoading,
+                      ____,
+                      _____,
+                      ______,
+                      _______,
+                      ________,
+                      isSendReplyLoading,
+                      _________,
+                      __________,
+                    ) =>
                         isSendCommentLoading || isSendReplyLoading,
                     orElse: () => false,
                   );
-              // Also rebuild when comments list identity changes (for submit payload).
-              List? commentsOf(ShowSingleFeedState s) => s.maybeWhen(
+
+                  final commentsData = state.maybeWhen(
                     loaded: (commentsResponse, _, __, ___, ____, _____, ______,
                             _______, ________, _________, __________,
                             ___________) =>
                         commentsResponse.data?.data,
                     orElse: () => null,
                   );
-              return sendingOf(previous) != sendingOf(current) ||
-                  !identical(commentsOf(previous), commentsOf(current));
-            },
-            builder: (context, state) {
-              final isSending = state.maybeWhen(
-                loaded: (
-                  _,
-                  __,
-                  ___,
-                  isSendCommentLoading,
-                  ____,
-                  _____,
-                  ______,
-                  _______,
-                  ________,
-                  isSendReplyLoading,
-                  _________,
-                  __________,
-                ) =>
-                    isSendCommentLoading || isSendReplyLoading,
-                orElse: () => false,
-              );
 
-              final commentsData = state.maybeWhen(
-                loaded: (commentsResponse, _, __, ___, ____, _____, ______,
-                        _______, ________, _________, __________, ___________) =>
-                    commentsResponse.data?.data,
-                orElse: () => null,
-              );
+                  final canSend = _hasText && !isSending;
 
-              final canSend = _hasText && !isSending;
-
-              // Always keep the composer mounted to avoid bottom-bar flashes.
-              return _ComposerShell(
-                isDark: isDark,
-                primary: primary,
-                bottomInset: bottomInset,
-                replyingTo: cubit.commentToReply,
-                hasText: _hasText,
-                canSend: canSend,
-                isSending: isSending,
-                controller: _controller,
-                textDirection: _textDirection,
-                focusNode: cubit.commentFocusNode,
-                onClearReply: () {
-                  cubit.clearReplyTarget();
-                  setState(() {});
+                  // Always keep the composer mounted to avoid bottom-bar flashes.
+                  return IgnorePointer(
+                    ignoring: hideBehindKeyboard,
+                    child: Opacity(
+                      opacity: hideBehindKeyboard ? 0 : 1,
+                      child: _ComposerShell(
+                        isDark: isDark,
+                        primary: primary,
+                        bottomInset: bottomInset,
+                        replyingTo: cubit.commentToReply,
+                        hasText: _hasText,
+                        canSend: canSend,
+                        isSending: isSending,
+                        controller: _controller,
+                        textDirection: _textDirection,
+                        focusNode: cubit.commentFocusNode,
+                        onClearReply: () {
+                          cubit.clearReplyTarget();
+                          setState(() {});
+                        },
+                        onSend: () => _submit(cubit, commentsData),
+                      ),
+                    ),
+                  );
                 },
-                onSend: () => _submit(cubit, commentsData),
               );
             },
           );
@@ -321,7 +339,7 @@ class _ComposerShell extends StatelessWidget {
                             maxHeight: (barHeight * maxLines) + 12,
                           ),
                           child: Stack(
-                            alignment: Alignment.topLeft,
+                            alignment: AlignmentDirectional.topStart,
                             children: [
                               TextField(
                                 controller: controller,
@@ -382,17 +400,22 @@ class _ComposerShell extends StatelessWidget {
                                       16.w,
                                       0,
                                     ),
-                                    child: Text(
-                                      context.tr(AppStrings.writeComment),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        height: 1.2,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Tajawal',
-                                        color: HomeDashboardColors.subtitle(
-                                          isDark,
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: Text(
+                                        context.tr(AppStrings.writeComment),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.start,
+                                        textDirection: textDirection,
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          height: 1.2,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Tajawal',
+                                          color: HomeDashboardColors.subtitle(
+                                            isDark,
+                                          ),
                                         ),
                                       ),
                                     ),

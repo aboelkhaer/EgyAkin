@@ -171,7 +171,9 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.signIn:
-        return MaterialPageRoute(
+        return FadeSwipeBackPageRoute(
+          settings: settings,
+          fadeDuration: const Duration(milliseconds: 380),
           builder: (_) => BlocProvider<AuthenticationCubit>(
             create: (context) => di.sl<AuthenticationCubit>()..getFCMToken(),
             child: const SignInScreen(),

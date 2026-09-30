@@ -1201,6 +1201,10 @@ class _ScrollHintChipRowState extends State<_ScrollHintChipRow> {
   Widget build(BuildContext context) {
     final scaffold = HomeDashboardColors.scaffold(widget.isDark);
     final fadeWidth = 28.w;
+    final isRtl = context.isRTL;
+    // In RTL the list starts on the right; "more content" is toward the left.
+    final moreOnLeft = isRtl ? _canScrollRight : _canScrollLeft;
+    final moreOnRight = isRtl ? _canScrollLeft : _canScrollRight;
 
     return Stack(
       children: [
@@ -1211,48 +1215,88 @@ class _ScrollHintChipRowState extends State<_ScrollHintChipRow> {
             parent: AlwaysScrollableScrollPhysics(),
           ),
           padding: EdgeInsets.only(
-            left: 16.w,
-            right: (_canScrollRight ? 28.w : 16.w),
+            left: moreOnLeft ? 28.w : 16.w,
+            right: moreOnRight ? 28.w : 16.w,
           ),
           children: widget.children,
         ),
-        // Left fade — more content behind
+        // Left fade (+ chevron in Arabic when more chips are that way)
         IgnorePointer(
           child: AnimatedOpacity(
-            opacity: _canScrollLeft ? 1 : 0,
+            opacity: moreOnLeft ? 1 : 0,
             duration: const Duration(milliseconds: 180),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Container(
-                width: fadeWidth,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      scaffold,
-                      scaffold.withOpacity(0),
-                    ],
-                  ),
+              child: SizedBox(
+                width: isRtl ? 36.w : fadeWidth,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Container(
+                      width: fadeWidth + (isRtl ? 8.w : 0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            scaffold,
+                            scaffold.withOpacity(0),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (isRtl)
+                      Padding(
+                        padding: EdgeInsets.only(left: 4.w),
+                        child: Container(
+                          width: 18.r,
+                          height: 18.r,
+                          decoration: BoxDecoration(
+                            color: widget.isDark
+                                ? const Color(0xFF2A2A2E)
+                                : const Color(0xFFE8E8ED),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.12),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          // Keep physical left chevron; Material mirrors
+                          // directional icons under RTL Directionality.
+                          child: Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Icon(
+                              Icons.chevron_left_rounded,
+                              size: 14.sp,
+                              color:
+                                  HomeDashboardColors.subtitle(widget.isDark),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
-        // Right fade + chevron cue
+        // Right fade (+ chevron cue in LTR)
         IgnorePointer(
           child: AnimatedOpacity(
-            opacity: _canScrollRight ? 1 : 0,
+            opacity: moreOnRight ? 1 : 0,
             duration: const Duration(milliseconds: 180),
             child: Align(
               alignment: Alignment.centerRight,
               child: SizedBox(
-                width: 36.w,
+                width: isRtl ? fadeWidth : 36.w,
                 child: Stack(
                   alignment: Alignment.centerRight,
                   children: [
                     Container(
-                      width: fadeWidth + 8.w,
+                      width: fadeWidth + (isRtl ? 0 : 8.w),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.centerRight,
@@ -1264,31 +1308,32 @@ class _ScrollHintChipRowState extends State<_ScrollHintChipRow> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 4.w),
-                      child: Container(
-                        width: 18.r,
-                        height: 18.r,
-                        decoration: BoxDecoration(
-                          color: widget.isDark
-                              ? const Color(0xFF2A2A2E)
-                              : const Color(0xFFE8E8ED),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.12),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          size: 14.sp,
-                          color: HomeDashboardColors.subtitle(widget.isDark),
+                    if (!isRtl)
+                      Padding(
+                        padding: EdgeInsets.only(right: 4.w),
+                        child: Container(
+                          width: 18.r,
+                          height: 18.r,
+                          decoration: BoxDecoration(
+                            color: widget.isDark
+                                ? const Color(0xFF2A2A2E)
+                                : const Color(0xFFE8E8ED),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.12),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.chevron_right_rounded,
+                            size: 14.sp,
+                            color: HomeDashboardColors.subtitle(widget.isDark),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

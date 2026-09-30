@@ -87,11 +87,44 @@ class ChatMessageListState extends State<ChatMessageList> {
     super.initState();
     _scrollController = ScrollController()..addListener(_onScroll);
     for (final m in widget.messages) {
-      _seenIds.add(m.clientTempId ?? m.id);
+      _markSeen(m);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _schedulePinnedDateUpdate(show: false);
     });
+  }
+
+  void _markSeen(ChatMessageItem m) {
+    _seenIds.add(m.id);
+    final temp = m.clientTempId;
+    if (temp != null && temp.isNotEmpty) _seenIds.add(temp);
+  }
+
+  bool _isSeen(ChatMessageItem m) {
+    if (_seenIds.contains(m.id)) return true;
+    final temp = m.clientTempId;
+    return temp != null && temp.isNotEmpty && _seenIds.contains(temp);
+  }
+
+  void _markEnterPlayed(ChatMessageItem m) {
+    _enterAnimPlayed.add(m.id);
+    final temp = m.clientTempId;
+    if (temp != null && temp.isNotEmpty) _enterAnimPlayed.add(temp);
+  }
+
+  bool _hasEnterPlayed(ChatMessageItem m) {
+    if (_enterAnimPlayed.contains(m.id)) return true;
+    final temp = m.clientTempId;
+    return temp != null &&
+        temp.isNotEmpty &&
+        _enterAnimPlayed.contains(temp);
+  }
+
+  /// Resume soft-reloads must not replay the send pop-in for old rows.
+  bool _isFreshForEnterAnim(ChatMessageItem m) {
+    final created = m.createdAt;
+    if (created == null) return true;
+    return DateTime.now().difference(created) <= const Duration(seconds: 3);
   }
 
   @override
@@ -100,14 +133,18 @@ class ChatMessageListState extends State<ChatMessageList> {
     if (widget.messages.isEmpty) return;
     final newest = widget.messages.last;
     final identity = newest.clientTempId ?? newest.id;
-    if (!_seenIds.contains(identity)) {
+    // Treat temp id and server id as the same message so resume reloads
+    // (which may briefly drop clientTempId) do not re-trigger the send pop-in.
+    if (!_isSeen(newest)) {
       // System notices (rename, etc.) should appear without the send pop-in.
-      if (!newest.isSystem) {
+      if (!newest.isSystem && _isFreshForEnterAnim(newest)) {
         _latestAnimatedId = identity;
       }
       for (final m in widget.messages) {
-        _seenIds.add(m.clientTempId ?? m.id);
+        _markSeen(m);
       }
+    } else {
+      _markSeen(newest);
     }
     if (!identical(oldWidget.messages, widget.messages)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -444,10 +481,11 @@ class ChatMessageListState extends State<ChatMessageList> {
                     // does not remount / replay the send animation.
                     final identity = message.clientTempId ?? message.id;
                     final shouldAnimate = identity == _latestAnimatedId &&
-                        !_enterAnimPlayed.contains(identity) &&
-                        !message.isSystem;
+                        !_hasEnterPlayed(message) &&
+                        !message.isSystem &&
+                        _isFreshForEnterAnim(message);
                     if (shouldAnimate) {
-                      _enterAnimPlayed.add(identity);
+                      _markEnterPlayed(message);
                     }
                     final isFlashing = widget.flashMessageId == message.id;
                     final showDateChip = _isFirstMessageOfDay(
