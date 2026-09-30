@@ -1,7 +1,9 @@
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat_room/presentation/widgets/chat_attachment_image.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/inbox/data/models/inbox_thread.dart';
+import 'package:get_it/get_it.dart';
 
 /// WhatsApp-style "More" sheet opened from the inbox swipe action.
 Future<InboxChatMoreAction?> showInboxChatMoreSheet({
@@ -46,6 +48,11 @@ class _InboxChatMoreSheet extends StatelessWidget {
 
   bool get _canBlock =>
       !_isGroup && (thread.counterpartUserId ?? 0) > 0;
+
+  bool get _isBlocked =>
+      _canBlock &&
+      GetIt.I.isRegistered<ChatBlockService>() &&
+      GetIt.I<ChatBlockService>().isBlocked(thread.counterpartUserId);
 
   @override
   Widget build(BuildContext context) {
@@ -169,9 +176,12 @@ class _InboxChatMoreSheet extends StatelessWidget {
                         children: [
                           if (_canBlock) ...[
                             _MoreRow(
-                              icon: Icons.block,
-                              label:
-                                  '${context.tr(AppStrings.block)} ${thread.title}',
+                              icon: _isBlocked
+                                  ? Icons.lock_open_rounded
+                                  : Icons.block,
+                              label: _isBlocked
+                                  ? context.tr(AppStrings.unblock)
+                                  : '${context.tr(AppStrings.block)} ${thread.title}',
                               color: destructive,
                               onTap: () => Navigator.pop(
                                 context,

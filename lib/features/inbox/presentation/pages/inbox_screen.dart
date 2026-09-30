@@ -1,7 +1,8 @@
 import 'package:egy_akin/features/chat/data/services/chat_archive_prefs.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
+import 'package:egy_akin/features/chat/presentation/widgets/show_block_user_dialog.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/inbox/data/models/inbox_thread.dart';
 import 'package:egy_akin/features/inbox/presentation/cubit/inbox_cubit.dart';
@@ -352,31 +353,7 @@ class _InboxScreenState extends State<InboxScreen> {
     final doctorId = thread.counterpartUserId;
     if (doctorId == null) return;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          '${context.tr(AppStrings.block)} ${thread.title}?',
-          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(context.tr(AppStrings.cancel)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              context.tr(AppStrings.block),
-              style: const TextStyle(color: Color(0xFFE11D48)),
-            ),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-
-    if (!GetIt.I.isRegistered<BlockUserUsecase>()) {
+    if (!GetIt.I.isRegistered<ChatBlockService>()) {
       customSnackBar(
         context: context,
         message: context.tr(AppStrings.blockFailed),
@@ -384,26 +361,36 @@ class _InboxScreenState extends State<InboxScreen> {
       return;
     }
 
-    final result = await GetIt.I<BlockUserUsecase>().execute(
-      BlockUserUsecaseInput(
-        doctorId: doctorId.toString(),
-        status: true,
-      ),
+    final service = GetIt.I<ChatBlockService>();
+    final alreadyBlocked = service.isBlocked(doctorId);
+
+    if (alreadyBlocked) {
+      final result = await service.unblockUser(doctorId);
+      if (!mounted) return;
+      result.fold(
+        (_) => customSnackBar(
+          context: context,
+          message: context.tr(AppStrings.unblockFailed),
+        ),
+        (_) {},
+      );
+      return;
+    }
+
+    final confirmed = await showBlockUserDialog(
+      context: context,
+      displayName: thread.title,
     );
+    if (!confirmed || !mounted) return;
+
+    final result = await service.blockUser(doctorId);
     if (!mounted) return;
     result.fold(
       (_) => customSnackBar(
         context: context,
         message: context.tr(AppStrings.blockFailed),
       ),
-      (_) async {
-        await context.read<InboxCubit>().hideThread(thread);
-        if (!mounted) return;
-        customSnackBar(
-          context: context,
-          message: context.tr(AppStrings.userBlocked),
-        );
-      },
+      (_) {},
     );
   }
 

@@ -882,11 +882,9 @@ class ChatRealtimeService with WidgetsBindingObserver {
             createdAt: data['created_at']?.toString(),
           ),
         );
-      case 'message.read':
-      case 'message.delivered':
-        final conversationId = _asInt(data['conversation_id']);
-        if (conversationId == null) return;
-        _onMessage(message, conversationId: conversationId);
+      // Laravel currently broadcasts message.read / message.delivered only on
+      // presence:conversation.{id}, not on the private user channel — those
+      // cases would never run here. Receipts are handled in [_onMessage].
       default:
         debugPrint('Ably user channel event ignored: $name');
     }

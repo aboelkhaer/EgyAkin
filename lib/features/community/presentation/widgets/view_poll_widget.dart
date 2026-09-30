@@ -326,27 +326,33 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
 
                             // Show loading indicator when adding a new option
                             _isAddingOption
-                                ? IconButton(
-                                    color: Colors.transparent,
-                                    focusColor: Colors.transparent,
-                                    hoverColor: Colors.transparent,
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onPressed: () {},
-                                    icon: SizedBox(
-                                      height: 15,
-                                      width: 15,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : AppColors.primary,
+                                ? Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: IconButton(
+                                      color: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onPressed: () {},
+                                      icon: SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.primary,
+                                        ),
                                       ),
                                     ),
                                   )
-                                : IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: _addNewOption,
+                                : Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: _addNewOption,
+                                    ),
                                   ),
                           ],
                         ),

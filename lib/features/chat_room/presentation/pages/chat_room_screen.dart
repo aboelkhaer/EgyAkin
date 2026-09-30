@@ -5,6 +5,7 @@ import 'package:egy_akin/features/chat/data/mappers/chat_mappers.dart';
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/chat/data/models/chat_composer_activity.dart';
 import 'package:egy_akin/features/chat/data/models/chat_composer_activity_labels.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_state.dart';
@@ -65,10 +66,13 @@ class ChatRoomScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatRoomScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin, RouteAware {
+  static final ValueNotifier<int> _noBlockRevision = ValueNotifier<int>(0);
   static const Duration _chromeAnimDuration = Duration(milliseconds: 280);
+  static const Duration _composerSwapDuration = Duration(milliseconds: 420);
 
   ChatRoomCubit? _chatCubit;
   bool _routeObserved = false;
+  bool _isUnblocking = false;
 
   final HashtagTextEditingController _messageController =
       HashtagTextEditingController(
@@ -1910,42 +1914,98 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                                   ],
                                 ),
                               ),
-                              AnimatedSize(
-                                duration: const Duration(milliseconds: 280),
-                                curve: Curves.easeOutCubic,
-                                alignment: Alignment.topCenter,
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 260),
-                                  switchInCurve: Curves.easeOutCubic,
-                                  switchOutCurve: Curves.easeInCubic,
-                                  transitionBuilder: (child, animation) {
-                                    final slide = Tween<Offset>(
-                                      begin: const Offset(0, 0.18),
-                                      end: Offset.zero,
-                                    ).animate(animation);
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: SlideTransition(
-                                        position: slide,
-                                        child: child,
+                              ValueListenableBuilder<int>(
+                                valueListenable:
+                                    GetIt.I.isRegistered<ChatBlockService>()
+                                        ? GetIt.I<ChatBlockService>().revision
+                                        : _noBlockRevision,
+                                builder: (context, _, __) {
+                                  final roomCubit = widget.usesApi
+                                      ? context.read<ChatRoomCubit>()
+                                      : null;
+                                  final peerId = widget.chatType ==
+                                              ChatApiType.private ||
+                                          (ChatApiType.fromApi(
+                                                  widget.chatType) ==
+                                              ChatApiType.private)
+                                      ? widget.contextId
+                                      : null;
+                                  final iBlocked = roomCubit?.iBlockedPeer ==
+                                          true ||
+                                      (GetIt.I.isRegistered<
+                                              ChatBlockService>() &&
+                                          GetIt.I<ChatBlockService>()
+                                              .isBlocked(peerId));
+                                  final messagingLocked = roomCubit != null &&
+                                      (roomCubit.recipientUnavailable ||
+                                          iBlocked ||
+                                          _isUnblocking);
+
+                                  if (messagingLocked &&
+                                      (_messageFocusNode.hasFocus ||
+                                          _attachmentPanelOpen ||
+                                          _emojiPanelOpen)) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      if (!mounted) return;
+                                      _messageFocusNode.unfocus();
+                                      if (_attachmentPanelOpen) {
+                                        _closeAttachmentPanel();
+                                      }
+                                      if (_emojiPanelOpen) {
+                                        setState(() {
+                                          _emojiPanelOpen = false;
+                                        });
+                                      }
+                                    });
+                                  }
+
+                                  Widget footerChild;
+                                  if (_selectionMode) {
+                                    footerChild = ColoredBox(
+                                      key: const ValueKey('sel_pad'),
+                                      color: ChatRoomGlassSurface
+                                          .solidBarColor(isDarkMode),
+                                      child: SizedBox(
+                                        height: MediaQuery.viewPaddingOf(
+                                                context)
+                                            .bottom,
                                       ),
                                     );
-                                  },
-                                  child: _selectionMode
-                                      ? ColoredBox(
-                                          key: const ValueKey('sel_pad'),
-                                          color: ChatRoomGlassSurface
-                                              .solidBarColor(isDarkMode),
-                                          child: SizedBox(
-                                            height: MediaQuery.viewPaddingOf(
-                                                    context)
-                                                .bottom,
-                                          ),
-                                        )
-                                      : Column(
-                                          key: const ValueKey('composer'),
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
+                                  } else if (messagingLocked) {
+                                    footerChild = _BlockedMemberFooter(
+                                      key: const ValueKey('composer_locked'),
+                                      iBlockedPeer: iBlocked || _isUnblocking,
+                                      isDark: isDarkMode,
+                                      isUnblocking: _isUnblocking,
+                                      onUnblock: (iBlocked || _isUnblocking)
+                                          ? () async {
+                                              if (_isUnblocking) return;
+                                              setState(
+                                                  () => _isUnblocking = true);
+                                              final cubit = context
+                                                  .read<ChatRoomCubit>();
+                                              final ok =
+                                                  await cubit.unblockPeer();
+                                              if (!mounted) return;
+                                              setState(
+                                                  () => _isUnblocking = false);
+                                              if (!ok) {
+                                                customSnackBar(
+                                                  context: context,
+                                                  message: context.tr(
+                                                    AppStrings.unblockFailed,
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          : null,
+                                    );
+                                  } else {
+                                    footerChild = Column(
+                                      key: const ValueKey('composer'),
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
                                             ChatTypingIndicator(
                                               name: peerTypingName ??
                                                   _peerDisplayName,
@@ -1978,7 +2038,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                                                     null) {
                                                   cubit.clearEditing();
                                                   _messageController.clear();
-                        } else {
+                                                } else {
                                                   cubit.clearReply();
                                                 }
                                               },
@@ -2115,11 +2175,56 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
                                                                 .expand(),
                                                   ),
                                                 );
-                      },
-                    ),
-                  ],
-                ),
-              ),
+                                              },
+                                            ),
+                                          ],
+                                    );
+                                  }
+
+                                  return AnimatedSize(
+                                    duration: _composerSwapDuration,
+                                    curve: Curves.easeInOutCubic,
+                                    alignment: Alignment.bottomCenter,
+                                    child: AnimatedSwitcher(
+                                      duration: _composerSwapDuration,
+                                      reverseDuration: const Duration(
+                                          milliseconds: 320),
+                                      switchInCurve: Curves.easeOutCubic,
+                                      switchOutCurve: Curves.easeInCubic,
+                                      layoutBuilder: (currentChild,
+                                          previousChildren) {
+                                        return Stack(
+                                          alignment: Alignment.bottomCenter,
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            ...previousChildren,
+                                            if (currentChild != null)
+                                              currentChild,
+                                          ],
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (child, animation) {
+                                        final curved = CurvedAnimation(
+                                          parent: animation,
+                                          curve: Curves.easeOutCubic,
+                                          reverseCurve: Curves.easeInCubic,
+                                        );
+                                        return FadeTransition(
+                                          opacity: curved,
+                                          child: SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(0, 0.08),
+                                              end: Offset.zero,
+                                            ).animate(curved),
+                                            child: child,
+                                          ),
+                                        );
+                                      },
+                                      child: footerChild,
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -2303,6 +2408,129 @@ class _ChatEmptyMessagesState extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _BlockedMemberFooter extends StatelessWidget {
+  final bool iBlockedPeer;
+  final bool isDark;
+  final bool isUnblocking;
+  final VoidCallback? onUnblock;
+
+  const _BlockedMemberFooter({
+    super.key,
+    required this.iBlockedPeer,
+    required this.isDark,
+    this.isUnblocking = false,
+    this.onUnblock,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
+    final blockedBg =
+        isDark ? const Color(0xFF2A1A1A) : const Color(0xFFFFF1F2);
+    final title = isDark ? const Color(0xFFFECACA) : const Color(0xFF9F1239);
+    final sub = isDark ? const Color(0xFFFCA5A5) : const Color(0xFFBE123C);
+
+    return Material(
+      color: blockedBg,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 12.h),
+            decoration: BoxDecoration(
+              color: blockedBg,
+              border: Border(
+                top: BorderSide(
+                  color: const Color(0xFFE11D48).withOpacity(0.28),
+                ),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.block_rounded,
+                  size: 22.sp,
+                  color: const Color(0xFFE11D48),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  context.tr(
+                    iBlockedPeer
+                        ? AppStrings.memberHasBeenBlocked
+                        : AppStrings.cantMessageThisUser,
+                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w800,
+                    color: title,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  context.tr(AppStrings.blockUserDescription),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                    height: 1.35,
+                    color: sub,
+                  ),
+                ),
+                if (iBlockedPeer && onUnblock != null) ...[
+                  SizedBox(height: 10.h),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    child: isUnblocking
+                        ? SizedBox(
+                            key: const ValueKey('unblock_loading'),
+                            width: 22.w,
+                            height: 22.w,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2.2,
+                              color: Color(0xFFE11D48),
+                            ),
+                          )
+                        : TextButton(
+                            key: const ValueKey('unblock_btn'),
+                            onPressed: onUnblock,
+                            style: TextButton.styleFrom(
+                              foregroundColor: const Color(0xFFE11D48),
+                              backgroundColor:
+                                  const Color(0xFFE11D48).withOpacity(0.12),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 8.h,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
+                            child: Text(
+                              context.tr(AppStrings.unblock),
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          ColoredBox(
+            color: blockedBg,
+            child: SizedBox(height: safeBottom, width: double.infinity),
+          ),
+        ],
       ),
     );
   }

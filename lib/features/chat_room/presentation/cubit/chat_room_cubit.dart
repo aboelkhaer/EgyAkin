@@ -9,6 +9,7 @@ import 'package:egy_akin/features/chat/data/models/chat_composer_activity_labels
 import 'package:egy_akin/features/chat/data/services/chat_incoming_sound.dart';
 import 'package:egy_akin/features/chat/data/services/chat_mute_prefs.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat/data/services/chat_typing_sound.dart';
 import 'package:egy_akin/features/chat_room/domain/repositories/chat_room_repo.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_state.dart';
@@ -221,6 +222,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     _myDisplayName = myDisplayName;
     _myImageUrl = myImageUrl;
     _peerIsOnline = peerIsOnline ?? false;
+    _recipientUnavailable = false;
     if (initialParticipants != null && initialParticipants.isNotEmpty) {
       _participants = List<ChatUserModel>.of(initialParticipants);
     }
@@ -283,6 +285,48 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         rosterVersion: _rosterVersion,
       ),
     );
+  }
+
+  bool _recipientUnavailable = false;
+
+  bool get recipientUnavailable => _recipientUnavailable;
+
+  bool get iBlockedPeer {
+    final peerId = _trackedPeerUserId;
+    return peerId != null &&
+        GetIt.I.isRegistered<ChatBlockService>() &&
+        GetIt.I<ChatBlockService>().isBlocked(peerId);
+  }
+
+  void clearRecipientUnavailable() {
+    if (!_recipientUnavailable) return;
+    _recipientUnavailable = false;
+    _emitLoaded();
+  }
+
+  Future<bool> blockPeer() async {
+    final peerId = _trackedPeerUserId;
+    if (peerId == null || !GetIt.I.isRegistered<ChatBlockService>()) {
+      return false;
+    }
+    final result = await GetIt.I<ChatBlockService>().blockUser(peerId);
+    return result.fold((_) => false, (_) {
+      _emitLoaded();
+      return true;
+    });
+  }
+
+  Future<bool> unblockPeer() async {
+    final peerId = _trackedPeerUserId;
+    if (peerId == null || !GetIt.I.isRegistered<ChatBlockService>()) {
+      return false;
+    }
+    final result = await GetIt.I<ChatBlockService>().unblockUser(peerId);
+    return result.fold((_) => false, (_) {
+      _recipientUnavailable = false;
+      _emitLoaded();
+      return true;
+    });
   }
 
   bool get _isGroupLikeChat =>
@@ -2404,6 +2448,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             _emitLoaded();
             return;
           }
+          if (ChatBlockService.isRecipientUnavailableFailure(failure)) {
+            _recipientUnavailable = true;
+          }
           _messages = [
             for (final m in _messages)
               if (m.clientTempId == tempId)
@@ -2747,13 +2794,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     if (!activity.isActive) {
       _typingStopTimer?.cancel();
     }
-    // Leaving text-typing for record/upload: clear REST typing so peers
-    // don't fall back to "is typing" after "sending files".
-    if (previous == ChatComposerActivity.typing &&
-        activity != ChatComposerActivity.typing &&
-        activity != ChatComposerActivity.none) {
-      _broadcastTypingApi(isTyping: false);
-    }
     _broadcastLocalActivity(activity, previous: previous);
   }
 
@@ -2761,46 +2801,17 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     ChatComposerActivity activity, {
     ChatComposerActivity? previous,
   }) {
-    final contextId = _contextId;
-    final chatType = _chatType;
     final conversationId = _conversationId;
-    if (contextId == null || chatType == null) return;
+    if (conversationId == null) return;
 
-    // Recording / image / file status go through Ably presence only.
-    // The typing REST endpoint usually echoes is_typing without activity,
-    // which would incorrectly show "typing" on the peer.
-    if (conversationId != null) {
-      unawaited(
-        _realtime.updateComposerActivity(
-          conversationId: conversationId,
-          activity: activity,
-        ),
-      );
-    }
-
-    // Typing REST only for real text typing start/stop.
-    // Clearing upload/recording must NOT hit typing API — backends often
-    // echo that as a false "is typing" flash after media sends.
-    final prev = previous ?? _localActivity;
-    final useTypingApi = activity == ChatComposerActivity.typing ||
-        (activity == ChatComposerActivity.none &&
-            prev == ChatComposerActivity.typing);
-    if (useTypingApi) {
-      _broadcastTypingApi(isTyping: activity == ChatComposerActivity.typing);
-    }
-  }
-
-  void _broadcastTypingApi({required bool isTyping}) {
-    final contextId = _contextId;
-    final chatType = _chatType;
-    if (contextId == null || chatType == null) return;
-    _repository.sendTyping(
-      contextId: contextId,
-      chatType: chatType,
-      isTyping: isTyping,
-      activity: isTyping
-          ? ChatComposerActivity.typing.apiValue
-          : ChatComposerActivity.none.apiValue,
+    // Presence-only for typing / recording / uploads. Avoid POST .../typing —
+    // Laravel rebroadcasts that as user.typing on Ably, so peers got the same
+    // state twice and every REST hit loaded the API for no gain.
+    unawaited(
+      _realtime.updateComposerActivity(
+        conversationId: conversationId,
+        activity: activity,
+      ),
     );
   }
 

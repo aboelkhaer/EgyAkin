@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:egy_akin/exports.dart' hide ImageSource;
 import 'package:egy_akin/features/chat/data/mappers/chat_mappers.dart';
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat/data/services/chat_mute_prefs.dart';
+import 'package:egy_akin/features/chat/presentation/widgets/show_block_user_dialog.dart';
 import 'package:egy_akin/features/chat_room/domain/repositories/chat_room_repo.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
 import 'package:egy_akin/features/chat_room/presentation/widgets/chat_attachment_image.dart';
@@ -53,6 +55,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen>
   bool _muted = false;
   bool _ready = false;
   bool _leaving = false;
+  bool _blocking = false;
   bool _loadingMembers = false;
   bool _savingProfile = false;
   bool _pickingPhoto = false;
@@ -192,6 +195,48 @@ class _ChatInfoScreenState extends State<ChatInfoScreen>
         unawaited(ChatMutePrefs.setMuted(_muteKey, !value));
         customSnackBar(context: context, message: failure.message);
       },
+      (_) {},
+    );
+  }
+
+  int? get _peerUserId {
+    if (widget.isGroup) return null;
+    final t = ChatApiType.fromApi(widget.chatType) ?? widget.chatType;
+    if (t != ChatApiType.private) return null;
+    return widget.contextId;
+  }
+
+  Future<void> _toggleBlockPeer() async {
+    final peerId = _peerUserId;
+    if (peerId == null ||
+        _blocking ||
+        !GetIt.I.isRegistered<ChatBlockService>()) {
+      return;
+    }
+    final service = GetIt.I<ChatBlockService>();
+    final isBlocked = service.isBlocked(peerId);
+
+    if (!isBlocked) {
+      final ok = await showBlockUserDialog(
+        context: context,
+        displayName: widget.displayName,
+      );
+      if (!ok || !mounted) return;
+    }
+
+    setState(() => _blocking = true);
+    final result = isBlocked
+        ? await service.unblockUser(peerId)
+        : await service.blockUser(peerId);
+    if (!mounted) return;
+    setState(() => _blocking = false);
+    result.fold(
+      (_) => customSnackBar(
+        context: context,
+        message: context.tr(
+          isBlocked ? AppStrings.unblockFailed : AppStrings.blockFailed,
+        ),
+      ),
       (_) {},
     );
   }
@@ -1133,6 +1178,82 @@ class _ChatInfoScreenState extends State<ChatInfoScreen>
                         onChanged: _toggleMute,
                       ),
                     ),
+                    if (!widget.isGroup && _peerUserId != null) ...[
+                      SizedBox(height: 12.h),
+                      ValueListenableBuilder<int>(
+                        valueListenable:
+                            GetIt.I<ChatBlockService>().revision,
+                        builder: (context, _, __) {
+                          final blocked = GetIt.I<ChatBlockService>()
+                              .isBlocked(_peerUserId);
+                          return _Card(
+                            surface: surface,
+                            isDark: isDark,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: _blocking ? null : _toggleBlockPeer,
+                                borderRadius: BorderRadius.circular(12.r),
+                                splashColor:
+                                    const Color(0xFFFF3B30).withOpacity(0.14),
+                                highlightColor:
+                                    const Color(0xFFFF3B30).withOpacity(0.08),
+                                overlayColor:
+                                    WidgetStateProperty.resolveWith((states) {
+                                  if (states.contains(WidgetState.pressed) ||
+                                      states.contains(WidgetState.hovered) ||
+                                      states.contains(WidgetState.focused)) {
+                                    return const Color(0xFFFF3B30)
+                                        .withOpacity(0.10);
+                                  }
+                                  return Colors.transparent;
+                                }),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14.w,
+                                    vertical: 12.h,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        blocked
+                                            ? Icons.lock_open_rounded
+                                            : Icons.block_rounded,
+                                        color: const Color(0xFFFF3B30),
+                                        size: 20.sp,
+                                      ),
+                                      SizedBox(width: 10.w),
+                                      Expanded(
+                                        child: Text(
+                                          blocked
+                                              ? context.tr(AppStrings.unblock)
+                                              : context.tr(AppStrings.block),
+                                          style: TextStyle(
+                                            color: const Color(0xFFFF3B30),
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      if (_blocking)
+                                        SizedBox(
+                                          width: 16.w,
+                                          height: 16.w,
+                                          child:
+                                              const CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Color(0xFFFF3B30),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                     if (widget.isGroup) ...[
                       SizedBox(height: 18.h),
                       Padding(

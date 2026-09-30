@@ -117,6 +117,17 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    if (sl.isRegistered<InboxCubit>()) {
+      final inbox = sl<InboxCubit>();
+      if (state == AppLifecycleState.resumed) {
+        inbox.setAppInForeground(true);
+      } else if (state == AppLifecycleState.inactive ||
+          state == AppLifecycleState.paused ||
+          state == AppLifecycleState.hidden ||
+          state == AppLifecycleState.detached) {
+        inbox.setAppInForeground(false);
+      }
+    }
     if (state == AppLifecycleState.resumed) {
       // Guide: refresh /user/me on resume (no polling / no full home reload).
       cubit?.refreshAccountState();
@@ -732,10 +743,14 @@ class _HomeScreenState extends State<HomeScreen>
     );
 
     final communityItem = PersistentBottomNavBarItem(
-      icon: Icon(Icons.explore_outlined, size: 22.sp),
-      inactiveIcon: Icon(Icons.explore_outlined, size: 22.sp),
+      icon: const _CommunityFeatureIcon(filled: true),
+      inactiveIcon: const _CommunityFeatureIcon(filled: false),
       title: context.tr(AppStrings.community),
-      textStyle: titleStyle,
+      textStyle: TextStyle(
+        fontWeight: FontWeight.w800,
+        fontSize: 11.sp,
+        letterSpacing: 0.2,
+      ),
       activeColorPrimary: activeColor,
       inactiveColorPrimary: inactiveColor,
       activeColorSecondary: Colors.white,
@@ -834,6 +849,239 @@ class _HomeScreenState extends State<HomeScreen>
       inboxItem,
       profileItem,
     ];
+  }
+}
+
+/// Hero Community tab icon — explore glyph with orbit glow + sparkle show.
+class _CommunityFeatureIcon extends StatefulWidget {
+  final bool filled;
+
+  const _CommunityFeatureIcon({required this.filled});
+
+  @override
+  State<_CommunityFeatureIcon> createState() => _CommunityFeatureIconState();
+}
+
+class _CommunityFeatureIconState extends State<_CommunityFeatureIcon>
+    with TickerProviderStateMixin {
+  late final AnimationController _pulse;
+  late final AnimationController _spin;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+    _spin = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    _spin.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = IconTheme.of(context).color ?? Colors.white;
+    // Keep layout footprint identical to other nav icons (avoids style7 overflow).
+    final size = 22.sp;
+
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulse, _spin]),
+      builder: (context, _) {
+        final t = Curves.easeInOut.transform(_pulse.value);
+        final spin = _spin.value;
+        final glow = (widget.filled ? 0.32 : 0.16) + (t * 0.18);
+        final iconScale = 0.94 + (t * 0.08);
+
+        return SizedBox(
+          width: size,
+          height: size,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              // Expanding ripple
+              Positioned(
+                left: -6 - (t * 3),
+                right: -6 - (t * 3),
+                top: -6 - (t * 3),
+                bottom: -6 - (t * 3),
+                child: Opacity(
+                  opacity: (1 - t) * 0.45,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: color.withOpacity(0.35),
+                        width: 1.2,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Soft bloom
+              Positioned(
+                left: -5,
+                right: -5,
+                top: -5,
+                bottom: -5,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withOpacity(glow * 0.7),
+                        blurRadius: 10 + (t * 6),
+                        spreadRadius: 1,
+                      ),
+                      BoxShadow(
+                        color: color.withOpacity(glow * 0.35),
+                        blurRadius: 16 + (t * 4),
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Rotating sweep ring
+              Positioned(
+                left: -3,
+                right: -3,
+                top: -3,
+                bottom: -3,
+                child: Transform.rotate(
+                  angle: spin * 6.28318530718,
+                  child: CustomPaint(
+                    painter: _CommunityOrbitPainter(
+                      color: color,
+                      intensity: 0.55 + (t * 0.35),
+                    ),
+                  ),
+                ),
+              ),
+              // Core fill
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        color.withOpacity(glow * 0.95),
+                        color.withOpacity(glow * 0.25),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.25, 0.65, 1],
+                    ),
+                  ),
+                ),
+              ),
+              Transform.scale(
+                scale: iconScale,
+                child: Icon(
+                  widget.filled
+                      ? Icons.explore_rounded
+                      : Icons.explore_outlined,
+                  size: size * 0.86,
+                  color: color,
+                ),
+              ),
+              // Orbiting spark
+              Transform.rotate(
+                angle: spin * 6.28318530718,
+                child: Align(
+                  alignment: const Alignment(1.35, -0.15),
+                  child: Opacity(
+                    opacity: 0.75 + (t * 0.25),
+                    child: Icon(
+                      Icons.auto_awesome,
+                      size: 9.sp,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ),
+              // Corner spark burst
+              Positioned(
+                right: -5,
+                top: -5,
+                child: Opacity(
+                  opacity: 0.5 + (t * 0.5),
+                  child: Transform.scale(
+                    scale: 0.8 + (t * 0.35),
+                    child: Icon(
+                      Icons.auto_awesome,
+                      size: 11.sp,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -3,
+                bottom: 0,
+                child: Opacity(
+                  opacity: 0.35 + ((1 - t) * 0.55),
+                  child: Transform.scale(
+                    scale: 0.75 + ((1 - t) * 0.3),
+                    child: Icon(
+                      Icons.star_rounded,
+                      size: 7.5.sp,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CommunityOrbitPainter extends CustomPainter {
+  final Color color;
+  final double intensity;
+
+  _CommunityOrbitPainter({
+    required this.color,
+    required this.intensity,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.shortestSide / 2) - 0.8;
+    final rect = Rect.fromCircle(center: center, radius: radius);
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.round
+      ..shader = SweepGradient(
+        colors: [
+          color.withOpacity(0),
+          color.withOpacity(intensity),
+          color.withOpacity(intensity * 0.15),
+          color.withOpacity(0),
+        ],
+        stops: const [0.0, 0.18, 0.42, 0.7],
+      ).createShader(rect);
+
+    canvas.drawArc(rect, 0, 6.28318530718, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CommunityOrbitPainter oldDelegate) {
+    return oldDelegate.color != color || oldDelegate.intensity != intensity;
   }
 }
 

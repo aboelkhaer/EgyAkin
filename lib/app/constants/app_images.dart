@@ -1,4 +1,4 @@
-const String imagePath = "assets/images";
+const String imagePath = 'assets/images';
 
 class AppImages {
   // static const String logo = '$imagePath/logo.png';

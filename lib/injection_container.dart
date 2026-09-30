@@ -7,6 +7,7 @@ import 'package:egy_akin/features/chat_room/data/repositories/chat_room_repo_imp
 import 'package:egy_akin/features/chat_room/domain/repositories/chat_room_repo.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/inbox/data/datasources/inbox_datasource.dart';
 import 'package:egy_akin/features/inbox/data/repositories/inbox_repo_impl.dart';
 import 'package:egy_akin/features/inbox/domain/repositories/inbox_repo.dart';
@@ -366,6 +367,7 @@ Future<void> diInit() async {
   sl.registerLazySingleton<ChatRoomDataSource>(
       () => ChatRoomDataSourceImpl(sl()));
   sl.registerLazySingleton(() => ChatRealtimeService(sl()));
+  sl.registerLazySingleton(() => ChatBlockService(sl(), sl()));
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(sl(), sl()));

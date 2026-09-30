@@ -2,6 +2,7 @@ import 'package:egy_akin/features/chat/data/mappers/chat_mappers.dart';
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/chat/data/models/chat_composer_activity.dart';
 import 'package:egy_akin/features/chat/data/services/chat_archive_prefs.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat/data/services/chat_incoming_sound.dart';
 import 'package:egy_akin/features/chat/data/services/chat_mute_prefs.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
@@ -11,6 +12,7 @@ import 'package:egy_akin/features/inbox/data/models/get_inbox_model_response.dar
 import 'package:egy_akin/features/inbox/data/models/inbox_thread.dart';
 import 'package:egy_akin/features/inbox/domain/usecases/get_inbox_usecase.dart';
 import 'package:egy_akin/features/inbox/presentation/cubit/inbox_state.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../exports.dart';
 
@@ -79,16 +81,24 @@ class InboxCubit extends Cubit<InboxState> {
   bool _archivedScreenVisible = false;
   List<int> _inboxListenIds = const [];
   Timer? _inboxListenLinger;
-  static const _inboxListenMax = 25;
+  /// Cap conversation-row Ably attaches. Each row = one
+  /// `presence:conversation.{id}` channel. Combined with the user channel,
+  /// `presence:app`, and an open chat room, a high cap burns the account's
+  /// ~200 concurrent-channel limit (Ably free). New-message previews already
+  /// arrive via `inbox.updated`; background refresh covers ticks/reactions.
+  static const _inboxListenMax = 3;
 
   /// Keep listening briefly after the list is hidden so quick tab switches
   /// don't re-attach every channel.
   static const _inboxListenLingerFor = Duration(seconds: 30);
 
-  /// While Chats/Archived is open, periodically GET /inbox so rows outside
-  /// the Ably listen cap still catch up without extra channels.
+  /// While Chats/Archived is open in the foreground, periodically GET /inbox
+  /// so rows outside the Ably listen cap still catch up.
   Timer? _inboxBackgroundRefresh;
-  static const _inboxBackgroundRefreshEvery = Duration(seconds: 25);
+  static const _inboxBackgroundRefreshEvery = Duration(seconds: 60);
+
+  /// False when the OS reports paused/inactive/hidden — stop polling /inbox.
+  bool _appInForeground = true;
 
   /// Last unread count we already POSTed `receipts/delivered` for.
   /// Key: `chatType:contextId`. Prevents Home open from re-acking forever.
@@ -244,6 +254,9 @@ class InboxCubit extends Cubit<InboxState> {
     unawaited(ChatArchivePrefs.ensureLoaded());
     // Prefetch so the Archived row can hide/show correctly on the main list.
     unawaited(loadArchivedThreads());
+    if (GetIt.I.isRegistered<ChatBlockService>()) {
+      unawaited(GetIt.I<ChatBlockService>().refresh());
+    }
     loadInbox(refresh: true, currentUserId: currentUserId);
   }
 
@@ -266,6 +279,7 @@ class InboxCubit extends Cubit<InboxState> {
     _inboxListenIds = const [];
     _chatsListVisible = false;
     _archivedScreenVisible = false;
+    _appInForeground = true;
     _deliveredAckUnreadByKey.clear();
     _ackDeliveredDebounce?.cancel();
     _ackDeliveredDebounce = null;
@@ -401,6 +415,18 @@ class InboxCubit extends Cubit<InboxState> {
     _syncInboxListeners();
   }
 
+  /// Pause/resume background GET /inbox with the app lifecycle.
+  void setAppInForeground(bool foreground) {
+    if (_appInForeground == foreground) return;
+    _appInForeground = foreground;
+    if (!foreground) {
+      _inboxBackgroundRefresh?.cancel();
+      _inboxBackgroundRefresh = null;
+      return;
+    }
+    _syncInboxBackgroundRefresh();
+  }
+
   /// Listen to the top rows of whichever list is on screen; stop a little
   /// after both are hidden. Only calls the service when that set changes.
   void _syncInboxListeners() {
@@ -438,7 +464,7 @@ class InboxCubit extends Cubit<InboxState> {
 
   void _syncInboxBackgroundRefresh() {
     final anyVisible = _chatsListVisible || _archivedScreenVisible;
-    if (!anyVisible) {
+    if (!anyVisible || !_appInForeground) {
       _inboxBackgroundRefresh?.cancel();
       _inboxBackgroundRefresh = null;
       return;
@@ -448,8 +474,10 @@ class InboxCubit extends Cubit<InboxState> {
       _inboxBackgroundRefreshEvery,
       (_) {
         if (isClosed) return;
+        if (!_appInForeground) return;
         if (!_chatsListVisible && !_archivedScreenVisible) return;
-        unawaited(silentRefresh(bypassThrottle: true));
+        // Respect silentRefresh throttle — do not bypass every tick.
+        unawaited(silentRefresh());
       },
     );
   }

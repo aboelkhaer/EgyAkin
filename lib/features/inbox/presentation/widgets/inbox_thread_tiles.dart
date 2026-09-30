@@ -2,12 +2,14 @@ import 'package:egy_akin/features/chat/data/mappers/chat_mappers.dart';
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/chat/data/models/chat_composer_activity.dart';
 import 'package:egy_akin/features/chat/data/models/chat_composer_activity_labels.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
 import 'package:egy_akin/features/chat_room/presentation/widgets/chat_attachment_image.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/inbox/data/models/inbox_thread.dart';
 import 'package:egy_akin/features/inbox/presentation/widgets/inbox_animated_thread_list.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../exports.dart';
 
@@ -91,6 +93,16 @@ class InboxThreadCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (GetIt.I.isRegistered<ChatBlockService>()) {
+      return ValueListenableBuilder<int>(
+        valueListenable: GetIt.I<ChatBlockService>().revision,
+        builder: (context, _, __) => _buildCard(context),
+      );
+    }
+    return _buildCard(context);
+  }
+
+  Widget _buildCard(BuildContext context) {
     // Ad-hoc chat groups get a dedicated compact row (social groups keep the
     // standard card — they already look clean).
     if (thread.chatType == ChatApiType.group) {
@@ -209,6 +221,30 @@ class InboxThreadCard extends StatelessWidget {
                                   fontSize: 8.sp,
                                   fontWeight: FontWeight.w800,
                                   color: const Color(0xFFD97706),
+                                ),
+                              ),
+                            ),
+                          ],
+                          if (GetIt.I.isRegistered<ChatBlockService>() &&
+                              GetIt.I<ChatBlockService>()
+                                  .isBlocked(thread.counterpartUserId)) ...[
+                            SizedBox(width: 6.w),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 5.w,
+                                vertical: 1.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    const Color(0xFFEF4444).withOpacity(0.14),
+                                borderRadius: BorderRadius.circular(6.r),
+                              ),
+                              child: Text(
+                                context.tr(AppStrings.blocked),
+                                style: TextStyle(
+                                  fontSize: 8.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFFDC2626),
                                 ),
                               ),
                             ),

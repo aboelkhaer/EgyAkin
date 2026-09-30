@@ -962,6 +962,18 @@ abstract class ApiServices {
     @Query('chat_type') String chatType,
   );
 
+  /// Users the current doctor has blocked in 1:1 chat (not who blocked you).
+  @GET(ApiEndPoint.chatBlockedUsers)
+  Future<ChatUsersSearchModelResponse> getChatBlockedUsers();
+
+  /// Idempotent — blocking an already-blocked user returns 200.
+  @POST('${ApiEndPoint.chatBlockedUsers}/{userId}')
+  Future<ChatEnvelopeModel> blockChatUser(@Path('userId') int userId);
+
+  /// Idempotent — safe if the user was not blocked.
+  @DELETE('${ApiEndPoint.chatBlockedUsers}/{userId}')
+  Future<ChatEnvelopeModel> unblockChatUser(@Path('userId') int userId);
+
   /// Not under `/api/v3` — Ably auth for chat realtime.
   @POST(ApiEndPoint.ablyToken)
   Future<AblyTokenRequestModel> getAblyToken();

@@ -164,6 +164,17 @@ class _MoreScreenState extends State<MoreScreen> {
                               homeDataModel: widget.homeDataModel,
                             ),
                           ],
+                          _MoreTile(
+                            isDark: isDark,
+                            iconBg: const Color(0xFFEF4444),
+                            icon: Icons.block_rounded,
+                            title: context.tr(AppStrings.blockedUsers),
+                            subtitle: context.tr(AppStrings.privacySecurity),
+                            onTap: () {
+                              navigatorKey.currentState
+                                  ?.pushNamed(AppRoutes.blockedUsers);
+                            },
+                          ),
                           _MoreDivider(isDark: isDark),
                           _MoreTile(
                             isDark: isDark,

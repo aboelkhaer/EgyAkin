@@ -972,8 +972,21 @@ class AppStrings {
   static const String muteFailed = 'Could not update mute';
   static const String contactInfo = 'Contact info';
   static const String block = 'Block';
+  static const String unblock = 'Unblock';
   static const String blockFailed = 'Could not block user';
+  static const String unblockFailed = 'Could not unblock user';
   static const String userBlocked = 'User blocked';
+  static const String userUnblocked = 'User unblocked';
+  static const String blockedUsers = 'Blocked users';
+  static const String noBlockedUsers = 'No blocked users';
+  static const String noBlockedUsersHint =
+      'People you block in private chats will appear here.';
+  static const String cantMessageThisUser = "You can't message this user";
+  static const String memberHasBeenBlocked = 'This member has been blocked';
+  static const String blockUserDescription =
+      'You won’t be able to message each other in this private chat.';
+  static const String blockUserHint =
+      'You can view and unblock them anytime from Profile → More → Privacy & security → Blocked users.';
   static const String searchInChat = 'Search in chat';
   static const String mediaGallery = 'Media';
   static const String documents = 'Documents';

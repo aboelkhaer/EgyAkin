@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/chat/data/services/chat_archive_prefs.dart';
+import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat/data/services/chat_mute_prefs.dart';
 import 'package:egy_akin/features/chat/data/services/chat_push_navigation.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
@@ -31,6 +32,14 @@ Future<void> clearChatSessionOnSignOut() async {
     }
   } catch (e) {
     debugPrint('clearChatSessionOnSignOut realtime failed: $e');
+  }
+
+  try {
+    if (sl.isRegistered<ChatBlockService>()) {
+      sl<ChatBlockService>().clear();
+    }
+  } catch (e) {
+    debugPrint('clearChatSessionOnSignOut block list failed: $e');
   }
 
   await Future.wait([

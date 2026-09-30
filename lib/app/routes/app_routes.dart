@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
+import 'package:egy_akin/features/chat/presentation/pages/blocked_users_screen.dart';
 import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.dart';
 import 'package:egy_akin/features/chat_room/presentation/pages/chat_forward_picker_screen.dart';
 import 'package:egy_akin/features/chat_room/presentation/pages/chat_info_screen.dart';
@@ -79,6 +80,7 @@ class AppRoutes {
   static const String inboxArchived = '/inboxArchived';
   static const String inboxGlobalSearch = '/inboxGlobalSearch';
   static const String chatInfo = '/chatInfo';
+  static const String blockedUsers = '/blockedUsers';
   static const String chatAddMembers = '/chatAddMembers';
   static const String chatForward = '/chatForward';
   static const String chatSearch = '/chatSearch';
@@ -1399,6 +1401,12 @@ class RouteGenerator {
           return unDefinedRoute();
         }
         return unDefinedRoute();
+
+      case AppRoutes.blockedUsers:
+        return SlideFromRightPageRoute(
+          settings: settings,
+          builder: (_) => const BlockedUsersScreen(),
+        );
 
       case AppRoutes.chatAddMembers:
         if (settings.arguments != null &&
