@@ -567,6 +567,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
   }
 
   void _insertEmoji(String emoji) {
+    // WhatsApp-style tick when picking an emoji into the composer.
+    HapticFeedback.lightImpact();
     final value = _messageController.value;
     final text = value.text;
     final selection = value.selection;
@@ -1025,16 +1027,20 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
   }
 
   void _applyEmojiReaction(String emoji) {
+    // Same light tick WhatsApp uses when reacting from the emoji bar.
+    HapticFeedback.lightImpact();
     final index = _overlayMessageIndex;
     if (index == null) return;
 
     if (widget.usesApi) {
       final cubit = context.read<ChatRoomCubit>();
       final messageId = cubit.messageIdAt(index);
-      _dismissMessageOverlay(restoreKeyboard: _restoreKeyboardAfterOverlay);
+      // Apply optimistically *before* revealing the list bubble so the badge
+      // does not flash empty/old → new when the overlay closes.
       if (messageId != null) {
         cubit.toggleReaction(messageId: messageId, emoji: emoji);
       }
+      _dismissMessageOverlay(restoreKeyboard: _restoreKeyboardAfterOverlay);
       return;
     }
 

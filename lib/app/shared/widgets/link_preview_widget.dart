@@ -13,7 +13,14 @@ class LinkPreviewWidget extends StatefulWidget {
   _LinkPreviewWidgetState createState() => _LinkPreviewWidgetState();
 }
 
-class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
+class _LinkPreviewWidgetState extends State<LinkPreviewWidget>
+    with AutomaticKeepAliveClientMixin {
+  static const double _ogImageHeight = 150;
+  static const double _tikTokImageHeight = 300;
+  /// Reserved height while loading so ListView items don't grow/shrink and
+  /// fight upward scrolls in Feeds (shimmer was 88px → loaded ~250px).
+  static const double _loadingCardHeight = 250;
+
   String? _title;
   String? _description;
   String? _imageUrl;
@@ -21,26 +28,53 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
   bool _isLoading = true;
   bool _hasError = false;
   bool _isTikTok = false;
-  bool _showLinkOnly = false;
   bool _imageFailed = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _loadMetadata();
+    _hydrateFromCacheOrFetch();
   }
 
-  void _loadMetadata() {
+  void _hydrateFromCacheOrFetch() {
     if (_metadataCache.containsKey(widget.url)) {
       final metadata = _metadataCache[widget.url];
-      if (metadata != null) {
-        _setMetadata(metadata);
+      if (metadata != null && _hasValidMetadata(metadata)) {
+        _applyMetadataFields(metadata);
+        _isLoading = false;
+      } else if (metadata != null) {
+        _applyFallbackFields();
+        _isLoading = false;
       } else {
-        _setError();
+        _hasError = true;
+        _isLoading = false;
       }
-    } else {
-      _fetchMetadata();
+      return;
     }
+    _fetchMetadata();
+  }
+
+  void _applyMetadataFields(Metadata metadata) {
+    _title = (metadata.title != null &&
+            metadata.title!.trim().isNotEmpty &&
+            metadata.title!.trim().toLowerCase() != 'null')
+        ? metadata.title!.trim()
+        : null;
+
+    _description = (metadata.description != null &&
+            metadata.description!.trim().isNotEmpty &&
+            metadata.description!.trim().toLowerCase() != 'null')
+        ? metadata.description!.trim()
+        : null;
+
+    _imageUrl = (metadata.image != null &&
+            metadata.image!.trim().isNotEmpty &&
+            metadata.image!.trim().toLowerCase() != 'null')
+        ? metadata.image!.trim()
+        : null;
   }
 
   Future<void> _fetchMetadata() async {
@@ -83,8 +117,6 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
         metadata.title != null && metadata.title!.trim().isNotEmpty;
     final hasDescription =
         metadata.description != null && metadata.description!.trim().isNotEmpty;
-    final hasImage =
-        metadata.image != null && metadata.image!.trim().isNotEmpty;
 
     // We need at least a title or description to show a meaningful preview
     // Also check that the values are not just "null" strings
@@ -158,32 +190,49 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
   }
 
   void _setMetadata(Metadata metadata) {
-    if (mounted) {
-      setState(() {
-        // Only set title if it's not null, not empty, and not "null" string
-        _title = (metadata.title != null &&
-                metadata.title!.trim().isNotEmpty &&
-                metadata.title!.trim().toLowerCase() != 'null')
-            ? metadata.title!.trim()
-            : null;
+    if (!mounted) return;
+    setState(() {
+      _applyMetadataFields(metadata);
+      _isLoading = false;
+    });
+  }
 
-        // Only set description if it's not null, not empty, and not "null" string
-        _description = (metadata.description != null &&
-                metadata.description!.trim().isNotEmpty &&
-                metadata.description!.trim().toLowerCase() != 'null')
-            ? metadata.description!.trim()
-            : null;
-
-        // Only set image URL if it's not null, not empty, and not "null" string
-        _imageUrl = (metadata.image != null &&
-                metadata.image!.trim().isNotEmpty &&
-                metadata.image!.trim().toLowerCase() != 'null')
-            ? metadata.image!.trim()
-            : null;
-
-        _isLoading = false;
-      });
+  void _applyFallbackFields() {
+    String fallbackTitle = 'Link';
+    try {
+      final uri = Uri.tryParse(widget.url);
+      if (uri != null && uri.host.isNotEmpty) {
+        String domain = uri.host.replaceAll('www.', '');
+        if (domain.contains('mayoclinic')) {
+          fallbackTitle = 'Mayo Clinic';
+        } else if (domain.contains('webmd')) {
+          fallbackTitle = 'WebMD';
+        } else if (domain.contains('healthline')) {
+          fallbackTitle = 'Healthline';
+        } else if (domain.contains('medlineplus')) {
+          fallbackTitle = 'MedlinePlus';
+        } else {
+          fallbackTitle = domain.split('.').first;
+          if (fallbackTitle.isNotEmpty) {
+            fallbackTitle =
+                fallbackTitle[0].toUpperCase() + fallbackTitle.substring(1);
+          }
+        }
+      } else if (widget.url.startsWith('file://')) {
+        fallbackTitle = 'Local File';
+      } else if (widget.url.startsWith('data:')) {
+        fallbackTitle = 'Data URL';
+      } else if (widget.url.startsWith('mailto:')) {
+        fallbackTitle = 'Email';
+      } else if (widget.url.startsWith('tel:')) {
+        fallbackTitle = 'Phone';
+      }
+    } catch (_) {
+      fallbackTitle = 'Link';
     }
+    _title = fallbackTitle;
+    _description = 'Click to view the full article';
+    _imageUrl = null;
   }
 
   void _setError() {
@@ -191,65 +240,16 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       setState(() {
         _hasError = true;
         _isLoading = false;
-        _showLinkOnly = true;
       });
     }
   }
 
   void _setFallbackMetadata() {
-    if (mounted) {
-      setState(() {
-        // Extract domain name for fallback title
-        String fallbackTitle = 'Link';
-
-        try {
-          final uri = Uri.tryParse(widget.url);
-
-          if (uri != null && uri.host.isNotEmpty) {
-            // Clean up domain name for better display
-            String domain = uri.host.replaceAll('www.', '');
-
-            // Special handling for known domains
-            if (domain.contains('mayoclinic')) {
-              fallbackTitle = 'Mayo Clinic';
-            } else if (domain.contains('webmd')) {
-              fallbackTitle = 'WebMD';
-            } else if (domain.contains('healthline')) {
-              fallbackTitle = 'Healthline';
-            } else if (domain.contains('medlineplus')) {
-              fallbackTitle = 'MedlinePlus';
-            } else {
-              // Capitalize first letter of domain
-              fallbackTitle = domain.split('.').first;
-              if (fallbackTitle.isNotEmpty) {
-                fallbackTitle =
-                    fallbackTitle[0].toUpperCase() + fallbackTitle.substring(1);
-              }
-            }
-          } else if (widget.url.startsWith('file://')) {
-            // Handle file URIs
-            fallbackTitle = 'Local File';
-          } else if (widget.url.startsWith('data:')) {
-            // Handle data URIs
-            fallbackTitle = 'Data URL';
-          } else if (widget.url.startsWith('mailto:')) {
-            // Handle mailto URIs
-            fallbackTitle = 'Email';
-          } else if (widget.url.startsWith('tel:')) {
-            // Handle tel URIs
-            fallbackTitle = 'Phone';
-          }
-        } catch (e) {
-          // If URI parsing fails, use generic title
-          fallbackTitle = 'Link';
-        }
-
-        _title = fallbackTitle;
-        _description = 'Click to view the full article';
-        _imageUrl = null;
-        _isLoading = false;
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      _applyFallbackFields();
+      _isLoading = false;
+    });
   }
 
   void _openUrl() async {
@@ -324,6 +324,7 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
@@ -354,7 +355,7 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       baseColor: isDarkMode ? AppColors.darkBorder : Colors.grey[300]!,
       highlightColor: isDarkMode ? AppColors.darkCardBG : Colors.grey[100]!,
       child: Container(
-        height: 88,
+        height: _loadingCardHeight,
         width: double.infinity,
         color: isDarkMode ? AppColors.darkCardBG : Colors.white,
       ),
@@ -506,10 +507,10 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     final hasTitle = _title != null && _title!.trim().isNotEmpty;
     final hasDescription =
         _description != null && _description!.trim().isNotEmpty;
-    final hasImage = !_imageFailed &&
-        _imageUrl != null &&
+    final wantsImage = _imageUrl != null &&
         _imageUrl!.trim().isNotEmpty &&
         !_isPdf;
+    final imageHeight = _isTikTok ? _tikTokImageHeight : _ogImageHeight;
 
     // If we don't have enough content, show link only
     // We need at least a title or description for a meaningful preview
@@ -517,63 +518,92 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       return _buildLinkOnly(isDarkMode);
     }
 
-    // WhatsApp / chat style: no OG image → text-only card (no app logo).
+    // Keep a fixed image slot even on load error — collapsing it mid-scroll
+    // makes Feeds ListView fight upward gestures (snap / panic).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (hasImage)
+        if (wantsImage)
           ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8),
               topRight: Radius.circular(8),
             ),
-            child: Stack(
-              children: [
-                Image.network(
-                  _imageUrl!,
-                  width: double.infinity,
-                  height: _isTikTok ? 300 : 150,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    // Drop the image block — same as chat link previews.
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (!mounted || _imageFailed) return;
-                      setState(() => _imageFailed = true);
-                    });
-                    return const SizedBox.shrink();
-                  },
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: _isTikTok ? 300 : 150,
-                      color:
-                          isDarkMode ? AppColors.darkBorder : Colors.grey[200],
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                          color: isDarkMode
-                              ? AppColors.darkTitle
-                              : AppColors.primary,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                if (_isTikTok)
-                  const Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.center,
+            child: SizedBox(
+              width: double.infinity,
+              height: imageHeight,
+              child: _imageFailed
+                  ? ColoredBox(
+                      color: isDarkMode
+                          ? AppColors.darkBorder
+                          : Colors.grey.shade200,
                       child: Icon(
-                        Icons.play_circle_filled,
-                        size: 50,
-                        color: Colors.white,
+                        Icons.broken_image_outlined,
+                        color: isDarkMode
+                            ? AppColors.darkDescription
+                            : Colors.grey[500],
+                        size: 36,
                       ),
+                    )
+                  : Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          _imageUrl!,
+                          width: double.infinity,
+                          height: imageHeight,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (!mounted || _imageFailed) return;
+                              setState(() => _imageFailed = true);
+                            });
+                            return ColoredBox(
+                              color: isDarkMode
+                                  ? AppColors.darkBorder
+                                  : Colors.grey.shade200,
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                color: isDarkMode
+                                    ? AppColors.darkDescription
+                                    : Colors.grey[500],
+                                size: 36,
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: imageHeight,
+                              color: isDarkMode
+                                  ? AppColors.darkBorder
+                                  : Colors.grey[200],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  color: isDarkMode
+                                      ? AppColors.darkTitle
+                                      : AppColors.primary,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (_isTikTok)
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.play_circle_filled,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-              ],
             ),
           ),
         _buildMetaBlock(isDarkMode),

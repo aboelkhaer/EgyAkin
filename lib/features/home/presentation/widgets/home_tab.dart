@@ -1,4 +1,6 @@
 import 'package:flutter/scheduler.dart';
+import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/data/models/home_dashboard_fake_data.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_consultations_section.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
@@ -71,6 +73,61 @@ class _HomeTabState extends State<HomeTab> {
         currentDoctorModel: currentDoctorModel,
         verified: homeData.verified ?? false,
         isSyndicateCardRequired: homeData.isSyndicateCardRequired ?? '',
+        currentDoctorRole: homeData.role.toString(),
+        currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
+        homeDataModel: homeData,
+      ),
+    );
+  }
+
+  void _openAddPatient({
+    required BuildContext context,
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeData,
+  }) {
+    if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+      return;
+    }
+    if (!PermissionHelper.canPermission(AppPermissions.addPatientInHome)) {
+      return;
+    }
+    if (homeData.isUserBlocked == true) {
+      showBlockedDialog(
+        context: context,
+        onDismissed: () {
+          homeCubit.signOut();
+          navigatorKey.currentState?.pushReplacementNamed(AppRoutes.signIn);
+        },
+      );
+      return;
+    }
+    if (homeData.verified != true) {
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.emailVerification),
+        description: context.tr(
+          AppStrings.youMustVerifyYourEmailAddressToEnjoyAllFeatures,
+        ),
+        noColoredButtonOnTap: () => Navigator.of(context).pop(),
+        coloredButtonText: context.tr(AppStrings.verify),
+        noColoredButtonText: context.tr(AppStrings.cancel),
+        coloredButtonOnTap: () {
+          Navigator.of(context).pop();
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.emailVerification,
+            arguments: AppRoutesArgs.emailVerificationRouteArgs(
+              currentDoctorModel: currentDoctorModel,
+            ),
+          );
+        },
+      );
+      return;
+    }
+
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.addPatient,
+      arguments: AppRoutesArgs.addPatientRouteArgs(
+        currentDoctorModel: homeCubit.currentDoctorModel,
         currentDoctorRole: homeData.role.toString(),
         currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
         homeDataModel: homeData,
@@ -349,7 +406,7 @@ class _HomeTabState extends State<HomeTab> {
                       consultations:
                           homeData.data?.pendingConsultations ?? const [],
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 8.h),
                     HomePatientsSection(
                       isDark: isDarkMode,
                       myPatients: homeData.data?.currentPatients ?? const [],
@@ -360,6 +417,18 @@ class _HomeTabState extends State<HomeTab> {
                       onSeeAll: () {
                         widget.cubit.jumpToPatientsTab();
                       },
+                      onAddPatient: isVerifiedUser(
+                                    homeData.isSyndicateCardRequired,
+                                  ) &&
+                              PermissionHelper.canPermission(
+                                AppPermissions.addPatientInHome,
+                              )
+                          ? () => _openAddPatient(
+                                context: context,
+                                currentDoctorModel: currentDoctor,
+                                homeData: homeData,
+                              )
+                          : null,
                       onPatientTap: (patient, {required isAllDataOpen}) {
                         final patientId = patient.id?.toString();
                         if (patientId == null || patientId.isEmpty) {
@@ -426,7 +495,7 @@ class _HomeTabState extends State<HomeTab> {
                         );
                       },
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 22.h),
                     HomeToolsSection(
                       isDark: isDarkMode,
                       tools: HomeDashboardFakeData.tools,

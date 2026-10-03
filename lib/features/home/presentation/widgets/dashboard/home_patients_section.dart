@@ -11,6 +11,7 @@ class HomePatientsSection extends StatefulWidget {
   final int? myPatientsCount;
   final int? allPatientsCount;
   final VoidCallback? onSeeAll;
+  final VoidCallback? onAddPatient;
   final void Function(
     PatientHomeDataModel patient, {
     required bool isAllDataOpen,
@@ -32,6 +33,7 @@ class HomePatientsSection extends StatefulWidget {
     this.myPatientsCount,
     this.allPatientsCount,
     this.onSeeAll,
+    this.onAddPatient,
     this.onPatientTap,
     this.onOutcomeTap,
     this.onAddCommentTap,
@@ -55,12 +57,7 @@ class _HomePatientsSectionState extends State<HomePatientsSection> {
     final myCount = widget.myPatientsCount ?? widget.myPatients.length;
     final allCount = widget.allPatientsCount ?? widget.allPatients.length;
     final activeCount = showMyOnly ? myCount : allCount;
-    // Create-first is never shown on Home. Skip the whole section when the
-    // account has no patients yet (add via header + / Patients tab).
     final trulyNoPatients = activeCount <= 0 && patients.isEmpty;
-    if (trulyNoPatients) {
-      return const SizedBox.shrink();
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,7 +83,18 @@ class _HomePatientsSectionState extends State<HomePatientsSection> {
           ),
         ],
         SizedBox(height: 12.h),
-        if (preview.isNotEmpty)
+        if (trulyNoPatients || preview.isEmpty && activeCount <= 0)
+          _EmptyPatientsCard(
+            isDark: widget.isDark,
+            onAddPatient: widget.onAddPatient,
+          )
+        else if (preview.isEmpty)
+          _ViewPatientsCard(
+            isDark: widget.isDark,
+            count: activeCount,
+            onViewAll: widget.onSeeAll,
+          )
+        else
           ...preview.map(
             (patient) => Padding(
               padding: EdgeInsets.only(bottom: 12.h),
@@ -113,14 +121,189 @@ class _HomePatientsSectionState extends State<HomePatientsSection> {
                         ),
               ),
             ),
-          )
-        else
-          _ViewPatientsCard(
-            isDark: widget.isDark,
-            count: activeCount,
-            onViewAll: widget.onSeeAll,
           ),
       ],
+    );
+  }
+}
+
+class _EmptyPatientsCard extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback? onAddPatient;
+
+  const _EmptyPatientsCard({
+    required this.isDark,
+    this.onAddPatient,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = HomeDashboardColors.primary(isDark);
+    final title = HomeDashboardColors.title(isDark);
+    final subtitle = HomeDashboardColors.subtitle(isDark);
+    final canAdd = onAddPatient != null;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 16.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18.r),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  primary.withOpacity(0.18),
+                  HomeDashboardColors.cardBg(isDark),
+                  primary.withOpacity(0.08),
+                ]
+              : [
+                  primary.withOpacity(0.1),
+                  Colors.white,
+                  primary.withOpacity(0.04),
+                ],
+        ),
+        border: Border.all(
+          color: primary.withOpacity(isDark ? 0.32 : 0.18),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: primary.withOpacity(0.08),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 64.r,
+            height: 64.r,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  primary.withOpacity(isDark ? 0.42 : 0.28),
+                  primary.withOpacity(isDark ? 0.16 : 0.1),
+                ],
+              ),
+              border: Border.all(
+                color: primary.withOpacity(isDark ? 0.45 : 0.22),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: primary.withOpacity(isDark ? 0.28 : 0.16),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.person_add_alt_1_rounded,
+              size: 28.sp,
+              color: primary,
+            ),
+          ),
+          SizedBox(height: 14.h),
+          Text(
+            context.tr(AppStrings.noPatientsYet),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w800,
+              color: title,
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            context.tr(AppStrings.addFirstPatientSubtitle),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12.sp,
+              height: 1.4,
+              fontWeight: FontWeight.w500,
+              color: subtitle,
+            ),
+          ),
+          if (canAdd) ...[
+            SizedBox(height: 16.h),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onAddPatient,
+                borderRadius: BorderRadius.circular(14.r),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14.r),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        primary,
+                        Color.lerp(
+                              primary,
+                              isDark
+                                  ? const Color(0xFF1F2937)
+                                  : const Color(0xFF4C1D95),
+                              0.22,
+                            ) ??
+                            primary,
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primary.withOpacity(isDark ? 0.35 : 0.28),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 28.r,
+                          height: 28.r,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.18),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add_rounded,
+                            size: 18.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Flexible(
+                          child: Text(
+                            context.tr(AppStrings.addYourFirstPatient),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

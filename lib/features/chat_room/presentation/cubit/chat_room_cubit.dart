@@ -38,6 +38,18 @@ class _PendingSendPayload {
   });
 }
 
+/// Short-lived guard so stale self reaction echoes / soft-reloads cannot wipe
+/// an optimistic emoji change (👍 → 😂) or a just-set reaction.
+class _LocalReactionHold {
+  /// `null` means the user intentionally cleared their reaction.
+  final String? emoji;
+  final DateTime until;
+
+  const _LocalReactionHold({required this.emoji, required this.until});
+
+  bool get isActive => DateTime.now().isBefore(until);
+}
+
 class ChatRoomCubit extends Cubit<ChatRoomState> {
   ChatRoomCubit(this._repository, this._realtime, this._networkInfo)
       : super(const ChatRoomState.initial()) {
@@ -72,6 +84,14 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   int _loadGeneration = 0;
   Future<void>? _loadOlderFuture;
   Future<void>? _loadMessagesFuture;
+
+  /// messageId → last local reaction we applied (survives soft-reload / echoes).
+  final Map<int, _LocalReactionHold> _localReactionHolds = {};
+
+  /// Full-screen image / local overlays push a route on top of this room.
+  /// [onVisibleAgain] must not soft-reload messages for those — GET often lags
+  /// reactions and wipes the badge the user just set.
+  int _localOverlayDepth = 0;
 
   /// First GET messages finished (success or failure) — allows empty rooms.
   bool _initialMessagesLoadDone = false;
@@ -616,6 +636,46 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         (merged.clientTempId == null || merged.clientTempId!.isEmpty)) {
       merged = merged.copyWith(clientTempId: prevTemp);
     }
+    // Soft-reload / media-viewer pop must not wipe reaction badges when the
+    // messages payload omits or lags reactions (including when peers remain
+    // but my own emoji was dropped from the GET payload).
+    // Never undo an intentional local remove (hold.emoji == null).
+    if (previous != null) {
+      final holdId = int.tryParse(merged.id);
+      final hold = holdId == null ? null : _localReactionHolds[holdId];
+      final removingMine =
+          hold != null && hold.isActive && hold.emoji == null;
+
+      final prevHasRx = previous.reactions.isNotEmpty ||
+          (previous.reactionEmoji?.trim().isNotEmpty ?? false);
+      final nextHasRx = merged.reactions.isNotEmpty ||
+          (merged.reactionEmoji?.trim().isNotEmpty ?? false);
+      if (prevHasRx && !nextHasRx && !removingMine) {
+        merged = merged.copyWith(
+          reactions: previous.reactions,
+          reactionEmoji: previous.reactionEmoji,
+        );
+      } else if (!removingMine) {
+        final prevMine = _myReactionEmojiFromItem(previous);
+        final nextMine = _myReactionEmojiFromItem(merged);
+        if (prevMine != null && nextMine == null) {
+          merged = merged.copyWith(
+            reactions: previous.reactions,
+            reactionEmoji: previous.reactionEmoji ?? prevMine,
+          );
+        } else if (prevMine != null &&
+            nextMine != null &&
+            prevMine != nextMine) {
+          // Prefer the locally shown emoji when GET is still on the old one.
+          if (hold != null && hold.isActive && hold.emoji == prevMine) {
+            merged = merged.copyWith(
+              reactions: previous.reactions,
+              reactionEmoji: prevMine,
+            );
+          }
+        }
+      }
+    }
     if (previous == null || !previous.isOutgoing || !next.isOutgoing) {
       return merged;
     }
@@ -804,11 +864,22 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     );
   }
 
+  /// Call before pushing a local overlay (e.g. full-screen image) so
+  /// [onVisibleAgain] reconnects realtime without replacing the message list.
+  void beginLocalOverlay() {
+    _localOverlayDepth++;
+  }
+
   /// Visible again after a chat pushed on top of it closed: that chat took
   /// over the realtime channel, so re-attach and catch up (also marks read).
+  /// Local overlays (image viewer) only re-attach — never soft-reload.
   void onVisibleAgain() {
     if (_isDisposing || isClosed || _conversationId == null) return;
     unawaited(_connectRealtimeIfPossible());
+    if (_localOverlayDepth > 0) {
+      _localOverlayDepth--;
+      return;
+    }
     unawaited(loadMessages(refresh: false));
   }
 
@@ -1263,10 +1334,18 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         }
         final rIdx = _rawMessages.indexWhere((m) => m.id == message.id);
         if (rIdx >= 0) {
+          final prevRaw = _rawMessages[rIdx];
+          final nextRaw = message.copyWith(isEdited: true);
+          // Edited payloads often omit reactions — don't wipe the badge.
+          final keepRx = (nextRaw.reactions == null ||
+                  nextRaw.reactions!.isEmpty) &&
+              (prevRaw.reactions != null && prevRaw.reactions!.isNotEmpty);
           _rawMessages = [
             for (var i = 0; i < _rawMessages.length; i++)
               if (i == rIdx)
-                message.copyWith(isEdited: true)
+                keepRx
+                    ? nextRaw.copyWith(reactions: prevRaw.reactions)
+                    : nextRaw
               else
                 _rawMessages[i],
           ];
@@ -1287,12 +1366,47 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         if (!_isEventForThisChat(conversationId)) return;
         final idx = _rawMessages.indexWhere((m) => m.id == messageId);
         if (idx == -1) return;
+        final before = _rawMessages[idx];
+        // Skip stale self-echoes that would briefly wipe an optimistic change
+        // (e.g. remove old emoji after we already switched to a new one).
+        if (userId != null && userId == _currentUserId) {
+          final mine = _myReactionEmoji(before);
+          final trimmed = reaction?.trim();
+          final isRemove = (action ?? '').toLowerCase().contains('remove') ||
+              (action ?? '').toLowerCase() == 'deleted' ||
+              (action ?? '').toLowerCase() == 'delete';
+          final hold = _localReactionHolds[messageId];
+          if (hold != null && hold.isActive) {
+            final held = hold.emoji?.trim();
+            if (isRemove) {
+              // Changing A→B emits remove(A) after we already hold B.
+              if (held != null && trimmed != null && trimmed != held) {
+                return;
+              }
+            } else {
+              // Already applied optimistically, or a stale add of the old emoji.
+              if (trimmed == null || trimmed != held) return;
+              if (mine != null && mine == trimmed) return;
+            }
+          } else {
+            if (isRemove &&
+                mine != null &&
+                trimmed != null &&
+                mine != trimmed) {
+              return;
+            }
+            if (!isRemove && mine != null && mine == trimmed) {
+              return;
+            }
+          }
+        }
         final updated = _applyReactionEvent(
-          message: _rawMessages[idx],
+          message: before,
           userId: userId,
           emoji: reaction,
           action: action,
         );
+        if (_reactionsEqual(before.reactions, updated.reactions)) return;
         _rawMessages = [
           for (var i = 0; i < _rawMessages.length; i++)
             if (i == idx) updated else _rawMessages[i],
@@ -1671,7 +1785,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       (response) async {
         _conversationId = response.conversationId ?? _conversationId;
         _hasMore = response.hasMore ?? false;
-        _rawMessages = _seedDeliveryOnList(response.data ?? const []);
+        // Soft-reload (resume / media viewer pop) must keep local reactions —
+        // GET messages often omits or lags the reactions array.
+        _rawMessages = _seedDeliveryOnList(
+          _mergeIncomingRawMessages(response.data ?? const []),
+        );
         _rebuildMessageItems();
         await ChatPendingSendStore.instance.ensureLoaded();
         _restorePendingFromStore();
@@ -2251,39 +2369,95 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   /// Resend a pending/failed optimistic message (WhatsApp-style).
+  /// Stamps the bubble with the current time and moves it to the latest slot.
   Future<void> resendMessage(String clientTempId) async {
     if (!_pendingSends.containsKey(clientTempId)) return;
     if (_inFlightTempIds.contains(clientTempId)) return;
 
+    final now = DateTime.now();
+    final timeLabel = ChatMappers.formatMessageTime(now.toIso8601String());
+
+    ChatMessageItem? target;
+    final others = <ChatMessageItem>[];
+    for (final m in _messages) {
+      if (m.clientTempId == clientTempId) {
+        target = m;
+      } else {
+        others.add(m);
+      }
+    }
+    if (target == null) return;
+
     final online = await _networkInfo.isConnected;
     if (!online) {
       _messages = [
-        for (final m in _messages)
-          if (m.clientTempId == clientTempId)
-            m.copyWith(status: ChatMessageStatus.pending)
-          else
-            m,
+        ...others,
+        target.copyWith(
+          status: ChatMessageStatus.pending,
+          createdAt: now,
+          timeLabel: timeLabel,
+        ),
       ];
-      _updatePersistedStatus(clientTempId, ChatMessageStatus.pending);
+      _touchPersistedResend(
+        clientTempId,
+        status: ChatMessageStatus.pending,
+        createdAt: now,
+        timeLabel: timeLabel,
+      );
       _emitLoaded();
       return;
     }
 
     _messages = [
-      for (final m in _messages)
-        if (m.clientTempId == clientTempId)
-          m.copyWith(
-            status: ChatMessageStatus.sending,
-            uploadProgress:
-                (m.hasImages || m.hasFiles || m.hasVoice) ? 0.0 : null,
-            clearUploadProgress: !(m.hasImages || m.hasFiles || m.hasVoice),
-          )
-        else
-          m,
+      ...others,
+      target.copyWith(
+        status: ChatMessageStatus.sending,
+        createdAt: now,
+        timeLabel: timeLabel,
+        uploadProgress:
+            (target.hasImages || target.hasFiles || target.hasVoice)
+                ? 0.0
+                : null,
+        clearUploadProgress:
+            !(target.hasImages || target.hasFiles || target.hasVoice),
+      ),
     ];
-    _updatePersistedStatus(clientTempId, ChatMessageStatus.sending);
+    _touchPersistedResend(
+      clientTempId,
+      status: ChatMessageStatus.sending,
+      createdAt: now,
+      timeLabel: timeLabel,
+    );
     _emitLoaded(isSending: true);
     await _dispatchSend(clientTempId);
+  }
+
+  void _touchPersistedResend(
+    String tempId, {
+    required ChatMessageStatus status,
+    required DateTime createdAt,
+    required String timeLabel,
+  }) {
+    final contextId = _contextId;
+    final chatType = _chatType;
+    if (contextId == null || chatType == null) return;
+    final entries = ChatPendingSendStore.instance.entriesFor(
+      chatType: chatType,
+      contextId: contextId,
+    );
+    for (final entry in entries) {
+      if (entry.tempId != tempId) continue;
+      ChatPendingSendStore.instance.save(
+        chatType: chatType,
+        contextId: contextId,
+        entry: entry.copyWith(
+          status: status,
+          createdAt: createdAt,
+          timeLabel: timeLabel,
+        ),
+      );
+      break;
+    }
   }
 
   /// Cancel an in-flight upload — keep the bubble + files so the user can
@@ -2881,7 +3055,28 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       message.reactions ?? const <ChatReactionModel>[],
     );
 
-    // Drop this user from every reaction group first (one reaction per user).
+    if (isRemove) {
+      // Only drop this emoji — do not wipe a newer reaction the user just
+      // switched to (change 👍 → 😂 emits remove for 👍 after 😂 is applied).
+      for (var i = 0; i < existing.length; i++) {
+        if (existing[i].emoji?.trim() != trimmed) continue;
+        final users = List<ChatUserModel>.from(existing[i].users ?? const []);
+        final before = users.length;
+        users.removeWhere((u) => userId != null && u.id == userId);
+        if (users.length != before) {
+          existing[i] = existing[i].copyWith(
+            users: users,
+            count: users.isEmpty ? 0 : (existing[i].count ?? users.length) - 1,
+          );
+        }
+      }
+      existing.removeWhere(
+        (r) => (r.count ?? 0) <= 0 && (r.users?.isEmpty ?? true),
+      );
+      return message.copyWith(reactions: existing);
+    }
+
+    // Add / change: one reaction per user — leave other emojis, then join this.
     for (var i = 0; i < existing.length; i++) {
       final users = List<ChatUserModel>.from(existing[i].users ?? const []);
       final before = users.length;
@@ -2897,44 +3092,42 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       (r) => (r.count ?? 0) <= 0 && (r.users?.isEmpty ?? true),
     );
 
-    if (!isRemove) {
-      final groupIdx = existing.indexWhere((r) => r.emoji == trimmed);
-      if (groupIdx >= 0) {
-        final users = List<ChatUserModel>.from(
-          existing[groupIdx].users ?? const [],
-        );
-        if (userId == null || !users.any((u) => u.id == userId)) {
-          users.add(
-            ChatUserModel(
-              id: userId,
-              name:
-                  userId == _currentUserId ? _myDisplayName : _peerDisplayName,
-            ),
-          );
-          // Update counts in place — keep list order (matches API).
-          existing[groupIdx] = existing[groupIdx].copyWith(
-            users: users,
-            count: (existing[groupIdx].count ?? 0) + 1,
-          );
-        }
-      } else {
-        // API puts newest at the top of the list → insert at index 0.
-        existing.insert(
-          0,
-          ChatReactionModel(
-            emoji: trimmed,
-            count: 1,
-            users: [
-              ChatUserModel(
-                id: userId,
-                name: userId == _currentUserId
-                    ? _myDisplayName
-                    : _peerDisplayName,
-              ),
-            ],
+    final groupIdx = existing.indexWhere((r) => r.emoji?.trim() == trimmed);
+    if (groupIdx >= 0) {
+      final users = List<ChatUserModel>.from(
+        existing[groupIdx].users ?? const [],
+      );
+      if (userId == null || !users.any((u) => u.id == userId)) {
+        users.add(
+          ChatUserModel(
+            id: userId,
+            name:
+                userId == _currentUserId ? _myDisplayName : _peerDisplayName,
           ),
         );
+        // Update counts in place — keep list order (matches API).
+        existing[groupIdx] = existing[groupIdx].copyWith(
+          users: users,
+          count: (existing[groupIdx].count ?? 0) + 1,
+        );
       }
+    } else {
+      // API puts newest at the top of the list → insert at index 0.
+      existing.insert(
+        0,
+        ChatReactionModel(
+          emoji: trimmed,
+          count: 1,
+          users: [
+            ChatUserModel(
+              id: userId,
+              name: userId == _currentUserId
+                  ? _myDisplayName
+                  : _peerDisplayName,
+            ),
+          ],
+        ),
+      );
     }
 
     return message.copyWith(reactions: existing);
@@ -2959,10 +3152,36 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         if (r.emoji?.trim().isNotEmpty == true) r.emoji!.trim(),
     };
 
-    // Same set of emoji types → take server order (stable with re-enter).
+    final myId = _currentUserId;
+    String? prevMine;
+    if (myId != null) {
+      for (final r in previous) {
+        if ((r.users ?? const []).any((u) => u.id == myId)) {
+          prevMine = r.emoji?.trim();
+          if (prevMine != null && prevMine.isEmpty) prevMine = null;
+          break;
+        }
+      }
+    }
+
+    // Same set of emoji types → take server order, but never drop *my*
+    // membership when GET lags behind an optimistic toggle.
     if (serverEmojis.length == prevEmojis.length &&
         serverEmojis.containsAll(prevEmojis)) {
-      return server;
+      if (prevMine == null) return server;
+      final serverHasMine = server.any(
+        (r) =>
+            r.emoji?.trim() == prevMine &&
+            (r.users ?? const []).any((u) => u.id == myId),
+      );
+      if (serverHasMine) return server;
+      return _applyReactionEvent(
+            message: ChatMessageModel(reactions: server),
+            userId: myId,
+            emoji: prevMine,
+            action: 'add',
+          ).reactions ??
+          server;
     }
 
     // New type appeared optimistically — keep current order, sync payloads.
@@ -2976,8 +3195,26 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       final e = r.emoji?.trim();
       if (e == null || e.isEmpty) continue;
       final s = byEmoji[e];
-      if (s == null) continue;
-      out.add(s);
+      if (s == null) {
+        // Keep my optimistic group when the soft-reload/toggle payload lags.
+        final mineHere = myId != null &&
+            (r.users ?? const []).any((u) => u.id == myId);
+        if (!mineHere) continue;
+        out.add(r);
+        seen.add(e);
+        continue;
+      }
+      // Prefer server counts/users but keep me if server omitted me on this
+      // emoji while previous still had me (stale GET during 👍→😂).
+      final serverHasMe = myId != null &&
+          (s.users ?? const []).any((u) => u.id == myId);
+      final prevHasMe = myId != null &&
+          (r.users ?? const []).any((u) => u.id == myId);
+      if (prevHasMe && !serverHasMe) {
+        out.add(r);
+      } else {
+        out.add(s);
+      }
       seen.add(e);
     }
     for (final r in server) {
@@ -2989,6 +3226,109 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     return out;
   }
 
+  void _holdLocalReaction(int messageId, String? emoji) {
+    _localReactionHolds[messageId] = _LocalReactionHold(
+      emoji: emoji?.trim().isEmpty == true ? null : emoji?.trim(),
+      // Long enough to cover image-viewer open + slow GET catch-up.
+      until: DateTime.now().add(const Duration(seconds: 45)),
+    );
+  }
+
+  void _clearLocalReactionHold(int messageId) {
+    _localReactionHolds.remove(messageId);
+  }
+
+  /// Soft-reload merge: keep local reactions when GET messages omits/lags them.
+  List<ChatMessageModel> _mergeIncomingRawMessages(
+    List<ChatMessageModel> incoming,
+  ) {
+    if (incoming.isEmpty) return incoming;
+    if (_rawMessages.isEmpty && _localReactionHolds.isEmpty) return incoming;
+
+    final prevById = <int, ChatMessageModel>{
+      for (final m in _rawMessages)
+        if (m.id != null) m.id!: m,
+    };
+
+    return [
+      for (final next in incoming) _mergeIncomingRawMessage(prevById, next),
+    ];
+  }
+
+  ChatMessageModel _mergeIncomingRawMessage(
+    Map<int, ChatMessageModel> prevById,
+    ChatMessageModel next,
+  ) {
+    final id = next.id;
+    if (id == null) return next;
+
+    final previous = prevById[id];
+    final hold = _localReactionHolds[id];
+
+    var merged = next;
+    final nextRx = next.reactions;
+    final prevRx = previous?.reactions;
+    final prevMine = previous == null ? null : _myReactionEmoji(previous);
+
+    if ((nextRx == null || nextRx.isEmpty) &&
+        prevRx != null &&
+        prevRx.isNotEmpty) {
+      merged = merged.copyWith(reactions: prevRx);
+    } else if (prevRx != null && prevRx.isNotEmpty && nextRx != null) {
+      merged = merged.copyWith(
+        reactions: _mergeReactionsKeepOrder(
+          previous: prevRx,
+          server: nextRx,
+        ),
+      );
+    }
+
+    // Active local toggle wins over a lagging GET payload.
+    if (hold != null && hold.isActive) {
+      final held = hold.emoji;
+      final mine = _myReactionEmoji(merged);
+      if (held == null) {
+        if (mine != null) {
+          merged = _applyReactionEvent(
+            message: merged,
+            userId: _currentUserId,
+            emoji: mine,
+            action: 'remove',
+          );
+        }
+      } else if (mine != held) {
+        merged = _applyReactionEvent(
+          message: merged,
+          userId: _currentUserId,
+          emoji: held,
+          action: 'add',
+        );
+      }
+    } else if (hold != null && !hold.isActive) {
+      _clearLocalReactionHold(id);
+      // Hold expired but GET still missing my reaction — keep what we showed.
+      final mine = _myReactionEmoji(merged);
+      if (prevMine != null && mine == null) {
+        merged = _applyReactionEvent(
+          message: merged,
+          userId: _currentUserId,
+          emoji: prevMine,
+          action: 'add',
+        );
+      }
+    } else if (prevMine != null && _myReactionEmoji(merged) == null) {
+      // No hold, but soft-reload dropped my badge — restore it.
+      merged = _applyReactionEvent(
+        message: merged,
+        userId: _currentUserId,
+        emoji: prevMine,
+        action: 'add',
+      );
+    }
+
+    return merged;
+  }
+
   Future<void> toggleReaction({
     required int messageId,
     required String emoji,
@@ -2996,20 +3336,23 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     final conversationId = _conversationId;
     if (conversationId == null) return;
 
+    final trimmedEmoji = emoji.trim();
+    if (trimmedEmoji.isEmpty) return;
+
     // Optimistic local update so the badge appears immediately.
     final idx = _rawMessages.indexWhere((m) => m.id == messageId);
+    var removing = false;
     if (idx >= 0) {
       final current = _rawMessages[idx];
-      final alreadyMine = (current.reactions ?? const []).any(
-        (r) =>
-            r.emoji == emoji &&
-            (r.users ?? const []).any((u) => u.id == _currentUserId),
-      );
+      final myPreviousEmoji = _myReactionEmoji(current);
+      removing = myPreviousEmoji == trimmedEmoji;
+      _holdLocalReaction(messageId, removing ? null : trimmedEmoji);
       final optimistic = _applyReactionEvent(
         message: current,
         userId: _currentUserId,
-        emoji: emoji,
-        action: alreadyMine ? 'remove' : 'add',
+        emoji: trimmedEmoji,
+        // Same emoji → remove; different / none → set (replaces previous).
+        action: removing ? 'remove' : 'add',
       );
       _rawMessages = [
         for (var i = 0; i < _rawMessages.length; i++)
@@ -3017,16 +3360,19 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       ];
       _rebuildMessageItems();
       _emitLoaded();
+    } else {
+      _holdLocalReaction(messageId, trimmedEmoji);
     }
 
     final result = await _repository.toggleReaction(
       conversationId: conversationId,
       messageId: messageId,
-      reaction: emoji,
+      reaction: trimmedEmoji,
     );
 
     result.fold(
       (failure) {
+        _clearLocalReactionHold(messageId);
         // Revert by reloading message list reactions from last known server
         // state is hard; soft-refresh messages instead.
         loadMessages(refresh: false);
@@ -3036,21 +3382,118 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         if (serverIdx == -1) return;
         if (response.data?.reactions != null) {
           final previous = _rawMessages[serverIdx];
-          final updated = previous.copyWith(
-            reactions: _mergeReactionsKeepOrder(
-              previous: previous.reactions,
-              server: response.data!.reactions!,
-            ),
-          );
+          var serverReactions = response.data!.reactions!;
+          // Changing A→B: a stale toggle response may omit B. Keep the
+          // optimistic change instead of flashing back to empty.
+          if (!removing) {
+            final hasMine = serverReactions.any(
+              (r) =>
+                  r.emoji?.trim() == trimmedEmoji &&
+                  (r.users ?? const [])
+                      .any((u) => u.id == _currentUserId),
+            );
+            if (!hasMine) {
+              serverReactions = _applyReactionEvent(
+                message: previous.copyWith(reactions: serverReactions),
+                userId: _currentUserId,
+                emoji: trimmedEmoji,
+                action: 'add',
+              ).reactions ??
+                  serverReactions;
+            }
+          } else if (removing) {
+            // Confirm removal even if the payload still lists my old emoji.
+            final stillMine = serverReactions.any(
+              (r) =>
+                  r.emoji?.trim() == trimmedEmoji &&
+                  (r.users ?? const [])
+                      .any((u) => u.id == _currentUserId),
+            );
+            if (stillMine) {
+              serverReactions = _applyReactionEvent(
+                message: previous.copyWith(reactions: serverReactions),
+                userId: _currentUserId,
+                emoji: trimmedEmoji,
+                action: 'remove',
+              ).reactions ??
+                  serverReactions;
+            }
+          }
+          // When removing, trust the patched server list — merging with the
+          // pre-remove optimistic row can resurrect my emoji via keep-order.
+          final merged = removing
+              ? serverReactions
+              : _mergeReactionsKeepOrder(
+                  previous: previous.reactions,
+                  server: serverReactions,
+                );
+          // Refresh hold so a follow-up soft-reload still respects this toggle.
+          _holdLocalReaction(messageId, removing ? null : trimmedEmoji);
+          if (_reactionsEqual(previous.reactions, merged)) return;
+          final updated = previous.copyWith(reactions: merged);
           _rawMessages = [
             for (var i = 0; i < _rawMessages.length; i++)
               if (i == serverIdx) updated else _rawMessages[i],
           ];
           _rebuildMessageItems();
           _emitLoaded();
+        } else if (removing) {
+          // Empty/omitted reactions payload after remove — keep optimistic clear.
+          _holdLocalReaction(messageId, null);
         }
       },
     );
+  }
+
+  String? _myReactionEmoji(ChatMessageModel message) {
+    final userId = _currentUserId;
+    if (userId == null) return null;
+    for (final r in message.reactions ?? const <ChatReactionModel>[]) {
+      if ((r.users ?? const []).any((u) => u.id == userId)) {
+        final e = r.emoji?.trim();
+        if (e != null && e.isNotEmpty) return e;
+      }
+    }
+    return null;
+  }
+
+  String? _myReactionEmojiFromItem(ChatMessageItem message) {
+    final userId = _currentUserId;
+    if (userId == null) return null;
+    for (final g in message.reactions) {
+      if (g.users.any((u) => u.id == userId)) {
+        final e = g.emoji.trim();
+        if (e.isNotEmpty) return e;
+      }
+    }
+    final fallback = message.reactionEmoji?.trim();
+    if (fallback != null && fallback.isNotEmpty) return fallback;
+    return null;
+  }
+
+  bool _reactionsEqual(
+    List<ChatReactionModel>? a,
+    List<ChatReactionModel>? b,
+  ) {
+    final left = a ?? const <ChatReactionModel>[];
+    final right = b ?? const <ChatReactionModel>[];
+    if (identical(left, right)) return true;
+    if (left.length != right.length) return false;
+    for (var i = 0; i < left.length; i++) {
+      final l = left[i];
+      final r = right[i];
+      if (l.emoji?.trim() != r.emoji?.trim() ||
+          (l.count ?? 0) != (r.count ?? 0)) {
+        return false;
+      }
+      final lu = l.users ?? const <ChatUserModel>[];
+      final ru = r.users ?? const <ChatUserModel>[];
+      if (lu.length != ru.length) return false;
+      for (var j = 0; j < lu.length; j++) {
+        if (lu[j].id != ru[j].id) return false;
+      }
+    }
+    return true;
   }
 
   /// Removes a message from this user's timeline (delete-for-me).

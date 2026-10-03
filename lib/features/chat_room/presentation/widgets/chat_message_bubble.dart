@@ -1109,31 +1109,32 @@ class _LiveMessageBubbleBody extends StatelessWidget {
     );
 
     // Reaction hangs under the bubble into reserved bottom space (not inside card).
+    // Keep the badge host mounted so a brief empty → restore (emoji change /
+    // soft-reload) cannot dispose + re-enter-animate (hide → show flicker).
     final bubble = Stack(
       clipBehavior: Clip.none,
       children: [
         card,
-        if (hasReaction)
-          Positioned(
-            left: isOutgoing ? null : 2.w,
-            right: isOutgoing ? 2.w : null,
-            bottom: -_kReactionHang.h - 2.h,
-            child: GestureDetector(
-              onTap: onReactionTap,
-              behavior: HitTestBehavior.opaque,
-              child: _AnimatedReactionBadge(
-                emojis: reactionEmojis.isNotEmpty
-                    ? reactionEmojis
-                    : [message.reactionEmoji!.trim()],
-                count: message.totalReactionCount > 0
-                    ? message.totalReactionCount
-                    : reactionEmojis.isNotEmpty
-                        ? reactionEmojis.length
-                        : 1,
-                isDarkMode: isDarkMode,
-              ),
-            ),
+        Positioned(
+          left: isOutgoing ? null : 2.w,
+          right: isOutgoing ? 2.w : null,
+          bottom: -_kReactionHang.h - 2.h,
+          child: _ReactionBadgeHost(
+            visible: hasReaction,
+            emojis: reactionEmojis.isNotEmpty
+                ? reactionEmojis
+                : (message.reactionEmoji?.trim().isNotEmpty == true
+                    ? [message.reactionEmoji!.trim()]
+                    : const <String>[]),
+            count: message.totalReactionCount > 0
+                ? message.totalReactionCount
+                : reactionEmojis.isNotEmpty
+                    ? reactionEmojis.length
+                    : 1,
+            isDarkMode: isDarkMode,
+            onTap: onReactionTap,
           ),
+        ),
       ],
     );
 
@@ -1556,16 +1557,66 @@ final RegExp _kEmojiSequence = RegExp(
   unicode: true,
 );
 
+/// Host stays mounted under the bubble so emoji switches don't remount/fade.
+/// Removal must hide immediately (no ghost of the last emoji).
+class _ReactionBadgeHost extends StatefulWidget {
+  final bool visible;
+  final List<String> emojis;
+  final int count;
+  final bool isDarkMode;
+  final VoidCallback? onTap;
+
+  const _ReactionBadgeHost({
+    required this.visible,
+    required this.emojis,
+    required this.count,
+    required this.isDarkMode,
+    this.onTap,
+  });
+
+  @override
+  State<_ReactionBadgeHost> createState() => _ReactionBadgeHostState();
+}
+
+class _ReactionBadgeHostState extends State<_ReactionBadgeHost> {
+  bool _hasEntered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.visible || widget.emojis.isEmpty) {
+      // Allow a fresh enter animation the next time a reaction appears.
+      _hasEntered = false;
+      return const SizedBox.shrink();
+    }
+
+    final animateEnter = !_hasEntered;
+    _hasEntered = true;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: _AnimatedReactionBadge(
+        emojis: widget.emojis,
+        count: widget.count,
+        isDarkMode: widget.isDarkMode,
+        animateEnter: animateEnter,
+      ),
+    );
+  }
+}
+
 class _AnimatedReactionBadge extends StatefulWidget {
   /// Distinct reaction emojis on this message (❤️, 👍, …).
   final List<String> emojis;
   final int count;
   final bool isDarkMode;
+  final bool animateEnter;
 
   const _AnimatedReactionBadge({
     required this.emojis,
     required this.isDarkMode,
     this.count = 1,
+    this.animateEnter = true,
   });
 
   @override
@@ -1593,27 +1644,22 @@ class _AnimatedReactionBadgeState extends State<_AnimatedReactionBadge>
       parent: _controller,
       curve: Curves.easeOut,
     );
-    _controller.forward();
+    if (widget.animateEnter) {
+      _controller.forward();
+    } else {
+      _controller.value = 1;
+    }
   }
 
   @override
   void didUpdateWidget(covariant _AnimatedReactionBadge oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_listEquals(oldWidget.emojis, widget.emojis) ||
-        oldWidget.count != widget.count) {
-      _controller
-        ..reset()
-        ..forward();
+    // Changing emoji/count must not replay the enter fade (looks like hide →
+    // show). WhatsApp swaps the glyph in place; only first appear animates.
+    // If a parent remount somehow left us mid-fade, snap to fully visible.
+    if (_controller.value < 1.0 && !_controller.isAnimating) {
+      _controller.value = 1.0;
     }
-  }
-
-  bool _listEquals(List<String> a, List<String> b) {
-    if (identical(a, b)) return true;
-    if (a.length != b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    return true;
   }
 
   @override
@@ -1981,6 +2027,12 @@ class _ImageAttachmentGrid extends StatelessWidget {
     final isLocal = tapped.localFile != null;
     final headers = allLocal ? null : await chatProtectedFileHeaders();
     if (!context.mounted) return;
+
+    // Soft-reload on RouteAware didPopNext wipes lagging reactions — mark this
+    // push as a local overlay so the cubit only re-attaches realtime.
+    try {
+      context.read<ChatRoomCubit>().beginLocalOverlay();
+    } catch (_) {}
 
     Navigator.of(context).push(
       FullScreenImage.route(

@@ -1074,16 +1074,14 @@ class ChatMappers {
   static bool isReactionPreview(String? text) {
     final p = (text ?? '').trim().toLowerCase();
     if (p.isEmpty) return false;
-    if (p.contains('reacted with') ||
-        p.contains('reacted to') ||
-        p.startsWith('reacted ') ||
-        p.contains('تفاعل ب') ||
+    // "Moatz Fadel reacted 😂 to your message" / "You reacted with 👍" / etc.
+    if (RegExp(r'\breacted\b').hasMatch(p)) return true;
+    if (p.contains('تفاعل ب') ||
         p.contains('تفاعل على') ||
-        p.contains('تفاعل مع')) {
+        p.contains('تفاعل مع') ||
+        RegExp(r'\bتفاعل\b').hasMatch(p)) {
       return true;
     }
-    // "You reacted …" / "Reacted …" system copy without emoji verb variants.
-    if (RegExp(r'^(you\s+)?reacted\b').hasMatch(p)) return true;
     return false;
   }
 

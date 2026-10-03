@@ -293,6 +293,26 @@ class ChatPendingSendEntry {
     );
   }
 
+  ChatPendingSendEntry copyWith({
+    ChatMessageStatus? status,
+    String? timeLabel,
+    DateTime? createdAt,
+  }) {
+    return ChatPendingSendEntry(
+      tempId: tempId,
+      previewText: previewText,
+      timeLabel: timeLabel ?? this.timeLabel,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      text: text,
+      images: images,
+      voices: voices,
+      files: files,
+      voiceDurationsMs: voiceDurationsMs,
+      replyToId: replyToId,
+    );
+  }
+
   ChatPendingSendEntry copyWithFiles({
     List<File>? images,
     List<File>? voices,

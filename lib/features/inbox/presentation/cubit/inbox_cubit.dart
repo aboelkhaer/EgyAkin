@@ -705,6 +705,8 @@ class InboxCubit extends Cubit<InboxState> {
           preview: ChatMappers.deletedForEveryoneContent,
         );
       case ChatMessageReactedEvent(:final conversationId):
+        // Reaction preview is not an outgoing message — hide delivery ticks now.
+        _clearLastMessageStatus(conversationId);
         // Server writes a reaction sentence into last_message.content — refresh
         // the list (debounced) so the row picks it up without pull-to-refresh.
         final inList =
@@ -878,6 +880,7 @@ class InboxCubit extends Cubit<InboxState> {
     final activityAt = event.createdAt ?? DateTime.now().toIso8601String();
     final timeLabel = ChatMappers.formatInboxTime(activityAt);
 
+    final reactionPreview = ChatMappers.isReactionPreview(preview);
     InboxThread apply(InboxThread t) => t.copyWith(
           preview: preview.isEmpty ? t.preview : preview,
           previewKind: preview.isEmpty
@@ -894,7 +897,7 @@ class InboxCubit extends Cubit<InboxState> {
           isPriority: becomesUnread
               ? true
               : (isViewing || isMine ? false : t.isPriority),
-          lastMessageStatus: !isMine
+          lastMessageStatus: (!isMine || reactionPreview)
               ? null
               : (messageId != null && t.lastMessageId == messageId
                   ? _mergedOutgoingStatus(
@@ -902,7 +905,7 @@ class InboxCubit extends Cubit<InboxState> {
                       fromApi: ChatMessageStatus.sent,
                     )
                   : ChatMessageStatus.sent),
-          clearLastMessageStatus: !isMine,
+          clearLastMessageStatus: !isMine || reactionPreview,
           lastMessageId: messageId,
           clearLastMessageId: messageId == null,
           peerActivity: isMine ? t.peerActivity : ChatComposerActivity.none,
@@ -1013,6 +1016,36 @@ class InboxCubit extends Cubit<InboxState> {
     unawaited(silentRefresh(bypassThrottle: true));
   }
 
+  void _clearLastMessageStatus(int conversationId) {
+    final idx = _threads.indexWhere((t) => t.conversationId == conversationId);
+    final archIdx =
+        _archivedThreads.indexWhere((t) => t.conversationId == conversationId);
+    var changed = false;
+    if (idx >= 0 && _threads[idx].lastMessageStatus != null) {
+      changed = true;
+      _threads = [
+        for (var i = 0; i < _threads.length; i++)
+          if (i == idx)
+            _threads[i].copyWith(clearLastMessageStatus: true)
+          else
+            _threads[i],
+      ];
+    }
+    var archivedChanged = false;
+    if (archIdx >= 0 && _archivedThreads[archIdx].lastMessageStatus != null) {
+      archivedChanged = true;
+      _archivedThreads = [
+        for (var i = 0; i < _archivedThreads.length; i++)
+          if (i == archIdx)
+            _archivedThreads[i].copyWith(clearLastMessageStatus: true)
+          else
+            _archivedThreads[i],
+      ];
+    }
+    if (changed) _emitLoaded();
+    if (archivedChanged) _notifyArchived();
+  }
+
   void _upgradeOutgoingStatus(
     int conversationId,
     ChatMessageStatus next,
@@ -1023,8 +1056,11 @@ class InboxCubit extends Cubit<InboxState> {
 
     // No status = the row's last message is incoming; receipts for our older
     // messages must not put ticks on it (they flashed until the refresh).
+    // Reaction previews are not outgoing messages — never show ticks on them.
     var changed = false;
-    if (idx >= 0 && _threads[idx].lastMessageStatus != null) {
+    if (idx >= 0 &&
+        _threads[idx].lastMessageStatus != null &&
+        !ChatMappers.isReactionPreview(_threads[idx].preview)) {
       final current = _threads[idx].lastMessageStatus!;
       final currentRank = _statusRank(current);
       if (_statusRank(next) > currentRank) {
@@ -1040,7 +1076,9 @@ class InboxCubit extends Cubit<InboxState> {
     }
 
     var archivedChanged = false;
-    if (archIdx >= 0 && _archivedThreads[archIdx].lastMessageStatus != null) {
+    if (archIdx >= 0 &&
+        _archivedThreads[archIdx].lastMessageStatus != null &&
+        !ChatMappers.isReactionPreview(_archivedThreads[archIdx].preview)) {
       final current = _archivedThreads[archIdx].lastMessageStatus!;
       final currentRank = _statusRank(current);
       if (_statusRank(next) > currentRank) {
@@ -1124,6 +1162,7 @@ class InboxCubit extends Cubit<InboxState> {
     ChatMessageStatus live,
   ) {
     if (thread.isGroupLike) return thread;
+    if (ChatMappers.isReactionPreview(thread.preview)) return thread;
     final api = thread.lastMessageStatus;
     if (api == null) return thread;
     if (live == ChatMessageStatus.seen) return thread;

@@ -97,21 +97,33 @@ class _ImagesInSinglePostState extends State<ImagesInSinglePost>
                     bottom: 8,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 6.w,
-                        vertical: 4.h,
+                        horizontal: 8.w,
+                        vertical: 5.h,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.black.withOpacity(0.55),
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.35),
+                          width: 0.8,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.35),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: SmoothPageIndicator(
                         controller: _pageController,
                         count: widget.mediaPaths.length,
-                        effect: const WormEffect(
-                          activeDotColor: AppColors.primary,
-                          dotColor: Colors.grey,
-                          dotHeight: 5,
-                          dotWidth: 5,
+                        effect: WormEffect(
+                          activeDotColor: Colors.white,
+                          dotColor: Colors.white.withOpacity(0.45),
+                          dotHeight: 7,
+                          dotWidth: 7,
+                          spacing: 6,
                         ),
                       ),
                     ),

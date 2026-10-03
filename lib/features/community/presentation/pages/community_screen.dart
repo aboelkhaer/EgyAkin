@@ -209,6 +209,10 @@ class _CommunityScreenState extends State<CommunityScreen>
     final delta = offset - _lastFeedOffset;
     _lastFeedOffset = offset;
 
+    // Ignore discrete layout corrections (link-preview remount height jumps).
+    // Real finger flings rarely move this much in a single listener tick.
+    if (delta.abs() > 80) return;
+
     final maxExtent = feedsScrollController.position.maxScrollExtent;
     _applyScrollDelta(delta, offset, maxExtent);
   }
