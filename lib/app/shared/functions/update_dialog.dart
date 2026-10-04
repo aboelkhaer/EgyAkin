@@ -54,41 +54,47 @@ class _WhatsNewDialog extends StatelessWidget {
 
     final features = <_WhatsNewFeature>[
       _WhatsNewFeature(
-        icon: Icons.auto_awesome_rounded,
+        icon: Icons.chat_bubble_rounded,
         accent: const Color(0xFF8B5CF6),
-        title: context.tr(AppStrings.updateFeatureRedesignTitle),
-        body: context.tr(AppStrings.updateFeatureRedesignBody),
+        title: context.tr(AppStrings.updateFeatureChatTitle),
+        body: context.tr(AppStrings.updateFeatureChatBody),
         highlight: true,
       ),
       _WhatsNewFeature(
-        icon: Icons.bolt_rounded,
-        accent: const Color(0xFFF59E0B),
-        title: context.tr(AppStrings.updateFeatureFasterListsTitle),
-        body: context.tr(AppStrings.updateFeatureFasterListsBody),
-      ),
-      _WhatsNewFeature(
-        icon: Icons.insights_rounded,
-        accent: const Color(0xFF22C55E),
-        title: context.tr(AppStrings.updateFeatureProfileStatsTitle),
-        body: context.tr(AppStrings.updateFeatureProfileStatsBody),
-      ),
-      _WhatsNewFeature(
-        icon: Icons.medical_services_outlined,
+        icon: Icons.medical_information_rounded,
         accent: const Color(0xFF3B82F6),
-        title: context.tr(AppStrings.updateFeatureConsultationsTitle),
-        body: context.tr(AppStrings.updateFeatureConsultationsBody),
+        title: context.tr(AppStrings.updateFeatureCaseGroupChatTitle),
+        body: context.tr(AppStrings.updateFeatureCaseGroupChatBody),
       ),
       _WhatsNewFeature(
-        icon: Icons.medication_liquid_rounded,
-        accent: const Color(0xFFEC4899),
-        title: context.tr(AppStrings.updateFeatureDoseSearchTitle),
-        body: context.tr(AppStrings.updateFeatureDoseSearchBody),
-      ),
-      _WhatsNewFeature(
-        icon: Icons.person_add_alt_1_rounded,
+        icon: Icons.groups_rounded,
         accent: const Color(0xFF14B8A6),
-        title: context.tr(AppStrings.updateFeatureAddPatientTitle),
-        body: context.tr(AppStrings.updateFeatureAddPatientBody),
+        title: context.tr(AppStrings.updateFeatureSocialGroupChatTitle),
+        body: context.tr(AppStrings.updateFeatureSocialGroupChatBody),
+      ),
+      _WhatsNewFeature(
+        icon: Icons.notifications_active_rounded,
+        accent: const Color(0xFFF59E0B),
+        title: context.tr(AppStrings.updateFeatureNotificationsTitle),
+        body: context.tr(AppStrings.updateFeatureNotificationsBody),
+      ),
+      _WhatsNewFeature(
+        icon: Icons.ios_share_rounded,
+        accent: const Color(0xFFEC4899),
+        title: context.tr(AppStrings.updateFeatureSharePostsTitle),
+        body: context.tr(AppStrings.updateFeatureSharePostsBody),
+      ),
+      _WhatsNewFeature(
+        icon: Icons.auto_awesome_rounded,
+        accent: const Color(0xFF6366F1),
+        title: context.tr(AppStrings.updateFeatureDesignTitle),
+        body: context.tr(AppStrings.updateFeatureDesignBody),
+      ),
+      _WhatsNewFeature(
+        icon: Icons.bug_report_outlined,
+        accent: const Color(0xFF22C55E),
+        title: context.tr(AppStrings.updateFeatureBugFixesTitle),
+        body: context.tr(AppStrings.updateFeatureBugFixesBody),
       ),
     ];
 

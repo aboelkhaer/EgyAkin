@@ -127,35 +127,57 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
       child: ListenableBuilder(
         listenable: cubit.commentFocusNode,
         builder: (context, _) {
-          // Only ride the keyboard when THIS field is focused. Otherwise stay
-          // pinned to the screen bottom (hidden behind the keyboard) so poll
-          // "add option" / other fields aren't covered by the comment bar.
+          // Always follow the live keyboard inset — switching to safeBottom the
+          // instant focus drops (while the keyboard is still animating away)
+          // made the bar jump to the floor then snap back up.
           final commentFocused = cubit.commentFocusNode.hasFocus;
-          final bottomInset = commentFocused && keyboard > safeBottom
-              ? keyboard
-              : safeBottom;
-          final hideBehindKeyboard = keyboard > 0 && !commentFocused;
+          final bottomInset =
+              keyboard > safeBottom ? keyboard : safeBottom;
+          // Hide only when another field owns the keyboard (e.g. poll option).
+          // On plain dismiss, primary focus is null — keep the bar visible and
+          // ride the keyboard down to its resting place.
+          final otherFieldOwnsKeyboard = keyboard > safeBottom &&
+              !commentFocused &&
+              (FocusManager.instance.primaryFocus?.hasFocus ?? false);
+          final hideBehindKeyboard = otherFieldOwnsKeyboard;
 
           return BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, themeState) {
-              final isDark =
-                  themeState is ThemeLoaded && themeState.isDarkMode;
+              final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
               final primary = HomeDashboardColors.primary(isDark);
               _controller.updateHashtagStyle(_hashtagStyle(primary));
 
               return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
                 buildWhen: (previous, current) {
                   bool sendingOf(ShowSingleFeedState s) => s.maybeWhen(
-                        loaded: (_, __, ___, isSendCommentLoading, ____,
-                                _____, ______, _______, ________,
-                                isSendReplyLoading, _________, __________) =>
+                        loaded: (_,
+                                __,
+                                ___,
+                                isSendCommentLoading,
+                                ____,
+                                _____,
+                                ______,
+                                _______,
+                                ________,
+                                isSendReplyLoading,
+                                _________,
+                                __________) =>
                             isSendCommentLoading || isSendReplyLoading,
                         orElse: () => false,
                       );
                   List? commentsOf(ShowSingleFeedState s) => s.maybeWhen(
-                        loaded: (commentsResponse, _, __, ___, ____, _____,
-                                ______, _______, ________, _________,
-                                __________, ___________) =>
+                        loaded: (commentsResponse,
+                                _,
+                                __,
+                                ___,
+                                ____,
+                                _____,
+                                ______,
+                                _______,
+                                ________,
+                                _________,
+                                __________,
+                                ___________) =>
                             commentsResponse.data?.data,
                         orElse: () => null,
                       );
@@ -183,8 +205,17 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                   );
 
                   final commentsData = state.maybeWhen(
-                    loaded: (commentsResponse, _, __, ___, ____, _____, ______,
-                            _______, ________, _________, __________,
+                    loaded: (commentsResponse,
+                            _,
+                            __,
+                            ___,
+                            ____,
+                            _____,
+                            ______,
+                            _______,
+                            ________,
+                            _________,
+                            __________,
                             ___________) =>
                         commentsResponse.data?.data,
                     orElse: () => null,
@@ -257,9 +288,8 @@ class _ComposerShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final replyName = replyingTo == null
-        ? null
-        : doctorDisplayName(replyingTo.doctor);
+    final replyName =
+        replyingTo == null ? null : doctorDisplayName(replyingTo.doctor);
 
     return ClipRect(
       child: BackdropFilter(
@@ -283,8 +313,7 @@ class _ComposerShell extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 8),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 6),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6),
                   decoration: BoxDecoration(
                     color: primary.withOpacity(isDark ? 0.16 : 0.08),
                     borderRadius: BorderRadius.circular(10.r),
@@ -329,12 +358,12 @@ class _ComposerShell extends StatelessWidget {
                             : const Color(0xFFF3F4F6);
                         const barHeight = 44.0;
                         const maxLines = 5;
-                        final borderColor = HomeDashboardColors.border(isDark)
-                            .withOpacity(0.8);
+                        final borderColor =
+                            HomeDashboardColors.border(isDark).withOpacity(0.8);
 
                         // Same growth + hint centering model as chat composer.
                         return ConstrainedBox(
-                          constraints: BoxConstraints(
+                          constraints: const BoxConstraints(
                             minHeight: barHeight,
                             maxHeight: (barHeight * maxLines) + 12,
                           ),
@@ -356,7 +385,7 @@ class _ComposerShell extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   height: 1.2,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                   fontFamily: 'Tajawal',
                                   color: HomeDashboardColors.title(isDark),
                                 ),
@@ -365,13 +394,9 @@ class _ComposerShell extends StatelessWidget {
                                   filled: true,
                                   fillColor: fieldColor,
                                   hintText: null,
-                                  // Extra top padding so Tajawal glyphs sit on
-                                  // the caret midline (same as chat message).
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                    16.w,
-                                    10.h,
-                                    16.w,
-                                    6.h,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 10.h,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(22.r),
@@ -463,8 +488,7 @@ class _SendCommentButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = canSend || isSending;
-    final idleColor =
-        isDark ? AppColors.darkSurface : const Color(0xFFF3F4F6);
+    final idleColor = isDark ? AppColors.darkSurface : const Color(0xFFF3F4F6);
     final iconIdle = HomeDashboardColors.subtitle(isDark);
 
     return TweenAnimationBuilder<double>(

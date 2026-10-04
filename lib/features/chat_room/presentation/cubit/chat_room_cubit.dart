@@ -36,6 +36,29 @@ class _PendingSendPayload {
     this.voiceDurationsMs = const [],
     this.replyToId,
   });
+
+  bool get hasAttachments =>
+      images.isNotEmpty || voices.isNotEmpty || files.isNotEmpty;
+}
+
+/// Watches for a server message that still arrived after the user cancelled
+/// an in-flight multipart upload (client abort ≠ server reject).
+class _CancelledSendWatch {
+  final DateTime until;
+  final int imageCount;
+  final int voiceCount;
+  final int fileCount;
+  final int? replyToId;
+
+  const _CancelledSendWatch({
+    required this.until,
+    required this.imageCount,
+    required this.voiceCount,
+    required this.fileCount,
+    this.replyToId,
+  });
+
+  bool get isExpired => DateTime.now().isAfter(until);
 }
 
 /// Short-lived guard so stale self reaction echoes / soft-reloads cannot wipe
@@ -168,6 +191,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   final Set<String> _inFlightTempIds = {};
   final Map<String, CancelToken> _sendCancelTokens = {};
   final Set<String> _cancelledTempIds = {};
+
+  /// Temp ids cancelled while upload may still complete on the server.
+  final Map<String, _CancelledSendWatch> _cancelledSendWatches = {};
 
   /// Typing / recording / uploading activity we broadcast to peers.
   Timer? _typingStartDebounce;
@@ -1245,6 +1271,20 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         // Skip our own non-system messages — send flow already reconciles them.
         // System events (member removed/added) must still appear for the actor.
         final isSystem = message.type == 'system';
+        // Cancelled multipart can still land on the server after Dio aborts.
+        // Delete that orphan for everyone so the peer never keeps it.
+        if (isMine &&
+            !isSystem &&
+            message.id != null &&
+            _claimCancelledSendWatchForMessage(message)) {
+          unawaited(
+            _deleteServerMessageForCancelledSend(
+              messageId: message.id!,
+              conversationId: message.conversationId ?? _conversationId,
+            ),
+          );
+          return;
+        }
         if ((!isMine || isSystem) &&
             message.id != null &&
             !_rawMessages.any((m) => m.id == message.id)) {
@@ -2461,13 +2501,21 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   /// Cancel an in-flight upload — keep the bubble + files so the user can
-  /// tap retry later. Does not delete the message.
+  /// tap retry later. Does not delete the local message.
+  ///
+  /// Also aborts the Dio request and arms an orphan watch so any message the
+  /// server still accepts after abort is deleted for everyone.
   void cancelSend(String clientTempId) {
     if (clientTempId.isEmpty) return;
     _cancelledTempIds.add(clientTempId);
     _sendCancelTokens.remove(clientTempId)?.cancel('upload_cancelled');
-    _inFlightTempIds.remove(clientTempId);
-    ChatPendingSendStore.instance.clearInFlight(clientTempId);
+    final payload = _pendingSends[clientTempId];
+    if (payload != null && payload.hasAttachments) {
+      _armCancelledSendWatch(clientTempId, payload);
+    }
+    // Keep in-flight markers until [_dispatchSend] finishes so a second
+    // dispatch cannot start for the same temp id while the cancelled request
+    // is still unwinding. Token cancel is enough to stop the upload.
     // Keep [_pendingSends] so [resendMessage] can retry the same files.
     _updatePersistedStatus(clientTempId, ChatMessageStatus.failed);
     _messages = [
@@ -2491,8 +2539,12 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     if (clientTempId.isEmpty) return;
     _cancelledTempIds.add(clientTempId);
     _sendCancelTokens.remove(clientTempId)?.cancel('upload_cancelled');
-    _inFlightTempIds.remove(clientTempId);
-    ChatPendingSendStore.instance.clearInFlight(clientTempId);
+    final payload = _pendingSends[clientTempId];
+    if (payload != null && payload.hasAttachments) {
+      _armCancelledSendWatch(clientTempId, payload);
+    }
+    // Don't clear in-flight here — let [_dispatchSend] finish unwinding so a
+    // late server accept can still be deleted via the cancel watch.
     _discardOptimisticSend(clientTempId);
     if (_isNonTypingComposerActivity(_localActivity)) {
       _setLocalActivity(ChatComposerActivity.none);
@@ -2521,6 +2573,101 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           m,
     ];
     _updatePersistedStatus(tempId, ChatMessageStatus.failed);
+  }
+
+  void _armCancelledSendWatch(String tempId, _PendingSendPayload payload) {
+    if (!payload.hasAttachments) return;
+    _cancelledSendWatches[tempId] = _CancelledSendWatch(
+      until: DateTime.now().add(const Duration(seconds: 25)),
+      imageCount: payload.images.length,
+      voiceCount: payload.voices.length,
+      fileCount: payload.files.length,
+      replyToId: payload.replyToId,
+    );
+  }
+
+  /// Returns true when [message] matches a cancelled upload we still need to
+  /// delete on the server (and claims that watch so we only delete once).
+  bool _claimCancelledSendWatchForMessage(ChatMessageModel message) {
+    _cancelledSendWatches.removeWhere((_, watch) => watch.isExpired);
+    if (_cancelledSendWatches.isEmpty) return false;
+
+    final attachments = message.attachments ?? const <ChatAttachmentModel>[];
+    var imageCount = 0;
+    var voiceCount = 0;
+    var fileCount = 0;
+    for (final a in attachments) {
+      if (ChatMappers.isImageAttachment(a)) {
+        imageCount++;
+      } else if (ChatMappers.isVoiceAttachment(a)) {
+        voiceCount++;
+      } else if (ChatMappers.isFileAttachment(a)) {
+        fileCount++;
+      }
+    }
+    // Text-only cancels don't need orphan cleanup.
+    if (imageCount == 0 && voiceCount == 0 && fileCount == 0) return false;
+
+    final replyId = message.replyTo?.id;
+    String? matchedTempId;
+    for (final entry in _cancelledSendWatches.entries) {
+      final watch = entry.value;
+      if (watch.imageCount != imageCount) continue;
+      if (watch.voiceCount != voiceCount) continue;
+      if (watch.fileCount != fileCount) continue;
+      // reply_to is often omitted on media payloads — only enforce when set.
+      if (watch.replyToId != null && watch.replyToId != replyId) continue;
+      matchedTempId = entry.key;
+      break;
+    }
+    if (matchedTempId == null) return false;
+    _cancelledSendWatches.remove(matchedTempId);
+    return true;
+  }
+
+  /// Best-effort delete-for-everyone after a cancelled upload still created a
+  /// server message. Keeps the local failed bubble for retry.
+  Future<void> _deleteServerMessageForCancelledSend({
+    required int messageId,
+    int? conversationId,
+  }) async {
+    var cid = conversationId ?? _conversationId;
+    for (var attempt = 0; attempt < 4; attempt++) {
+      if (_isDisposing || isClosed) return;
+      cid ??= _conversationId;
+      if (cid == null) {
+        await Future<void>.delayed(Duration(milliseconds: 350 * (attempt + 1)));
+        continue;
+      }
+      final result = await _repository.deleteMessage(
+        conversationId: cid,
+        messageId: messageId,
+        forEveryone: true,
+      );
+      final ok = result.fold((_) => false, _isDeleteEnvelopeOk);
+      if (ok) {
+        // Drop any server copy that slipped into local state; leave the
+        // optimistic failed bubble (keyed by clientTempId) alone.
+        final idStr = '$messageId';
+        _rawMessages = [
+          for (final m in _rawMessages)
+            if (m.id != messageId) m,
+        ];
+        _messages = [
+          for (final m in _messages)
+            if (m.id != idStr)
+              m
+            else if (m.clientTempId != null && m.clientTempId!.isNotEmpty)
+              m.copyWith(
+                status: ChatMessageStatus.failed,
+                clearUploadProgress: true,
+              ),
+        ];
+        if (!_isDisposing && !isClosed) _emitLoaded();
+        return;
+      }
+      await Future<void>.delayed(Duration(milliseconds: 400 * (attempt + 1)));
+    }
   }
 
   Future<void> _flushPendingSends() async {
@@ -2574,6 +2721,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     final cancelToken = CancelToken();
     _sendCancelTokens[tempId] = cancelToken;
     _cancelledTempIds.remove(tempId);
+    _cancelledSendWatches.remove(tempId);
 
     try {
       final uploadActivity = payload.images.isNotEmpty
@@ -2611,6 +2759,17 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         _updateUploadProgress(tempId, 0.15);
       }
 
+      if (_cancelledTempIds.contains(tempId) || cancelToken.isCancelled) {
+        _armCancelledSendWatch(tempId, payload);
+        _markFailedForResume(tempId);
+        if (_isNonTypingComposerActivity(_localActivity) ||
+            uploadActivity.isActive) {
+          _setLocalActivity(ChatComposerActivity.none);
+        }
+        _emitLoaded();
+        return;
+      }
+
       final result = await _repository.sendMessage(
         contextId: contextId,
         chatType: chatType,
@@ -2635,22 +2794,37 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       }
 
       if (wasCancelled) {
-        // Keep bubble for later retry unless the server already accepted it.
-        var serverAccepted = false;
+        // Never treat a cancelled upload as delivered — even if the HTTP
+        // response already came back. Delete the server copy when we have an
+        // id; otherwise watch realtime for the orphan and delete it there.
+        int? serverMessageId;
+        int? serverConversationId;
         result.fold((_) {}, (response) {
           if (response.value != false && response.data != null) {
-            serverAccepted = true;
+            serverMessageId = response.data!.id;
+            serverConversationId = response.data!.conversationId;
           }
         });
-        if (!serverAccepted) {
-          _markFailedForResume(tempId);
-          _emitLoaded();
-          return;
+        if (serverMessageId != null) {
+          _cancelledSendWatches.remove(tempId);
+          if (serverConversationId != null) {
+            _conversationId ??= serverConversationId;
+          }
+          unawaited(
+            _deleteServerMessageForCancelledSend(
+              messageId: serverMessageId!,
+              conversationId: serverConversationId ?? _conversationId,
+            ),
+          );
+        } else {
+          _armCancelledSendWatch(tempId, payload);
         }
-        // Fall through to success handling below.
+        _markFailedForResume(tempId);
+        _emitLoaded();
+        return;
       }
 
-      if (hasAttachments && !wasCancelled) {
+      if (hasAttachments) {
         _updateUploadProgress(tempId, 1.0);
       }
 
@@ -2659,6 +2833,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           if (wasCancelled ||
               _cancelledTempIds.contains(tempId) ||
               cancelToken.isCancelled) {
+            _armCancelledSendWatch(tempId, payload);
             _markFailedForResume(tempId);
             _emitLoaded();
             return;

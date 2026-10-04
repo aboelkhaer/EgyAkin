@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/app/shared/functions/chat_emoji_text.dart';
 import 'package:egy_akin/app/shared/functions/chat_text_direction.dart';
 import 'package:egy_akin/features/chat/data/mappers/chat_mappers.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
@@ -998,13 +999,14 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                         style: baseStyle,
                         hashtagStyle: hashtagStyle,
                       )
-                    : Text(
-                        displayText,
-                        style: baseStyle,
+                    : Text.rich(
+                        ChatEmojiText.rich(
+                          displayText,
+                          baseStyle,
+                          glueWithRlm: true,
+                        ),
                         textDirection: textDirection,
-                        textAlign: textDirection == TextDirection.rtl
-                            ? TextAlign.right
-                            : TextAlign.left,
+                        textAlign: TextAlign.start,
                       );
 
                 // Horizontal pad for caption/text only — link preview stays

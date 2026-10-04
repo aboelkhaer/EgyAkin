@@ -9,7 +9,6 @@ import 'package:egy_akin/features/patient_section_details/presentation/widgets/s
 import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
 
 class BuildQuestion extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -46,12 +45,12 @@ class _BuildQuestionState extends State<BuildQuestion> {
         switch (cubit.questionModelList[widget.index].type) {
           //! double
           case AppStrings.questionTypeDouble:
-            // Get current value (null if no answer exists)
             final currentAnswer = cubit.questionModelList[widget.index].answer;
             final qidDouble =
                 cubit.questionModelList[widget.index].id.toString();
+            final isMandatory =
+                cubit.questionModelList[widget.index].mandatory == true;
 
-            // Split into whole and decimal parts only if value exists
             String? initialWhole;
             String? initialDecimal;
 
@@ -66,91 +65,20 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   : '00';
             }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Whole number part
-                    SizedBox(
-                      width: 50,
-                      child: CustomTextFormField(
-                        title: '00',
-                        textInputType: TextInputType.number,
-                        contentPadding: EdgeInsets.zero,
-                        maxLength: 2,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        textAlign: TextAlign.center,
-                        initialValue: initialWhole, // null will show title '00'
-                        onChanged: (wholeValue) {
-                          cubit.clearAiFilledMark(qidDouble);
-                          final decimalValue =
-                              cubit.getCurrentDecimalValue(widget.index);
-                          _updateDoubleValue(
-                            cubit: cubit,
-                            index: widget.index,
-                            whole: wholeValue,
-                            decimal: decimalValue,
-                          );
-                        },
-                        validator: (val) {
-                          if (cubit.questionModelList[widget.index].mandatory ==
-                                  true &&
-                              (val == null || val.isEmpty)) {
-                            return AppStrings.thisFieldIsRequired;
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-
-                    //! Decimal point
-                    Container(
-                      width: 4,
-                      height: 4,
-                      margin:
-                          const EdgeInsets.only(bottom: 5, left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade500,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-
-                    //! Decimal part
-                    SizedBox(
-                      width: 50,
-                      child: CustomTextFormField(
-                        title: '00',
-                        textInputType: TextInputType.number,
-                        contentPadding: EdgeInsets.zero,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(2),
-                        ],
-                        maxLength: 2,
-                        textAlign: TextAlign.center,
-                        initialValue:
-                            initialDecimal, // null will show title '00'
-                        onChanged: (decimalValue) {
-                          cubit.clearAiFilledMark(qidDouble);
-                          final wholeValue =
-                              cubit.getCurrentWholeValue(widget.index);
-                          _updateDoubleValue(
-                            cubit: cubit,
-                            index: widget.index,
-                            whole: wholeValue,
-                            decimal: decimalValue,
-                          );
-                        },
-                        validator: (value) => null,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            return _CompactDoubleQuestionField(
+              isDarkMode: isDarkMode,
+              isMandatory: isMandatory,
+              initialWhole: initialWhole,
+              initialDecimal: initialDecimal,
+              onChanged: (whole, decimal) {
+                cubit.clearAiFilledMark(qidDouble);
+                _updateDoubleValue(
+                  cubit: cubit,
+                  index: widget.index,
+                  whole: whole,
+                  decimal: decimal,
+                );
+              },
             );
 
           //! String
@@ -689,5 +617,233 @@ class _SectionDateQuestionFieldState extends State<_SectionDateQuestionField> {
     } finally {
       if (mounted) setState(() => _isSelected = false);
     }
+  }
+}
+
+/// Compact decimal input matching other section-detail fields (40.h shell).
+/// Whole · decimal in one bordered control — no stray maxLength counter gap.
+class _CompactDoubleQuestionField extends StatefulWidget {
+  final bool isDarkMode;
+  final bool isMandatory;
+  final String? initialWhole;
+  final String? initialDecimal;
+  final void Function(String whole, String decimal) onChanged;
+
+  const _CompactDoubleQuestionField({
+    required this.isDarkMode,
+    required this.isMandatory,
+    required this.initialWhole,
+    required this.initialDecimal,
+    required this.onChanged,
+  });
+
+  @override
+  State<_CompactDoubleQuestionField> createState() =>
+      _CompactDoubleQuestionFieldState();
+}
+
+class _CompactDoubleQuestionFieldState
+    extends State<_CompactDoubleQuestionField> {
+  late final TextEditingController _wholeController;
+  late final TextEditingController _decimalController;
+  late final FocusNode _wholeFocus;
+  late final FocusNode _decimalFocus;
+
+  @override
+  void initState() {
+    super.initState();
+    _wholeController = TextEditingController(text: widget.initialWhole ?? '');
+    _decimalController =
+        TextEditingController(text: widget.initialDecimal ?? '');
+    _wholeFocus = FocusNode()..addListener(_onFocusChange);
+    _decimalFocus = FocusNode()..addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(covariant _CompactDoubleQuestionField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialWhole != widget.initialWhole &&
+        (widget.initialWhole ?? '') != _wholeController.text) {
+      _wholeController.text = widget.initialWhole ?? '';
+    }
+    if (oldWidget.initialDecimal != widget.initialDecimal &&
+        (widget.initialDecimal ?? '') != _decimalController.text) {
+      _decimalController.text = widget.initialDecimal ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _wholeFocus.removeListener(_onFocusChange);
+    _decimalFocus.removeListener(_onFocusChange);
+    _wholeFocus.dispose();
+    _decimalFocus.dispose();
+    _wholeController.dispose();
+    _decimalController.dispose();
+    super.dispose();
+  }
+
+  void _emit() {
+    widget.onChanged(_wholeController.text, _decimalController.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDarkMode;
+    final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
+    final muted = isDark ? AppColors.darkDescription : Colors.grey.shade500;
+    final title = isDark ? AppColors.darkTitle : const Color(0xFF111827);
+    final focused = _wholeFocus.hasFocus || _decimalFocus.hasFocus;
+
+    return FormField<String>(
+      initialValue: widget.initialWhole,
+      validator: (_) {
+        if (widget.isMandatory && _wholeController.text.trim().isEmpty) {
+          return AppStrings.thisFieldIsRequired;
+        }
+        return null;
+      },
+      builder: (state) {
+        final hasError = state.hasError;
+        final borderColor = hasError
+            ? const Color(0xFFEF4444)
+            : focused
+                ? primary
+                : (isDark ? AppColors.darkBorder : Colors.grey.shade300);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Compact value control — does not stretch full card width.
+            Container(
+              height: kSectionQuestionFieldHeight,
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCardBG : AppColors.subBG,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: borderColor, width: 1),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 44.w,
+                    child: _digitField(
+                      controller: _wholeController,
+                      focusNode: _wholeFocus,
+                      hint: '0',
+                      titleColor: title,
+                      mutedColor: muted,
+                      textInputAction: TextInputAction.next,
+                      onChanged: (v) {
+                        state.didChange(v);
+                        _emit();
+                      },
+                      onSubmitted: (_) => _decimalFocus.requestFocus(),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: Text(
+                      '.',
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w700,
+                        height: 1,
+                        color: muted,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 44.w,
+                    child: _digitField(
+                      controller: _decimalController,
+                      focusNode: _decimalFocus,
+                      hint: '00',
+                      titleColor: title,
+                      mutedColor: muted,
+                      textInputAction: TextInputAction.done,
+                      onChanged: (_) => _emit(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (hasError)
+              Padding(
+                padding: EdgeInsets.only(top: 2.h, bottom: 2.h),
+                child: Text(
+                  state.errorText ?? '',
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    height: 1.2,
+                    color: const Color(0xFFEF4444),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _digitField({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String hint,
+    required Color titleColor,
+    required Color mutedColor,
+    required TextInputAction textInputAction,
+    required ValueChanged<String> onChanged,
+    ValueChanged<String>? onSubmitted,
+  }) {
+    return TextField(
+      controller: controller,
+      focusNode: focusNode,
+      keyboardType: TextInputType.number,
+      textInputAction: textInputAction,
+      textAlign: TextAlign.center,
+      textAlignVertical: TextAlignVertical.center,
+      maxLength: 2,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(2),
+      ],
+      style: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
+        height: 1.2,
+        color: titleColor,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+      cursorWidth: 1.2,
+      cursorHeight: 16.sp,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      decoration: InputDecoration(
+        isDense: true,
+        isCollapsed: true,
+        counterText: '',
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        contentPadding: EdgeInsets.zero,
+        hintText: hint,
+        hintStyle: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+          height: 1.2,
+          color: mutedColor,
+        ),
+      ),
+    );
   }
 }

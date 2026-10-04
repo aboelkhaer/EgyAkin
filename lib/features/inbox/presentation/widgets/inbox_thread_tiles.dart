@@ -5,6 +5,7 @@ import 'package:egy_akin/features/chat/data/models/chat_composer_activity_labels
 import 'package:egy_akin/features/chat/data/services/chat_block_service.dart';
 import 'package:egy_akin/features/chat_room/presentation/models/chat_message_item.dart';
 import 'package:egy_akin/features/chat_room/presentation/widgets/chat_attachment_image.dart';
+import 'package:egy_akin/features/chat_room/presentation/widgets/chat_typing_indicator.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/inbox/data/models/inbox_thread.dart';
 import 'package:egy_akin/features/inbox/presentation/widgets/inbox_animated_thread_list.dart';
@@ -12,6 +13,40 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../exports.dart';
+
+/// Inbox preview for typing / recording / sending — same bouncing dots as chat.
+Widget _inboxPeerActivityLine({
+  required BuildContext context,
+  required InboxThread thread,
+  required Color color,
+  required double fontSize,
+}) {
+  final activity = thread.peerActivity.isActive
+      ? thread.peerActivity
+      : ChatComposerActivity.typing;
+  final label = ChatComposerActivityLabels.short(context, activity)
+      .replaceAll(RegExp(r'(\.\.\.|…)\s*$'), '')
+      .trim();
+
+  return Row(
+    children: [
+      Flexible(
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ),
+      SizedBox(width: 4.w),
+      ChatComposerActivityDots(color: color, size: 3.2, gap: 2.2),
+    ],
+  );
+}
 
 String _inboxDisplayTime(InboxThread thread) {
   final iso = thread.lastActivityAt;
@@ -340,20 +375,11 @@ class InboxThreadCard extends StatelessWidget {
                     ],
                     Expanded(
                       child: thread.hasPeerActivity
-                          ? Text(
-                              ChatComposerActivityLabels.short(
-                                context,
-                                thread.peerActivity.isActive
-                                    ? thread.peerActivity
-                                    : ChatComposerActivity.typing,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primary,
-                              ),
+                          ? _inboxPeerActivityLine(
+                              context: context,
+                              thread: thread,
+                              color: AppColors.primary,
+                              fontSize: 11.sp,
                             )
                           : _InboxPreviewLine(
                               thread: thread,
@@ -597,20 +623,11 @@ class _AdHocGroupThreadRow extends StatelessWidget {
                     ],
                     Expanded(
                       child: thread.hasPeerActivity
-                          ? Text(
-                              ChatComposerActivityLabels.short(
-                                context,
-                                thread.peerActivity.isActive
-                                    ? thread.peerActivity
-                                    : ChatComposerActivity.typing,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11.5.sp,
-                                fontWeight: FontWeight.w600,
-                                color: primary,
-                              ),
+                          ? _inboxPeerActivityLine(
+                              context: context,
+                              thread: thread,
+                              color: primary,
+                              fontSize: 11.5.sp,
                             )
                           : _InboxPreviewLine(
                               thread: thread,

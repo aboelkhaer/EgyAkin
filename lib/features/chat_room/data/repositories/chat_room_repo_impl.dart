@@ -16,13 +16,22 @@ class ChatRoomRepositoryImpl extends ChatRoomRepository {
 
   ChatRoomRepositoryImpl(this.chatRoomRemoteDataSource, this.networkInfo);
 
-  Future<Either<Failure, T>> _guard<T>(Future<T> Function() call) async {
+  Future<Either<Failure, T>> _guard<T>(
+    Future<T> Function() call, {
+    CancelToken? cancelToken,
+  }) async {
     if (!await networkInfo.isConnected) {
       return Left(DataSource.noInternetConnection.getFailure());
     }
     try {
+      if (cancelToken?.isCancelled == true) {
+        return Left(DataSource.cancel.getFailure());
+      }
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+      if (cancelToken?.isCancelled == true) {
+        return Left(DataSource.cancel.getFailure());
+      }
       final response = await call();
       return Right(response);
     } catch (error) {
@@ -59,6 +68,8 @@ class ChatRoomRepositoryImpl extends ChatRoomRepository {
     List<File> files = const [],
     CancelToken? cancelToken,
   }) {
+    // Honor cancel before/after the shared API delay so a tap on cancel
+    // during the short wait never starts the multipart upload.
     return _guard(
       () => chatRoomRemoteDataSource.sendMessage(
         contextId: contextId,
@@ -72,6 +83,7 @@ class ChatRoomRepositoryImpl extends ChatRoomRepository {
         files: files,
         cancelToken: cancelToken,
       ),
+      cancelToken: cancelToken,
     );
   }
 

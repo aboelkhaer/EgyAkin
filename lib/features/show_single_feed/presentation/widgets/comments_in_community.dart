@@ -126,7 +126,7 @@ class CommentsInCommunity extends StatelessWidget {
                   );
 
               return Padding(
-                padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

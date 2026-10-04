@@ -621,6 +621,12 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                               final canRemove = _canModerate &&
                                   !isSelf &&
                                   !isOwner;
+                              final role = isOwner
+                                  ? context.tr(AppStrings.adminOfGroup)
+                                  : context.tr(AppStrings.memberOfGroup);
+                              final roleLabel = isSelf
+                                  ? '$role ${context.tr(AppStrings.youInParentheses)}'
+                                  : role;
 
                               items.add(SizedBox(height: 8.h));
                               items.add(
@@ -634,9 +640,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                                     isDark: isDark,
                                     primary: primary,
                                     doctor: doctor,
-                                    roleLabel: isOwner
-                                        ? context.tr(AppStrings.adminOfGroup)
-                                        : context.tr(AppStrings.memberOfGroup),
+                                    roleLabel: roleLabel,
                                     isAdmin: isOwner,
                                     isRemoving: isRemoveLoading &&
                                         cubit.doctorIdForLoading ==

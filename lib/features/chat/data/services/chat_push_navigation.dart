@@ -28,6 +28,10 @@ class ChatPushNavigation {
   /// Held until home / session is ready (cold start from killed state).
   static Map<String, dynamic>? _pending;
 
+  /// Opens a queued non-chat payload once the home shell is ready.
+  /// Registered by [NotificationServices] (consultation / post / group / …).
+  static void Function(Map<String, dynamic> data)? nonChatOpener;
+
   /// Avoid stacking duplicate navigations from FCM + local notification.
   static String? _navigatingKey;
   static DateTime? _navigatingAt;
@@ -68,43 +72,74 @@ class ChatPushNavigation {
   }
 
   /// Queue-only path for killed→tap capture before splash/home exist.
-  /// Never navigates; [flushPending] / [openFromData] open later.
+  /// Queues **chat and non-chat** payloads. Never navigates; [flushPending]
+  /// opens later (chat via [openFromData], non-chat via [nonChatOpener]).
   static bool queueColdStartData(Map<String, dynamic> data) {
     final normalized = normalizeData(data);
-    if (!_looksLikeChat(normalized)) return false;
+    if (_looksLikeChat(normalized)) {
+      final chatType = _resolveChatType(normalized);
+      final contextId = _resolveContextId(normalized, chatType);
+      if (chatType == null || contextId == null || contextId <= 0) {
+        debugPrint(
+          'ChatPushNavigation: cold-start queue missing chat_type/context_id '
+          'keys=${normalized.keys.toList()}',
+        );
+        return false;
+      }
 
-    final chatType = _resolveChatType(normalized);
-    final contextId = _resolveContextId(normalized, chatType);
-    if (chatType == null || contextId == null || contextId <= 0) {
+      final pendingMap = _pendingPayload(
+        chatType: chatType,
+        contextId: contextId,
+        conversationId: _asInt(
+          normalized['conversation_id'] ?? normalized['conversationId'],
+        ),
+        title: _titleOf(normalized),
+        senderId: _asInt(normalized['sender_id'] ?? normalized['senderId']),
+        focusMessageId: _messageIdOf(normalized),
+        peerImageUrl: _imageOf(normalized),
+      );
+      _pending = pendingMap;
+      unawaited(_persistPendingToDisk(pendingMap));
       debugPrint(
-        'ChatPushNavigation: cold-start queue missing chat_type/context_id '
+        'ChatPushNavigation: cold-start queued '
+        'chat_type=$chatType context_id=$contextId',
+      );
+      if (_homeShellReady) {
+        flushPending();
+      }
+      return true;
+    }
+
+    // Non-chat (consultation / post / group / comment / …).
+    final type = _resolveNonChatType(normalized);
+    if (type.isEmpty) {
+      debugPrint(
+        'ChatPushNavigation: cold-start non-chat missing type '
         'keys=${normalized.keys.toList()}',
       );
       return false;
     }
 
-    final pendingMap = _pendingPayload(
-      chatType: chatType,
-      contextId: contextId,
-      conversationId: _asInt(
-        normalized['conversation_id'] ?? normalized['conversationId'],
-      ),
-      title: _titleOf(normalized),
-      senderId: _asInt(normalized['sender_id'] ?? normalized['senderId']),
-      focusMessageId: _messageIdOf(normalized),
-      peerImageUrl: _imageOf(normalized),
-    );
+    final pendingMap = Map<String, dynamic>.from(normalized);
+    pendingMap['_non_chat'] = true;
+    pendingMap['_queued_at'] = DateTime.now().millisecondsSinceEpoch;
     _pending = pendingMap;
     unawaited(_persistPendingToDisk(pendingMap));
     debugPrint(
-      'ChatPushNavigation: cold-start queued '
-      'chat_type=$chatType context_id=$contextId',
+      'ChatPushNavigation: cold-start queued non-chat type=$type',
     );
-    // Home may already be up (slow FCM/prefs capture after splash).
     if (_homeShellReady) {
       flushPending();
     }
     return true;
+  }
+
+  /// Prefer `notification_type` (canonical) over temporary `type` aliases.
+  static String _resolveNonChatType(Map<String, dynamic> data) {
+    final notificationType =
+        (data['notification_type'] ?? '').toString().trim();
+    if (notificationType.isNotEmpty) return notificationType;
+    return (data['type'] ?? '').toString().trim();
   }
 
   /// Tap from FCM tray (background / terminated) or local notification.
@@ -211,10 +246,33 @@ class ChatPushNavigation {
     final pending = _pending;
     if (pending == null) return;
 
+    final isNonChat = pending['_non_chat'] == true || !_looksLikeChat(pending);
+
+    // Non-chat must wait for home — do not clear the queue yet.
+    if (isNonChat && (!_sessionReady() || _isOnSplashRoute())) {
+      debugPrint(
+        'ChatPushNavigation: keep non-chat pending until home ready '
+        'sessionReady=${_sessionReady()} onSplash=${_isOnSplashRoute()}',
+      );
+      return;
+    }
+
     // Claim immediately so a later cold start / flush retry cannot re-open
     // the same notification after we already started handling it.
     _pending = null;
     await _clearPendingDisk();
+
+    if (isNonChat) {
+      final opener = nonChatOpener;
+      if (opener == null) {
+        debugPrint(
+          'ChatPushNavigation: non-chat pending but opener not registered',
+        );
+        return;
+      }
+      opener(pending);
+      return;
+    }
 
     openFromData(pending);
   }

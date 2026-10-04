@@ -1,7 +1,11 @@
+import 'package:egy_akin/app/shared/functions/chat_emoji_text.dart';
 import 'package:flutter/material.dart';
 
 /// Colors `#hashtags` (and optional `*bold*`) while the user types.
 /// Same behavior as create-post — no Unicode isolates (caret stays correct).
+///
+/// Emoji runs are painted without Tajawal so Arabic + emoji do not get a
+/// fake gap from the custom-font → emoji-fallback boundary.
 class HashtagTextEditingController extends TextEditingController {
   HashtagTextEditingController({
     String? text,
@@ -35,8 +39,13 @@ class HashtagTextEditingController extends TextEditingController {
     }
 
     final text = value.text;
-    if (text.isEmpty || !patternRegex.hasMatch(text)) {
+    if (text.isEmpty) {
       return TextSpan(style: style, text: text);
+    }
+
+    if (!patternRegex.hasMatch(text)) {
+      // glueWithRlm: false — span text must equal controller text.
+      return ChatEmojiText.rich(text, style);
     }
 
     final boldStyle = (style ?? const TextStyle()).merge(
@@ -53,34 +62,34 @@ class HashtagTextEditingController extends TextEditingController {
     var start = 0;
     for (final match in patternRegex.allMatches(text)) {
       if (match.start > start) {
-        children.add(TextSpan(
-          text: text.substring(start, match.start),
-          style: style,
-        ));
+        children.addAll(
+          ChatEmojiText.spans(text.substring(start, match.start), style),
+        );
       }
 
       final matched = match.group(0)!;
       if (matched.startsWith('#')) {
-        children.add(TextSpan(
-          text: matched,
-          style: style?.merge(hashtagStyle) ?? hashtagStyle,
-        ));
+        children.addAll(
+          ChatEmojiText.spans(
+            matched,
+            style?.merge(hashtagStyle) ?? hashtagStyle,
+          ),
+        );
       } else if (matched.startsWith('*') && matched.endsWith('*')) {
         children.add(TextSpan(text: '*', style: starStyle));
-        children.add(TextSpan(
-          text: matched.substring(1, matched.length - 1),
-          style: boldStyle,
-        ));
+        children.addAll(
+          ChatEmojiText.spans(
+            matched.substring(1, matched.length - 1),
+            boldStyle,
+          ),
+        );
         children.add(TextSpan(text: '*', style: starStyle));
       }
 
       start = match.end;
     }
     if (start < text.length) {
-      children.add(TextSpan(
-        text: text.substring(start),
-        style: style,
-      ));
+      children.addAll(ChatEmojiText.spans(text.substring(start), style));
     }
 
     return TextSpan(style: style, children: children);

@@ -58,7 +58,7 @@ class ChatTypingIndicator extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 6.w),
-                      _TypingDots(
+                      ChatComposerActivityDots(
                         color: isDark
                             ? AppColors.darkDescription
                             : AppColors.description,
@@ -73,16 +73,25 @@ class ChatTypingIndicator extends StatelessWidget {
   }
 }
 
-class _TypingDots extends StatefulWidget {
+/// Bouncing dots used for typing / sending activity (chat room + inbox).
+class ChatComposerActivityDots extends StatefulWidget {
   final Color color;
+  final double size;
+  final double gap;
 
-  const _TypingDots({required this.color});
+  const ChatComposerActivityDots({
+    super.key,
+    required this.color,
+    this.size = 4,
+    this.gap = 3,
+  });
 
   @override
-  State<_TypingDots> createState() => _TypingDotsState();
+  State<ChatComposerActivityDots> createState() =>
+      _ChatComposerActivityDotsState();
 }
 
-class _TypingDotsState extends State<_TypingDots>
+class _ChatComposerActivityDotsState extends State<ChatComposerActivityDots>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -112,13 +121,16 @@ class _TypingDotsState extends State<_TypingDots>
             final start = i * 0.2;
             final t = ((_controller.value - start) % 1.0).clamp(0.0, 1.0);
             final bounce = (t < 0.5) ? (t * 2) : (2 - t * 2);
+            final dot = widget.size.w;
             return Padding(
-              padding: EdgeInsets.only(right: i == 2 ? 0 : 3.w),
+              padding: EdgeInsets.only(
+                right: i == 2 ? 0 : widget.gap.w,
+              ),
               child: Transform.translate(
                 offset: Offset(0, -3.h * bounce),
                 child: Container(
-                  width: 4.w,
-                  height: 4.w,
+                  width: dot,
+                  height: dot,
                   decoration: BoxDecoration(
                     color: widget.color.withOpacity(0.55 + 0.45 * bounce),
                     shape: BoxShape.circle,

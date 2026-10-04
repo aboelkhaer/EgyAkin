@@ -504,9 +504,12 @@ class _FeedScaffoldState extends State<_FeedScaffold>
       listenable: cubit.commentFocusNode,
       builder: (context, _) {
         final commentFocused = cubit.commentFocusNode.hasFocus;
-        // While another field (e.g. poll add-option) owns the keyboard, the
-        // comment bar stays hidden behind it — only reserve keyboard height.
-        final scrollBottom = (!commentFocused && keyboard > safeBottom)
+        // Keep composer height in the scroll reserve while the keyboard is
+        // closing after the comment field loses focus (avoids a layout jump).
+        final otherFieldOwnsKeyboard = keyboard > safeBottom &&
+            !commentFocused &&
+            (FocusManager.instance.primaryFocus?.hasFocus ?? false);
+        final scrollBottom = otherFieldOwnsKeyboard
             ? bottomInset + 12
             : composerReserve + bottomInset;
 

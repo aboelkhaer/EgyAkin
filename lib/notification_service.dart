@@ -98,11 +98,16 @@ class NotificationServices {
     );
   }
 
+  void _bindNonChatOpener() {
+    ChatPushNavigation.nonChatOpener = _openNonChatTarget;
+  }
+
   /// Capture killed→tap payloads as early as possible (before permissions /
   /// splash finish). Queues only — does not navigate until home is ready.
   Future<void> captureColdStartLaunch() async {
     if (_coldStartCaptureStarted) return;
     _coldStartCaptureStarted = true;
+    _bindNonChatOpener();
 
     // Local-notification launch path (Android / some iOS) — init plugin first.
     await ensureLocalNotificationsReady(openLaunchPayload: false);
@@ -335,6 +340,7 @@ class NotificationServices {
   void firebaseInit() {
     if (_firebaseHandlersBound) return;
     _firebaseHandlersBound = true;
+    _bindNonChatOpener();
 
     // Cold-start capture may already be in flight from [captureColdStartLaunch].
     unawaited(captureColdStartLaunch());
@@ -438,16 +444,13 @@ class NotificationServices {
     if (data.isEmpty) {
       debugPrint(
         'Push cold-start: empty data map — cannot route '
-        '(backend must put chat_type/context_id in FCM data)',
+        '(backend must put type / chat_type in FCM data)',
       );
       return;
     }
-    // Always queue first on cold start; home flush opens when ready.
+    // Always queue on cold start; home flush opens when ready (chat + non-chat).
     final queued = ChatPushNavigation.queueColdStartData(data);
-    if (!queued) {
-      _openNonChatTarget(data);
-      return;
-    }
+    if (!queued) return;
     ChatPushNavigation.flushPending();
   }
 
@@ -459,7 +462,7 @@ class NotificationServices {
     if (data.isEmpty) {
       debugPrint(
         'Push open: empty data map — cannot route '
-        '(backend must put chat_type/context_id in FCM data)',
+        '(backend must put type / chat_type in FCM data)',
       );
       // Still flush any previously queued local-notification payload.
       ChatPushNavigation.flushPending();
@@ -480,10 +483,7 @@ class NotificationServices {
         Map<String, dynamic>.from(decoded),
       );
       final queued = ChatPushNavigation.queueColdStartData(data);
-      if (!queued) {
-        _openNonChatTarget(data);
-        return;
-      }
+      if (!queued) return;
       ChatPushNavigation.flushPending();
     } catch (e) {
       debugPrint('Push payload cold-start queue failed: $e');
@@ -507,15 +507,25 @@ class NotificationServices {
     }
   }
 
+  /// Prefer canonical `notification_type` (GroupPost / group_join_approved)
+  /// over temporary backend aliases in `type`.
+  String _resolvePushType(Map<String, dynamic> data) {
+    final notificationType =
+        (data['notification_type'] ?? '').toString().trim();
+    if (notificationType.isNotEmpty) return notificationType;
+    return (data['type'] ?? '').toString().trim();
+  }
+
   /// Best-effort routing for non-chat pushes (matches in-app notification types).
   void _openNonChatTarget(Map<String, dynamic> data) {
-    final type = (data['type'] ?? '').toString().trim();
+    final type = _resolvePushType(data);
     if (type.isEmpty) {
       debugPrint('Push open: unknown payload keys=${data.keys.toList()}');
       return;
     }
     if (!_sessionReadyForNav()) {
-      debugPrint('Push open: session not ready for type=$type');
+      debugPrint('Push open: session not ready for type=$type — queue');
+      ChatPushNavigation.queueColdStartData(data);
       return;
     }
 
@@ -526,12 +536,24 @@ class NotificationServices {
       final typeId = data['type_id'] ?? data['typeId'] ?? data['id'];
       final role = home.currentDoctorRole;
       final points = int.tryParse(home.doctorScore ?? '') ?? 0;
+      final verified = home.accountVerification ?? false;
+      final syndicateRequired = home.isSyndicateCardRequired;
+      final nav = navigatorKey.currentState;
 
       switch (type) {
         case 'Consultation':
           final consultationId = typeId?.toString();
           if (consultationId == null || consultationId.isEmpty) break;
-          navigatorKey.currentState?.pushNamed(
+          // List under details so Back returns to received consultations.
+          nav?.pushNamed(
+            AppRoutes.consultation,
+            arguments: AppRoutesArgs.consultationRouteArgs(
+              homeDataModel: homeData,
+              currentDoctorModel: doctor,
+              initialTab: 1,
+            ),
+          );
+          nav?.pushNamed(
             AppRoutes.consultationDetails,
             arguments: AppRoutesArgs.consultationDetailsRouteArgs(
               homeDataModel: homeData,
@@ -548,7 +570,7 @@ class NotificationServices {
           final patientId =
               (data['patient_id'] ?? data['patientId'] ?? typeId)?.toString();
           if (patientId == null || patientId.isEmpty) break;
-          navigatorKey.currentState?.pushNamed(
+          nav?.pushNamed(
             AppRoutes.patientSections,
             arguments: AppRoutesArgs.patientSectionsRouteArguments(
               patientId: patientId,
@@ -560,13 +582,74 @@ class NotificationServices {
             ),
           );
           return;
+        case 'Comment':
+          final patientId =
+              (data['patient_id'] ?? data['patientId'] ?? '').toString();
+          if (patientId.isEmpty) break;
+          nav?.pushNamed(
+            AppRoutes.comments,
+            arguments: AppRoutesArgs.patientCommentsRouteArgs(
+              patientId: patientId,
+              currentDoctorModel: doctor,
+              verified: verified,
+              patientName:
+                  (data['patient_name'] ?? data['patientName'] ?? '').toString(),
+              homeDataModel: homeData,
+              currentDoctorPoints: points,
+              isSyndicateCardRequired: syndicateRequired,
+              currentDoctorRole: role,
+            ),
+          );
+          return;
+        case 'Achievement':
+          final doctorId = (data['type_doctor_id'] ??
+                  data['typeDoctorId'] ??
+                  typeId)
+              ?.toString();
+          if (doctorId == null || doctorId.isEmpty) break;
+          nav?.pushNamed(
+            AppRoutes.doctorInfoView,
+            arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+              doctorId: doctorId,
+              initialIndex: 1,
+              currentDoctorModel: doctor,
+              isSyndicateCardRequired: syndicateRequired,
+              accountVerification: verified,
+              currentDoctorRole: role,
+              currentDoctorPoints: points,
+              homeDataModel: homeData,
+              isNavigateToTheButtonOfInformationTab: false,
+            ),
+          );
+          return;
+        case 'Syndicate Card':
+          // Backend omits type_id; route by type_doctor_id only.
+          final doctorId =
+              (data['type_doctor_id'] ?? data['typeDoctorId'])?.toString();
+          if (doctorId == null || doctorId.isEmpty) break;
+          nav?.pushNamed(
+            AppRoutes.doctorInfoView,
+            arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+              doctorId: doctorId,
+              initialIndex: 0,
+              currentDoctorModel: doctor,
+              isSyndicateCardRequired: syndicateRequired,
+              accountVerification: verified,
+              currentDoctorRole: role,
+              currentDoctorPoints: points,
+              homeDataModel: homeData,
+              isNavigateToTheButtonOfInformationTab: true,
+            ),
+          );
+          return;
         case 'Post':
+        case 'GroupPost':
         case 'PostLike':
         case 'PostComment':
         case 'CommentLike':
           final feedId = typeId?.toString();
           if (feedId == null || feedId.isEmpty) break;
-          navigatorKey.currentState?.pushNamed(
+          nav?.pushNamed(
             AppRoutes.showSingleFeed,
             arguments: AppRoutesArgs.showSingleFeedRouteArgs(
               homeDataModel: homeData,
@@ -581,9 +664,10 @@ class NotificationServices {
         case 'group_invitation':
         case 'group_invitation_accepted':
         case 'group_join_request':
+        case 'group_join_approved':
           final groupId = typeId?.toString();
           if (groupId == null || groupId.isEmpty) break;
-          navigatorKey.currentState?.pushNamed(
+          nav?.pushNamed(
             AppRoutes.groupDetailsInCommunity,
             arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
               groupId: groupId,
@@ -591,6 +675,10 @@ class NotificationServices {
               homeDataModel: homeData,
             ),
           );
+          return;
+        case 'group_join_declined':
+        case 'group_member_removed':
+          // Informational only — stay on home.
           return;
         default:
           debugPrint('Push open: no route for type=$type');

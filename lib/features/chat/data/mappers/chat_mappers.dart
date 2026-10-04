@@ -148,6 +148,8 @@ class ChatMappers {
 
   static bool isImageAttachment(ChatAttachmentModel a) => _isImageAttachment(a);
 
+  static bool isVoiceAttachment(ChatAttachmentModel a) => _isVoiceAttachment(a);
+
   static bool isFileAttachment(ChatAttachmentModel a) => _isFileAttachment(a);
 
   static bool _isImageAttachment(ChatAttachmentModel a) {

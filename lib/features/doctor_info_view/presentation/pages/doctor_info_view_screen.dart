@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:egy_akin/features/chat/data/mappers/chat_mappers.dart';
+import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -108,6 +110,52 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen>
     super.dispose();
   }
 
+  void _openChatWithDoctor() {
+    if (_isOwnProfile) return;
+    final peerId = int.tryParse(widget.doctorId);
+    if (peerId == null || peerId <= 0) return;
+
+    DoctorModel? peer;
+    context.read<DoctorInfoViewCubit>().state.maybeWhen(
+          loaded: (
+            doctorInfo,
+            _,
+            __,
+            ___,
+            ____,
+            _____,
+          ) {
+            peer = doctorInfo?.data;
+          },
+          orElse: () {},
+        );
+
+    final firstName = peer?.firstName?.trim() ?? '';
+    final lastName = peer?.lastName?.trim() ?? '';
+    final displayName = doctorName(
+      firstName: firstName,
+      lastName: lastName,
+      role: peer?.isSyndicateCardRequired ?? '',
+    );
+    final initials = ChatMappers.initialsFromTitle(
+      [firstName, lastName].where((p) => p.isNotEmpty).join(' '),
+    );
+
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.chatRoom,
+      arguments: AppRoutesArgs.chatRoomRouteArgs(
+        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: widget.homeDataModel,
+        peerDisplayName: displayName.isNotEmpty ? displayName : null,
+        peerInitials: initials,
+        peerVerified: peer?.isSyndicateCardRequired == 'Verified',
+        chatType: ChatApiType.private,
+        contextId: peerId,
+        peerImageUrl: peer?.image,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = DoctorInfoViewCubit.get(context);
@@ -181,6 +229,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen>
                               );
                             });
                           },
+                          onChat: _openChatWithDoctor,
                           onOpenImage: (imageUrl) {
                             Navigator.push(
                               context,
@@ -273,6 +322,7 @@ class _ProfileHeader extends StatelessWidget {
   final DoctorInfoViewState state;
   final VoidCallback onBack;
   final VoidCallback onEdit;
+  final VoidCallback onChat;
   final ValueChanged<String> onOpenImage;
 
   const _ProfileHeader({
@@ -283,6 +333,7 @@ class _ProfileHeader extends StatelessWidget {
     required this.state,
     required this.onBack,
     required this.onEdit,
+    required this.onChat,
     required this.onOpenImage,
   });
 
@@ -330,6 +381,12 @@ class _ProfileHeader extends StatelessWidget {
                         isDark: isDark,
                         icon: Icons.edit_rounded,
                         onTap: onEdit,
+                      )
+                    else
+                      _GlassIconButton(
+                        isDark: isDark,
+                        icon: Icons.chat_bubble_outline_rounded,
+                        onTap: onChat,
                       ),
                   ],
                 ),

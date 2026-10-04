@@ -297,6 +297,7 @@ class CheckNotificationType extends StatelessWidget {
         );
 
       case 'Post':
+      case 'GroupPost':
       case 'PostLike':
       case 'PostComment':
       case 'CommentLike':
@@ -331,6 +332,7 @@ class CheckNotificationType extends StatelessWidget {
       case 'group_invitation':
       case 'group_invitation_accepted':
       case 'group_join_request':
+      case 'group_join_approved':
         final doctor = notificationModel.typeDoctor;
         return _tile(
           fallbackIcon: Icons.groups_rounded,
@@ -355,6 +357,25 @@ class CheckNotificationType extends StatelessWidget {
               ),
             );
           },
+        );
+
+      case 'group_join_declined':
+      case 'group_member_removed':
+        final doctor = notificationModel.typeDoctor;
+        return _tile(
+          fallbackIcon: Icons.groups_rounded,
+          avatar: _doctorAvatar(
+            imageUrl: doctor?.image?.toString(),
+            firstName: doctor?.firstName,
+          ),
+          onAvatarTap: doctor?.id == null
+              ? null
+              : () => _openDoctorInfo(
+                    doctorId: doctor!.id.toString(),
+                    initialIndex: 0,
+                    isNavigateToTheButtonOfInformationTab: true,
+                  ),
+          onTap: () {},
         );
 
       default:

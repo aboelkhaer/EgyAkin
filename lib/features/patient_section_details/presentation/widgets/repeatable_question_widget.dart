@@ -176,32 +176,27 @@ class RepeatableQuestionWidget extends StatelessWidget {
                       onDelete: () => _deleteEntry(context, entries, index),
                     );
                   }),
-                SizedBox(height: 12.h),
-                SafeArea(
-                  minimum: EdgeInsets.only(bottom: 8.h),
-                  top: false,
-                  left: false,
-                  right: false,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openSheet(context, entries: entries),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: BorderSide(
-                        color: AppColors.primary.withOpacity(0.45),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
+                SizedBox(height: 8.h),
+                OutlinedButton.icon(
+                  onPressed: () => _openSheet(context, entries: entries),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    side: BorderSide(
+                      color: AppColors.primary.withOpacity(0.45),
                     ),
-                    icon:
-                        Icon(Icons.add, size: 16.sp, color: AppColors.primary),
-                    label: Text(
-                      context.tr(AppStrings.addReading),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13.sp,
-                      ),
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  icon: Icon(Icons.add, size: 16.sp, color: AppColors.primary),
+                  label: Text(
+                    context.tr(AppStrings.addReading),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.sp,
                     ),
                   ),
                 ),

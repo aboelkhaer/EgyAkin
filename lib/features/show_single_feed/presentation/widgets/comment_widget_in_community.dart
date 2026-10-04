@@ -229,150 +229,140 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                       ],
                                     ),
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(12.w, 12.h, 10.w, 10.h),
+                    padding: EdgeInsets.all(12.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         KeyedSubtree(
                           key: cubit.keyForComment(commentModel.id.toString()),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              GestureDetector(
-                                onTap: () => _openDoctorProfile(context),
-                                child: DoctorCircleAvatar(
-                                  doctor: displayDoctor ?? commentModel.doctor,
-                                  primary: primary,
-                                  size: 36.r,
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              // Avatar + name centered on one row.
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    children: [
-                                        Expanded(
-                                        child: Row(
-                                          children: [
-                                            Flexible(
-                                                child: GestureDetector(
-                                                  onTap: () =>
-                                                      _openDoctorProfile(
-                                                          context),
-                                              child: Text(
-                                                    name,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 12.5.sp,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      color: isOwn
-                                                          ? HomeDashboardColors
-                                                              .success
-                                                          : HomeDashboardColors
-                                                              .title(isDark),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              if (isVerified)
-                                                const Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 4),
-                                                  child: VerificationIcon(
-                                                  duration: 300,
-                                                  isSmaller: true,
-                                                  ),
-                                                ),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(
-                                        TimeAgoService.instance
-                                            .formatTimeAgoFromString(
-                                            commentModel.createdAt.toString(),
-                                            context,
-                                          ),
-                                          style: TextStyle(
-                                            fontSize: 10.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: HomeDashboardColors.subtitle(
-                                                isDark),
-                                          ),
-                                        ),
-                                        if (_canManage())
-                                          deleting
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 6.w),
-                                                  child: SizedBox(
-                                                    width: 14,
-                                                    height: 14,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      strokeWidth: 1.5,
-                                                      color: primary,
-                                                    ),
-                                                  ),
-                                                )
-                                              : PopupMenuButton<String>(
-                                                  padding: EdgeInsets.zero,
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                    minWidth: 32,
-                                                    minHeight: 32,
-                                                  ),
-                                                  iconSize: 18.sp,
-                                                  icon: Icon(
-                                                    Icons.more_horiz_rounded,
-                                                    color: HomeDashboardColors
-                                                        .subtitle(isDark),
-                                                  ),
-                                                  onSelected: (value) {
-                                                    if (value == 'Delete') {
-                                                      _onDelete(context, cubit);
-                                                    }
-                                                  },
-                                                  itemBuilder: (context) => [
-                                                    PopupMenuItem(
-                                                      value: 'Delete',
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .delete_outline_rounded,
-                                                            size: 18.sp,
-                                                            color:
-                                                                HomeDashboardColors
-                                                                    .danger,
-                                                          ),
-                                                          SizedBox(width: 8.w),
-                                                          Text(
-                                                            context.tr(
-                                                                AppStrings
-                                                                    .delete),
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  HomeDashboardColors
-                                                                      .danger,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                        ),
-                                      ),
-                                    ],
+                                  GestureDetector(
+                                    onTap: () => _openDoctorProfile(context),
+                                    child: DoctorCircleAvatar(
+                                      doctor: displayDoctor ??
+                                          commentModel.doctor,
+                                      primary: primary,
+                                      size: 36.r,
+                                    ),
                                   ),
+                                  SizedBox(width: 10.w),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                _openDoctorProfile(context),
+                                            child: Text(
+                                              name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 12.5.sp,
+                                                fontWeight: FontWeight.w800,
+                                                height: 1.1,
+                                                color: isOwn
+                                                    ? HomeDashboardColors
+                                                        .success
+                                                    : HomeDashboardColors
+                                                        .title(isDark),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        if (isVerified)
+                                          Padding(
+                                            padding: EdgeInsetsDirectional
+                                                .only(start: 4.w),
+                                            child: const VerificationIcon(
+                                              duration: 300,
+                                              isSmaller: true,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (_canManage())
+                                    deleting
+                                        ? Padding(
+                                            padding: EdgeInsetsDirectional
+                                                .only(start: 6.w),
+                                            child: SizedBox(
+                                              width: 14,
+                                              height: 14,
+                                              child:
+                                                  CircularProgressIndicator(
+                                                strokeWidth: 1.5,
+                                                color: primary,
+                                              ),
+                                            ),
+                                          )
+                                        : PopupMenuButton<String>(
+                                            padding: EdgeInsets.zero,
+                                            constraints:
+                                                const BoxConstraints(
+                                              minWidth: 28,
+                                              minHeight: 28,
+                                            ),
+                                            iconSize: 18.sp,
+                                            icon: Icon(
+                                              Icons.more_horiz_rounded,
+                                              color: HomeDashboardColors
+                                                  .subtitle(isDark),
+                                            ),
+                                            onSelected: (value) {
+                                              if (value == 'Delete') {
+                                                _onDelete(context, cubit);
+                                              }
+                                            },
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value: 'Delete',
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .delete_outline_rounded,
+                                                      size: 18.sp,
+                                                      color:
+                                                          HomeDashboardColors
+                                                              .danger,
+                                                    ),
+                                                    SizedBox(width: 8.w),
+                                                    Text(
+                                                      context.tr(
+                                                          AppStrings.delete),
+                                                      style: const TextStyle(
+                                                        color:
+                                                            HomeDashboardColors
+                                                                .danger,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 8.h),
+                                              ),
+                                            ],
+                                          ),
+                                ],
+                              ),
+                              SizedBox(height: 6.h),
+                              // Content indented under the name column.
+                              Padding(
+                                padding: EdgeInsetsDirectional.only(
+                                  start: 36.r + 10.w,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
                                     Container(
                                       width: double.infinity,
                                       padding: EdgeInsets.symmetric(
@@ -393,7 +383,8 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                           : Alignment.centerLeft,
                                       child: HashtagText(
                                         content: commentText,
-                                        currentDoctorModel: currentDoctorModel,
+                                        currentDoctorModel:
+                                            currentDoctorModel,
                                         homeDataModel: homeDataModel,
                                         disableTrimLines: true,
                                         showLinkPreviews: false,
@@ -402,8 +393,8 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                           fontWeight: FontWeight.w500,
                                           height: 1.45,
                                           fontFamily: 'Tajawal',
-                                          color:
-                                              HomeDashboardColors.title(isDark),
+                                          color: HomeDashboardColors.title(
+                                              isDark),
                                         ),
                                         hashtagStyle: TextStyle(
                                           fontSize: 13.sp,
@@ -420,14 +411,18 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                         _CommentActionChip(
                                           isDark: isDark,
                                           primary: primary,
-                                          active: commentModel.isLiked == true,
-                                          activeColor: const Color(0xFFE11D48),
+                                          active:
+                                              commentModel.isLiked == true,
+                                          activeColor:
+                                              const Color(0xFFE11D48),
                                           icon: commentModel.isLiked == true
                                               ? Icons.favorite_rounded
-                                              : Icons.favorite_border_rounded,
+                                              : Icons
+                                                  .favorite_border_rounded,
                                           label:
                                               '${commentModel.likesCount ?? 0}',
-                                          onTap: () => _onLike(context, cubit),
+                                          onTap: () =>
+                                              _onLike(context, cubit),
                                         ),
                                         if (isMainComment) ...[
                                           SizedBox(width: 8.w),
@@ -436,13 +431,14 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                             primary: primary,
                                             active: false,
                                             icon: Icons.reply_rounded,
-                                            label: context.tr(AppStrings.reply),
+                                            label: context
+                                                .tr(AppStrings.reply),
                                             onTap: () =>
                                                 _onReply(context, cubit),
                                           ),
                                         ],
                                         if (replies.isNotEmpty) ...[
-                                          const Spacer(),
+                                          SizedBox(width: 8.w),
                                           Text(
                                             replies.length == 1
                                                 ? context.tr(
@@ -460,20 +456,34 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                             style: TextStyle(
                                               fontSize: 10.5.sp,
                                               fontWeight: FontWeight.w600,
-                                              color:
-                                                  HomeDashboardColors.subtitle(
-                                                      isDark),
+                                              color: HomeDashboardColors
+                                                  .subtitle(isDark),
                                             ),
                                           ),
                                         ],
+                                        const Spacer(),
+                                        Text(
+                                          TimeAgoService.instance
+                                              .formatTimeAgoFromString(
+                                            commentModel.createdAt
+                                                .toString(),
+                                            context,
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 10.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: HomeDashboardColors
+                                                .subtitle(isDark),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
                                 ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         if (isMainComment &&
                             commentModel.parentId == null &&
                             replies.isNotEmpty) ...[

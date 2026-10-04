@@ -587,14 +587,14 @@ class _ChatInputBarState extends State<ChatInputBar>
     required Color textColor,
   }) {
     final isRtlLocale = context.isRTL;
-    final fieldIsRtl = _textDirection == TextDirection.rtl;
 
-    // Keep attach on the left and mic/send on the right in Arabic too
-    // (RTL Row would otherwise mirror them). Emoji stays on the physical
-    // right of the field; typed text / hint follow Arabic alignment.
+    // WhatsApp-style: +/-/send stay on the bottom edge as the field grows.
+    final lineHeight = 15.sp * 1.25;
+    final maxFieldHeight = _barHeight + (lineHeight * (_maxInputLines - 1));
+
     return Row(
       textDirection: TextDirection.ltr,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         IgnorePointer(
           ignoring: _recording || widget.isEditing,
@@ -616,258 +616,267 @@ class _ChatInputBarState extends State<ChatInputBar>
         ),
         SizedBox(width: 8.w),
         Expanded(
-          child: IgnorePointer(
-            ignoring: _recording,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                minHeight: _barHeight,
-                maxHeight: (_barHeight * _maxInputLines) + 12,
-              ),
-              child: Directionality(
-                textDirection: TextDirection.ltr,
-                child: Stack(
-                  alignment:
-                      fieldIsRtl ? Alignment.topRight : Alignment.topLeft,
-                  children: [
-                    TextField(
-                      controller: widget.controller,
-                      focusNode: widget.focusNode,
-                      onTap:
-                          (widget.attachmentPanelOpen || widget.emojiPanelOpen)
-                              ? widget.onOpenKeyboard
-                              : null,
-                      onChanged: (value) {
-                        _syncTextDirection();
-                        widget.onChanged?.call(value);
-                      },
-                      onSubmitted: (_) {
-                        if (widget.hasText) widget.onSendText();
-                      },
-                      textInputAction: TextInputAction.newline,
-                      keyboardType: TextInputType.multiline,
-                      minLines: 1,
-                      maxLines: _maxInputLines,
-                      textDirection: _textDirection,
-                      textAlign: fieldIsRtl ? TextAlign.right : TextAlign.left,
-                      textAlignVertical: TextAlignVertical.center,
-                      enableSuggestions: true,
-                      // iOS 16+: Flutter's toolbar hides Paste for cross-app
-                      // clipboard until permission is probed. System menu shows
-                      // Paste natively.
-                      contextMenuBuilder: (context, editableTextState) {
-                        if (SystemContextMenu.isSupported(context)) {
-                          return SystemContextMenu.editableText(
-                            editableTextState: editableTextState,
-                          );
-                        }
-                        final items = List<ContextMenuButtonItem>.of(
-                          editableTextState.contextMenuButtonItems,
-                        );
-                        final hasPaste = items.any(
-                          (item) => item.type == ContextMenuButtonType.paste,
-                        );
-                        if (!hasPaste) {
-                          items.insert(
-                            0,
-                            ContextMenuButtonItem(
-                              type: ContextMenuButtonType.paste,
-                              onPressed: () {
-                                editableTextState.pasteText(
-                                  SelectionChangedCause.toolbar,
-                                );
-                              },
-                            ),
-                          );
-                        }
-                        return AdaptiveTextSelectionToolbar.buttonItems(
-                          anchors: editableTextState.contextMenuAnchors,
-                          buttonItems: items,
-                        );
-                      },
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        height: 1.2,
-                        color: textColor,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Tajawal',
-                        fontFamilyFallback: const [
-                          'Apple Color Emoji',
-                          'Segoe UI Emoji',
-                          'Noto Color Emoji',
-                          'Android Emoji',
-                        ],
-                      ),
-                      cursorColor: AppColors.primary,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        filled: true,
-                        fillColor: fieldBg,
-                        hintText: null,
-                        // Extra top padding so Tajawal glyphs sit on the
-                        // caret midline (font sits visually high in the line).
-                        contentPadding: EdgeInsets.fromLTRB(
-                          14.w,
-                          10.h,
-                          14.w,
-                          6.h,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                          borderSide: BorderSide(color: borderColor),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                          borderSide: BorderSide(color: borderColor),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                          borderSide: BorderSide(
-                            color: isDarkMode
-                                ? AppColors.darkPrimary
-                                : AppColors.primary,
-                          ),
-                        ),
-                        // Physical right (Directionality.ltr above).
-                        suffixIconConstraints: const BoxConstraints(
-                          minWidth: _barHeight,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final fieldStyle = TextStyle(
+                fontSize: 15.sp,
+                height: 1.25,
+                color: textColor,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Tajawal',
+                fontFamilyFallback: const [
+                  'Apple Color Emoji',
+                  'Segoe UI Emoji',
+                  'Noto Color Emoji',
+                  'Android Emoji',
+                ],
+              );
+              final textDir = widget.hasText
+                  ? _textDirection
+                  : (isRtlLocale ? TextDirection.rtl : TextDirection.ltr);
+
+              // Draw the pill ourselves and keep emoji outside InputDecoration.
+              // suffixIcon + expands both break equal top/bottom text inset.
+              final verticalPad =
+                  ((_barHeight - lineHeight) / 2).clamp(0.0, 12.0);
+              final focusListenable =
+                  widget.focusNode ?? const AlwaysStoppedAnimation<int>(0);
+
+              return IgnorePointer(
+                ignoring: _recording,
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOutCubic,
+                  alignment: Alignment.center,
+                  child: ListenableBuilder(
+                    listenable: focusListenable,
+                    builder: (context, _) {
+                      final focused = widget.focusNode?.hasFocus ?? false;
+                      final activeBorder = focused
+                          ? (isDarkMode
+                              ? AppColors.darkPrimary
+                              : AppColors.primary)
+                          : borderColor;
+
+                      return Container(
+                        width: constraints.maxWidth,
+                        constraints: BoxConstraints(
                           minHeight: _barHeight,
-                          maxWidth: _barHeight,
-                          maxHeight: _barHeight,
+                          maxHeight: maxFieldHeight,
                         ),
-                        suffixIcon: IconButton(
-                          onPressed: widget.onEmoji ?? () {},
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: _barHeight,
-                            minHeight: _barHeight,
-                          ),
-                          icon: Icon(
-                            widget.emojiPanelOpen
-                                ? Icons.keyboard_rounded
-                                : Icons.emoji_emotions_outlined,
-                            color: widget.emojiPanelOpen
-                                ? (isDarkMode
-                                    ? AppColors.darkPrimary
-                                    : AppColors.primary)
-                                : hintColor,
-                            size: 20.sp,
-                          ),
+                        decoration: BoxDecoration(
+                          color: fieldBg,
+                          borderRadius: BorderRadius.circular(_barHeight / 2),
+                          border: Border.all(color: activeBorder),
                         ),
-                      ),
-                    ),
-                    if (!widget.hasText)
-                      IgnorePointer(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            14.w,
-                            10.h,
-                            _barHeight,
-                            0,
-                          ),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Text(
-                              '${context.tr(AppStrings.message)}...',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: (isRtlLocale || fieldIsRtl)
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                              textDirection: (isRtlLocale || fieldIsRtl)
-                                  ? TextDirection.rtl
-                                  : TextDirection.ltr,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                height: 1.2,
-                                color: hintColor,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Tajawal',
+                        child: Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: widget.controller,
+                                  focusNode: widget.focusNode,
+                                  onTap: (widget.attachmentPanelOpen ||
+                                          widget.emojiPanelOpen)
+                                      ? widget.onOpenKeyboard
+                                      : null,
+                                  onChanged: (value) {
+                                    _syncTextDirection();
+                                    widget.onChanged?.call(value);
+                                  },
+                                  onSubmitted: (_) {
+                                    if (widget.hasText) {
+                                      widget.onSendText();
+                                    }
+                                  },
+                                  textInputAction: TextInputAction.newline,
+                                  keyboardType: TextInputType.multiline,
+                                  minLines: 1,
+                                  maxLines: _maxInputLines,
+                                  textDirection: textDir,
+                                  // start follows textDirection (RTL/LTR) so
+                                  // mixed Arabic + emoji stay tightly packed.
+                                  textAlign: TextAlign.start,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  cursorOpacityAnimates: true,
+                                  enableSuggestions: true,
+                                  contextMenuBuilder:
+                                      (context, editableTextState) {
+                                    if (SystemContextMenu.isSupported(
+                                        context)) {
+                                      return SystemContextMenu.editableText(
+                                        editableTextState: editableTextState,
+                                      );
+                                    }
+                                    final items =
+                                        List<ContextMenuButtonItem>.of(
+                                      editableTextState.contextMenuButtonItems,
+                                    );
+                                    final hasPaste = items.any(
+                                      (item) =>
+                                          item.type ==
+                                          ContextMenuButtonType.paste,
+                                    );
+                                    if (!hasPaste) {
+                                      items.insert(
+                                        0,
+                                        ContextMenuButtonItem(
+                                          type: ContextMenuButtonType.paste,
+                                          onPressed: () {
+                                            editableTextState.pasteText(
+                                              SelectionChangedCause.toolbar,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }
+                                    return AdaptiveTextSelectionToolbar
+                                        .buttonItems(
+                                      anchors:
+                                          editableTextState.contextMenuAnchors,
+                                      buttonItems: items,
+                                    );
+                                  },
+                                  style: fieldStyle,
+                                  strutStyle: StrutStyle(
+                                    fontSize: 15.sp,
+                                    height: 1.25,
+                                    forceStrutHeight: true,
+                                    leadingDistribution:
+                                        TextLeadingDistribution.even,
+                                  ),
+                                  cursorColor: AppColors.primary,
+                                  decoration: InputDecoration(
+                                    isCollapsed: true,
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    filled: false,
+                                    hintText: null,
+                                    // Equal top/bottom so glyphs sit centered
+                                    // inside the fixed pill height.
+                                    contentPadding: EdgeInsets.fromLTRB(
+                                      12.w,
+                                      verticalPad,
+                                      4.w,
+                                      verticalPad,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              SizedBox(
+                                width: _barHeight,
+                                height: _barHeight,
+                                child: IconButton(
+                                  onPressed: widget.onEmoji ?? () {},
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: _barHeight,
+                                    minHeight: _barHeight,
+                                  ),
+                                  icon: Icon(
+                                    widget.emojiPanelOpen
+                                        ? Icons.keyboard_rounded
+                                        : Icons.emoji_emotions_outlined,
+                                    color: widget.emojiPanelOpen
+                                        ? (isDarkMode
+                                            ? AppColors.darkPrimary
+                                            : AppColors.primary)
+                                        : hintColor,
+                                    size: 20.sp,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
         SizedBox(width: 8.w),
-        if (widget.hasText)
-          IgnorePointer(
-            ignoring: _recording,
-            child: _CircleIconButton(
-              size: _barHeight,
-              onPressed: widget.onSendText,
-              backgroundColor: AppColors.primary,
-              icon: widget.isEditing ? Icons.check_rounded : Icons.send_rounded,
-              iconColor: Colors.white,
-            ),
-          )
-        else
-          // Mic Listener must stay mounted + hittable during hold-to-send.
-          Listener(
-            behavior: HitTestBehavior.opaque,
-            onPointerDown: (e) {
-              if (widget.hasText || _recording || _starting) return;
-              _holdArmTimer?.cancel();
-              _pointerActive = true;
-              _holdArmed = false;
-              _finishHoldWhenReady = false;
-              _cancelHoldWhenReady = false;
-              _pointerStart = e.position;
-              _slideDx = 0;
-              _willCancel = false;
-              _holdArmTimer = Timer(const Duration(milliseconds: 140), () {
-                if (!_pointerActive || _recording || _starting) return;
-                _holdArmed = true;
-                unawaited(_startRecording(locked: false));
-              });
-            },
-            onPointerMove: (e) {
-              if (_holdArmed || _holdMode) {
-                _updateHoldSlide(e.position);
-              }
-            },
-            onPointerUp: (_) {
-              _holdArmTimer?.cancel();
-              final wasArmed = _holdArmed;
-              _pointerActive = false;
-              if (!wasArmed && !_recording && !_starting) {
-                // Quick tap → locked recording (tap send to finish).
-                unawaited(_startRecording(locked: true));
-                return;
-              }
-              _requestHoldFinish(send: !_willCancel);
-            },
-            onPointerCancel: (_) {
-              // Treat cancel like release (send) unless slid to cancel.
-              // Do NOT force-cancel: rebuilds used to abort every hold send.
-              _holdArmTimer?.cancel();
-              _pointerActive = false;
-              if (_holdArmed || _holdMode) {
-                _requestHoldFinish(send: !_willCancel);
-              }
-            },
-            child: const SizedBox(
-              width: _barHeight,
-              height: _barHeight,
-              child: Material(
-                color: AppColors.primary,
-                shape: CircleBorder(),
-                elevation: 0,
-                clipBehavior: Clip.antiAlias,
-                child: Center(
-                  child: Icon(
-                    Icons.mic_rounded,
-                    color: Colors.white,
-                    size: 18,
+        widget.hasText
+            ? IgnorePointer(
+                ignoring: _recording,
+                child: _CircleIconButton(
+                  size: _barHeight,
+                  onPressed: widget.onSendText,
+                  backgroundColor: AppColors.primary,
+                  icon: widget.isEditing
+                      ? Icons.check_rounded
+                      : Icons.send_rounded,
+                  iconColor: Colors.white,
+                ),
+              )
+            // Mic Listener must stay mounted + hittable during hold-to-send.
+            : Listener(
+                behavior: HitTestBehavior.opaque,
+                onPointerDown: (e) {
+                  if (widget.hasText || _recording || _starting) return;
+                  _holdArmTimer?.cancel();
+                  _pointerActive = true;
+                  _holdArmed = false;
+                  _finishHoldWhenReady = false;
+                  _cancelHoldWhenReady = false;
+                  _pointerStart = e.position;
+                  _slideDx = 0;
+                  _willCancel = false;
+                  _holdArmTimer = Timer(const Duration(milliseconds: 140), () {
+                    if (!_pointerActive || _recording || _starting) {
+                      return;
+                    }
+                    _holdArmed = true;
+                    unawaited(_startRecording(locked: false));
+                  });
+                },
+                onPointerMove: (e) {
+                  if (_holdArmed || _holdMode) {
+                    _updateHoldSlide(e.position);
+                  }
+                },
+                onPointerUp: (_) {
+                  _holdArmTimer?.cancel();
+                  final wasArmed = _holdArmed;
+                  _pointerActive = false;
+                  if (!wasArmed && !_recording && !_starting) {
+                    unawaited(_startRecording(locked: true));
+                    return;
+                  }
+                  _requestHoldFinish(send: !_willCancel);
+                },
+                onPointerCancel: (_) {
+                  _holdArmTimer?.cancel();
+                  _pointerActive = false;
+                  if (_holdArmed || _holdMode) {
+                    _requestHoldFinish(send: !_willCancel);
+                  }
+                },
+                child: const SizedBox(
+                  width: _barHeight,
+                  height: _barHeight,
+                  child: Material(
+                    color: AppColors.primary,
+                    shape: CircleBorder(),
+                    elevation: 0,
+                    clipBehavior: Clip.antiAlias,
+                    child: Center(
+                      child: Icon(
+                        Icons.mic_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
       ],
     );
   }

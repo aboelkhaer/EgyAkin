@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/widgets/link_preview_widget.dart';
+import 'package:egy_akin/app/shared/functions/chat_emoji_text.dart';
 import 'package:egy_akin/app/shared/functions/chat_text_direction.dart';
 import 'package:flutter/gestures.dart';
 import '../../../exports.dart';
@@ -184,6 +185,15 @@ class _HashtagTextState extends State<HashtagText> {
     return TextSpan(style: defaultTextStyle, children: spans);
   }
 
+  List<TextSpan> _spansSplitEmoji(String text, TextStyle style) {
+    return ChatEmojiText.spans(
+      text,
+      style,
+      // Display-only: RLM keeps emoji glued to Arabic (no RTL hole).
+      glueWithRlm: true,
+    ).whereType<TextSpan>().toList(growable: false);
+  }
+
   TextSpan _buildNormalTextSpan(String text, bool isDarkMode) {
     final defaultStyle = widget.style ??
         TextStyle(
@@ -203,7 +213,7 @@ class _HashtagTextState extends State<HashtagText> {
     if (widget.highlightWord == null ||
         widget.highlightWord!.isEmpty ||
         !text.toLowerCase().contains(widget.highlightWord!.toLowerCase())) {
-      return TextSpan(text: text, style: defaultStyle);
+      return ChatEmojiText.rich(text, defaultStyle, glueWithRlm: true);
     }
 
     // Only highlight the matching word(s), not the whole segment
@@ -214,22 +224,20 @@ class _HashtagTextState extends State<HashtagText> {
     int fromIndex = 0;
     while ((index = text.toLowerCase().indexOf(searchLower, fromIndex)) != -1) {
       if (index > start) {
-        spans.add(TextSpan(
-          text: text.substring(start, index),
-          style: defaultStyle,
-        ));
+        spans.addAll(
+          _spansSplitEmoji(text.substring(start, index), defaultStyle),
+        );
       }
-      spans.add(TextSpan(
-        text: text.substring(index, index + searchLower.length),
-        style: highlightStyle,
-      ));
+      spans.addAll(
+        _spansSplitEmoji(
+          text.substring(index, index + searchLower.length),
+          highlightStyle,
+        ),
+      );
       start = fromIndex = index + searchLower.length;
     }
     if (start < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(start),
-        style: defaultStyle,
-      ));
+      spans.addAll(_spansSplitEmoji(text.substring(start), defaultStyle));
     }
 
     return TextSpan(children: spans);

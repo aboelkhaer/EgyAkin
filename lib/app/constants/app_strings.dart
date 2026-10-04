@@ -700,30 +700,30 @@ class AppStrings {
   static const String appFullyRedesignedSubtitle =
       'app_fully_redesigned_subtitle';
   static const String gotItExploreTheApp = 'got_it_explore_the_app';
-  static const String updateFeatureRedesignTitle =
-      'update_feature_redesign_title';
-  static const String updateFeatureRedesignBody =
-      'update_feature_redesign_body';
-  static const String updateFeatureFasterListsTitle =
-      'update_feature_faster_lists_title';
-  static const String updateFeatureFasterListsBody =
-      'update_feature_faster_lists_body';
-  static const String updateFeatureProfileStatsTitle =
-      'update_feature_profile_stats_title';
-  static const String updateFeatureProfileStatsBody =
-      'update_feature_profile_stats_body';
-  static const String updateFeatureConsultationsTitle =
-      'update_feature_consultations_title';
-  static const String updateFeatureConsultationsBody =
-      'update_feature_consultations_body';
-  static const String updateFeatureDoseSearchTitle =
-      'update_feature_dose_search_title';
-  static const String updateFeatureDoseSearchBody =
-      'update_feature_dose_search_body';
-  static const String updateFeatureAddPatientTitle =
-      'update_feature_add_patient_title';
-  static const String updateFeatureAddPatientBody =
-      'update_feature_add_patient_body';
+  static const String updateFeatureChatTitle = 'update_feature_chat_title';
+  static const String updateFeatureChatBody = 'update_feature_chat_body';
+  static const String updateFeatureCaseGroupChatTitle =
+      'update_feature_case_group_chat_title';
+  static const String updateFeatureCaseGroupChatBody =
+      'update_feature_case_group_chat_body';
+  static const String updateFeatureSocialGroupChatTitle =
+      'update_feature_social_group_chat_title';
+  static const String updateFeatureSocialGroupChatBody =
+      'update_feature_social_group_chat_body';
+  static const String updateFeatureNotificationsTitle =
+      'update_feature_notifications_title';
+  static const String updateFeatureNotificationsBody =
+      'update_feature_notifications_body';
+  static const String updateFeatureSharePostsTitle =
+      'update_feature_share_posts_title';
+  static const String updateFeatureSharePostsBody =
+      'update_feature_share_posts_body';
+  static const String updateFeatureDesignTitle = 'update_feature_design_title';
+  static const String updateFeatureDesignBody = 'update_feature_design_body';
+  static const String updateFeatureBugFixesTitle =
+      'update_feature_bug_fixes_title';
+  static const String updateFeatureBugFixesBody =
+      'update_feature_bug_fixes_body';
   static const String clearUpdateMessageToShowItAgain =
       'Clear Update Message to show it again';
   static const String adminOnlyClearUpdateMessageFlag =
