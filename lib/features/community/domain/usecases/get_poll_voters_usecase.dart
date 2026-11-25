@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/community/data/models/get_poll_voters_model_response.dart';
 import '../../../../exports.dart';
 
 class GetPollVotersUsecase

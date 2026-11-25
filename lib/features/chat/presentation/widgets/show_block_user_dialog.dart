@@ -16,7 +16,7 @@ Future<bool> showBlockUserDialog({
     context: context,
     barrierDismissible: true,
     barrierLabel: context.tr(AppStrings.dismiss),
-    barrierColor: Colors.black.withOpacity(0.55),
+    barrierColor: Colors.black.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 260),
     pageBuilder: (context, animation, secondaryAnimation) {
       return const SizedBox.shrink();
@@ -73,16 +73,16 @@ class _BlockUserDialog extends StatelessWidget {
           color: HomeDashboardColors.cardBg(isDark),
           borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
-            color: HomeDashboardColors.border(isDark).withOpacity(0.75),
+            color: HomeDashboardColors.border(isDark).withValues(alpha: 0.75),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.45 : 0.14),
+              color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.14),
               blurRadius: 28,
               offset: const Offset(0, 14),
             ),
             BoxShadow(
-              color: danger.withOpacity(isDark ? 0.12 : 0.08),
+              color: danger.withValues(alpha: isDark ? 0.12 : 0.08),
               blurRadius: 30,
               spreadRadius: -4,
               offset: const Offset(0, 8),
@@ -104,8 +104,8 @@ class _BlockUserDialog extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          danger.withOpacity(isDark ? 0.22 : 0.12),
-                          danger.withOpacity(0),
+                          danger.withValues(alpha: isDark ? 0.22 : 0.12),
+                          danger.withValues(alpha: 0),
                         ],
                       ),
                     ),
@@ -125,7 +125,7 @@ class _BlockUserDialog extends StatelessWidget {
                           height: 72.r,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: danger.withOpacity(isDark ? 0.1 : 0.06),
+                            color: danger.withValues(alpha: isDark ? 0.1 : 0.06),
                           ),
                         ),
                         Container(
@@ -137,12 +137,12 @@ class _BlockUserDialog extends StatelessWidget {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                danger.withOpacity(isDark ? 0.32 : 0.18),
-                                danger.withOpacity(isDark ? 0.16 : 0.08),
+                                danger.withValues(alpha: isDark ? 0.32 : 0.18),
+                                danger.withValues(alpha: isDark ? 0.16 : 0.08),
                               ],
                             ),
                             border: Border.all(
-                              color: danger.withOpacity(0.28),
+                              color: danger.withValues(alpha: 0.28),
                               width: 1.2,
                             ),
                           ),
@@ -184,10 +184,10 @@ class _BlockUserDialog extends StatelessWidget {
                         vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
-                        color: danger.withOpacity(isDark ? 0.14 : 0.08),
+                        color: danger.withValues(alpha: isDark ? 0.14 : 0.08),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: danger.withOpacity(0.22),
+                          color: danger.withValues(alpha: 0.22),
                         ),
                       ),
                       child: Row(
@@ -260,7 +260,7 @@ class _BlockUserDialog extends StatelessWidget {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: danger.withOpacity(0.35),
+                                    color: danger.withValues(alpha: 0.35),
                                     blurRadius: 12,
                                     offset: const Offset(0, 4),
                                   ),

@@ -688,13 +688,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen>
   Future<void> _pickDocument() async {
     _closeAttachmentPanel();
     try {
-      final result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
+      final files = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: _documentExtensions,
       );
-      if (!mounted || result == null || result.files.isEmpty) return;
-      final paths = result.files
+      if (!mounted || files.isEmpty) return;
+      final paths = files
           .where((f) => f.path != null && f.path!.isNotEmpty)
           .map((f) => File(f.path!))
           .toList(growable: false);

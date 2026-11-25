@@ -171,12 +171,12 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(99),
                                         color: isDark
-                                            ? Colors.white.withOpacity(0.12)
-                                            : Colors.white.withOpacity(0.75),
+                                            ? Colors.white.withValues(alpha: 0.12)
+                                            : Colors.white.withValues(alpha: 0.75),
                                         border: Border.all(
                                           color: isDark
-                                              ? Colors.white.withOpacity(0.14)
-                                              : primary.withOpacity(0.18),
+                                              ? Colors.white.withValues(alpha: 0.14)
+                                              : primary.withValues(alpha: 0.18),
                                         ),
                                       ),
                                       child: Padding(
@@ -197,8 +197,8 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                                 decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   color: isDark
-                                                      ? primary.withOpacity(0.35)
-                                                      : primary.withOpacity(0.12),
+                                                      ? primary.withValues(alpha: 0.35)
+                                                      : primary.withValues(alpha: 0.12),
                                                 ),
                                                 child: Icon(
                                                   Icons.person_rounded,
@@ -226,7 +226,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                                           FontWeight.w600,
                                                       color: isDark
                                                           ? Colors.white
-                                                              .withOpacity(0.92)
+                                                              .withValues(alpha: 0.92)
                                                           : titleColor,
                                                     ),
                                                   ),
@@ -238,8 +238,8 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                                 size: 16.sp,
                                                 color: isDark
                                                     ? Colors.white
-                                                        .withOpacity(0.7)
-                                                    : primary.withOpacity(0.8),
+                                                        .withValues(alpha: 0.7)
+                                                    : primary.withValues(alpha: 0.8),
                                                 textDirection:
                                                     Directionality.of(context),
                                               ),
@@ -331,14 +331,14 @@ class _OutcomeRoundIconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF2A2A2E) : Colors.white,
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.08)
+                ? Colors.white.withValues(alpha: 0.08)
                 : const Color(0xFFE8E8EE),
           ),
           boxShadow: isDark
               ? null
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -388,7 +388,7 @@ class _OutcomeAiActionButton extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: primary.withOpacity(0.35),
+                  color: primary.withValues(alpha: 0.35),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),

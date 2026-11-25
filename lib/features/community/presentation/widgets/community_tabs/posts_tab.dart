@@ -1,9 +1,7 @@
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 import 'package:egy_akin/features/community/presentation/widgets/community_chrome_scope.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_removal_animator.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
-import '../../../../../app/services/theme_bloc.dart';
 
 class PostsTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;

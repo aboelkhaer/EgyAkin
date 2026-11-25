@@ -1,11 +1,8 @@
-import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/hospital_text.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../exports.dart';
 
@@ -508,7 +505,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                       // Export patients (filtered or all)
                       cubit.exportFilteredPatients(false);
                     },
-                    backgroundColor: AppColors.primary.withOpacity(0.8),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.8),
                     heroTag: 'export',
                     child: const Icon(
                       Icons.download,
@@ -589,7 +586,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                               // Export patients (filtered or all)
                               cubit.exportFilteredPatients(false);
                             },
-                      backgroundColor: AppColors.primary.withOpacity(0.8),
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.8),
                       heroTag: 'export',
                       child: isExportLoading
                           ? const SizedBox(
@@ -637,7 +634,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                               cubit.totalPatientInFilter = 0;
                               cubit.getCurrentDoctorPatients();
                             },
-                            backgroundColor: AppColors.primary.withOpacity(0.8),
+                            backgroundColor: AppColors.primary.withValues(alpha: 0.8),
                             heroTag: 'clear',
                             child: const Icon(
                               Icons.clear,

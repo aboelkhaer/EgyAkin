@@ -2,7 +2,6 @@ import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_
 import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/invite_external_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
-import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
 
 import '../../../../exports.dart';
 

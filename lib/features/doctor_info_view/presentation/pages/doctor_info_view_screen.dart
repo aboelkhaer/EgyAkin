@@ -445,13 +445,13 @@ class _ProfileHeader extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: isDark
                                         ? const Color(0xFF2DD4BF)
-                                            .withOpacity(0.18)
+                                            .withValues(alpha: 0.18)
                                         : const Color(0xFFCCFBF1),
                                     borderRadius: BorderRadius.circular(8.r),
                                     border: Border.all(
                                       color: isDark
                                           ? const Color(0xFF2DD4BF)
-                                              .withOpacity(0.45)
+                                              .withValues(alpha: 0.45)
                                           : const Color(0xFF5EEAD4),
                                     ),
                                   ),
@@ -578,7 +578,7 @@ class _ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = 76.r;
     final borderColor =
-        isDark ? Colors.white.withOpacity(0.92) : Colors.white;
+        isDark ? Colors.white.withValues(alpha: 0.92) : Colors.white;
 
     return GestureDetector(
       onTap: image.isEmpty ? null : () => onOpenImage(image),
@@ -590,7 +590,7 @@ class _ProfileAvatar extends StatelessWidget {
           border: Border.all(color: borderColor, width: 3),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.25 : 0.12),
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.12),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -600,8 +600,8 @@ class _ProfileAvatar extends StatelessWidget {
           child: image.isEmpty
               ? ColoredBox(
                   color: isDark
-                      ? Colors.white.withOpacity(0.12)
-                      : Colors.white.withOpacity(0.55),
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.white.withValues(alpha: 0.55),
                   child: Center(
                     child: Text(
                       initial,
@@ -639,8 +639,8 @@ class _GlassIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.white.withOpacity(0.55),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.white.withValues(alpha: 0.55),
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -666,7 +666,7 @@ class _HeroLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shimmer = isDark ? Colors.white12 : Colors.white.withOpacity(0.45);
+    final shimmer = isDark ? Colors.white12 : Colors.white.withValues(alpha: 0.45);
 
     return Row(
       children: [
@@ -731,17 +731,17 @@ class _CredentialsCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.r),
             color: (isDark ? const Color(0xFF1E1B2E) : Colors.white)
-                .withOpacity(isDark ? 0.94 : 1),
+                .withValues(alpha: isDark ? 0.94 : 1),
             border: Border.all(
               color: isDark
-                  ? Colors.white.withOpacity(0.08)
+                  ? Colors.white.withValues(alpha: 0.08)
                   : const Color(0xFFE5E7EB),
             ),
             boxShadow: isDark
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withValues(alpha: 0.06),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -858,7 +858,7 @@ class _CredentialDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 28.h,
-      color: HomeDashboardColors.border(isDark).withOpacity(0.85),
+      color: HomeDashboardColors.border(isDark).withValues(alpha: 0.85),
     );
   }
 }
@@ -1096,22 +1096,22 @@ class _MetricCard extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: isDark
                   ? [
-                      item.accent.withOpacity(0.22),
+                      item.accent.withValues(alpha: 0.22),
                       HomeDashboardColors.cardBg(isDark),
                     ]
                   : [
                       Colors.white,
-                      item.accent.withOpacity(0.08),
+                      item.accent.withValues(alpha: 0.08),
                     ],
             ),
             border: Border.all(
-              color: item.accent.withOpacity(isDark ? 0.35 : 0.22),
+              color: item.accent.withValues(alpha: isDark ? 0.35 : 0.22),
             ),
             boxShadow: isDark
                 ? null
                 : [
                     BoxShadow(
-                      color: item.accent.withOpacity(0.12),
+                      color: item.accent.withValues(alpha: 0.12),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -1124,7 +1124,7 @@ class _MetricCard extends StatelessWidget {
                 width: 34.r,
                 height: 34.r,
                 decoration: BoxDecoration(
-                  color: item.accent.withOpacity(isDark ? 0.28 : 0.14),
+                  color: item.accent.withValues(alpha: isDark ? 0.28 : 0.14),
                   borderRadius: BorderRadius.circular(11.r),
                 ),
                 child: Icon(item.icon, size: 17.sp, color: item.accent),
@@ -1187,7 +1187,7 @@ class _SegmentedTabs extends StatelessWidget {
             color: HomeDashboardColors.surfaceBg(isDark),
             borderRadius: BorderRadius.circular(14.r),
             border: Border.all(
-              color: HomeDashboardColors.border(isDark).withOpacity(0.7),
+              color: HomeDashboardColors.border(isDark).withValues(alpha: 0.7),
             ),
           ),
           child: LayoutBuilder(
@@ -1212,12 +1212,12 @@ class _SegmentedTabs extends StatelessWidget {
                         gradient: LinearGradient(
                           colors: [
                             primary,
-                            primary.withOpacity(0.82),
+                            primary.withValues(alpha: 0.82),
                           ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: primary.withOpacity(0.28),
+                            color: primary.withValues(alpha: 0.28),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),

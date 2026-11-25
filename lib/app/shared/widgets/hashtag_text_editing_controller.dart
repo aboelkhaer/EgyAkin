@@ -54,7 +54,7 @@ class HashtagTextEditingController extends TextEditingController {
     final starStyle = (style ?? const TextStyle()).merge(
       TextStyle(
         fontWeight: FontWeight.w500,
-        color: (style?.color ?? Colors.grey).withOpacity(0.45),
+        color: (style?.color ?? Colors.grey).withValues(alpha: 0.45),
       ),
     );
 

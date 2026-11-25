@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
 import 'package:egy_akin/app/shared/functions/saved_posts_local_sync.dart';

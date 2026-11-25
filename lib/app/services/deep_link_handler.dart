@@ -1,8 +1,6 @@
 import 'package:app_links/app_links.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../exports.dart';
-import '../constants/api_end_point.dart';
 import 'deep_link_navigation_service.dart';
 
 class DeepLinkHandler {

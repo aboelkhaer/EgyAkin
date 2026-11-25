@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/community/domain/usecases/get_trending_posts_in_community_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_state.dart';
 
 import '../../../../../exports.dart';

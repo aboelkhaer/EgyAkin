@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
 import '../../../../exports.dart';
 
 class AddLikeOnPostUsecase

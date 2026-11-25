@@ -11,7 +11,7 @@ Future<void> showFinalSubmitIncompleteDialog({
     context: context,
     barrierDismissible: true,
     barrierLabel: context.tr(AppStrings.sectionsIncompleteBarrier),
-    barrierColor: Colors.black.withOpacity(0.55),
+    barrierColor: Colors.black.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 220),
     pageBuilder: (context, animation, secondaryAnimation) {
       return const SizedBox.shrink();
@@ -103,7 +103,7 @@ class _FinalSubmitIncompleteDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(28.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.45 : 0.12),
+                  color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.12),
                   blurRadius: 28,
                   offset: const Offset(0, 12),
                 ),
@@ -215,7 +215,7 @@ class _FinalSubmitIncompleteDialog extends StatelessWidget {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    dialogBg.withOpacity(0),
+                                    dialogBg.withValues(alpha: 0),
                                     dialogBg,
                                   ],
                                 ),
@@ -269,7 +269,7 @@ class _FinalSubmitIncompleteDialog extends StatelessWidget {
                           boxShadow: [
                             BoxShadow(
                               color: const Color(0xFF6B47E6)
-                                  .withOpacity(isDark ? 0.45 : 0.35),
+                                  .withValues(alpha: isDark ? 0.45 : 0.35),
                               blurRadius: 14,
                               offset: const Offset(0, 5),
                             ),

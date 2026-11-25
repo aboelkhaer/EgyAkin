@@ -5,7 +5,7 @@ import FirebaseMessaging
 import UserNotifications
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   let gcmMessageIDKey = "gcm.message_id"
   private static let coldStartPushKey = "egyakin_cold_start_push_userinfo"
   private static let coldStartPushTsKey = "egyakin_cold_start_push_ts"
@@ -40,8 +40,6 @@ import UserNotifications
     // native-crash when the user taps a push on a real device.
     application.registerForRemoteNotifications()
 
-    GeneratedPluginRegistrant.register(with: self)
-    setupSharedAuthChannel()
     let launched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
     // After FlutterAppDelegate wires delegates, keep Messaging in the loop.
@@ -50,10 +48,15 @@ import UserNotifications
     }
 
     applySavedThemeStyle()
-    setupNativeThemeChannel()
-    // FlutterViewController may not exist on the first tick — retry.
-    setupNativePushChannelWithRetry()
     return launched
+  }
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    let messenger = engineBridge.applicationRegistrar.messenger()
+    setupSharedAuthChannel(messenger: messenger)
+    setupNativeThemeChannel(messenger: messenger)
+    setupNativePushChannel(messenger: messenger)
   }
 
   override func application(
@@ -80,9 +83,6 @@ import UserNotifications
       default:
         style = .unspecified
       }
-      if let window = window {
-        window.overrideUserInterfaceStyle = style
-      }
       UIApplication.shared.connectedScenes
         .compactMap { $0 as? UIWindowScene }
         .flatMap { $0.windows }
@@ -90,14 +90,10 @@ import UserNotifications
     }
   }
 
-  private func setupNativeThemeChannel() {
-    guard let controller = window?.rootViewController as? FlutterViewController else {
-      return
-    }
-
+  private func setupNativeThemeChannel(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(
       name: "com.incode.EgyAkin/theme",
-      binaryMessenger: controller.binaryMessenger
+      binaryMessenger: messenger
     )
 
     channel.setMethodCallHandler { [weak self] call, result in
@@ -117,11 +113,10 @@ import UserNotifications
   /// Flutter writes the login token here after login / on start and clears
   /// it on logout, so the NotificationService extension can ack deliveries
   /// while the app is closed.
-  private func setupSharedAuthChannel() {
-    guard let registrar = registrar(forPlugin: "EgyAkinSharedAuth") else { return }
+  private func setupSharedAuthChannel(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(
       name: "com.incode.EgyAkin/shared_auth",
-      binaryMessenger: registrar.messenger()
+      binaryMessenger: messenger
     )
     channel.setMethodCallHandler { call, result in
       let shared = UserDefaults(suiteName: Self.appGroupId)
@@ -144,26 +139,10 @@ import UserNotifications
     }
   }
 
-  private func setupNativePushChannelWithRetry(attempt: Int = 0) {
-    if setupNativePushChannel() { return }
-    guard attempt < 20 else {
-      print("EgyAkin push channel: FlutterViewController never ready")
-      return
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-      self?.setupNativePushChannelWithRetry(attempt: attempt + 1)
-    }
-  }
-
-  @discardableResult
-  private func setupNativePushChannel() -> Bool {
-    guard let controller = window?.rootViewController as? FlutterViewController else {
-      return false
-    }
-
+  private func setupNativePushChannel(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(
       name: "com.incode.EgyAkin/push",
-      binaryMessenger: controller.binaryMessenger
+      binaryMessenger: messenger
     )
 
     channel.setMethodCallHandler { call, result in
@@ -173,7 +152,6 @@ import UserNotifications
       }
       result(Self.takeColdStartPushUserInfo())
     }
-    return true
   }
 
   /// Store notification userInfo for Dart cold-start open (TTL ~120s).

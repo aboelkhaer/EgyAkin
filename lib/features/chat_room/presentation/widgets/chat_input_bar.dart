@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:egy_akin/exports.dart';
@@ -12,10 +11,8 @@ import 'package:egy_akin/features/chat_room/presentation/widgets/chat_room_backg
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
-typedef VoiceRecordedCallback = FutureOr<void> Function(
-  File file,
-  Duration duration,
-);
+typedef VoiceRecordedCallback =
+    FutureOr<void> Function(File file, Duration duration);
 
 /// Chat composer with:
 /// - tap mic → locked recording (tap send / trash)
@@ -316,11 +313,11 @@ class _ChatInputBarState extends State<ChatInputBar>
       _ampSub = _recorder
           .onAmplitudeChanged(const Duration(milliseconds: 120))
           .listen((a) {
-        if (!mounted) return;
-        final db = a.current;
-        final norm = ((db + 45) / 45).clamp(0.0, 1.0);
-        setState(() => _amp = norm);
-      });
+            if (!mounted) return;
+            final db = a.current;
+            final norm = ((db + 45) / 45).clamp(0.0, 1.0);
+            setState(() => _amp = norm);
+          });
 
       if (!mounted) return;
       setState(() => _recording = true);
@@ -368,8 +365,9 @@ class _ChatInputBarState extends State<ChatInputBar>
 
     String? path = _path;
     final startedAt = _startedAt;
-    final elapsed =
-        startedAt == null ? _elapsed : DateTime.now().difference(startedAt);
+    final elapsed = startedAt == null
+        ? _elapsed
+        : DateTime.now().difference(startedAt);
 
     _tick?.cancel();
     _tick = null;
@@ -452,13 +450,15 @@ class _ChatInputBarState extends State<ChatInputBar>
       // Fire-and-forget so upload never blocks the composer.
       final cb = widget.onVoiceRecorded;
       if (cb != null) {
-        unawaited(Future<void>(() async {
-          try {
-            await cb(file, elapsed);
-          } catch (e) {
-            debugPrint('Chat voice send callback failed: $e');
-          }
-        }));
+        unawaited(
+          Future<void>(() async {
+            try {
+              await cb(file, elapsed);
+            } catch (e) {
+              debugPrint('Chat voice send callback failed: $e');
+            }
+          }),
+        );
       }
     } finally {
       _finishing = false;
@@ -502,8 +502,9 @@ class _ChatInputBarState extends State<ChatInputBar>
             (isDarkMode ? AppColors.darkBorder : Colors.grey.shade300)
                 .withOpacity(0.55);
         final fieldBg = ChatRoomGlassSurface.fieldGlassColor(isDarkMode);
-        final hintColor =
-            isDarkMode ? AppColors.darkDescription : Colors.grey.shade500;
+        final hintColor = isDarkMode
+            ? AppColors.darkDescription
+            : Colors.grey.shade500;
         final textColor = isDarkMode ? AppColors.darkTitle : AppColors.title;
 
         final controller = widget.controller;
@@ -530,9 +531,7 @@ class _ChatInputBarState extends State<ChatInputBar>
 
         return ChatRoomGlassSurface(
           isDark: isDarkMode,
-          border: Border(
-            top: BorderSide(color: borderColor, width: 1),
-          ),
+          border: Border(top: BorderSide(color: borderColor, width: 1)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -637,8 +636,10 @@ class _ChatInputBarState extends State<ChatInputBar>
 
               // Draw the pill ourselves and keep emoji outside InputDecoration.
               // suffixIcon + expands both break equal top/bottom text inset.
-              final verticalPad =
-                  ((_barHeight - lineHeight) / 2).clamp(0.0, 12.0);
+              final verticalPad = ((_barHeight - lineHeight) / 2).clamp(
+                0.0,
+                12.0,
+              );
               final focusListenable =
                   widget.focusNode ?? const AlwaysStoppedAnimation<int>(0);
 
@@ -654,8 +655,8 @@ class _ChatInputBarState extends State<ChatInputBar>
                       final focused = widget.focusNode?.hasFocus ?? false;
                       final activeBorder = focused
                           ? (isDarkMode
-                              ? AppColors.darkPrimary
-                              : AppColors.primary)
+                                ? AppColors.darkPrimary
+                                : AppColors.primary)
                           : borderColor;
 
                       return Container(
@@ -678,7 +679,8 @@ class _ChatInputBarState extends State<ChatInputBar>
                                 child: TextField(
                                   controller: widget.controller,
                                   focusNode: widget.focusNode,
-                                  onTap: (widget.attachmentPanelOpen ||
+                                  onTap:
+                                      (widget.attachmentPanelOpen ||
                                           widget.emojiPanelOpen)
                                       ? widget.onOpenKeyboard
                                       : null,
@@ -702,18 +704,19 @@ class _ChatInputBarState extends State<ChatInputBar>
                                   textAlignVertical: TextAlignVertical.center,
                                   cursorOpacityAnimates: true,
                                   enableSuggestions: true,
-                                  contextMenuBuilder:
-                                      (context, editableTextState) {
+                                  contextMenuBuilder: (context, editableTextState) {
                                     if (SystemContextMenu.isSupported(
-                                        context)) {
+                                      context,
+                                    )) {
                                       return SystemContextMenu.editableText(
                                         editableTextState: editableTextState,
                                       );
                                     }
                                     final items =
                                         List<ContextMenuButtonItem>.of(
-                                      editableTextState.contextMenuButtonItems,
-                                    );
+                                          editableTextState
+                                              .contextMenuButtonItems,
+                                        );
                                     final hasPaste = items.any(
                                       (item) =>
                                           item.type ==
@@ -732,8 +735,7 @@ class _ChatInputBarState extends State<ChatInputBar>
                                         ),
                                       );
                                     }
-                                    return AdaptiveTextSelectionToolbar
-                                        .buttonItems(
+                                    return AdaptiveTextSelectionToolbar.buttonItems(
                                       anchors:
                                           editableTextState.contextMenuAnchors,
                                       buttonItems: items,
@@ -784,8 +786,8 @@ class _ChatInputBarState extends State<ChatInputBar>
                                         : Icons.emoji_emotions_outlined,
                                     color: widget.emojiPanelOpen
                                         ? (isDarkMode
-                                            ? AppColors.darkPrimary
-                                            : AppColors.primary)
+                                              ? AppColors.darkPrimary
+                                              : AppColors.primary)
                                         : hintColor,
                                     size: 20.sp,
                                   ),
@@ -899,8 +901,8 @@ class _ChatInputBarState extends State<ChatInputBar>
           color: _willCancel
               ? const Color(0xFFEF4444).withOpacity(0.35)
               : (isDarkMode
-                  ? Colors.white.withOpacity(0.08)
-                  : AppColors.primary.withOpacity(0.12)),
+                    ? Colors.white.withOpacity(0.08)
+                    : AppColors.primary.withOpacity(0.12)),
         ),
       ),
       child: Row(
@@ -926,8 +928,9 @@ class _ChatInputBarState extends State<ChatInputBar>
                   color: const Color(0xFFEF4444),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          const Color(0xFFEF4444).withOpacity(0.25 + t * 0.45),
+                      color: const Color(
+                        0xFFEF4444,
+                      ).withOpacity(0.25 + t * 0.45),
                       blurRadius: 6 + t * 10,
                       spreadRadius: t * 2,
                     ),
@@ -989,8 +992,8 @@ class _ChatInputBarState extends State<ChatInputBar>
                             color: _willCancel
                                 ? const Color(0xFFEF4444)
                                 : (isDarkMode
-                                    ? Colors.white60
-                                    : AppColors.description),
+                                      ? Colors.white60
+                                      : AppColors.description),
                           ),
                         ),
                       ),
@@ -1132,14 +1135,18 @@ class _SlideChevrons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        isDark ? Colors.white38 : AppColors.description.withOpacity(0.7);
+    final color = isDark
+        ? Colors.white38
+        : AppColors.description.withOpacity(0.7);
     return SizedBox(
       width: 18.w,
       child: Row(
         children: [
-          Icon(Icons.chevron_left_rounded,
-              size: 14.sp, color: color.withOpacity(0.45)),
+          Icon(
+            Icons.chevron_left_rounded,
+            size: 14.sp,
+            color: color.withOpacity(0.45),
+          ),
           Transform.translate(
             offset: Offset(-6.w, 0),
             child: Icon(Icons.chevron_left_rounded, size: 14.sp, color: color),
@@ -1174,7 +1181,8 @@ class _LiveWaveform extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: List.generate(18, (i) {
           final mid = (i - 8.5).abs() / 8.5;
-          final wave = (0.35 + level * 0.65) * (1 - mid * 0.35) +
+          final wave =
+              (0.35 + level * 0.65) * (1 - mid * 0.35) +
               (pulse * 0.2 * (i.isEven ? 1 : 0.55));
           final h = (6.h + 20.h * wave.clamp(0.15, 1.0));
           return Expanded(
@@ -1231,9 +1239,7 @@ class _CircleIconButton extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           customBorder: const CircleBorder(),
-          child: Center(
-            child: Icon(icon, color: iconColor, size: 18),
-          ),
+          child: Center(child: Icon(icon, color: iconColor, size: 18)),
         ),
       ),
     );

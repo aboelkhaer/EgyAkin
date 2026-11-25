@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/all_doctor_posts/data/models/get_all_doctor_posts_model_response.dart';
 import 'package:egy_akin/features/saved_posts/data/models/get_saved_posts_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'saved_posts_state.freezed.dart';

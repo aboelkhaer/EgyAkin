@@ -1,6 +1,5 @@
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String url;

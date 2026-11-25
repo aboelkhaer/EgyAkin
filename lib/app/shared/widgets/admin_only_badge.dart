@@ -1,8 +1,5 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../exports.dart';
-import '../../services/theme_bloc.dart';
 
 class AdminOnlyBadge extends StatefulWidget {
   final Widget child;
@@ -207,7 +204,7 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: widget.badgeColor != null
-              ? [widget.badgeColor!, widget.badgeColor!.withOpacity(0.8)]
+              ? [widget.badgeColor!, widget.badgeColor!.withValues(alpha: 0.8)]
               : isDarkMode
                   ? [Colors.amber.shade600, Colors.orange.shade700]
                   : [Colors.amber.shade500, Colors.orange.shade600],
@@ -218,19 +215,19 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
         boxShadow: [
           BoxShadow(
             color:
-                (widget.badgeColor ?? Colors.orange.shade600).withOpacity(0.4),
+                (widget.badgeColor ?? Colors.orange.shade600).withValues(alpha: 0.4),
             blurRadius: widget.glowEffect ? 8 + (_glowAnimation.value * 4) : 6,
             offset: const Offset(0, 2),
             spreadRadius: widget.glowEffect ? _glowAnimation.value * 2 : 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -244,7 +241,7 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
       padding: widget.badgePadding ??
           EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
       decoration: BoxDecoration(
-        color: neonColor.withOpacity(0.1),
+        color: neonColor.withValues(alpha: 0.1),
         borderRadius: widget.borderRadius ?? BorderRadius.circular(16.r),
         border: Border.all(
           color: neonColor,
@@ -252,12 +249,12 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
         ),
         boxShadow: [
           BoxShadow(
-            color: neonColor.withOpacity(0.6),
+            color: neonColor.withValues(alpha: 0.6),
             blurRadius: 10 + (_glowAnimation.value * 5),
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: neonColor.withOpacity(0.3),
+            color: neonColor.withValues(alpha: 0.3),
             blurRadius: 20 + (_glowAnimation.value * 10),
             spreadRadius: 4,
           ),
@@ -284,7 +281,7 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
         borderRadius: widget.borderRadius ?? BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.purple.withOpacity(0.4),
+            color: Colors.purple.withValues(alpha: 0.4),
             blurRadius: 8,
             offset: const Offset(0, 2),
             spreadRadius: 1,
@@ -304,15 +301,15 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
           padding: widget.badgePadding ??
               EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(isDarkMode ? 0.1 : 0.2),
+            color: Colors.white.withValues(alpha: isDarkMode ? 0.1 : 0.2),
             borderRadius: widget.borderRadius ?? BorderRadius.circular(16.r),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -337,7 +334,7 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.shade400.withOpacity(0.5),
+            color: Colors.green.shade400.withValues(alpha: 0.5),
             blurRadius: 8,
             spreadRadius: 1,
           ),
@@ -370,7 +367,7 @@ class _AdminOnlyBadgeState extends State<AdminOnlyBadge>
                     widget.style == BadgeStyle.cyberpunk
                 ? [
                     Shadow(
-                      color: textColor.withOpacity(0.8),
+                      color: textColor.withValues(alpha: 0.8),
                       blurRadius: 4,
                     ),
                   ]
@@ -423,7 +420,7 @@ class AdminOnlyBanner extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 2,
                     offset: const Offset(0, 1),
                   ),
@@ -504,7 +501,7 @@ class AdminOnlyMark extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 3,
                       offset: const Offset(0, 1),
                     ),

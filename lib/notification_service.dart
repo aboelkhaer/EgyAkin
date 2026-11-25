@@ -6,7 +6,6 @@ import 'package:egy_akin/features/chat/data/services/chat_push_delivery_ack.dart
 import 'package:egy_akin/features/chat/data/services/chat_push_navigation.dart';
 import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart';
 import 'package:egy_akin/injection_container.dart' as di;
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -154,7 +153,7 @@ class NotificationServices {
     );
 
     await _localNotificationsPlugin.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         try {
           if (response.payload == null) return;
@@ -814,10 +813,10 @@ class NotificationServices {
     );
 
     await _localNotificationsPlugin.show(
-      int.parse(notificationId),
-      title,
-      body.isEmpty ? null : body,
-      notificationDetails,
+      id: int.parse(notificationId),
+      title: title,
+      body: body.isEmpty ? null : body,
+      notificationDetails: notificationDetails,
       payload: jsonEncode(payloadMap.isEmpty ? message.data : payloadMap),
     );
   }

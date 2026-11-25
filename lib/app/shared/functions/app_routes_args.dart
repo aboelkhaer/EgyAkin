@@ -1,6 +1,5 @@
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/chat/data/models/chat_api_models.dart';
-import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 
 class AppRoutesArgs {
   static Map<String, dynamic> patientSectionsRouteArguments({

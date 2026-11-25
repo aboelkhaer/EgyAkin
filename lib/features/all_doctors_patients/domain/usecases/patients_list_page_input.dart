@@ -1,4 +1,3 @@
-import '../../../../exports.dart';
 
 class PatientsListPageInput {
   final int page;

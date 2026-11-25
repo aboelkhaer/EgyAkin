@@ -1,5 +1,4 @@
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/patient_comments/presentation/widgets/delete_comment_dialog.dart';
 

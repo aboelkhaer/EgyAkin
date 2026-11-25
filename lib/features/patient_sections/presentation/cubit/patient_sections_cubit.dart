@@ -2,7 +2,6 @@ import 'package:egy_akin/features/patient_sections/domain/usecases/make_mark_pat
 import 'package:egy_akin/features/patient_sections/domain/usecases/make_unmark_patient_usecase.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/final_submit_incomplete_dialog.dart';
 import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_cubit.dart';
-import 'package:egy_akin/injection_container.dart';
 
 import '../../../../exports.dart';
 

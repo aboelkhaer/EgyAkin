@@ -66,9 +66,8 @@ class InboxAnimatedThreadList extends StatefulWidget {
 class _RowEntry {
   _RowEntry({
     required this.thread,
-    this.exiting = false,
     this.entering = false,
-  });
+  }) : exiting = false;
 
   InboxThread thread;
   bool exiting;

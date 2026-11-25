@@ -95,7 +95,7 @@ class _InboxComposeOverlayState extends State<InboxComposeOverlay>
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                       child: Container(
-                        color: Colors.black.withOpacity(isDark ? 0.42 : 0.28),
+                        color: Colors.black.withValues(alpha: isDark ? 0.42 : 0.28),
                       ),
                     ),
                   ),
@@ -151,11 +151,11 @@ class _ComposePanel extends StatelessWidget {
         color: HomeDashboardColors.cardBg(isDark),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: HomeDashboardColors.border(isDark).withOpacity(0.65),
+          color: HomeDashboardColors.border(isDark).withValues(alpha: 0.65),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.35 : 0.12),
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -182,7 +182,7 @@ class _ComposePanel extends StatelessWidget {
               isDark: isDark,
               icon: Icons.person_outline_rounded,
               iconColor: primary,
-              iconBg: primary.withOpacity(isDark ? 0.22 : 0.14),
+              iconBg: primary.withValues(alpha: isDark ? 0.22 : 0.14),
               title: context.tr(AppStrings.startChatWithMember),
               subtitle: context.tr(AppStrings.startChatWithMemberSubtitle),
               onTap: onMember,
@@ -191,13 +191,13 @@ class _ComposePanel extends StatelessWidget {
               height: 1,
               indent: 14.w,
               endIndent: 14.w,
-              color: HomeDashboardColors.border(isDark).withOpacity(0.55),
+              color: HomeDashboardColors.border(isDark).withValues(alpha: 0.55),
             ),
             _ComposeOptionTile(
               isDark: isDark,
               icon: Icons.groups_rounded,
               iconColor: const Color(0xFF3B82F6),
-              iconBg: const Color(0xFF3B82F6).withOpacity(isDark ? 0.22 : 0.14),
+              iconBg: const Color(0xFF3B82F6).withValues(alpha: isDark ? 0.22 : 0.14),
               title: context.tr(AppStrings.startGroupChat),
               subtitle: context.tr(AppStrings.startGroupChatSubtitle),
               onTap: onGroup,

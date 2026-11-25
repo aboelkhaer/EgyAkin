@@ -2,7 +2,6 @@ import 'package:egy_akin/features/send_consultation/domain/usecases/add_doctors_
 import 'package:egy_akin/features/send_consultation/domain/usecases/get_members_for_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/invite_external_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/remove_member_from_consultation_usecase.dart';
-import 'package:egy_akin/features/send_consultation/domain/usecases/send_group_invitation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_state.dart';
 
 import '../../../../exports.dart';

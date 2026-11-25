@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_annotation_target
-import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_recommendations_model_response.freezed.dart';
 part 'get_recommendations_model_response.g.dart';

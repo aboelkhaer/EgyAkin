@@ -44,8 +44,8 @@ class ChatRoomGlassSurface extends StatefulWidget {
   });
 
   static Color glassColor(bool isDark) => isDark
-      ? AppColors.darkCardBG.withOpacity(0.94)
-      : Colors.white.withOpacity(0.94);
+      ? AppColors.darkCardBG.withValues(alpha: 0.94)
+      : Colors.white.withValues(alpha: 0.94);
 
   /// Opaque fill for the home-indicator strip under the composer — same as
   /// the composer chrome so the bottom doesn't look like a mismatched gap.
@@ -53,8 +53,8 @@ class ChatRoomGlassSurface extends StatefulWidget {
       isDark ? AppColors.darkCardBG : Colors.white;
 
   static Color fieldGlassColor(bool isDark) => isDark
-      ? AppColors.darkCardBG.withOpacity(0.72)
-      : Colors.white.withOpacity(0.72);
+      ? AppColors.darkCardBG.withValues(alpha: 0.72)
+      : Colors.white.withValues(alpha: 0.72);
 
   @override
   State<ChatRoomGlassSurface> createState() => _ChatRoomGlassSurfaceState();
@@ -141,19 +141,19 @@ class _ChatRoomBackgroundPainter extends CustomPainter {
       canvas,
       center: Offset(size.width * 0.88, size.height * 0.08),
       radius: size.width * 0.55,
-      color: primary.withOpacity(isDark ? 0.18 : 0.14),
+      color: primary.withValues(alpha: isDark ? 0.18 : 0.14),
     );
     _radialGlow(
       canvas,
       center: Offset(size.width * 0.12, size.height * 0.72),
       radius: size.width * 0.48,
-      color: const Color(0xFF14B8A6).withOpacity(isDark ? 0.10 : 0.08),
+      color: const Color(0xFF14B8A6).withValues(alpha: isDark ? 0.10 : 0.08),
     );
     _radialGlow(
       canvas,
       center: Offset(size.width * 0.5, size.height * 0.45),
       radius: size.width * 0.35,
-      color: primary.withOpacity(isDark ? 0.06 : 0.05),
+      color: primary.withValues(alpha: isDark ? 0.06 : 0.05),
     );
   }
 
@@ -168,7 +168,7 @@ class _ChatRoomBackgroundPainter extends CustomPainter {
       rect,
       Paint()
         ..shader = RadialGradient(
-          colors: [color, color.withOpacity(0)],
+          colors: [color, color.withValues(alpha: 0)],
         ).createShader(rect),
     );
   }
@@ -177,7 +177,7 @@ class _ChatRoomBackgroundPainter extends CustomPainter {
     const step = 28.0;
     final paint = Paint()
       ..color = (isDark ? Colors.white : AppColors.primary)
-          .withOpacity(isDark ? 0.04 : 0.035)
+          .withValues(alpha: isDark ? 0.04 : 0.035)
       ..style = PaintingStyle.fill;
 
     for (double y = 0; y < size.height; y += step) {
@@ -197,12 +197,12 @@ class _ChatRoomBackgroundPainter extends CustomPainter {
       ..strokeWidth = 1.4
       ..strokeCap = StrokeCap.round
       ..color = (isDark ? Colors.white : AppColors.primary)
-          .withOpacity(isDark ? 0.07 : 0.09);
+          .withValues(alpha: isDark ? 0.07 : 0.09);
 
     final fillPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = (isDark ? AppColors.darkPrimary : AppColors.primary)
-          .withOpacity(isDark ? 0.05 : 0.06);
+          .withValues(alpha: isDark ? 0.05 : 0.06);
 
     for (var row = 0; row < rows; row++) {
       for (var col = 0; col < cols; col++) {

@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/community/domain/usecases/get_poll_voters_usecase.dart';
 import 'package:egy_akin/features/poll_voters/presentation/cubit/poll_voters_state.dart';
 
 import '../../../../exports.dart';

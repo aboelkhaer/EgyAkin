@@ -302,7 +302,7 @@ class _StatsSkeleton extends StatelessWidget {
                 decoration: HomeDashboardDecor.card(
                   isDark,
                   color: HomeDashboardColors.primary(isDark)
-                      .withOpacity(isDark ? 0.12 : 0.06),
+                      .withValues(alpha: isDark ? 0.12 : 0.06),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,7 +346,7 @@ class _DraftsSkeleton extends StatelessWidget {
         decoration: HomeDashboardDecor.card(
           isDark,
           color: HomeDashboardColors.primary(isDark)
-              .withOpacity(isDark ? 0.12 : 0.06),
+              .withValues(alpha: isDark ? 0.12 : 0.06),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -515,7 +515,7 @@ class _ToggleSkeleton extends StatelessWidget {
               child: Container(
                 height: 36.h,
                 decoration: BoxDecoration(
-                  color: bone.withOpacity(0.55),
+                  color: bone.withValues(alpha: 0.55),
                   borderRadius: BorderRadius.circular(11.r),
                 ),
               ),
@@ -542,7 +542,7 @@ class _PatientCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = HomeDashboardColors.primary(isDark).withOpacity(0.28);
+    final accent = HomeDashboardColors.primary(isDark).withValues(alpha: 0.28);
 
     return Container(
       decoration: HomeDashboardDecor.card(isDark).copyWith(
@@ -710,7 +710,7 @@ class _WeekSkeleton extends StatelessWidget {
         decoration: HomeDashboardDecor.card(
           isDark,
           color: HomeDashboardColors.primary(isDark)
-              .withOpacity(isDark ? 0.12 : 0.06),
+              .withValues(alpha: isDark ? 0.12 : 0.06),
         ),
         child: Column(
           children: [
@@ -778,7 +778,7 @@ class _InsightsSkeleton extends StatelessWidget {
         decoration: HomeDashboardDecor.card(
           isDark,
           color: HomeDashboardColors.primary(isDark)
-              .withOpacity(isDark ? 0.12 : 0.06),
+              .withValues(alpha: isDark ? 0.12 : 0.06),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

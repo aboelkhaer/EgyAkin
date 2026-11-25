@@ -299,10 +299,10 @@ class _ComposerShell extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(12.w, 10, 12.w, 10 + bottomInset),
           decoration: BoxDecoration(
             color: (isDark ? const Color(0xFF12101A) : Colors.white)
-                .withOpacity(0.94),
+                .withValues(alpha: 0.94),
             border: Border(
               top: BorderSide(
-                color: HomeDashboardColors.border(isDark).withOpacity(0.85),
+                color: HomeDashboardColors.border(isDark).withValues(alpha: 0.85),
               ),
             ),
           ),
@@ -315,9 +315,9 @@ class _ComposerShell extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6),
                   decoration: BoxDecoration(
-                    color: primary.withOpacity(isDark ? 0.16 : 0.08),
+                    color: primary.withValues(alpha: isDark ? 0.16 : 0.08),
                     borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: primary.withOpacity(0.22)),
+                    border: Border.all(color: primary.withValues(alpha: 0.22)),
                   ),
                   child: Row(
                     children: [
@@ -359,7 +359,7 @@ class _ComposerShell extends StatelessWidget {
                         const barHeight = 44.0;
                         const maxLines = 5;
                         final borderColor =
-                            HomeDashboardColors.border(isDark).withOpacity(0.8);
+                            HomeDashboardColors.border(isDark).withValues(alpha: 0.8);
 
                         // Same growth + hint centering model as chat composer.
                         return ConstrainedBox(
@@ -509,7 +509,7 @@ class _SendCommentButton extends StatelessWidget {
             color: bg,
             boxShadow: [
               BoxShadow(
-                color: primary.withOpacity(shadowOpacity),
+                color: primary.withValues(alpha: shadowOpacity),
                 blurRadius: 8 * t,
                 offset: Offset(0, 3 * t),
               ),

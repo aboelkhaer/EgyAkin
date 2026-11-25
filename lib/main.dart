@@ -4,7 +4,6 @@ import 'package:egy_akin/features/chat/data/services/chat_realtime_service.dart'
 import 'package:egy_akin/injection_container.dart' as di;
 import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/app/services/deep_link_navigation_service.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 

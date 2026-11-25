@@ -1,6 +1,4 @@
-import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import '../../../../exports.dart';
 
 class TopDoctors extends StatelessWidget {

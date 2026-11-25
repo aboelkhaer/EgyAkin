@@ -413,7 +413,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                                               color: isInvalidHighlight
                                                   ? (isDarkMode
                                                       ? errorRed
-                                                          .withOpacity(0.14)
+                                                          .withValues(alpha: 0.14)
                                                       : const Color(
                                                           0xFFFEF2F2))
                                                   : cardBg,
@@ -421,10 +421,10 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                                                   BorderRadius.circular(16.r),
                                               border: Border.all(
                                                 color: isInvalidHighlight
-                                                    ? errorRed.withOpacity(0.55)
+                                                    ? errorRed.withValues(alpha: 0.55)
                                                     : (isDarkMode
                                                         ? Colors.white
-                                                            .withOpacity(0.06)
+                                                            .withValues(alpha: 0.06)
                                                         : const Color(
                                                             0xFFE8E8EE)),
                                                 width: isInvalidHighlight
@@ -436,7 +436,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                                                   : [
                                                       BoxShadow(
                                                         color: Colors.black
-                                                            .withOpacity(0.03),
+                                                            .withValues(alpha: 0.03),
                                                         blurRadius: 10,
                                                         offset: const Offset(
                                                             0, 3),
@@ -930,16 +930,16 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? primaryLocal.withOpacity(isDarkMode ? 0.28 : 0.14)
+                      ? primaryLocal.withValues(alpha: isDarkMode ? 0.28 : 0.14)
                       : (isDarkMode
                           ? const Color(0xFF2A2A2E)
                           : const Color(0xFFF3F4F6)),
                   borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected
-                        ? primaryLocal.withOpacity(0.55)
+                        ? primaryLocal.withValues(alpha: 0.55)
                         : (isDarkMode
-                            ? Colors.white.withOpacity(0.08)
+                            ? Colors.white.withValues(alpha: 0.08)
                             : const Color(0xFFE5E7EB)),
                   ),
                 ),
@@ -1033,7 +1033,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                     color: fieldBg,
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
-                      color: primaryLocal.withOpacity(0.55),
+                      color: primaryLocal.withValues(alpha: 0.55),
                       width: 1.2,
                     ),
                   ),
@@ -1048,8 +1048,8 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                           width: 36.w,
                           height: 36.w,
                           decoration: BoxDecoration(
-                            color: primaryLocal.withOpacity(
-                              isDarkMode ? 0.22 : 0.12,
+                            color: primaryLocal.withValues(
+                              alpha: isDarkMode ? 0.22 : 0.12,
                             ),
                             borderRadius: BorderRadius.circular(10.r),
                           ),

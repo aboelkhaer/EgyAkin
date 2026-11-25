@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_annotation_target
-import 'package:egy_akin/exports.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'get_trending_tab_in_community_model_response.freezed.dart';

@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import 'package:flutter/services.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/add_repeatable_reading_sheet.dart';
 
@@ -182,7 +181,7 @@ class RepeatableQuestionWidget extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: BorderSide(
-                      color: AppColors.primary.withOpacity(0.45),
+                      color: AppColors.primary.withValues(alpha: 0.45),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 10.h),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -230,10 +229,10 @@ class _ReadingEntryCard extends StatelessWidget {
           margin: EdgeInsets.only(bottom: 6.h),
           padding: EdgeInsets.fromLTRB(10.w, 6.h, 4.w, 6.h),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(isDarkMode ? 0.12 : 0.06),
+            color: AppColors.primary.withValues(alpha: isDarkMode ? 0.12 : 0.06),
             borderRadius: BorderRadius.circular(8.r),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.2),
+              color: AppColors.primary.withValues(alpha: 0.2),
               width: 0.8,
             ),
           ),

@@ -252,8 +252,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                   scaffold,
                                 ]
                               : [
-                                  primary.withOpacity(0.28),
-                                  primary.withOpacity(0.14),
+                                  primary.withValues(alpha: 0.28),
+                                  primary.withValues(alpha: 0.14),
                                   scaffold,
                                 ],
                           stops: const [0.0, 0.55, 1.0],
@@ -325,7 +325,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                               fontWeight: FontWeight.w500,
                                               color: isDark
                                                   ? Colors.white
-                                                      .withOpacity(0.62)
+                                                      .withValues(alpha: 0.62)
                                                   : muted,
                                             ),
                                           ),
@@ -518,7 +518,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                   color: isInvalidHighlight
                                                       ? (isDark
                                                           ? errorRed
-                                                              .withOpacity(0.14)
+                                                              .withValues(alpha: 0.14)
                                                           : const Color(
                                                               0xFFFEF2F2))
                                                       : cardBg,
@@ -530,8 +530,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                         ? errorRed
                                                         : (isDark
                                                             ? Colors.white
-                                                                .withOpacity(
-                                                                    0.06)
+                                                                .withValues(
+                                                                    alpha: 0.06)
                                                             : const Color(
                                                                 0xFFE8E8EE)),
                                                     width: isInvalidHighlight
@@ -544,11 +544,11 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                                           BoxShadow(
                                                             color: isInvalidHighlight
                                                                 ? errorRed
-                                                                    .withOpacity(
-                                                                        0.12)
+                                                                    .withValues(
+                                                                        alpha: 0.12)
                                                                 : Colors.black
-                                                                    .withOpacity(
-                                                                        0.03),
+                                                                    .withValues(
+                                                                        alpha: 0.03),
                                                             blurRadius: 10,
                                                             offset:
                                                                 const Offset(
@@ -676,13 +676,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                       border: Border(
                         top: BorderSide(
                           color: isDark
-                              ? Colors.white.withOpacity(0.06)
+                              ? Colors.white.withValues(alpha: 0.06)
                               : const Color(0xFFE8E8EE),
                         ),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.45 : 0.06),
+                          color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.06),
                           blurRadius: 16,
                           offset: const Offset(0, -4),
                         ),
@@ -1020,16 +1020,16 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? primaryLocal.withOpacity(isDarkModeLocal ? 0.28 : 0.14)
+                      ? primaryLocal.withValues(alpha: isDarkModeLocal ? 0.28 : 0.14)
                       : (isDarkModeLocal
                           ? const Color(0xFF2A2A2E)
                           : const Color(0xFFF3F4F6)),
                   borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected
-                        ? primaryLocal.withOpacity(0.55)
+                        ? primaryLocal.withValues(alpha: 0.55)
                         : (isDarkModeLocal
-                            ? Colors.white.withOpacity(0.08)
+                            ? Colors.white.withValues(alpha: 0.08)
                             : const Color(0xFFE5E7EB)),
                   ),
                 ),
@@ -1154,8 +1154,8 @@ class _AddPatientLoadingView extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    primary.withOpacity(isDark ? 0.28 : 0.16),
-                    primary.withOpacity(0),
+                    primary.withValues(alpha: isDark ? 0.28 : 0.16),
+                    primary.withValues(alpha: 0),
                   ],
                 ),
               ),
@@ -1167,11 +1167,11 @@ class _AddPatientLoadingView extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
                   border: Border.all(
-                    color: primary.withOpacity(0.35),
+                    color: primary.withValues(alpha: 0.35),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: primary.withOpacity(0.18),
+                      color: primary.withValues(alpha: 0.18),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -1298,9 +1298,9 @@ class _AddPatientFooterLoading extends StatelessWidget {
       child: Container(
         height: 44.h,
         decoration: BoxDecoration(
-          color: primary.withOpacity(isDark ? 0.22 : 0.12),
+          color: primary.withValues(alpha: isDark ? 0.22 : 0.12),
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(color: primary.withOpacity(0.28)),
+          border: Border.all(color: primary.withValues(alpha: 0.28)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1352,14 +1352,14 @@ class _RoundIconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF2A2A2E) : Colors.white,
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.08)
+                ? Colors.white.withValues(alpha: 0.08)
                 : const Color(0xFFE8E8EE),
           ),
           boxShadow: isDark
               ? null
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -1406,7 +1406,7 @@ class _MicButton extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: primary.withOpacity(0.35),
+                  color: primary.withValues(alpha: 0.35),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),

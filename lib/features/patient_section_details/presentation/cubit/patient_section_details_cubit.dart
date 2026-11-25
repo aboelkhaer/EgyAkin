@@ -934,14 +934,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     ));
 
     // Pick multiple files
-    FilePickerResult? result;
-    result = await FilePicker.platform.pickFiles(allowMultiple: true);
-    if (result != null && result.files.isNotEmpty) {
+    final pickedFiles = await FilePicker.pickFiles();
+    if (pickedFiles.isNotEmpty) {
       List<Map<String, String>> filesList = [];
       int totalSizeInBytes = 0;
 
       // Validate each file
-      for (var pickedFile in result.files) {
+      for (var pickedFile in pickedFiles) {
         File file = File(pickedFile.path!);
         int fileSize = await file.length(); // Size in bytes
         double fileSizeInMB = fileSize / (1024 * 1024); // Convert to MB
@@ -1004,7 +1003,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       }
 
       // Process valid files
-      for (var pickedFile in result.files) {
+      for (var pickedFile in pickedFiles) {
         File file = File(pickedFile.path!);
         String fileName = pickedFile.name;
 

@@ -5,8 +5,6 @@ import 'package:egy_akin/features/all_doctors_patients/data/models/export_patien
 import 'package:egy_akin/features/authentication/data/models/authentication_with_google_model_response.dart';
 import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
-import 'package:egy_akin/features/home/data/models/get_permissions_model_response.dart';
-import 'package:egy_akin/features/home/data/models/user_me_response.dart';
 import 'package:egy_akin/features/marked_patients/data/models/get_marked_patients_model_response.dart';
 import 'package:egy_akin/features/more/data/models/change_language_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_new_medicine_model_response.dart';

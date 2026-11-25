@@ -33,12 +33,12 @@ class AiFormUploadCubit extends Cubit<AiFormUploadState> {
 
   Future<void> pickFiles() async {
     emit(state.copyWith(isPickingFiles: true, errorMessage: ''));
-    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
-    if (result == null || result.files.isEmpty) {
+    final picked = await FilePicker.pickFiles();
+    if (picked.isEmpty) {
       emit(state.copyWith(isPickingFiles: false));
       return;
     }
-    final files = result.files
+    final files = picked
         .where((e) => e.path != null)
         .map((e) => File(e.path!))
         .toList();

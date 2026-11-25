@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import '../../../../exports.dart';
-import 'package:egy_akin/features/home/data/models/user_me_response.dart';
 
 abstract class HomeDataSource {
   Future<HomeModelResponse> getHome();

@@ -42,13 +42,13 @@ class HomeDashboardDecor {
       color: color ?? HomeDashboardColors.cardBg(isDark),
       borderRadius: BorderRadius.circular(16.r),
       border: Border.all(
-        color: HomeDashboardColors.border(isDark).withOpacity(0.7),
+        color: HomeDashboardColors.border(isDark).withValues(alpha: 0.7),
       ),
       boxShadow: isDark
           ? null
           : [
               BoxShadow(
-                color: Colors.black.withOpacity(0.035),
+                color: Colors.black.withValues(alpha: 0.035),
                 blurRadius: 12,
                 offset: const Offset(0, 3),
               ),
@@ -75,7 +75,7 @@ class HomeInitialsAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = backgroundColor ?? AppColors.primary.withOpacity(0.15);
+    final bg = backgroundColor ?? AppColors.primary.withValues(alpha: 0.15);
     final fg = textColor ?? AppColors.primary;
 
     return Stack(
@@ -166,7 +166,7 @@ class HomeSectionHeader extends StatelessWidget {
               vertical: 2.h,
             ),
             decoration: BoxDecoration(
-              color: primary.withOpacity(isDark ? 0.25 : 0.12),
+              color: primary.withValues(alpha: isDark ? 0.25 : 0.12),
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Text(
@@ -292,7 +292,7 @@ class DashboardEmptyState extends StatelessWidget {
     final primary = HomeDashboardColors.primary(isDark);
     final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
     final border = isDark
-        ? Colors.white.withOpacity(0.06)
+        ? Colors.white.withValues(alpha: 0.06)
         : const Color(0xFFE8E8EE);
     final iconSize = compact ? 56.r : 88.r;
     final iconGlyph = compact ? 24.sp : 36.sp;
@@ -306,11 +306,11 @@ class DashboardEmptyState extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            primary.withOpacity(isDark ? 0.28 : 0.16),
-            primary.withOpacity(isDark ? 0.1 : 0.05),
+            primary.withValues(alpha: isDark ? 0.28 : 0.16),
+            primary.withValues(alpha: isDark ? 0.1 : 0.05),
           ],
         ),
-        border: Border.all(color: primary.withOpacity(0.22)),
+        border: Border.all(color: primary.withValues(alpha: 0.22)),
       ),
       child: Icon(icon, size: iconGlyph, color: primary),
     );

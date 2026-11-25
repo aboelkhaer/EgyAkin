@@ -270,7 +270,7 @@ class _FullScreenImageState extends State<FullScreenImage>
     final action = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.55),
+      barrierColor: Colors.black.withValues(alpha: 0.55),
       isScrollControlled: true,
       builder: (ctx) {
         return _MediaActionsSheet(
@@ -345,9 +345,11 @@ class _FullScreenImageState extends State<FullScreenImage>
             width: 1,
             height: 1,
           );
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        sharePositionOrigin: origin,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path)],
+          sharePositionOrigin: origin,
+        ),
       );
     } catch (_) {
       if (mounted) _toast(context.tr(AppStrings.failedToShare));
@@ -407,7 +409,7 @@ class _FullScreenImageState extends State<FullScreenImage>
               fit: StackFit.expand,
               children: [
                 ColoredBox(
-                  color: Colors.black.withOpacity(bgOpacity),
+                  color: Colors.black.withValues(alpha: bgOpacity),
                 ),
                 Transform.translate(
                   offset: _drag,
@@ -580,16 +582,16 @@ class _MediaActionsSheet extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF2A2438).withOpacity(0.94),
-                  const Color(0xFF16121F).withOpacity(0.96),
+                  const Color(0xFF2A2438).withValues(alpha: 0.94),
+                  const Color(0xFF16121F).withValues(alpha: 0.96),
                 ],
               ),
               border: Border.all(
-                color: Colors.white.withOpacity(0.10),
+                color: Colors.white.withValues(alpha: 0.10),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.45),
+                  color: Colors.black.withValues(alpha: 0.45),
                   blurRadius: 32,
                   offset: const Offset(0, 12),
                 ),
@@ -604,7 +606,7 @@ class _MediaActionsSheet extends StatelessWidget {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.22),
+                      color: Colors.white.withValues(alpha: 0.22),
                       borderRadius: BorderRadius.circular(99),
                     ),
                   ),
@@ -617,11 +619,11 @@ class _MediaActionsSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.14),
+                            color: Colors.white.withValues(alpha: 0.14),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withOpacity(0.25),
+                              color: AppColors.primary.withValues(alpha: 0.25),
                               blurRadius: 16,
                               offset: const Offset(0, 6),
                             ),
@@ -632,7 +634,7 @@ class _MediaActionsSheet extends StatelessWidget {
                           image: _thumbProvider,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => ColoredBox(
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.white.withValues(alpha: 0.08),
                             child: const Icon(
                               Icons.image_outlined,
                               color: Colors.white54,
@@ -659,7 +661,7 @@ class _MediaActionsSheet extends StatelessWidget {
                               countLabel ??
                                   context.tr(AppStrings.saveImage),
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.55),
+                                color: Colors.white.withValues(alpha: 0.55),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -697,15 +699,15 @@ class _MediaActionsSheet extends StatelessWidget {
                     child: TextButton(
                       onPressed: onCancel,
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white.withOpacity(0.72),
+                        foregroundColor: Colors.white.withValues(alpha: 0.72),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                           side: BorderSide(
-                            color: Colors.white.withOpacity(0.10),
+                            color: Colors.white.withValues(alpha: 0.10),
                           ),
                         ),
-                        backgroundColor: Colors.white.withOpacity(0.06),
+                        backgroundColor: Colors.white.withValues(alpha: 0.06),
                       ),
                       child: Text(
                         context.tr(AppStrings.cancel),
@@ -766,12 +768,12 @@ class _MediaActionCardState extends State<_MediaActionCard> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                widget.accent.withOpacity(_pressed ? 0.28 : 0.20),
-                widget.accent.withOpacity(_pressed ? 0.12 : 0.08),
+                widget.accent.withValues(alpha: _pressed ? 0.28 : 0.20),
+                widget.accent.withValues(alpha: _pressed ? 0.12 : 0.08),
               ],
             ),
             border: Border.all(
-              color: widget.accent.withOpacity(0.35),
+              color: widget.accent.withValues(alpha: 0.35),
             ),
           ),
           child: Column(
@@ -781,10 +783,10 @@ class _MediaActionCardState extends State<_MediaActionCard> {
                 height: 46,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.accent.withOpacity(0.22),
+                  color: widget.accent.withValues(alpha: 0.22),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.accent.withOpacity(0.35),
+                      color: widget.accent.withValues(alpha: 0.35),
                       blurRadius: 14,
                       offset: const Offset(0, 4),
                     ),

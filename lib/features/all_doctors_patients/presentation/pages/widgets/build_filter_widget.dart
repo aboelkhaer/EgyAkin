@@ -215,7 +215,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget>
                       height: 110.r,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: primary.withOpacity(isDark ? 0.14 : 0.08),
+                        color: primary.withValues(alpha: isDark ? 0.14 : 0.08),
                       ),
                     ),
                   ),
@@ -370,7 +370,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget>
             color: HomeDashboardColors.surfaceBg(isDark),
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
-              color: HomeDashboardColors.border(isDark).withOpacity(0.8),
+              color: HomeDashboardColors.border(isDark).withValues(alpha: 0.8),
             ),
           ),
           child: DropdownButtonFormField<dynamic>(
@@ -665,7 +665,7 @@ class _FilterHeader extends StatelessWidget {
           colors: isDark
               ? const [Color(0xFF0F172A), Color(0xFF1A1035)]
               : [
-                  primary.withOpacity(0.1),
+                  primary.withValues(alpha: 0.1),
                   HomeDashboardColors.scaffold(isDark)
                 ],
         ),
@@ -677,7 +677,7 @@ class _FilterHeader extends StatelessWidget {
             height: 3.h,
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black)
-                  .withOpacity(isDark ? 0.28 : 0.18),
+                  .withValues(alpha: isDark ? 0.28 : 0.18),
               borderRadius: BorderRadius.circular(99),
             ),
           ),
@@ -690,7 +690,7 @@ class _FilterHeader extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(9.r),
                   gradient: LinearGradient(
-                    colors: [primary, primary.withOpacity(0.75)],
+                    colors: [primary, primary.withValues(alpha: 0.75)],
                   ),
                 ),
                 child: Icon(
@@ -735,7 +735,7 @@ class _FilterHeader extends StatelessWidget {
                   margin: EdgeInsets.only(right: 4.w),
                   padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
                   decoration: BoxDecoration(
-                    color: primary.withOpacity(isDark ? 0.28 : 0.14),
+                    color: primary.withValues(alpha: isDark ? 0.28 : 0.14),
                     borderRadius: BorderRadius.circular(99),
                   ),
                   child: Text(
@@ -748,7 +748,7 @@ class _FilterHeader extends StatelessWidget {
                   ),
                 ),
               Material(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
                 shape: const CircleBorder(),
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
@@ -798,12 +798,12 @@ class _FilterSectionCard extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(10.w, 9.h, 10.w, 10.h),
       decoration: HomeDashboardDecor.card(isDark).copyWith(
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: accent.withOpacity(isDark ? 0.24 : 0.14)),
+        border: Border.all(color: accent.withValues(alpha: isDark ? 0.24 : 0.14)),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.025),
+                  color: Colors.black.withValues(alpha: 0.025),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -818,7 +818,7 @@ class _FilterSectionCard extends StatelessWidget {
                 width: 24.r,
                 height: 24.r,
                 decoration: BoxDecoration(
-                  color: accent.withOpacity(isDark ? 0.22 : 0.12),
+                  color: accent.withValues(alpha: isDark ? 0.22 : 0.12),
                   borderRadius: BorderRadius.circular(7.r),
                 ),
                 child: Icon(icon, size: 13.sp, color: accent),
@@ -881,14 +881,14 @@ class _ChoicePill extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.r),
             gradient: selected
                 ? LinearGradient(
-                    colors: [accent, accent.withOpacity(0.78)],
+                    colors: [accent, accent.withValues(alpha: 0.78)],
                   )
                 : null,
             color: selected ? null : HomeDashboardColors.surfaceBg(isDark),
             border: Border.all(
               color: selected
-                  ? accent.withOpacity(0.1)
-                  : HomeDashboardColors.border(isDark).withOpacity(0.9),
+                  ? accent.withValues(alpha: 0.1)
+                  : HomeDashboardColors.border(isDark).withValues(alpha: 0.9),
             ),
           ),
           child: Row(
@@ -973,7 +973,7 @@ class _DateTile extends StatelessWidget {
                 color: HomeDashboardColors.surfaceBg(isDark),
                 borderRadius: BorderRadius.circular(9.r),
                 border: Border.all(
-                  color: HomeDashboardColors.border(isDark).withOpacity(0.9),
+                  color: HomeDashboardColors.border(isDark).withValues(alpha: 0.9),
                 ),
               ),
               child: Row(
@@ -1029,10 +1029,10 @@ class _FilterFooter extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, bottomInset),
           decoration: BoxDecoration(
             color: (isDark ? const Color(0xFF12101A) : Colors.white)
-                .withOpacity(0.94),
+                .withValues(alpha: 0.94),
             border: Border(
               top: BorderSide(
-                color: HomeDashboardColors.border(isDark).withOpacity(0.8),
+                color: HomeDashboardColors.border(isDark).withValues(alpha: 0.8),
               ),
             ),
           ),
@@ -1069,11 +1069,11 @@ class _FilterFooter extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.r),
                     gradient: LinearGradient(
-                      colors: [primary, primary.withOpacity(0.82)],
+                      colors: [primary, primary.withValues(alpha: 0.82)],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: primary.withOpacity(0.22),
+                        color: primary.withValues(alpha: 0.22),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),

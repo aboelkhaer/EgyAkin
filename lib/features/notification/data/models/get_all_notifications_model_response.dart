@@ -1,7 +1,6 @@
 // ignore_for_file: invalid_annotation_target
 
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
-import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_all_notifications_model_response.freezed.dart';
 part 'get_all_notifications_model_response.g.dart';

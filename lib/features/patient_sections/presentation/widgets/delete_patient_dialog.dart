@@ -10,7 +10,7 @@ Future<void> showDeletePatientDialog({
     context: context,
     barrierDismissible: true,
     barrierLabel: context.tr(AppStrings.deletePatientBarrier),
-    barrierColor: Colors.black.withOpacity(0.55),
+    barrierColor: Colors.black.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 220),
     pageBuilder: (context, animation, secondaryAnimation) {
       return const SizedBox.shrink();
@@ -71,7 +71,7 @@ class _DeletePatientDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(22.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.45 : 0.12),
+                  color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.12),
                   blurRadius: 22,
                   offset: const Offset(0, 10),
                 ),

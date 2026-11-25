@@ -1,6 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/group_members/data/models/accept_or_decline_member_model_response.dart';
-import 'package:egy_akin/features/group_members/domain/repositories/group_members_repo.dart';
 import '../../../../exports.dart';
 
 class AcceptOrDeclineMemberInGroupUsecase

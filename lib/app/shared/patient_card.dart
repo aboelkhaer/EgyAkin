@@ -1,7 +1,5 @@
 import 'dart:ui' as ui;
-import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import '../../exports.dart';
 
 class PatientCard extends StatelessWidget {
@@ -86,7 +84,7 @@ class PatientCard extends StatelessWidget {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.4),
+                                  color: Colors.grey.withValues(alpha: 0.4),
                                   spreadRadius: 2,
                                   blurRadius: 9,
                                   offset: const Offset(0, 3),
@@ -144,8 +142,8 @@ class PatientCard extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 20.r,
                                   backgroundColor: isDarkMode
-                                      ? AppColors.darkPrimary.withOpacity(0.8)
-                                      : AppColors.primary.withOpacity(0.8),
+                                      ? AppColors.darkPrimary.withValues(alpha: 0.8)
+                                      : AppColors.primary.withValues(alpha: 0.8),
                                   child: doctorImage == null
                                       ? Text(
                                           drFirstName[0].toUpperCase(),
@@ -329,8 +327,8 @@ class PatientCard extends StatelessWidget {
                                                                           .darkPrimary
                                                                       : AppColors
                                                                           .primary)
-                                                                  .withOpacity(
-                                                                      0.4),
+                                                                  .withValues(
+                                                                      alpha: 0.4),
                                                         ),
                                                         maxLines: 1,
                                                         overflow: TextOverflow
@@ -448,8 +446,8 @@ class PatientCard extends StatelessWidget {
                     : AppIcons.isFinalNotSubmit,
                 color: submitStatus
                     ? (isDarkMode
-                        ? AppColors.darkPrimary.withOpacity(0.7)
-                        : AppColors.primary.withOpacity(0.7))
+                        ? AppColors.darkPrimary.withValues(alpha: 0.7)
+                        : AppColors.primary.withValues(alpha: 0.7))
                     : Colors.amber,
               ),
             ),

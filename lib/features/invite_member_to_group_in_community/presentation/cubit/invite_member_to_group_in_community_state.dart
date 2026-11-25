@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'invite_member_to_group_in_community_state.freezed.dart';
 

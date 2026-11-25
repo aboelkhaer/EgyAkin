@@ -1,6 +1,5 @@
 import 'package:egy_akin/exports.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
 import 'package:intl/intl.dart';
 
@@ -512,7 +511,7 @@ class _SheetHeader extends StatelessWidget {
               style: TextStyle(
                 color: canSave
                     ? AppColors.primary
-                    : AppColors.primary.withOpacity(0.35),
+                    : AppColors.primary.withValues(alpha: 0.35),
                 fontWeight: FontWeight.w700,
                 fontSize: 13.sp,
               ),
@@ -933,14 +932,14 @@ class _QuickChips extends StatelessWidget {
                           ? AppColors.primary
                           : (isDarkMode
                               ? AppColors.darkSurface
-                              : AppColors.primary.withOpacity(0.08)),
+                              : AppColors.primary.withValues(alpha: 0.08)),
                       borderRadius: BorderRadius.circular(18.r),
                       border: Border.all(
                         color: isSelected
                             ? AppColors.primary
                             : (isDarkMode
                                 ? AppColors.darkBorder
-                                : AppColors.primary.withOpacity(0.35)),
+                                : AppColors.primary.withValues(alpha: 0.35)),
                         width: 1,
                       ),
                     ),

@@ -538,7 +538,7 @@ class _MoreDivider extends StatelessWidget {
       height: 1,
       thickness: 1,
       indent: 52.w,
-      color: HomeDashboardColors.border(isDark).withOpacity(0.6),
+      color: HomeDashboardColors.border(isDark).withValues(alpha: 0.6),
     );
   }
 }
@@ -577,7 +577,7 @@ class _MoreTile extends StatelessWidget {
                 width: 32.r,
                 height: 32.r,
                 decoration: BoxDecoration(
-                  color: iconBg.withOpacity(isDark ? 0.18 : 0.12),
+                  color: iconBg.withValues(alpha: isDark ? 0.18 : 0.12),
                   borderRadius: BorderRadius.circular(9.r),
                 ),
                 child: Icon(icon, size: 15.sp, color: iconBg),
@@ -723,7 +723,7 @@ class _ThemeTile extends StatelessWidget {
               onChanged: (_) {
                 context.read<ThemeBloc>().add(ToggleTheme());
               },
-              activeColor: primary,
+              activeTrackColor: primary,
             ),
           ),
           onTap: () {

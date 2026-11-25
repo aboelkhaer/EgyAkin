@@ -1,14 +1,12 @@
 import 'package:egy_akin/app/shared/functions/multiple_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_question.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/section_submit_button.dart';
 import 'package:flutter/rendering.dart';
 
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class BuildSectionDetailsIfFinalSubmitFalse extends StatefulWidget {
   final List<QuestionModel> questions;
@@ -409,7 +407,7 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                             color: isInvalidHighlight
                                                 ? (isDark
                                                     ? errorRed
-                                                        .withOpacity(0.14)
+                                                        .withValues(alpha: 0.14)
                                                     : const Color(0xFFFEF2F2))
                                                 : cardBg,
                                             borderRadius:
@@ -419,7 +417,7 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                                   ? errorRed
                                                   : (isDark
                                                       ? Colors.white
-                                                          .withOpacity(0.06)
+                                                          .withValues(alpha: 0.06)
                                                       : const Color(
                                                           0xFFE8E8EE)),
                                               width: isInvalidHighlight
@@ -432,11 +430,11 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                                     BoxShadow(
                                                       color: isInvalidHighlight
                                                           ? errorRed
-                                                              .withOpacity(
-                                                                  0.12)
+                                                              .withValues(
+                                                                  alpha: 0.12)
                                                           : Colors.black
-                                                              .withOpacity(
-                                                                  0.03),
+                                                              .withValues(
+                                                                  alpha: 0.03),
                                                       blurRadius: 10,
                                                       offset:
                                                           const Offset(0, 3),

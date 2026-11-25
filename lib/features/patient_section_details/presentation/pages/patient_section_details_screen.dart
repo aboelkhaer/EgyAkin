@@ -7,10 +7,8 @@ import 'package:egy_akin/features/patient_section_details/data/models/patient_re
 import 'package:egy_akin/features/record/presentation/cubit/record_cubit.dart';
 import 'package:egy_akin/features/record/presentation/pages/record_screen.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 /// iOS edge-swipe pops with a null result; this route fills in the
 /// section-completed flag so the patients list still updates.

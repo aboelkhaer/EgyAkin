@@ -155,7 +155,7 @@ class DoctorCircleAvatar extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: primary.withOpacity(0.25), width: 1.2),
+          border: Border.all(color: primary.withValues(alpha: 0.25), width: 1.2),
         ),
         child: Padding(
           padding: EdgeInsets.all(1.2.w),
@@ -180,7 +180,7 @@ class _InitialsFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: primary.withOpacity(0.12),
+      color: primary.withValues(alpha: 0.12),
       child: Center(
         child: Text(
           initials,

@@ -1,7 +1,5 @@
-import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
-import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_cubit.dart';
 import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_state.dart';
 
 import '../../../../exports.dart';

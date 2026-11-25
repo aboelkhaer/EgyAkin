@@ -105,7 +105,7 @@ class PatientCommentsHeader extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14.r),
                       boxShadow: [
                         BoxShadow(
-                          color: primary.withOpacity(isDark ? 0.35 : 0.22),
+                          color: primary.withValues(alpha: isDark ? 0.35 : 0.22),
                           blurRadius: 14,
                           offset: const Offset(0, 6),
                         ),
@@ -132,12 +132,12 @@ class PatientCommentsHeader extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(99),
                                   color: isDark
-                                      ? Colors.white.withOpacity(0.12)
-                                      : Colors.white.withOpacity(0.75),
+                                      ? Colors.white.withValues(alpha: 0.12)
+                                      : Colors.white.withValues(alpha: 0.75),
                                   border: Border.all(
                                     color: isDark
-                                        ? Colors.white.withOpacity(0.14)
-                                        : primary.withOpacity(0.18),
+                                        ? Colors.white.withValues(alpha: 0.14)
+                                        : primary.withValues(alpha: 0.18),
                                   ),
                                 ),
                                 child: Padding(
@@ -158,8 +158,8 @@ class PatientCommentsHeader extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: isDark
-                                                ? primary.withOpacity(0.35)
-                                                : primary.withOpacity(0.12),
+                                                ? primary.withValues(alpha: 0.35)
+                                                : primary.withValues(alpha: 0.12),
                                           ),
                                           child: Icon(
                                             Icons.person_rounded,
@@ -186,7 +186,7 @@ class PatientCommentsHeader extends StatelessWidget {
                                                 fontWeight: FontWeight.w700,
                                                 color: isDark
                                                     ? Colors.white
-                                                        .withOpacity(0.92)
+                                                        .withValues(alpha: 0.92)
                                                     : titleColor,
                                               ),
                                             ),
@@ -197,8 +197,8 @@ class PatientCommentsHeader extends StatelessWidget {
                                           Icons.chevron_right_rounded,
                                           size: 16.sp,
                                           color: isDark
-                                              ? Colors.white.withOpacity(0.7)
-                                              : primary.withOpacity(0.8),
+                                              ? Colors.white.withValues(alpha: 0.7)
+                                              : primary.withValues(alpha: 0.8),
                                           textDirection:
                                               Directionality.of(context),
                                         ),
@@ -230,7 +230,7 @@ class PatientCommentsHeader extends StatelessWidget {
                               ),
                               decoration: BoxDecoration(
                                 color:
-                                    primary.withOpacity(isDark ? 0.22 : 0.12),
+                                    primary.withValues(alpha: isDark ? 0.22 : 0.12),
                                 borderRadius: BorderRadius.circular(20.r),
                               ),
                               child: Text(

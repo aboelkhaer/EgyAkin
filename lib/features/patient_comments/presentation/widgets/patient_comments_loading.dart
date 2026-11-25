@@ -1,7 +1,5 @@
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/exports.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shimmer/shimmer.dart';
 
 class PatientCommentsLoadingList extends StatelessWidget {
   final bool isDark;

@@ -1,6 +1,5 @@
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class LatestTrendsHashtags extends StatefulWidget {
   const LatestTrendsHashtags({super.key});

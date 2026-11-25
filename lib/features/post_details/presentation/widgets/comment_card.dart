@@ -1,8 +1,5 @@
-import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 import '../../../../app/shared/functions/permissions_helper.dart';
-import '../../../../app/shared/permissions/app_permissions.dart';
 
 class CommentCard extends StatelessWidget {
   final CommentModel commentModel;

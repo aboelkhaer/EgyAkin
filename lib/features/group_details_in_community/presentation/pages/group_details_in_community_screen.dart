@@ -815,16 +815,16 @@ class _ProfileHeader extends StatelessWidget {
                               stops: const [0.0, 0.35, 0.62, 1.0],
                               colors: isDark
                                   ? [
-                                      Colors.black.withOpacity(0.45),
-                                      Colors.black.withOpacity(0.12),
-                                      Colors.black.withOpacity(0.55),
-                                      Colors.black.withOpacity(0.72),
+                                      Colors.black.withValues(alpha: 0.45),
+                                      Colors.black.withValues(alpha: 0.12),
+                                      Colors.black.withValues(alpha: 0.55),
+                                      Colors.black.withValues(alpha: 0.72),
                                     ]
                                   : [
-                                      const Color(0xFFDDD6FE).withOpacity(0.55),
-                                      const Color(0xFFC4B5FD).withOpacity(0.2),
-                                      Colors.white.withOpacity(0.72),
-                                      Colors.white.withOpacity(0.92),
+                                      const Color(0xFFDDD6FE).withValues(alpha: 0.55),
+                                      const Color(0xFFC4B5FD).withValues(alpha: 0.2),
+                                      Colors.white.withValues(alpha: 0.72),
+                                      Colors.white.withValues(alpha: 0.92),
                                     ],
                             ),
                                       ),
@@ -852,7 +852,7 @@ class _ProfileHeader extends StatelessWidget {
                       Icons.groups_rounded,
                       size: 120.sp,
                       color: (isDark ? Colors.white : const Color(0xFF5B21B6))
-                          .withOpacity(0.06),
+                          .withValues(alpha: 0.06),
                     ),
                   ),
                 ),
@@ -963,7 +963,7 @@ class _ProfileHeader extends StatelessWidget {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isDark
-                                  ? Colors.white.withOpacity(0.9)
+                                  ? Colors.white.withValues(alpha: 0.9)
                                   : Colors.white,
                               width: 3,
                             ),
@@ -971,7 +971,7 @@ class _ProfileHeader extends StatelessWidget {
                                 ? null
                                 : [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.12),
+                                      color: Colors.black.withValues(alpha: 0.12),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -981,8 +981,8 @@ class _ProfileHeader extends StatelessWidget {
                             child: imageUrl.trim().isEmpty
                                 ? ColoredBox(
                                     color: isDark
-                                        ? Colors.white.withOpacity(0.12)
-                                        : Colors.white.withOpacity(0.55),
+                                        ? Colors.white.withValues(alpha: 0.12)
+                                        : Colors.white.withValues(alpha: 0.55),
                                     child: Center(
                                       child: Text(
                                         initial,
@@ -1022,7 +1022,7 @@ class _ProfileHeader extends StatelessWidget {
                                         : (isDark
                                             ? const Color(0xFF2DD4BF)
                                             : const Color(0xFF0D9488)))
-                                    .withOpacity(isDark ? 0.18 : 0.14),
+                                    .withValues(alpha: isDark ? 0.18 : 0.14),
                                 borderRadius: BorderRadius.circular(8.r),
                                 border: Border.all(
                                   color: (private
@@ -1030,7 +1030,7 @@ class _ProfileHeader extends StatelessWidget {
                                           : (isDark
                                               ? const Color(0xFF2DD4BF)
                                               : const Color(0xFF0D9488)))
-                                      .withOpacity(0.45),
+                                      .withValues(alpha: 0.45),
                                 ),
                               ),
                               child: Row(
@@ -1085,13 +1085,13 @@ class _ProfileHeader extends StatelessWidget {
                                 shadows: isDark
                                     ? [
                                         Shadow(
-                                          color: Colors.black.withOpacity(0.45),
+                                          color: Colors.black.withValues(alpha: 0.45),
                                           blurRadius: 10,
                                         ),
                                       ]
                                     : [
                                         Shadow(
-                                          color: Colors.white.withOpacity(0.9),
+                                          color: Colors.white.withValues(alpha: 0.9),
                                           blurRadius: 12,
                                               ),
                                             ],
@@ -1111,7 +1111,7 @@ class _ProfileHeader extends StatelessWidget {
                                     ? null
                                     : [
                                         Shadow(
-                                          color: Colors.white.withOpacity(0.85),
+                                          color: Colors.white.withValues(alpha: 0.85),
                                           blurRadius: 10,
                                         ),
                                       ],
@@ -1147,11 +1147,11 @@ class _ProfileHeader extends StatelessWidget {
                                           decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
                     color: (isDark ? const Color(0xFF1E1B2E) : Colors.white)
-                        .withOpacity(isDark ? 0.92 : 0.95),
+                        .withValues(alpha: isDark ? 0.92 : 0.95),
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : primary.withOpacity(0.12),
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : primary.withValues(alpha: 0.12),
                     ),
                   ),
                   child: Row(
@@ -1170,7 +1170,7 @@ class _ProfileHeader extends StatelessWidget {
                         width: 1,
                         height: 28.h,
                         color:
-                            HomeDashboardColors.border(isDark).withOpacity(0.8),
+                            HomeDashboardColors.border(isDark).withValues(alpha: 0.8),
                       ),
                       Expanded(
                         child: _MiniStat(
@@ -1184,7 +1184,7 @@ class _ProfileHeader extends StatelessWidget {
                         width: 1,
                         height: 28.h,
                         color:
-                            HomeDashboardColors.border(isDark).withOpacity(0.8),
+                            HomeDashboardColors.border(isDark).withValues(alpha: 0.8),
                       ),
                       Expanded(
                         child: _MiniStat(
@@ -1267,7 +1267,7 @@ class _ProfileHeader extends StatelessWidget {
             color: scaffold,
             border: Border(
               bottom: BorderSide(
-                color: HomeDashboardColors.border(isDark).withOpacity(0.75),
+                color: HomeDashboardColors.border(isDark).withValues(alpha: 0.75),
               ),
             ),
           ),
@@ -1312,8 +1312,8 @@ class _GlassIconButton extends StatelessWidget {
         isDark ? Colors.white : const Color(0xFF4C1D95);
     return Material(
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.white.withOpacity(0.72),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.white.withValues(alpha: 0.72),
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -1389,8 +1389,8 @@ class _MiniStat extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(8.w, 3.h, 5.w, 3.h),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(99),
-              border: Border.all(color: primary.withOpacity(0.35)),
-              color: primary.withOpacity(isDark ? 0.12 : 0.06),
+              border: Border.all(color: primary.withValues(alpha: 0.35)),
+              color: primary.withValues(alpha: isDark ? 0.12 : 0.06),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1640,7 +1640,7 @@ class _JoinRow extends StatelessWidget {
         onPressed: pending ? null : onJoin,
                                                 style: ElevatedButton.styleFrom(
           backgroundColor: primary,
-          disabledBackgroundColor: primary.withOpacity(0.35),
+          disabledBackgroundColor: primary.withValues(alpha: 0.35),
                                                   foregroundColor: Colors.white,
           elevation: 0,
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -1749,7 +1749,7 @@ class _AboutBody extends StatelessWidget {
                           ),
                           Divider(
                 height: 18.h,
-                color: HomeDashboardColors.border(isDark).withOpacity(0.8),
+                color: HomeDashboardColors.border(isDark).withValues(alpha: 0.8),
               ),
               _AboutRow(
                 isDark: isDark,

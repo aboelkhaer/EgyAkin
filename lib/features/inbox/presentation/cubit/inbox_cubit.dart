@@ -1476,7 +1476,7 @@ class InboxCubit extends Cubit<InboxState> {
           if (rollbackIdx >= 0) {
             _threads = [
               for (var i = 0; i < _threads.length; i++)
-                if (i == rollbackIdx) previous! else _threads[i],
+                if (i == rollbackIdx) previous else _threads[i],
             ];
             _sortPinnedFirst();
             _emitLoaded();
@@ -1716,7 +1716,7 @@ class InboxCubit extends Cubit<InboxState> {
           if (rollbackIdx >= 0) {
             _threads = [
               for (var i = 0; i < _threads.length; i++)
-                if (i == rollbackIdx) previous! else _threads[i],
+                if (i == rollbackIdx) previous else _threads[i],
             ];
             _sortPinnedFirst();
             _emitLoaded();
@@ -1728,7 +1728,7 @@ class InboxCubit extends Cubit<InboxState> {
             _archivedThreads = [
               for (var i = 0; i < _archivedThreads.length; i++)
                 if (i == rollbackIdx)
-                  previousArchived!
+                  previousArchived
                 else
                   _archivedThreads[i],
             ];
@@ -1981,7 +1981,7 @@ class InboxCubit extends Cubit<InboxState> {
           if (rollbackIdx >= 0) {
             _threads = [
               for (var i = 0; i < _threads.length; i++)
-                if (i == rollbackIdx) previous! else _threads[i],
+                if (i == rollbackIdx) previous else _threads[i],
             ];
             _emitLoaded();
           }
@@ -1992,7 +1992,7 @@ class InboxCubit extends Cubit<InboxState> {
             _archivedThreads = [
               for (var i = 0; i < _archivedThreads.length; i++)
                 if (i == rollbackIdx)
-                  previousArchived!
+                  previousArchived
                 else
                   _archivedThreads[i],
             ];

@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
 

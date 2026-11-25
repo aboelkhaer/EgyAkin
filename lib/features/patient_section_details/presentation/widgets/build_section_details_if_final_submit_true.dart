@@ -2,13 +2,11 @@ import 'package:egy_akin/app/shared/functions/convert_dynamic_list_to_string_lis
 import 'package:egy_akin/app/shared/functions/hide_email.dart';
 import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
 
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 import 'dart:ui' as ui;
 
 class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
@@ -71,8 +69,8 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 10, bottom: 10),
                     decoration: BoxDecoration(
                       color: isDarkMode
-                          ? AppColors.primary.withOpacity(0.1)
-                          : AppColors.primary.withOpacity(0.06),
+                          ? AppColors.primary.withValues(alpha: 0.1)
+                          : AppColors.primary.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: question.type == 'files'

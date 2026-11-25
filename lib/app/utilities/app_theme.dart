@@ -30,9 +30,9 @@ class Themes {
           color: AppColors.primary,
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: AppColors.primary.withOpacity(0.8),
+          backgroundColor: AppColors.primary.withValues(alpha: 0.8),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: AppColors.white,
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -53,12 +53,12 @@ class Themes {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide:
-                BorderSide(color: AppColors.description.withOpacity(0.3)),
+                BorderSide(color: AppColors.description.withValues(alpha: 0.3)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide:
-                BorderSide(color: AppColors.description.withOpacity(0.3)),
+                BorderSide(color: AppColors.description.withValues(alpha: 0.3)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
@@ -96,9 +96,9 @@ class Themes {
           color: AppColors.darkPrimary,
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: AppColors.darkPrimary.withOpacity(0.8),
+          backgroundColor: AppColors.darkPrimary.withValues(alpha: 0.8),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: AppColors.darkCardBG,
           elevation: 2,
           shape: RoundedRectangleBorder(

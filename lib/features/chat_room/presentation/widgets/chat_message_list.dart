@@ -716,16 +716,16 @@ class _ScrollToBottomButtonState extends State<_ScrollToBottomButton>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: accent.withOpacity(
-                            widget.isDarkMode ? 0.55 : 0.35,
+                          color: accent.withValues(
+                            alpha: widget.isDarkMode ? 0.55 : 0.35,
                           ),
                           blurRadius: 14,
                           spreadRadius: -1,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.black.withOpacity(
-                            widget.isDarkMode ? 0.5 : 0.16,
+                          color: Colors.black.withValues(
+                            alpha: widget.isDarkMode ? 0.5 : 0.16,
                           ),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
@@ -766,19 +766,19 @@ class _ScrollToBottomButtonState extends State<_ScrollToBottomButton>
                                   colors: widget.isDarkMode
                                       ? [
                                           const Color(0xFF2B2148)
-                                              .withOpacity(0.92),
+                                              .withValues(alpha: 0.92),
                                           const Color(0xFF17122A)
-                                              .withOpacity(0.96),
+                                              .withValues(alpha: 0.96),
                                         ]
                                       : [
-                                          Colors.white.withOpacity(0.95),
+                                          Colors.white.withValues(alpha: 0.95),
                                           const Color(0xFFF3EEFF)
-                                              .withOpacity(0.92),
+                                              .withValues(alpha: 0.92),
                                         ],
                                 ),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(
-                                    widget.isDarkMode ? 0.18 : 0.7,
+                                  color: Colors.white.withValues(
+                                    alpha: widget.isDarkMode ? 0.18 : 0.7,
                                   ),
                                   width: 0.8,
                                 ),
@@ -799,10 +799,10 @@ class _ScrollToBottomButtonState extends State<_ScrollToBottomButton>
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                     colors: [
-                                      Colors.white.withOpacity(
-                                        widget.isDarkMode ? 0.35 : 0.7,
+                                      Colors.white.withValues(
+                                        alpha: widget.isDarkMode ? 0.35 : 0.7,
                                       ),
-                                      Colors.white.withOpacity(0),
+                                      Colors.white.withValues(alpha: 0),
                                     ],
                                   ),
                                 ),
@@ -820,7 +820,7 @@ class _ScrollToBottomButtonState extends State<_ScrollToBottomButton>
                                   : accent,
                               shadows: [
                                 Shadow(
-                                  color: accent.withOpacity(0.45),
+                                  color: accent.withValues(alpha: 0.45),
                                   blurRadius: 8,
                                 ),
                               ],
@@ -1058,17 +1058,17 @@ class _DateChip extends StatelessWidget {
         ),
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
                 decoration: BoxDecoration(
-          color: (isDarkMode ? Colors.black : Colors.white).withOpacity(
-            pinned ? (isDarkMode ? 0.55 : 0.92) : (isDarkMode ? 0.32 : 0.72),
+          color: (isDarkMode ? Colors.black : Colors.white).withValues(
+            alpha: pinned ? (isDarkMode ? 0.55 : 0.92) : (isDarkMode ? 0.32 : 0.72),
           ),
                   borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: (isDarkMode ? Colors.white : AppColors.primary)
-                .withOpacity(pinned ? 0.12 : 0.08),
+                .withValues(alpha: pinned ? 0.12 : 0.08),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(pinned ? 0.18 : 0.04),
+              color: Colors.black.withValues(alpha: pinned ? 0.18 : 0.04),
               blurRadius: pinned ? 12 : 8,
               offset: Offset(0, pinned ? 4 : 2),
             ),
@@ -1294,7 +1294,7 @@ class _SwipeToReplyWrapperState extends State<_SwipeToReplyWrapper>
                       width: 32.r,
                       height: 32.r,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.14),
+                        color: AppColors.primary.withValues(alpha: 0.14),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -1415,13 +1415,13 @@ class _LongPressMessageTile extends StatelessWidget {
                     onMessageTap!(message);
                   }
                 : null,
-            splashColor: AppColors.primary.withOpacity(0.12),
-            highlightColor: AppColors.primary.withOpacity(0.08),
+            splashColor: AppColors.primary.withValues(alpha: 0.12),
+            highlightColor: AppColors.primary.withValues(alpha: 0.08),
             child: AnimatedContainer(
               duration: selectAnim,
               curve: selectCurve,
               color: isSelected
-                  ? AppColors.primary.withOpacity(isDarkMode ? 0.18 : 0.12)
+                  ? AppColors.primary.withValues(alpha: isDarkMode ? 0.18 : 0.12)
                   : Colors.transparent,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1592,8 +1592,8 @@ class _FlashHighlightState extends State<_FlashHighlight>
   @override
   Widget build(BuildContext context) {
     final glow = widget.isOutgoing
-        ? AppColors.primary.withOpacity(0.3)
-        : const Color(0xFF8B5CF6).withOpacity(0.28);
+        ? AppColors.primary.withValues(alpha: 0.3)
+        : const Color(0xFF8B5CF6).withValues(alpha: 0.28);
 
     return AnimatedBuilder(
       animation: _opacity,
@@ -1632,10 +1632,10 @@ class _FlashOverlayPainter extends CustomPainter {
     final rect = Offset.zero & size;
     final rrect = RRect.fromRectAndRadius(rect, Radius.circular(radius));
     final fill = Paint()
-      ..color = color.withOpacity(0.22 * progress)
+      ..color = color.withValues(alpha: 0.22 * progress)
       ..style = PaintingStyle.fill;
     final stroke = Paint()
-      ..color = color.withOpacity(0.9 * progress)
+      ..color = color.withValues(alpha: 0.9 * progress)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6;
     canvas.drawRRect(rrect, fill);

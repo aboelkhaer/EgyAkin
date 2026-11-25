@@ -1,6 +1,5 @@
 import 'package:egy_akin/features/profile/data/models/profile_screens.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_syndicate_card_banner.dart';
 
 import '../../../../exports.dart';

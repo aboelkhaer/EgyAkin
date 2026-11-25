@@ -138,7 +138,7 @@ class BuildSelectValueQuestion extends StatelessWidget {
         if (showAiFilledBanner) const AiFilledFieldBanner(),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.06),
+            color: AppColors.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(10),
           ),
           child: DropdownButtonFormField<dynamic>(
@@ -282,9 +282,9 @@ class _OverlaySelectFieldState extends State<_OverlaySelectField> {
     _entry = OverlayEntry(
       builder: (context) {
         final trackColor = isDark
-            ? Colors.white.withOpacity(0.08)
-            : Colors.black.withOpacity(0.06);
-        final thumbColor = primary.withOpacity(0.85);
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.06);
+        final thumbColor = primary.withValues(alpha: 0.85);
 
         return Stack(
           children: [
@@ -312,17 +312,17 @@ class _OverlaySelectFieldState extends State<_OverlaySelectField> {
                       decoration: BoxDecoration(
                         color: isDark
                             ? const Color(0xCC2C2C30)
-                            : Colors.white.withOpacity(0.94),
+                            : Colors.white.withValues(alpha: 0.94),
                         borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
                           color: isDark
-                              ? Colors.white.withOpacity(0.10)
+                              ? Colors.white.withValues(alpha: 0.10)
                               : const Color(0xFFE5E7EB),
                         ),
                         boxShadow: [
                           BoxShadow(
                             color:
-                                Colors.black.withOpacity(isDark ? 0.4 : 0.12),
+                                Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
                             blurRadius: 22,
                             offset: const Offset(0, 10),
                           ),

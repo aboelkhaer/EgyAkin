@@ -1,11 +1,9 @@
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
-import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_like_action.dart';
 import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class PostCard extends StatelessWidget {
   final PostCommunityModel feed;

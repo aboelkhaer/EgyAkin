@@ -1,8 +1,5 @@
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
-import 'package:egy_akin/app/shared/permissions/permission_guard.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 import '../../../../exports.dart';
 

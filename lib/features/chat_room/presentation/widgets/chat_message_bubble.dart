@@ -94,7 +94,7 @@ class ChatMessageMetaRow extends StatelessWidget {
         final timeColor = onImageOverlay
             ? Colors.white
             : onPrimaryBackground
-                ? Colors.white.withOpacity(0.78)
+                ? Colors.white.withValues(alpha: 0.78)
                 : (isDarkMode
                     ? AppColors.darkDescription
                     : AppColors.description);
@@ -210,7 +210,7 @@ class _MessageStatusTicks extends StatelessWidget {
     final muted = onImageOverlay
         ? Colors.white
         : onPrimaryBackground
-            ? Colors.white.withOpacity(0.72)
+            ? Colors.white.withValues(alpha: 0.72)
             : const Color(0xFF9CA3AF);
     final seenColor = onImageOverlay || onPrimaryBackground
         ? const Color(0xFF53BDEB) // WhatsApp-like sky on media / purple
@@ -273,7 +273,7 @@ class _ForwardedHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isOutgoing
-        ? Colors.white.withOpacity(0.78)
+        ? Colors.white.withValues(alpha: 0.78)
         : (isDarkMode ? AppColors.darkDescription : const Color(0xFF8696A0));
 
     return Row(
@@ -603,7 +603,6 @@ class _LiveMessageBubbleBody extends StatelessWidget {
   final void Function(ChatReplyItem reply)? onReplyQuoteTap;
 
   const _LiveMessageBubbleBody({
-    super.key,
     required this.message,
     required this.isDarkMode,
     required this.isOutgoing,
@@ -719,7 +718,7 @@ class _LiveMessageBubbleBody extends StatelessWidget {
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -1306,10 +1305,10 @@ class _SystemHintChip extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: (isDarkMode ? Colors.black : Colors.white)
-              .withOpacity(isDarkMode ? 0.38 : 0.78),
+              .withValues(alpha: isDarkMode ? 0.38 : 0.78),
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
-            color: (isDarkMode ? Colors.white : Colors.black).withOpacity(0.06),
+            color: (isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.06),
           ),
         ),
         child: Text(
@@ -1475,7 +1474,7 @@ class _IncomingBubble extends StatelessWidget {
                   padding: EdgeInsets.only(right: 6.w, bottom: 4.h),
                   child: CircleAvatar(
                     radius: 12.r,
-                    backgroundColor: AppColors.primary.withOpacity(0.15),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.15),
                     child: avatarUrl != null && avatarUrl.isNotEmpty
                         ? ClipOval(
                             child: CustomCachedNetworkImage(
@@ -1721,11 +1720,11 @@ class _AnimatedReactionBadgeState extends State<_AnimatedReactionBadge>
               color: widget.isDarkMode ? AppColors.darkCardBG : Colors.white,
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.12),
+                color: AppColors.primary.withValues(alpha: 0.12),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 4,
                   offset: const Offset(0, 1),
                 ),
@@ -1749,11 +1748,11 @@ class _AnimatedReactionBadgeState extends State<_AnimatedReactionBadge>
             color: widget.isDarkMode ? AppColors.darkCardBG : Colors.white,
             borderRadius: BorderRadius.circular(size / 2),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.12),
+              color: AppColors.primary.withValues(alpha: 0.12),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -1804,16 +1803,16 @@ class _ReplyQuoteBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accentColor = reply.isOutgoing
-        ? (isOutgoing ? Colors.white.withOpacity(0.6) : AppColors.primary)
+        ? (isOutgoing ? Colors.white.withValues(alpha: 0.6) : AppColors.primary)
         : const Color(0xFF8B5CF6);
     final bgColor = isOutgoing
-        ? Colors.white.withOpacity(0.12)
+        ? Colors.white.withValues(alpha: 0.12)
         : (isDarkMode
-            ? Colors.white.withOpacity(0.06)
-            : AppColors.primary.withOpacity(0.06));
+            ? Colors.white.withValues(alpha: 0.06)
+            : AppColors.primary.withValues(alpha: 0.06));
     final textColor = isOutgoing
-        ? Colors.white.withOpacity(0.8)
-        : (isDarkMode ? Colors.white.withOpacity(0.6) : AppColors.description);
+        ? Colors.white.withValues(alpha: 0.8)
+        : (isDarkMode ? Colors.white.withValues(alpha: 0.6) : AppColors.description);
     final image = reply.imageAttachment;
     final voice = image == null ? reply.voiceAttachment : null;
     final hasLinkThumb = image == null && firstChatUrl(reply.text) != null;
@@ -1933,7 +1932,7 @@ class _ReplyQuoteBanner extends StatelessWidget {
                   width: 36.w,
                   height: 36.w,
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(isOutgoing ? 0.22 : 0.16),
+                    color: accentColor.withValues(alpha: isOutgoing ? 0.22 : 0.16),
                     borderRadius: BorderRadius.circular(5.r),
                   ),
                   child: Icon(
@@ -2256,7 +2255,7 @@ class _UploadOverlay extends StatelessWidget {
           child,
           Positioned.fill(
             child: ColoredBox(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
             ),
           ),
           Material(
@@ -2278,14 +2277,14 @@ class _UploadOverlay extends StatelessWidget {
                           value: progress > 0 ? progress.clamp(0.0, 1.0) : null,
                           strokeWidth: 2.8,
                           color: Colors.white,
-                          backgroundColor: Colors.white.withOpacity(0.25),
+                          backgroundColor: Colors.white.withValues(alpha: 0.25),
                         ),
                       ),
                     Container(
                       width: 34.r,
                       height: 34.r,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.45),
+                        color: Colors.black.withValues(alpha: 0.45),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -2351,7 +2350,7 @@ class _SingleImageTile extends StatelessWidget {
                 ),
                 if (moreLabel != null)
                   ColoredBox(
-                    color: Colors.black.withOpacity(0.45),
+                    color: Colors.black.withValues(alpha: 0.45),
                     child: Center(
                       child: Text(
                         moreLabel!,
@@ -2380,7 +2379,6 @@ class _DeletedMessageBubble extends StatelessWidget {
   final bool isOutgoing;
 
   const _DeletedMessageBubble({
-    super.key,
     required this.message,
     required this.isDarkMode,
     required this.isOutgoing,
@@ -2389,7 +2387,7 @@ class _DeletedMessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final muted = isOutgoing
-        ? Colors.white.withOpacity(0.72)
+        ? Colors.white.withValues(alpha: 0.72)
         : (isDarkMode ? AppColors.darkDescription : AppColors.description);
     // Soft-delete for everyone (WhatsApp-style).
     final label = context.tr(
@@ -2416,7 +2414,7 @@ class _DeletedMessageBubble extends StatelessWidget {
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -2457,7 +2455,7 @@ class _DeletedMessageBubble extends StatelessWidget {
             style: TextStyle(
               fontSize: 10.sp,
               fontWeight: FontWeight.w500,
-              color: muted.withOpacity(0.85),
+              color: muted.withValues(alpha: 0.85),
             ),
           ),
         ],

@@ -102,7 +102,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                   ),
                   SizedBox(height: 12.h),
                   Material(
-                    color: AppColors.primary.withOpacity(isDark ? 0.12 : 0.08),
+                    color: AppColors.primary.withValues(alpha: isDark ? 0.12 : 0.08),
                     borderRadius: BorderRadius.circular(8.r),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8.r),
@@ -952,9 +952,9 @@ class _HeaderGlowBackground extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      glow.withOpacity(isDark ? 0.55 : 0.18),
-                      glow.withOpacity(isDark ? 0.18 : 0.08),
-                      glow.withOpacity(0),
+                      glow.withValues(alpha: isDark ? 0.55 : 0.18),
+                      glow.withValues(alpha: isDark ? 0.18 : 0.08),
+                      glow.withValues(alpha: 0),
                     ],
                     stops: const [0, 0.45, 1],
                   ),
@@ -973,8 +973,8 @@ class _HeaderGlowBackground extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
                       colors: [
-                        const Color(0xFF6B47E6).withOpacity(0.22),
-                        const Color(0xFF6B47E6).withOpacity(0),
+                        const Color(0xFF6B47E6).withValues(alpha: 0.22),
+                        const Color(0xFF6B47E6).withValues(alpha: 0),
                       ],
                     ),
                   ),
@@ -992,8 +992,8 @@ class _HeaderGlowBackground extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
                       colors: [
-                        AppColors.primary.withOpacity(0.1),
-                        AppColors.primary.withOpacity(0),
+                        AppColors.primary.withValues(alpha: 0.1),
+                        AppColors.primary.withValues(alpha: 0),
                       ],
                     ),
                   ),
@@ -1103,10 +1103,10 @@ class _CollapsingHeader extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
-                  color: primary.withOpacity(isDark ? 0.22 : 0.12),
+                  color: primary.withValues(alpha: isDark ? 0.22 : 0.12),
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(
-                    color: primary.withOpacity(isDark ? 0.28 : 0.18),
+                    color: primary.withValues(alpha: isDark ? 0.28 : 0.18),
                   ),
                 ),
                 child: Text(
@@ -1217,7 +1217,7 @@ class _CaseChatCard extends StatelessWidget {
                 width: 36.w,
                 height: 36.w,
                 decoration: BoxDecoration(
-                  color: primary.withOpacity(isDark ? 0.18 : 0.12),
+                  color: primary.withValues(alpha: isDark ? 0.18 : 0.12),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Icon(
@@ -1286,7 +1286,7 @@ class _RoundIconButton extends StatelessWidget {
     return Material(
       color: background,
       elevation: isDark ? 0 : 1.5,
-      shadowColor: Colors.black.withOpacity(0.12),
+      shadowColor: Colors.black.withValues(alpha: 0.12),
       shape: const CircleBorder(),
       child: InkWell(
         customBorder: const CircleBorder(),
@@ -1367,7 +1367,7 @@ class _PillBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.18 : 0.12),
+        color: color.withValues(alpha: isDark ? 0.18 : 0.12),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
@@ -1411,12 +1411,12 @@ class _ProgressSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: border.withOpacity(isDark ? 1 : 0.85)),
+        border: Border.all(color: border.withValues(alpha: isDark ? 1 : 0.85)),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 12,
                   offset: const Offset(0, 3),
                 ),
@@ -1436,7 +1436,7 @@ class _ProgressSummaryCard extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: total == 0 ? 0 : doneCount / total,
                     strokeWidth: 5.5,
-                    backgroundColor: primary.withOpacity(isDark ? 0.18 : 0.12),
+                    backgroundColor: primary.withValues(alpha: isDark ? 0.18 : 0.12),
                     valueColor: AlwaysStoppedAnimation<Color>(primary),
                     strokeCap: StrokeCap.round,
                   ),
@@ -1559,7 +1559,7 @@ class _GroupHeader extends StatelessWidget {
           height: 18.w,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: color.withOpacity(isDark ? 0.18 : 0.12),
+            color: color.withValues(alpha: isDark ? 0.18 : 0.12),
             shape: BoxShape.circle,
           ),
           child: Text(

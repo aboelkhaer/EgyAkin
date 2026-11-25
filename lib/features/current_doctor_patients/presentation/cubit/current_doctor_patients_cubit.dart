@@ -1,5 +1,4 @@
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/export_patients_usecase.dart';
-import 'package:egy_akin/features/all_doctors_patients/domain/usecases/apply_patients_filters_usecase.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/patient_sort_models.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/patients_list_page_input.dart';

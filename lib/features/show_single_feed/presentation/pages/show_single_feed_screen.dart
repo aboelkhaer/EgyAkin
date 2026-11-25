@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:ui';
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
-import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/app/shared/functions/feed_post_manage.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
@@ -264,7 +263,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                         height: 160.r,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: primary.withOpacity(isDark ? 0.16 : 0.1),
+                          color: primary.withValues(alpha: isDark ? 0.16 : 0.1),
                         ),
                       ),
                     ),
@@ -704,7 +703,7 @@ class _FeedHeader extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: primary.withOpacity(isDark ? 0.2 : 0.12),
+                    color: primary.withValues(alpha: isDark ? 0.2 : 0.12),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

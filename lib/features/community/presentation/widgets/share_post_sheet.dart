@@ -1,5 +1,4 @@
 import 'package:egy_akin/app/services/deep_link_handler.dart';
-import 'package:egy_akin/app/shared/widgets/doctor_circle_avatar.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -117,19 +116,25 @@ class _SharePostSheetState extends State<_SharePostSheet> {
       // Prefer URI share so iOS/Android can surface a link preview card.
       if (uri != null) {
         try {
-          await Share.shareUri(uri, sharePositionOrigin: origin);
+          await SharePlus.instance.share(
+            ShareParams(uri: uri, sharePositionOrigin: origin),
+          );
         } catch (_) {
-          await Share.share(
-            _shareBody(),
-            subject: '$_authorName · EgyAkin',
-            sharePositionOrigin: origin,
+          await SharePlus.instance.share(
+            ShareParams(
+              text: _shareBody(),
+              subject: '$_authorName · EgyAkin',
+              sharePositionOrigin: origin,
+            ),
           );
         }
       } else {
-        await Share.share(
-          _shareBody(),
-          subject: '$_authorName · EgyAkin',
-          sharePositionOrigin: origin,
+        await SharePlus.instance.share(
+          ShareParams(
+            text: _shareBody(),
+            subject: '$_authorName · EgyAkin',
+            sharePositionOrigin: origin,
+          ),
         );
       }
       if (mounted) Navigator.of(context).maybePop();

@@ -201,8 +201,8 @@ class _ChatMessageOverlayState extends State<ChatMessageOverlay>
                           sigmaY: 10 * _blurFade.value + 2,
                         ),
                         child: ColoredBox(
-                          color: Colors.black.withOpacity(
-                            (isDarkMode ? 0.45 : 0.3) * _blurFade.value,
+                          color: Colors.black.withValues(
+                            alpha: (isDarkMode ? 0.45 : 0.3) * _blurFade.value,
                           ),
                         ),
                       ),
@@ -313,11 +313,11 @@ class _EmojiReactionBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 5.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF2B2B2E).withOpacity(0.96),
+        color: const Color(0xFF2B2B2E).withValues(alpha: 0.96),
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -350,7 +350,7 @@ class _EmojiReactionBar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   decoration: selectedEmoji == emojis[index]
                       ? BoxDecoration(
-                          color: Colors.white.withOpacity(0.18),
+                          color: Colors.white.withValues(alpha: 0.18),
                           shape: BoxShape.circle,
                         )
                       : null,
@@ -437,11 +437,11 @@ class _MessageActionMenu extends StatelessWidget {
     return Container(
       width: 200.w,
       decoration: BoxDecoration(
-        color: const Color(0xFF2B2B2E).withOpacity(0.96),
+        color: const Color(0xFF2B2B2E).withValues(alpha: 0.96),
         borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.22),
+            color: Colors.black.withValues(alpha: 0.22),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -558,7 +558,7 @@ class _MenuRow extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),

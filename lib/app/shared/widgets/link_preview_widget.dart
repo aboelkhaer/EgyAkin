@@ -1,5 +1,4 @@
 import 'package:metadata_fetch/metadata_fetch.dart';
-import '../../services/theme_bloc.dart';
 import '../../../exports.dart';
 
 /// Global cache to store fetched metadata and prevent reloading

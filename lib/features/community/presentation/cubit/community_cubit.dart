@@ -2,9 +2,6 @@ import 'dart:developer';
 
 import 'package:egy_akin/app/shared/functions/profile_post_counts.dart';
 import 'package:egy_akin/app/shared/functions/saved_posts_local_sync.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 
 import '../../../../exports.dart';
 

@@ -1,11 +1,8 @@
 import 'package:egy_akin/features/community/presentation/widgets/post_removal_animator.dart';
-import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
-import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class CommunitySearchScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
